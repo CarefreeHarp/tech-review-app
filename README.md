@@ -6,7 +6,11 @@ The application is envisioned as a small social network where people can discove
 
 ## Design
 
-The Devicers interface prototype is available on [Figma](https://www.figma.com/design/l7mETjAKWkyAFwtx1VWmIX/Untitled?node-id=1-484&t=p0lttPj7kJNiSUG2-1).
+The Devicers interface prototype is available on <a href="https://www.figma.com/design/l7mETjAKWkyAFwtx1VWmIX/Untitled?node-id=1-484&amp;t=p0lttPj7kJNiSUG2-1" target="_blank" rel="noopener noreferrer">Figma</a>.
+
+### Feed preview
+
+![Devicers feed screen](images/AppFeed.png)
 
 ## Sprint 1
 
