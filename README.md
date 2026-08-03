@@ -12,6 +12,12 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 ![Devicers feed screen](images/AppFeed.png)
 
+## Data model
+
+### Entity-relationship diagram
+
+![Devicers entity-relationship diagram](images/DiagramaEntidad-Relacion.svg)
+
 ## Sprint 1
 
 - **Course:** Mobile Computing — Pontificia Universidad Javeriana.
