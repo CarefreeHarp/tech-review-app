@@ -8,17 +8,15 @@ The application is envisioned as a small social network where people can discove
 
 The Devicers interface prototype is available on <a href="https://www.figma.com/design/l7mETjAKWkyAFwtx1VWmIX/Untitled?node-id=1-484&amp;t=p0lttPj7kJNiSUG2-1" target="_blank" rel="noopener noreferrer">Figma</a>.
 
-### Feed preview
-
-![Devicers feed screen](images/AppFeedScreen.png)
-
-### Profile preview
-
-![Devicers profile screen](images/AppProfileScreen.jpeg)
+| Feed preview | Profile preview |
+| --- | --- |
+| ![Devicers feed screen](images/AppFeedScreen.png) | ![Devicers profile screen](images/AppProfileScreen.jpeg) |
 
 ## Data model
 
 ### Entity-relationship diagram
+
+> The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
 
 ![Devicers entity-relationship diagram](images/DiagramaEntidad-Relacion.svg)
 
@@ -26,7 +24,7 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 - **Course:** Mobile Computing — Pontificia Universidad Javeriana.
 - **Professor:** Juan Sebastián Angarita Torres.
-- **Date:** July 29, 2026.
+- **Date:** August 2, 2026.
 - **Team:** Daniel Felipe Ramírez Vargas, Edwin Esteban Barreto Gaitán, and Guillermo Andrés Aponte Cárdenas.
 
 ### Deliverables
