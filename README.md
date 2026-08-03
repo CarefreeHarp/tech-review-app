@@ -37,14 +37,15 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 - **FR-01 to FR-04 — Authentication:** create an account with an email address, username, and password; sign in; and restrict features to registered users.
 - **FR-05 and FR-06 — Feed:** show reviews from followed accounts, ordered from newest to oldest.
-- **FR-08 to FR-11 — Product discovery:** filter products by subcategory, search by name, select a product from the feed or search results, and view its main information.
-- **Community reviews:** show reviews written by other users for a product and provide access to each review author's profile.
+- **FR-07 to FR-11 and FR-30 to FR-32 — Product discovery:** browse products by categories and subcategories; filter by subcategory or brand; search, select, and view product details; and access stores where a product is available.
+- **FR-25, FR-26, and FR-33 to FR-36 — Community reviews:** show reviews from other users with author, date, rating, likes, and access to the author's profile; users can hide or delete their own reviews and manage review likes.
 - **FR-12 to FR-16 — Ratings and reviews:** rate products using integer values from 0 to 5, write an analysis, allow only one review per user and product, and allow later edits.
-- **FR-17 — Comments:** comment on other users' analyses, including users who are not followed; display comments with their author and publication date.
-- **Following:** allow users to follow other users.
+- **FR-17, FR-27, FR-28, and FR-37 to FR-40 — Comments:** comment on other users' analyses, including users who are not followed; reply to, edit, hide, or delete own comments; and manage comment likes.
+- **FR-29 and FR-44 to FR-45 — Following:** follow or unfollow users, view followers and followed users, and prevent self-following.
 - **FR-18 to FR-20 — Profile:** update profile information and photo, delete the account, and view all products rated by the user.
 - **FR-21 to FR-23 — Notifications:** notify users about new followers, comments on their reviews, and likes on their reviews.
 - **FR-24 — Review reading:** select a review from the feed to view its full content.
+- **FR-41 to FR-43 and FR-46 to FR-47 — Account and saved content:** save reviews, view saved reviews, view public profile details, sign out, and hide content without permanently deleting it.
 
 ## Technical scope
 
