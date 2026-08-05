@@ -4,10 +4,12 @@ class User{
     +int id
     +String username
     +String email
-    +String password
+    +String firebaseUid
     +String biography
     +String profilePicture
-
+    +List DBFollowers
+    +List DBFollows
+    
     +follow(user)
     +unfollow(user)
     +createReview()
@@ -15,7 +17,7 @@ class User{
     +saveReview()
 }
 
-class Product{
+class Article{
     +int id
     +String name
     +String model
@@ -32,11 +34,6 @@ class Category{
     +String name
 }
 
-class Subcategory{
-    +int id
-    +String name
-}
-
 class Brand{
     +int id
     +String name
@@ -48,17 +45,14 @@ class Store{
     +String url
 }
 
-class Availability{
-    +String productUrl
-}
 
 class Review{
     +int id
     +int rating
     +String content
     +Date date
-    +boolean hidden
-
+    +boolean isActive
+    +Date reviewLike
     +edit()
     +delete()
     +hide()
@@ -69,63 +63,36 @@ class Comment{
     +String content
     +Date date
     +boolean hidden
+    +Date commentLike
 
     +edit()
     +delete()
     +reply()
 }
 
-class Notification{
-    +int id
-    +String type
-    +String message
-    +Date date
-    +boolean read
 
-    +markAsRead()
-}
-
-class Follow{
-    +Date date
-}
 
 class SavedReview{
     +Date date
 }
 
-class ReviewLike{
-    +Date date
-}
-
-class CommentLike{
-    +Date date
-}
-
 User "1" --> "*" Review : writes
 User "1" --> "*" Comment : writes
-User "1" --> "*" Notification : receives
 
-Product "1" --> "*" Review : has
 
-Category "1" --> "*" Subcategory
-Subcategory "1" --> "*" Product
-Brand "1" --> "*" Product
+Article "1" --> "*" Review : has
 
-Product "1" --> "*" Availability
-Store "1" --> "*" Availability
+Category "1" --> "*" Category: subcategory
+Category "1" --> "*" Article
+Brand "1" --> "*" Article
+
+Article "*" --> "1" Store
 
 Review "1" --> "*" Comment
 
 Comment "1" --> "0..*" Comment : replies to
 
-User "1" --> "*" Follow : follows
-Follow "*" --> "1" User : followed
 
 User "1" --> "*" SavedReview
 SavedReview "*" --> "1" Review
 
-User "1" --> "*" ReviewLike
-ReviewLike "*" --> "1" Review
-
-User "1" --> "*" CommentLike
-CommentLike "*" --> "1" Comment
