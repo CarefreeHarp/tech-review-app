@@ -24,7 +24,7 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 > The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
 
-![Devicers entity-relationship diagram](images/DiagramaClases.svg)
+![Devicers object-oriented class diagram](images/ClassDiagram.svg)
 
 
 ### Entity-relationship diagram
