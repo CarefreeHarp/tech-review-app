@@ -12,7 +12,7 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 | Feed preview | Profile preview |
 | --- | --- |
-| ![Devicers feed screen](images/AppFeedScreen.png) | ![Devicers profile screen](images/AppProfileScreen.jpeg) |
+| <img src="images/AppFeedScreen.png" alt="Devicers feed screen" width="280"> | <img src="images/AppProfileScreen.png" alt="Devicers profile screen" width="280"> |
 
 ### Logue
 
@@ -24,14 +24,14 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 > The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
 
-![Devicers entity-relationship diagram](images/DiagramaClases.svg)
+![Devicers object-oriented class diagram](images/ClassDiagram.svg)
 
 
 ### Entity-relationship diagram
 
 > The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
 
-![Devicers entity-relationship diagram](images/DiagramaEntidad-Relacion.svg)
+![Devicers entity-relationship diagram](images/DBdiagram.svg)
 
 ## Sprint 1
 
