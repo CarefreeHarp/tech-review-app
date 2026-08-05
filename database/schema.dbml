@@ -10,6 +10,7 @@ Table users {
   username text [not null, unique]
   biography text
   profile_image_url text
+  notifications_last_viewed_at timestamp
 
   is_active boolean [not null, default: true]
   created_at timestamp [not null, default: `now()`]

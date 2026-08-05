@@ -14,6 +14,7 @@ Stores user accounts and profile information.
 | username | text | Yes | — | Unique | — | Unique username used within the application. |
 | biography | text | No | — | Optional | — | Profile biography displayed to other users. |
 | profile_image_url | text | No | — | Optional | — | Location where the profile image is stored. |
+| notifications_last_viewed_at | timestamp | No | — | Optional | — | Date and time when the user last viewed their notifications. |
 | is_active | boolean | Yes | — | Default: true | — | Indicates whether the account is active and visible, allowing it to be hidden without deletion. |
 | created_at | timestamp | Yes | — | Default: now() | — | Date and time when the account was created. |
 | updated_at | timestamp | Yes | — | Default: now(); must be updated when modified | — | Date and time of the most recent account or profile update. |
