@@ -10,9 +10,9 @@ The application is envisioned as a small social network where people can discove
 
 The Devicers interface prototype is available on <a href="https://www.figma.com/design/l7mETjAKWkyAFwtx1VWmIX/Untitled?node-id=1-484&amp;t=p0lttPj7kJNiSUG2-1" target="_blank" rel="noopener noreferrer">Figma</a>.
 
-| Feed preview | Profile preview |
-| --- | --- |
-| <img src="images/AppFeedScreen.png" alt="Devicers feed screen" width="280"> | <img src="images/AppProfileScreen.png" alt="Devicers profile screen" width="280"> |
+| Feed preview                                                                 | Profile preview                                                                    |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| <img src="images/AppFeedScreen.jpeg" alt="Devicers feed screen" width="280"> | <img src="images/AppProfileScreen.jpeg" alt="Devicers profile screen" width="280"> |
 
 ### Logue
 
@@ -27,7 +27,6 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 > The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
 
 ![Devicers object-oriented class diagram](images/ClassDiagram.svg)
-
 
 ### Entity-relationship diagram
 
