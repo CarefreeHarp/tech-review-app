@@ -16,7 +16,9 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 ### Logue
 
-![Devicers entity-relationship diagram](images/Logue.svg)
+<p align="center">
+  <img src="images/Logue.svg" alt="Devicers logo" width="260">
+</p>
 
 ## Data model
 
