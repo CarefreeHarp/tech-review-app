@@ -31,7 +31,7 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 > The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
 
-![Devicers entity-relationship diagram](images/DiagramaEntidad-Relacion.svg)
+![Devicers entity-relationship diagram](images/DBdiagram.svg)
 
 ## Sprint 1
 

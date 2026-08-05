@@ -175,6 +175,27 @@ Table review_bookmarks {
 }
 
 // ======================================================
+// NOTIFICACIONES
+// ======================================================
+
+Table notifications {
+  id int [pk, increment]
+
+  user_id int [not null]
+  actor_user_id int
+
+  type text [not null]
+
+  review_id int
+  comment_id int
+
+  is_read boolean [not null, default: false]
+  created_at timestamp [not null, default: `now()`]
+
+  Note: 'user_id es el usuario que recibe la notificación. actor_user_id es quien la genera. type puede ser review_like, comment_like o follow. review_id y comment_id identifican el contenido relacionado cuando corresponda.'
+}
+
+// ======================================================
 // RELACIONES
 // ======================================================
 
@@ -213,3 +234,9 @@ Ref: comment_likes.comment_id > comments.id [delete: cascade]
 // Reseñas guardadas
 Ref: review_bookmarks.user_id > users.id [delete: cascade]
 Ref: review_bookmarks.review_id > reviews.id [delete: cascade]
+
+// Notificaciones
+Ref: notifications.user_id > users.id [delete: cascade]
+Ref: notifications.actor_user_id > users.id [delete: set null]
+Ref: notifications.review_id > reviews.id [delete: cascade]
+Ref: notifications.comment_id > comments.id [delete: cascade]

@@ -146,3 +146,18 @@ Records the reviews saved by each user.
 |---|---|---|---|---|---|---|
 | user_id | int | Yes | Composite PK and FK | Prevents the same review from being saved twice | users.id (ON DELETE CASCADE) | Identifies the user who saved the review. |
 | review_id | int | Yes | Composite PK and FK | Prevents the same review from being saved twice | reviews.id (ON DELETE CASCADE) | Identifies the review saved by the user. |
+
+## `notifications`
+
+Stores notifications received by users for relevant activity in the application.
+
+| Attribute | Type | Required | Key | Properties | Reference | Description |
+|---|---|---|---|---|---|---|
+| id | int | Yes | Primary Key | Auto-increment | — | Unique identifier of the notification. |
+| user_id | int | Yes | Foreign Key | Not null | users.id | User who receives the notification. |
+| actor_user_id | int | No | Foreign Key | Nullable | users.id | User who generated the notification. |
+| type | text | Yes | — | Not null | — | Type of notification (e.g., `review_like`, `comment_like`, `follow`). |
+| review_id | int | No | Foreign Key | Nullable | reviews.id | Related review, if applicable. |
+| comment_id | int | No | Foreign Key | Nullable | comments.id | Related comment, if applicable. |
+| is_read | boolean | Yes | — | Default: `false` | — | Indicates whether the notification has been read. |
+| created_at | timestamp | Yes | — | Default: `now()` | — | Date and time when the notification was created. |
