@@ -12,7 +12,7 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 | Feed preview | Profile preview |
 | --- | --- |
-| ![Devicers feed screen](images/AppFeedScreen.png) | ![Devicers profile screen](images/AppProfileScreen.jpeg) |
+| ![Devicers feed screen](images/AppFeedScreen.png) | ![Devicers profile screen](images/AppProfileScreen.png) |
 
 ### Logue
 
