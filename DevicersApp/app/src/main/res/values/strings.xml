@@ -1,3 +1,32 @@
 <resources>
-    <string name="app_name">DevicersApp</string>
+    <string name="app_name">Devicers</string>
+    <string name="welcome_message">Bienvenido a Devicers</string>
+    <string name="sign_in">Iniciar sesión</string>
+    <string name="create_account">Crear cuenta</string>
+    <string name="devicers_logo_description">Logotipo de Devicers</string>
+    <string name="first_name">Nombre</string>
+    <string name="last_name">Apellido</string>
+    <string name="email">Correo electrónico</string>
+    <string name="email_placeholder">tu@correo.com</string>
+    <string name="password">Contraseña</string>
+    <string name="confirm_password">Repite tu contraseña</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="continue_with">o continúa con</string>
+    <string name="no_account">¿No tienes cuenta?</string>
+    <string name="already_have_account">¿Ya tienes cuenta?</string>
+    <string name="social_google">G</string>
+    <string name="social_facebook">f</string>
+    <string name="social_phone">☎</string>
+    <string name="google_sign_in">Continuar con Google</string>
+    <string name="facebook_sign_in">Continuar con Facebook</string>
+    <string name="phone_sign_in">Continuar con teléfono</string>
+    <string name="light_theme">Tema claro</string>
+    <string name="sign_in_title">Inicia sesión</string>
+    <string name="sign_in_description">Accede para ver reseñas y calificar tus dispositivos.</string>
+    <string name="create_account_description">Crea tu perfil para publicar y guardar tus reseñas.</string>
+    <string name="username">Nombre de usuario</string>
+    <string name="username_placeholder">usuario</string>
+    <string name="show_password">Mostrar contraseña</string>
+    <string name="hide_password">Ocultar contraseña</string>
+    <string name="password_placeholder">◉◉◉◉◉</string>
 </resources>

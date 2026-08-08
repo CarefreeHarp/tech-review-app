@@ -7,4 +7,24 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Devicers: tema claro -->
+    <color name="background_light">#F4F4ED</color>
+    <color name="surface_light">#D6D6C5</color>
+    <color name="surface_secondary_light">#E7E7DB</color>
+    <color name="text_primary_light">#1C1C18</color>
+    <color name="text_secondary_light">#595950</color>
+    <color name="border_light">#BDBDAC</color>
+
+    <!-- Devicers: tema oscuro -->
+    <color name="background_dark">#11110F</color>
+    <color name="surface_dark">#24241F</color>
+    <color name="surface_secondary_dark">#30302A</color>
+    <color name="text_primary_dark">#F7F7F0</color>
+    <color name="text_secondary_dark">#B8B8AA</color>
+    <color name="border_dark">#44443B</color>
+
+    <!-- Devicers: colores compartidos por ambos temas -->
+    <color name="primary_yellow">#E8E84F</color>
+    <color name="soft_yellow">#F3F3A9</color>
 </resources>
