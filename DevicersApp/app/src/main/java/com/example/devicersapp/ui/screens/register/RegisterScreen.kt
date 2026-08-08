@@ -24,7 +24,7 @@ import com.example.devicersapp.ui.utils.authentication.PrimaryButton
 import com.example.devicersapp.ui.utils.authentication.ScreenTitle
 import com.example.devicersapp.ui.utils.authentication.SocialButtons
 
-/** Renders the static light-theme registration screen from the Devicers prototype. */
+/** Renderiza la pantalla estática de creación de cuenta del tema claro de Devicers. */
 @Composable
 fun RegisterScreen(modifier: Modifier = Modifier) {
     RegisterScreenContent(
@@ -34,7 +34,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
     )
 }
 
-/** Assembles the visual content displayed by [RegisterScreen]. */
+/** Reúne el contenido visual que muestra [RegisterScreen]. */
 @Composable
 fun RegisterScreenContent(modifier: Modifier = Modifier) {
     Column(
@@ -43,7 +43,7 @@ fun RegisterScreenContent(modifier: Modifier = Modifier) {
             .padding(horizontal = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Vertical spacing preserves the visual rhythm defined by the light prototype.
+        // El espaciado vertical conserva el ritmo visual definido por el prototipo claro.
         Spacer(modifier = Modifier.height(50.dp))
         AuthenticationHeader()
         Spacer(modifier = Modifier.height(44.dp))
@@ -84,14 +84,14 @@ fun RegisterScreenContent(modifier: Modifier = Modifier) {
     }
 }
 
-/** Provides an editor preview of the complete registration composition. */
+/** Muestra una vista previa de la composición completa de creación de cuenta. */
 @Composable
 @Preview(showBackground = true, locale = "es")
 fun RegisterScreenPreview() {
     RegisterScreen()
 }
 
-/** Provides an editor preview of the visual registration content. */
+/** Muestra una vista previa del contenido visual de creación de cuenta. */
 @Composable
 @Preview(showBackground = true, locale = "es")
 fun RegisterScreenContentPreview() {

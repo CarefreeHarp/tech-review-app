@@ -6,12 +6,12 @@ import androidx.activity.compose.setContent
 import com.example.devicersapp.ui.screens.login.LoginScreen
 
 
-/** Android entry activity that displays the frontend login prototype. */
+/** Actividad de entrada que muestra el prototipo visual de inicio de sesión. */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Login is the initial static screen until navigation is implemented.
+            // Inicio de sesión es la pantalla inicial estática hasta implementar navegación.
             LoginScreen()
         }
     }

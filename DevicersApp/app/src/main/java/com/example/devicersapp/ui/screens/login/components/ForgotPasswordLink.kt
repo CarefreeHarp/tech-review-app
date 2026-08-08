@@ -11,8 +11,8 @@ import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 
 /**
- * Displays a password-recovery action with the visual appearance of plain text.
- * The empty callback intentionally preserves the current frontend-only prototype.
+ * Muestra la acción de recuperación de contraseña con la apariencia visual de texto plano.
+ * El callback vacío conserva intencionalmente el prototipo actual solo de frontend.
  */
 @Composable
 fun ForgotPasswordLink(modifier: Modifier = Modifier) {
@@ -25,7 +25,7 @@ fun ForgotPasswordLink(modifier: Modifier = Modifier) {
     }
 }
 
-/** Provides an editor preview of the static password-recovery link. */
+/** Muestra una vista previa del enlace estático de recuperación de contraseña. */
 @Composable
 @Preview(showBackground = true, locale = "es")
 fun ForgotPasswordLinkPreview() {

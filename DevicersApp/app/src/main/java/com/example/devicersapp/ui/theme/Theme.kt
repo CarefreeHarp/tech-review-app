@@ -22,7 +22,7 @@ private val LightColorScheme = lightColorScheme(
     secondary = PurpleGrey40,
     tertiary = Pink40
 
-    /* Other default colors to override
+    /* Otros colores predeterminados que se pueden reemplazar
     background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
@@ -36,7 +36,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun DevicersAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
+    // El color dinámico está disponible desde Android 12.
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {

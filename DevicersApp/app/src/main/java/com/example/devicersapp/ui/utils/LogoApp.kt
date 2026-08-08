@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 
-/** Displays the Devicers logo while allowing the caller to control its size and placement. */
+/** Muestra el logo de Devicers y permite controlar su tamaño y ubicación desde quien lo llama. */
 @Composable
 fun LogoApp(modifier: Modifier = Modifier) {
     Image(
@@ -22,7 +22,7 @@ fun LogoApp(modifier: Modifier = Modifier) {
     )
 }
 
-/** Provides a standalone preview for checking the logo asset. */
+/** Muestra una vista previa independiente para verificar el recurso del logo. */
 @Composable
 @Preview(showBackground = true)
 fun LogoAppPreview() {

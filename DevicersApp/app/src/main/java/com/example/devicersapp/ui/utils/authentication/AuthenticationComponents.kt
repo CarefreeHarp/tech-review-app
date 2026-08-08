@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.utils.LogoApp
 
-/** Renders the yellow primary action button shared by authentication screens. */
+/** Renderiza el botón de acción amarillo compartido por las pantallas de autenticación. */
 @Composable
 fun PrimaryButton(@StringRes textResId: Int, modifier: Modifier = Modifier) {
     Button(
@@ -56,7 +56,7 @@ fun PrimaryButton(@StringRes textResId: Int, modifier: Modifier = Modifier) {
     }
 }
 
-/** Displays the compact header shared by login and registration. */
+/** Muestra el encabezado compacto compartido por inicio de sesión y creación de cuenta. */
 @Composable
 fun AuthenticationHeader(modifier: Modifier = Modifier) {
     Row(
@@ -71,7 +71,7 @@ fun AuthenticationHeader(modifier: Modifier = Modifier) {
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp
         )
-        // Uses the free space to keep the theme label aligned to the right.
+        // Usa el espacio disponible para mantener la etiqueta del tema alineada a la derecha.
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = stringResource(R.string.light_theme),
@@ -81,7 +81,7 @@ fun AuthenticationHeader(modifier: Modifier = Modifier) {
     }
 }
 
-/** Displays the title and supporting description for an authentication screen. */
+/** Muestra el título y la descripción de apoyo de una pantalla de autenticación. */
 @Composable
 fun ScreenTitle(@StringRes title: Int, @StringRes description: Int, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -92,8 +92,8 @@ fun ScreenTitle(@StringRes title: Int, @StringRes description: Int, modifier: Mo
 }
 
 /**
- * Renders a frontend-only outlined authentication field.
- * Its empty value callback is required by [OutlinedTextField] but intentionally does not store input yet.
+ * Renderiza un campo de autenticación delineado, únicamente visual.
+ * El callback de valor vacío es obligatorio para [OutlinedTextField], pero todavía no guarda texto.
  */
 @Composable
 fun AuthenticationField(
@@ -107,7 +107,7 @@ fun AuthenticationField(
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
             value = "",
-            // Material requires this callback. Keeping it empty preserves the static prototype.
+            // Material exige este callback; dejarlo vacío conserva el prototipo estático.
             onValueChange = {},
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(14.dp),
@@ -145,13 +145,13 @@ fun AuthenticationField(
     }
 }
 
-/** Displays the text separating primary authentication from social access options. */
+/** Muestra el texto que separa la autenticación principal de las opciones sociales. */
 @Composable
 fun AuthenticationDividerText(modifier: Modifier = Modifier) {
     Text(text = stringResource(R.string.continue_with), modifier = modifier, color = colorResource(R.color.text_secondary_light), fontSize = 10.sp)
 }
 
-/** Displays the Google, Facebook, and phone social-access buttons from the prototype. */
+/** Muestra los botones sociales de Google, Facebook y teléfono del prototipo. */
 @Composable
 fun SocialButtons(modifier: Modifier = Modifier) {
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -161,7 +161,7 @@ fun SocialButtons(modifier: Modifier = Modifier) {
     }
 }
 
-/** Renders one static social button using the provided drawable icon and description. */
+/** Renderiza un botón social estático con el ícono y la descripción proporcionados. */
 @Composable
 fun SocialButton(@DrawableRes iconResId: Int, @StringRes contentDescriptionResId: Int, modifier: Modifier = Modifier) {
     Button(
@@ -181,7 +181,7 @@ fun SocialButton(@DrawableRes iconResId: Int, @StringRes contentDescriptionResId
     }
 }
 
-/** Displays the static account-status message and its visual action link. */
+/** Muestra el mensaje estático sobre el estado de la cuenta y su enlace visual. */
 @Composable
 fun AuthenticationFooter(@StringRes textResId: Int, @StringRes actionResId: Int, modifier: Modifier = Modifier) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {

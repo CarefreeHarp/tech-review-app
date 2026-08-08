@@ -26,7 +26,7 @@ import com.example.devicersapp.ui.utils.authentication.PrimaryButton
 import com.example.devicersapp.ui.utils.authentication.ScreenTitle
 import com.example.devicersapp.ui.utils.authentication.SocialButtons
 
-/** Renders the static light-theme login screen from the Devicers prototype. */
+/** Renderiza la pantalla estática de inicio de sesión del tema claro de Devicers. */
 @Composable
 fun LoginScreen(modifier: Modifier = Modifier) {
     LoginScreenContent(
@@ -36,7 +36,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
     )
 }
 
-/** Assembles the visual content displayed by [LoginScreen]. */
+/** Reúne el contenido visual que muestra [LoginScreen]. */
 @Composable
 fun LoginScreenContent(modifier: Modifier = Modifier) {
     Column(
@@ -45,7 +45,7 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
             .padding(horizontal = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Vertical spacing mirrors the composition of the light Figma screen.
+        // El espaciado vertical reproduce la composición de la pantalla clara de Figma.
         Spacer(modifier = Modifier.height(50.dp))
         AuthenticationHeader()
         Spacer(modifier = Modifier.height(50.dp))
@@ -66,14 +66,14 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
     }
 }
 
-/** Provides an editor preview of the complete login composition. */
+/** Muestra una vista previa de la composición completa de inicio de sesión. */
 @Composable
 @Preview(showBackground = true, locale = "es")
 fun LoginScreenPreview() {
     LoginScreen()
 }
 
-/** Provides an editor preview of the visual login content. */
+/** Muestra una vista previa del contenido visual de inicio de sesión. */
 @Composable
 @Preview(showBackground = true, locale = "es")
 fun LoginScreenContentPreview() {
