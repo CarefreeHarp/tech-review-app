@@ -33,5 +33,33 @@
     <string name="review_example_description">Una excelente opción. Tiene buen rendimiento y cumple con lo esperado.</string>
     <string name="review_rating">★★★★★</string>
     <string name="feed">Para ti</string>
+    <string name="search_title">Buscar</string>
+    <string name="search_placeholder">Buscar dispositivos</string>
+    <string name="search_filters">Filtros de búsqueda</string>
+    <string name="clear_filters">Limpiar</string>
+    <string name="brand">MARCA</string>
+    <string name="brand_placeholder">Escribe una marca</string>
+    <string name="product_name">NOMBRE DEL PRODUCTO</string>
+    <string name="product_name_placeholder">Ej. Auriculares</string>
+    <string name="launch_date">FECHA DE LANZAMIENTO</string>
+    <string name="launch_date_placeholder">DD / MM / AAAA</string>
+    <string name="category">CATEGORÍA</string>
+    <string name="all">Todos</string>
+    <string name="cellphones">Celulares</string>
+    <string name="audio">Audio</string>
+    <string name="computers">Computadores</string>
+    <string name="minimum_rating">CALIFICACIÓN MÍNIMA</string>
+    <string name="rating_four_or_more">4.0 o más</string>
+    <string name="sort_by">ORDENAR POR</string>
+    <string name="most_recent">Más recientes</string>
+    <string name="best_rated">Mejor valorados</string>
+    <string name="apply_filters">Aplicar filtros</string>
+    <string name="rating_zero">0</string>
+    <string name="rating_one">1</string>
+    <string name="rating_two">2</string>
+    <string name="rating_three">3</string>
+    <string name="rating_four">4</string>
+    <string name="rating_five">5</string>
+    <string name="search">Buscar</string>
 
 </resources>

@@ -1,0 +1,115 @@
+package com.example.devicersapp.ui.screens.search
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.devicersapp.R
+import com.example.devicersapp.ui.screens.feed.components.FeedHeader
+import com.example.devicersapp.ui.screens.search.components.SearchFilterPanel
+import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
+import com.example.devicersapp.ui.utils.navigation.SearchBar
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+/**
+ * Configura la pantalla de búsqueda y establece su fondo.
+ *
+ * La pantalla delega la construcción de su contenido visual a
+ * [SearchScreenContent] para mantener separada la configuración
+ * general de la composición de los elementos.
+ *
+ * @param modifier Permite modificar el diseño externo de la pantalla.
+ */
+@Composable
+fun SearchScreen(modifier: Modifier = Modifier) {
+    SearchScreenContent(
+        modifier = modifier
+            .fillMaxSize()
+            .background(colorResource(R.color.background_light))
+    )
+}
+
+/**
+ * Reúne los elementos visuales de la pantalla de búsqueda.
+ *
+ * La pantalla muestra un título centrado, una barra de búsqueda y
+ * los filtros. La navegación inferior permanece fija mientras
+ * el contenido superior puede desplazarse.
+ *
+ * @param modifier Permite modificar el diseño externo del contenido.
+ */
+@Composable
+fun SearchScreenContent(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+    ) {
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 30.dp)
+        ) {
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Text(
+                text = stringResource(R.string.search),
+                modifier = Modifier.fillMaxWidth(),
+                color = colorResource(R.color.text_primary_light),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(25.dp))
+
+            SearchBar(
+                placeholder = R.string.search_placeholder,
+                backgroundColor = R.color.surface_light,
+                showSearchIcon = true
+            )
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            SearchFilterPanel()
+
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+
+        BottomNavigationBar(
+            modifier = Modifier.fillMaxWidth(),
+            selectedItem = "search"
+        )
+    }
+}
+
+/**
+ * Muestra una vista previa de la pantalla completa de búsqueda.
+ */
+@Composable
+@Preview(showBackground = true, locale = "es")
+fun SearchScreenPreview() {
+    SearchScreen()
+}
