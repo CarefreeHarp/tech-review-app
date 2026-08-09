@@ -191,3 +191,4 @@ fun AuthenticationFooter(@StringRes textResId: Int, @StringRes actionResId: Int,
         }
     }
 }
+

@@ -29,4 +29,9 @@
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
     <string name="password_placeholder">◉◉◉◉◉</string>
+    <string name="review_product_image">Imagen del producto</string>
+    <string name="review_example_description">Una excelente opción. Tiene buen rendimiento y cumple con lo esperado.</string>
+    <string name="review_rating">★★★★★</string>
+    <string name="feed">Para ti</string>
+
 </resources>
