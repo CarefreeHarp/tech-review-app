@@ -109,7 +109,7 @@ fun SearchScreenContent(modifier: Modifier = Modifier) {
  * Muestra una vista previa de la pantalla completa de búsqueda.
  */
 @Composable
-@Preview(showBackground = true, locale = "es")
+@Preview(showBackground = true)
 fun SearchScreenPreview() {
     SearchScreen()
 }

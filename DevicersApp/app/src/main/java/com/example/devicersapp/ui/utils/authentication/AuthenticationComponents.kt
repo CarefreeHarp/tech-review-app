@@ -29,6 +29,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
@@ -192,3 +193,75 @@ fun AuthenticationFooter(@StringRes textResId: Int, @StringRes actionResId: Int,
     }
 }
 
+/** Muestra una vista previa del botón principal de autenticación. */
+@Composable
+@Preview(showBackground = true)
+fun PrimaryButtonPreview() {
+    PrimaryButton(R.string.sign_in, Modifier.fillMaxWidth().height(48.dp))
+}
+
+/** Muestra una vista previa del encabezado de autenticación. */
+@Composable
+@Preview(showBackground = true)
+fun AuthenticationHeaderPreview() {
+    AuthenticationHeader(modifier = Modifier.padding(16.dp))
+}
+
+/** Muestra una vista previa del título y la descripción de autenticación. */
+@Composable
+@Preview(showBackground = true)
+fun ScreenTitlePreview() {
+    ScreenTitle(
+        title = R.string.sign_in_title,
+        description = R.string.sign_in_description,
+        modifier = Modifier.padding(16.dp)
+    )
+}
+
+/** Muestra una vista previa de un campo de contraseña de autenticación. */
+@Composable
+@Preview(showBackground = true)
+fun AuthenticationFieldPreview() {
+    AuthenticationField(
+        label = R.string.password,
+        placeholder = R.string.password_placeholder,
+        isPassword = true,
+        modifier = Modifier.padding(16.dp)
+    )
+}
+
+/** Muestra una vista previa del texto divisor de autenticación. */
+@Composable
+@Preview(showBackground = true)
+fun AuthenticationDividerTextPreview() {
+    AuthenticationDividerText(modifier = Modifier.padding(16.dp))
+}
+
+/** Muestra una vista previa de los botones sociales. */
+@Composable
+@Preview(showBackground = true)
+fun SocialButtonsPreview() {
+    SocialButtons(modifier = Modifier.padding(16.dp))
+}
+
+/** Muestra una vista previa de un botón social individual. */
+@Composable
+@Preview(showBackground = true)
+fun SocialButtonPreview() {
+    SocialButton(
+        iconResId = R.drawable.google,
+        contentDescriptionResId = R.string.google_sign_in,
+        modifier = Modifier.padding(16.dp)
+    )
+}
+
+/** Muestra una vista previa del mensaje inferior de autenticación. */
+@Composable
+@Preview(showBackground = true)
+fun AuthenticationFooterPreview() {
+    AuthenticationFooter(
+        textResId = R.string.no_account,
+        actionResId = R.string.create_account,
+        modifier = Modifier.padding(16.dp)
+    )
+}

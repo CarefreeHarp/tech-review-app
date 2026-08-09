@@ -27,7 +27,7 @@ fun ForgotPasswordLink(modifier: Modifier = Modifier) {
 
 /** Muestra una vista previa del enlace estático de recuperación de contraseña. */
 @Composable
-@Preview(showBackground = true, locale = "es")
+@Preview(showBackground = true)
 fun ForgotPasswordLinkPreview() {
     ForgotPasswordLink()
 }

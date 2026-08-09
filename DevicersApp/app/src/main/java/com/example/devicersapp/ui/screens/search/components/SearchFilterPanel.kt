@@ -293,3 +293,17 @@ fun SearchFilterPanelPreview() {
         modifier = Modifier.padding(20.dp)
     )
 }
+
+/** Muestra una vista previa de una etiqueta de filtro. */
+@Composable
+@Preview(showBackground = true)
+fun FilterLabelPreview() {
+    FilterLabel(textResId = R.string.brand, modifier = Modifier.padding(16.dp))
+}
+
+/** Muestra una vista previa del deslizador estático de calificación. */
+@Composable
+@Preview(showBackground = true)
+fun RatingSliderPreview() {
+    RatingSlider(modifier = Modifier.padding(16.dp))
+}

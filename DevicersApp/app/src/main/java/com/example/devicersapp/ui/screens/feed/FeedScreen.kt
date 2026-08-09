@@ -98,7 +98,7 @@ fun FeedScreenContent(modifier: Modifier = Modifier) {
 
 /** Muestra una vista previa de la composición completa del Feed. */
 @Composable
-@Preview(showBackground = true, locale = "es")
+@Preview(showBackground = true)
 fun FeedScreenPreview() {
     FeedScreen()
 }

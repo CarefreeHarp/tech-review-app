@@ -117,3 +117,10 @@ fun BottomNavigationBarPreview() {
         selectedItem = "search"
     )
 }
+
+/** Muestra una vista previa de un elemento seleccionado de la navegación inferior. */
+@Composable
+@Preview(showBackground = true)
+fun NavigationItemPreview() {
+    NavigationItem(iconResId = R.drawable.home, isSelected = true)
+}

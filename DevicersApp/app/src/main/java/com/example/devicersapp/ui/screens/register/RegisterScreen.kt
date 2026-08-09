@@ -86,18 +86,7 @@ fun RegisterScreenContent(modifier: Modifier = Modifier) {
 
 /** Muestra una vista previa de la composición completa de creación de cuenta. */
 @Composable
-@Preview(showBackground = true, locale = "es")
+@Preview(showBackground = true)
 fun RegisterScreenPreview() {
     RegisterScreen()
-}
-
-/** Muestra una vista previa del contenido visual de creación de cuenta. */
-@Composable
-@Preview(showBackground = true, locale = "es")
-fun RegisterScreenContentPreview() {
-    RegisterScreenContent(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(R.color.background_light))
-    )
 }

@@ -68,18 +68,7 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
 
 /** Muestra una vista previa de la composición completa de inicio de sesión. */
 @Composable
-@Preview(showBackground = true, locale = "es")
+@Preview(showBackground = true)
 fun LoginScreenPreview() {
     LoginScreen()
-}
-
-/** Muestra una vista previa del contenido visual de inicio de sesión. */
-@Composable
-@Preview(showBackground = true, locale = "es")
-fun LoginScreenContentPreview() {
-    LoginScreenContent(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(R.color.background_light))
-    )
 }

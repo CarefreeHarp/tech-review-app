@@ -102,7 +102,7 @@ fun SearchBar(
 
  **/
 @Composable
-@Preview(showBackground = true, locale = "es")
+@Preview(showBackground = true)
 fun SearchBarPreview() {
     SearchBar(
         placeholder = R.string.search_placeholder,
