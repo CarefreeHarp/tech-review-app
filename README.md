@@ -20,9 +20,9 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 ### Logo
 
-<p align="center">
-  <img src="DevicersApp/app/src/main/res/drawable/logo_claro.png" alt="Devicers logo" width="320">
-</p>
+| Versión oscura | Versión clara |
+| --- | --- |
+| <div align="center" style="background-color: #FFFFFF; padding: 24px;"><img src="DevicersApp/app/src/main/res/drawable/logo_oscuro.png" alt="Logo oscuro de Devicers" width="300"></div> | <div align="center" style="background-color: #000000; padding: 24px;"><img src="DevicersApp/app/src/main/res/drawable/logo_claro.png" alt="Logo claro de Devicers" width="300"></div> |
 
 ## Data model
 
