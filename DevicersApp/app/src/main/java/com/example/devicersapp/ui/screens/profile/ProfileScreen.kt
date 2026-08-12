@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.statusBarsPadding
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
-import com.example.devicersapp.ui.screens.profile.components.ProfileHeader
 import com.example.devicersapp.ui.screens.profile.components.ProfileStats
 import com.example.devicersapp.ui.screens.profile.components.ProfileReviewCard
+import com.example.devicersapp.ui.utils.navigation.AppTopBar
 
 @Composable
 fun ProfileScreen(
@@ -51,13 +51,9 @@ fun ProfileScreenContent(
                 .padding(horizontal = 12.dp)
         ) {
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(35.dp))
 
-            ProfileHeader()
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Spacer(modifier = Modifier.height(24.dp))
+            AppTopBar()
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -73,24 +69,14 @@ fun ProfileScreenContent(
             )
 
             Spacer(modifier = Modifier.height(12.dp))
-            Spacer(modifier = Modifier.height(28.dp))
-
-            Spacer(modifier = Modifier.height(12.dp))
 
             ProfileReviewCard()
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            ProfileReviewCard(
-                productName = "Smartwatch",
-                reviewText = "Buena batería y una interfaz muy fluida.",
-                rating = "★★★★☆",
-                likes = 18
-            )
+            ProfileReviewCard()
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Spacer(modifier = Modifier.height(120.dp))
+            Spacer(modifier = Modifier.height(144.dp))
         }
 
         BottomNavigationBar(

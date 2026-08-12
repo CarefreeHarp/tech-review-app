@@ -125,7 +125,7 @@ fun ReviewBox(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(R.drawable.like),
+                painter = painterResource(R.drawable.like_icon),
                 contentDescription = null,
                 modifier = Modifier.size(18.dp)
             )
@@ -135,19 +135,20 @@ fun ReviewBox(
             Text(
                 text = likes.toString(),
                 color = colorResource(R.color.text_secondary_light),
-                fontSize = 10.sp
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Black
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             Image(
-                painter = painterResource(R.drawable.share),
+                painter = painterResource(R.drawable.send_icon),
                 contentDescription = null,
                 modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(40.dp))
             Image(
-                    painter = painterResource(R.drawable.save),
+                    painter = painterResource(R.drawable.bookmark_icon),
                     contentDescription = null,
                     modifier = Modifier.size(18.dp)
             )

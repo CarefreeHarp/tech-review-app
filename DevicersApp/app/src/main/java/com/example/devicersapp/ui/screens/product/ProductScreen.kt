@@ -20,12 +20,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
-import com.example.devicersapp.ui.screens.product.components.ProductHeader
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 import androidx.compose.foundation.layout.statusBarsPadding
 import com.example.devicersapp.ui.screens.product.components.ProductImageCard
 import com.example.devicersapp.ui.screens.product.components.RatingSummary
-import com.example.devicersapp.ui.screens.product.components.FeaturedReview
+import com.example.devicersapp.ui.screens.product.components.ReviewCard
+import com.example.devicersapp.ui.utils.navigation.AppTopBar
 
 @Composable
 fun ProductScreen(
@@ -62,7 +62,7 @@ fun ProductScreenContent(
             )
 
             // Header: volver + logo + opciones
-            ProductHeader()
+            AppTopBar()
 
             Spacer(
                 modifier = Modifier.height(2.dp)
@@ -95,11 +95,7 @@ fun ProductScreenContent(
 
             RatingSummary()
 
-            Spacer(modifier = Modifier.height(18.dp))
-
-            Spacer(
-                modifier = Modifier.height(20.dp)
-            )
+            Spacer(modifier = Modifier.height(38.dp))
 
             // Botón para calificar
             Button(
@@ -125,7 +121,7 @@ fun ProductScreenContent(
             // Reseñas
             Spacer(modifier = Modifier.height(10.dp))
 
-            FeaturedReview()
+            ReviewCard()
 
             Spacer(modifier = Modifier.height(20.dp))
 

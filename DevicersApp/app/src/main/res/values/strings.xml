@@ -72,5 +72,11 @@
     <string name="feed_product_watch">Reloj</string>
     <string name="feed_review_watch">Cómodo, preciso y práctico para el día a día.</string>
     <string name="feed_time_two_days">Hace 2 días</string>
+    <string name="review_card_avatar_initial">J</string>
+    <string name="review_card_username">@usuario</string>
+    <string name="review_card_text">Muy cómodo y con buen sonido.</string>
+    <string name="review_like_count">%1$d</string>
+    <string name="top_bar_back">‹</string>
+    <string name="top_bar_options">⋮</string>
 
 </resources>

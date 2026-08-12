@@ -50,11 +50,11 @@ fun BottomNavigationBar(selectedItem: String, modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        NavigationItem(R.drawable.home, selectedItem == "home")
-        NavigationItem(R.drawable.search, selectedItem == "search")
-        NavigationItem(R.drawable.add, selectedItem == "add")
-        NavigationItem(R.drawable.like, selectedItem == "favorite")
-        NavigationItem(R.drawable.profile, selectedItem == "profile")
+        NavigationItem(R.drawable.home_icon, selectedItem == "home")
+        NavigationItem(R.drawable.explore_icon, selectedItem == "search")
+        NavigationItem(R.drawable.create_review_icon, selectedItem == "add")
+        NavigationItem(R.drawable.notifications_icon, selectedItem == "favorite")
+        NavigationItem(R.drawable.profile_icon, selectedItem == "profile")
     }
 }
 
@@ -87,7 +87,7 @@ fun NavigationItem(
         Image(
             painter = painterResource(iconResId),
             contentDescription = null,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(28.dp)
         )
     }
 }
@@ -167,7 +167,7 @@ fun SearchBar(
             ) {
                 if (showSearchIcon) {
                     Image(
-                        painter = painterResource(R.drawable.search),
+                        painter = painterResource(R.drawable.explore_icon),
                         contentDescription = null,
                         modifier = Modifier.size(16.dp)
                     )
@@ -191,6 +191,41 @@ fun SearchBar(
     )
 }
 
+/**
+ * Muestra la barra superior compartida de detalle, con regreso, ícono de marca y opciones.
+ *
+ * @param modifier Modificador aplicado al contenedor de la barra.
+ */
+@Composable
+fun AppTopBar(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.top_bar_back),
+            fontSize = 28.sp,
+            color = colorResource(R.color.text_primary_light),
+            modifier = Modifier.align(Alignment.CenterStart)
+        )
+        Image(
+            painter = painterResource(R.drawable.logo_icono_claro),
+            contentDescription = stringResource(R.string.devicers_logo_description),
+            modifier = Modifier
+                .height(44.dp)
+                .align(Alignment.Center)
+        )
+        Text(
+            text = stringResource(R.string.top_bar_options),
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            color = colorResource(R.color.text_primary_light),
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
+    }
+}
+
 /** Muestra una vista previa de la navegación inferior. */
 @Composable
 @Preview(showBackground = true)
@@ -202,7 +237,7 @@ fun BottomNavigationBarPreview() {
 @Composable
 @Preview(showBackground = true)
 fun NavigationItemPreview() {
-    NavigationItem(R.drawable.home, isSelected = true)
+    NavigationItem(R.drawable.home_icon, isSelected = true)
 }
 
 /** Muestra una vista previa de una opción de filtro seleccionada. */
@@ -221,4 +256,11 @@ fun SearchBarPreview() {
         backgroundColor = R.color.surface_light,
         showSearchIcon = true
     )
+}
+
+/** Muestra una vista previa de la barra superior compartida. */
+@Composable
+@Preview(showBackground = true)
+fun AppTopBarPreview() {
+    AppTopBar()
 }
