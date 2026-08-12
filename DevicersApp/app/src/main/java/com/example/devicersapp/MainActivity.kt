@@ -3,45 +3,19 @@ package com.example.devicersapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.screens.feed.FeedScreen
+import com.example.devicersapp.ui.screens.login.LoginScreen
+import com.example.devicersapp.ui.screens.register.RegisterScreen
+import com.example.devicersapp.ui.screens.search.SearchScreen
 
+
+/** Actividad de entrada que muestra el prototipo visual de inicio de sesión. */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            DevicersAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            // Inicio de sesión es la pantalla inicial estática hasta implementar navegación.
+            SearchScreen()
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Helloww $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    DevicersAppTheme {
-        Greeting("Android")
     }
 }
