@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
@@ -35,29 +36,29 @@ fun RatingSummary(
 
             // Calificación general
             Column(
-                modifier = Modifier.width(90.dp)
+                modifier = Modifier.width(168.dp)
             ) {
                 Text(
                     text = "4.6",
-                    fontSize = 32.sp,
+                    fontSize = 56.sp,
                     fontWeight = FontWeight.Bold,
                     color = colorResource(R.color.text_primary_light)
                 )
 
                 Text(
                     text = "★★★★★",
-                    fontSize = 14.sp,
+                    fontSize = 24.sp,
                     color = colorResource(R.color.primary_yellow)
                 )
 
                 Text(
                     text = "230 reseñas",
-                    fontSize = 11.sp,
+                    fontSize = 14.sp,
                     color = colorResource(R.color.text_secondary_light)
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
             // Distribución
             Column(
@@ -72,6 +73,13 @@ fun RatingSummary(
             }
         }
     }
+}
+
+/** Muestra una vista previa del resumen de calificaciones del producto. */
+@Composable
+@Preview(showBackground = true)
+fun RatingSummaryPreview() {
+    RatingSummary()
 }
 
 @Composable
@@ -94,8 +102,8 @@ private fun RatingBarRow(
 
         Box(
             modifier = Modifier
-                .weight(1f)
-                .height(4.dp)
+                .width(145.dp)
+                .height(8.dp)
                 .background(
                     color = colorResource(R.color.surface_secondary_light),
                     shape = RoundedCornerShape(10.dp)
@@ -104,7 +112,7 @@ private fun RatingBarRow(
             Box(
                 modifier = Modifier
                     .fillMaxWidth(progress)
-                    .height(4.dp)
+                    .height(8.dp)
                     .background(
                         color = colorResource(R.color.primary_yellow),
                         shape = RoundedCornerShape(10.dp)
