@@ -1,118 +1,67 @@
 package com.example.devicersapp.ui.screens.review
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.ui.screens.review.components.CuadroResena
-import com.example.devicersapp.ui.screens.review.components.ResponderUsuario
-import com.example.devicersapp.ui.screens.review.components.Respuestas
-import com.example.devicersapp.ui.screens.review.components.EncabezadoResena
-import com.example.devicersapp.ui.screens.review.components.Item
-import com.example.devicersapp.ui.screens.review.components.RespuestaItem
+import com.example.devicersapp.ui.screens.review.components.ReplyComposer
+import com.example.devicersapp.ui.screens.review.components.ReplyList
+import com.example.devicersapp.ui.screens.review.components.ReviewDetailCard
+import com.example.devicersapp.ui.screens.review.components.ReviewDetailHeader
+import com.example.devicersapp.ui.screens.review.components.ReviewProductSummary
 
-
+/** Configura el fondo y la estructura principal de la pantalla de detalle de reseña. */
 @Composable
-fun ReviewScreen(
-    modifier: Modifier = Modifier
-) {
-    Column(
+fun ReviewScreen(modifier: Modifier = Modifier) {
+    ReviewScreenContent(
         modifier = modifier
             .fillMaxSize()
-    ) {
+            .background(colorResource(R.color.background_light))
+    )
+}
 
-        // Encabezado superior
-        EncabezadoResena()
-
-        // Contenido principal
+/** Ensambla el producto, la reseña, las respuestas y el compositor de respuesta. */
+@Composable
+fun ReviewScreenContent(modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        ReviewDetailHeader()
         Column(
             modifier = Modifier
                 .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 12.dp)
         ) {
-
-            // Producto
-            Item(
-                idImage = R.drawable.auriculares_logo,
-                nombreItem = "Auriculares FX3 Pro",
-                marca = "Sony",
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 8.dp
-                )
-            )
-
-            // Reseña principal
-            CuadroResena(
-                inicial = "D",
-                usuario = "@usuario",
-                tiempo = "Hace 2 días",
-                estrellas = "★★★★★",
-                respuesta = "El sonido es claro, la batería dura bastante y la cancelación de ruido ayuda mucho para estudiar o trabajar.",
-                likes = "128",
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 8.dp
-                )
-            )
-
-            // Línea separadora
+            ReviewProductSummary()
+            ReviewDetailCard(modifier = Modifier.padding(top = 12.dp))
+            Spacer(modifier = Modifier.height(28.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(Color.LightGray)
             )
-
-            // Sección de respuestas CENTRADA VERTICALMENTE
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-
-                Respuestas(
-                    numRespuestas = 2,
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 4.dp
-                    )
-                )
-
-                RespuestaItem(
-                    inicial = "E",
-                    usuario = "@papichulo",
-                    tiempo = "Hace 1 día",
-                    respuesta = "Super bueno para movil"
-                )
-
-                RespuestaItem(
-                    inicial = "A",
-                    usuario = "@jordi",
-                    tiempo = "Hace 1 día",
-                    respuesta = "No me gusta la capacidad"
-                )
-            }
+            ReplyList(modifier = Modifier.padding(vertical = 20.dp))
         }
-
-        // Barra inferior
-        ResponderUsuario()
+        ReplyComposer(modifier = Modifier.fillMaxWidth())
     }
 }
 
-@Preview(showBackground = true)
+/** Muestra una vista previa de la pantalla completa de detalle de reseña. */
 @Composable
+@Preview(showBackground = true)
 fun ReviewScreenPreview() {
     ReviewScreen()
 }

@@ -18,6 +18,14 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | <img src="images/AppFeedScreen.png" alt="Devicers feed screen" width="280"> | <img src="images/AppSearchScreen.png" alt="Devicers search screen" width="280"> |
 
+| Product screen                                                                     | Review screen                                                                    |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| <img src="images/AppProductScreen.png" alt="Devicers product detail screen" width="280"> | <img src="images/AppReviewScreen.png" alt="Devicers review detail screen" width="280"> |
+
+| Profile screen                                                                       |
+| ------------------------------------------------------------------------------------ |
+| <img src="images/AppProfileScreen.jpeg" alt="Devicers profile screen" width="280"> |
+
 ### Logos
 
 <p align="center">

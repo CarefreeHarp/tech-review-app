@@ -78,5 +78,24 @@
     <string name="review_like_count">%1$d</string>
     <string name="top_bar_back">‹</string>
     <string name="top_bar_options">⋮</string>
+    <string name="review_back">Volver</string>
+    <string name="review_title">Reseña</string>
+    <string name="review_save">Guardar reseña</string>
+    <string name="review_send">Enviar respuesta</string>
+    <string name="review_product_name">Auriculares FX3 Pro</string>
+    <string name="review_product_brand">Sony</string>
+    <string name="review_author_initial">D</string>
+    <string name="review_author">@usuario</string>
+    <string name="review_time">Hace 2 días</string>
+    <string name="review_detail_text">El sonido es claro, la batería dura bastante y la cancelación de ruido ayuda mucho para estudiar o trabajar.</string>
+    <string name="review_like">Me gusta</string>
+    <string name="review_reply_placeholder">Responder a @usuario</string>
+    <string name="review_replies">Respuestas (%1$d)</string>
+    <string name="review_reply_author_one">@papichulo</string>
+    <string name="review_reply_text_one">Súper bueno para móvil.</string>
+    <string name="review_reply_author_two">@jordi</string>
+    <string name="review_reply_text_two">No me gusta la capacidad.</string>
+    <string name="review_reply_time">Hace 1 día</string>
+    <string name="review_reply_action">Responder</string>
 
 </resources>
