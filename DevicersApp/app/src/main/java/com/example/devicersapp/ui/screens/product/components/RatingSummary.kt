@@ -8,20 +8,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.models.RatingDistribution
+import com.example.devicersapp.ui.models.RatingSummaryContent
+import com.example.devicersapp.ui.utils.rating.ratingStarsResource
 
 @Composable
-fun RatingSummary(
-    modifier: Modifier = Modifier
-) {
+fun RatingSummary(summary: RatingSummaryContent, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
 
         Text(
-            text = "Calificación promedio",
+            text = summary.title,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
             color = colorResource(R.color.text_primary_light)
@@ -39,20 +41,20 @@ fun RatingSummary(
                 modifier = Modifier.width(168.dp)
             ) {
                 Text(
-                    text = "4.6",
+                    text = summary.average,
                     fontSize = 56.sp,
                     fontWeight = FontWeight.Bold,
                     color = colorResource(R.color.text_primary_light)
                 )
 
                 Text(
-                    text = "★★★★★",
+                    text = stringResource(ratingStarsResource(summary.rating)),
                     fontSize = 24.sp,
                     color = colorResource(R.color.primary_yellow)
                 )
 
                 Text(
-                    text = "230 reseñas",
+                    text = summary.reviewCount,
                     fontSize = 14.sp,
                     color = colorResource(R.color.text_secondary_light)
                 )
@@ -65,36 +67,23 @@ fun RatingSummary(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                RatingBarRow("5", 0.88f, "88%")
-                RatingBarRow("4", 0.52f, "52%")
-                RatingBarRow("3", 0.17f, "17%")
-                RatingBarRow("2", 0.07f, "7%")
-                RatingBarRow("1", 0.05f, "5%")
+                summary.distribution.forEach { row ->
+                    RatingBarRow(row)
+                }
             }
         }
     }
 }
 
-/** Muestra una vista previa del resumen de calificaciones del producto. */
 @Composable
-@Preview(showBackground = true)
-fun RatingSummaryPreview() {
-    RatingSummary()
-}
-
-@Composable
-private fun RatingBarRow(
-    stars: String,
-    progress: Float,
-    percentage: String
-) {
+private fun RatingBarRow(distribution: RatingDistribution) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
 
         Text(
-            text = stars,
+            text = distribution.rating,
             fontSize = 11.sp,
             color = colorResource(R.color.text_secondary_light),
             modifier = Modifier.width(14.dp)
@@ -111,7 +100,7 @@ private fun RatingBarRow(
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(progress)
+                    .fillMaxWidth(distribution.progress)
                     .height(8.dp)
                     .background(
                         color = colorResource(R.color.primary_yellow),
@@ -123,10 +112,40 @@ private fun RatingBarRow(
         Spacer(modifier = Modifier.width(6.dp))
 
         Text(
-            text = percentage,
+            text = distribution.percentage,
             fontSize = 10.sp,
             color = colorResource(R.color.text_secondary_light),
             modifier = Modifier.width(28.dp)
         )
     }
 }
+
+/** Muestra una vista previa del resumen de calificaciones del producto. */
+@Composable
+@Preview(showBackground = true)
+fun RatingSummaryPreview() {
+    RatingSummary(sampleRatingSummary())
+}
+
+/** Muestra una vista previa de una fila de distribución de calificaciones. */
+@Composable
+@Preview(showBackground = true)
+fun RatingBarRowPreview() {
+    RatingBarRow(RatingDistribution(rating = stringResource(R.string.rating_five), progress = 0.88f, percentage = stringResource(R.string.product_rating_five_percentage)))
+}
+
+/** Contiene datos de ejemplo para las vistas previas del resumen de calificaciones. */
+@Composable
+private fun sampleRatingSummary() = RatingSummaryContent(
+    title = stringResource(R.string.product_average_rating),
+    average = stringResource(R.string.product_average_value),
+    rating = 5,
+    reviewCount = stringResource(R.string.product_review_count),
+    distribution = listOf(
+        RatingDistribution(stringResource(R.string.rating_five), 0.88f, stringResource(R.string.product_rating_five_percentage)),
+        RatingDistribution(stringResource(R.string.rating_four), 0.52f, stringResource(R.string.product_rating_four_percentage)),
+        RatingDistribution(stringResource(R.string.rating_three), 0.17f, stringResource(R.string.product_rating_three_percentage)),
+        RatingDistribution(stringResource(R.string.rating_two), 0.07f, stringResource(R.string.product_rating_two_percentage)),
+        RatingDistribution(stringResource(R.string.rating_one), 0.05f, stringResource(R.string.product_rating_one_percentage))
+    )
+)

@@ -14,13 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.screens.search.components.SearchFilterPanel
+import com.example.devicersapp.ui.theme.SearchScreenTitleText
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 /**
@@ -69,8 +68,7 @@ fun SearchScreenContent(modifier: Modifier = Modifier) {
                 text = stringResource(R.string.search),
                 modifier = Modifier.fillMaxWidth(),
                 color = colorResource(R.color.text_primary_light),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+                style = SearchScreenTitleText,
                 textAlign = TextAlign.Center
             )
 
