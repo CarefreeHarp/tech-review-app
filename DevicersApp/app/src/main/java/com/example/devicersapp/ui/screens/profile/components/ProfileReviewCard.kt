@@ -24,6 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.models.ReviewContent
+import com.example.devicersapp.ui.theme.ReviewContentText
+import com.example.devicersapp.ui.utils.rating.ratingStarsResource
 
 /**
  * Muestra una tarjeta de reseña de perfil sin avatar, con autor, calificación y me gusta.
@@ -31,7 +34,7 @@ import com.example.devicersapp.R
  * @param modifier Modificador aplicado a la tarjeta.
  */
 @Composable
-fun ProfileReviewCard(modifier: Modifier = Modifier) {
+fun ProfileReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -43,13 +46,13 @@ fun ProfileReviewCard(modifier: Modifier = Modifier) {
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = stringResource(R.string.review_card_username),
+                text = review.author,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = colorResource(R.color.text_primary_light)
             )
             Text(
-                text = stringResource(R.string.review_rating),
+                text = stringResource(ratingStarsResource(review.rating)),
                 fontSize = 12.sp,
                 color = colorResource(R.color.primary_yellow)
             )
@@ -58,8 +61,8 @@ fun ProfileReviewCard(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = stringResource(R.string.review_card_text),
-            fontSize = 13.sp,
+            text = review.text,
+            style = ReviewContentText,
             color = colorResource(R.color.text_secondary_light)
         )
 
@@ -77,7 +80,7 @@ fun ProfileReviewCard(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = stringResource(R.string.review_like_count, 23),
+                text = review.likes.toString(),
                 fontSize = 11.sp,
                 color = colorResource(R.color.text_secondary_light),
                 fontWeight = FontWeight.Black
@@ -90,5 +93,13 @@ fun ProfileReviewCard(modifier: Modifier = Modifier) {
 @Composable
 @Preview(showBackground = true)
 fun ProfileReviewCardPreview() {
-    ProfileReviewCard()
+    ProfileReviewCard(
+        ReviewContent(
+            avatarInitial = stringResource(R.string.review_card_avatar_initial),
+            author = stringResource(R.string.review_card_username),
+            rating = 5,
+            text = stringResource(R.string.review_card_text),
+            likes = 23
+        )
+    )
 }

@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.SearchControlText
 
 /**
  * Muestra la barra de navegación inferior de la aplicación.
@@ -115,13 +116,13 @@ fun FilterChip(
                 },
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(horizontal = 10.dp, vertical = 7.dp),
+            .padding(horizontal = 10.dp, vertical = 9.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = stringResource(textResId),
             color = colorResource(R.color.text_primary_light),
-            fontSize = 8.sp,
+            style = SearchControlText,
             fontWeight = FontWeight.Bold
         )
     }
@@ -149,7 +150,7 @@ fun SearchBar(
         onValueChange = { text = it },
         modifier = modifier
             .fillMaxWidth()
-            .height(34.dp)
+            .height(42.dp)
             .background(
                 color = colorResource(backgroundColor),
                 shape = RoundedCornerShape(9.dp)
@@ -158,7 +159,7 @@ fun SearchBar(
         singleLine = true,
         textStyle = LocalTextStyle.current.copy(
             color = colorResource(R.color.text_primary_light),
-            fontSize = 9.sp
+            fontSize = SearchControlText.fontSize
         ),
         decorationBox = { innerTextField ->
             Row(
@@ -169,7 +170,7 @@ fun SearchBar(
                     Image(
                         painter = painterResource(R.drawable.explore_icon),
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                     androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(6.dp))
                 }
@@ -181,7 +182,7 @@ fun SearchBar(
                         Text(
                             text = stringResource(placeholder),
                             color = colorResource(R.color.text_secondary_light),
-                            fontSize = 9.sp
+                            style = SearchControlText
                         )
                     }
                     innerTextField()

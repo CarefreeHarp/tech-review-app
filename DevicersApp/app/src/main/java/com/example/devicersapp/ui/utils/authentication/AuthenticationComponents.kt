@@ -31,6 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.AuthenticationFieldLabelText
+import com.example.devicersapp.ui.theme.AuthenticationSupportText
 
 /**
  * Renderiza el botón de acción principal compartido por las pantallas de autenticación.
@@ -134,7 +136,7 @@ fun AuthenticationField(
         Text(
             text = stringResource(labelResId),
             color = colorResource(R.color.text_primary_light),
-            fontSize = 11.sp
+            style = AuthenticationFieldLabelText
         )
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
@@ -188,7 +190,7 @@ fun AuthenticationDividerText(modifier: Modifier = Modifier) {
         text = stringResource(R.string.continue_with),
         modifier = modifier,
         color = colorResource(R.color.text_secondary_light),
-        fontSize = 10.sp
+        style = AuthenticationSupportText
     )
 }
 
@@ -256,13 +258,13 @@ fun AuthenticationFooter(
         Text(
             text = stringResource(textResId),
             color = colorResource(R.color.text_primary_light),
-            fontSize = 10.sp
+            style = AuthenticationSupportText
         )
         TextButton(onClick = {}) {
             Text(
                 text = stringResource(actionResId),
                 color = colorResource(R.color.text_primary_light),
-                fontSize = 11.sp
+                style = AuthenticationSupportText
             )
         }
     }

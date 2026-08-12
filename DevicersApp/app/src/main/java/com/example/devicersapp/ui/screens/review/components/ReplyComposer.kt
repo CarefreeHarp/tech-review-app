@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,8 +36,9 @@ fun ReplyComposer(modifier: Modifier = Modifier) {
 
     Row(
         modifier = modifier
-            .background(colorResource(R.color.surface_light))
-            .padding(horizontal = 16.dp, vertical = 10.dp),
+            .height(78.dp)
+            .background(colorResource(R.color.surface_secondary_light))
+            .padding(horizontal = 18.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         BasicTextField(
@@ -44,28 +46,28 @@ fun ReplyComposer(modifier: Modifier = Modifier) {
             onValueChange = { replyText = it },
             modifier = Modifier
                 .weight(1f)
-                .height(52.dp)
+                .height(42.dp)
                 .background(
                     colorResource(R.color.background_light),
-                    RoundedCornerShape(16.dp)
+                    RoundedCornerShape(14.dp)
                 )
                 .border(
                     width = 1.dp,
                     color = colorResource(R.color.border_light),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(14.dp)
                 )
                 .padding(horizontal = 16.dp),
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(
                 color = colorResource(R.color.text_primary_light),
-                fontSize = 13.sp
+                fontSize = MaterialTheme.typography.bodyMedium.fontSize
             ),
             decorationBox = { innerTextField ->
                 Box(contentAlignment = Alignment.CenterStart) {
                     if (replyText.isEmpty()) {
                         Text(
                             text = stringResource(R.string.review_reply_placeholder),
-                            fontSize = 13.sp,
+                            style = MaterialTheme.typography.bodyMedium,
                             color = colorResource(R.color.text_secondary_light)
                         )
                     }
@@ -73,13 +75,19 @@ fun ReplyComposer(modifier: Modifier = Modifier) {
                 }
             }
         )
-        Image(
-            painter = painterResource(R.drawable.send_icon),
-            contentDescription = stringResource(R.string.review_send),
+        Box(
             modifier = Modifier
-                .padding(start = 16.dp)
-                .size(28.dp)
-        )
+                .padding(start = 10.dp)
+                .size(42.dp)
+                .background(colorResource(R.color.primary_yellow), RoundedCornerShape(14.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.send_icon),
+                contentDescription = stringResource(R.string.review_send),
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
 

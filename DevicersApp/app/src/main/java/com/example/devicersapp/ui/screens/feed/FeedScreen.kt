@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.screens.feed.components.ReviewBox
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 
@@ -85,34 +86,43 @@ fun FeedScreenContent(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(20.dp))
 
             ReviewBox(
-                elementTypeResId = R.string.feed_product_phone,
-                imageResId = R.drawable.iphone,
-                usernameResId = R.string.feed_user_phone,
-                reviewResId = R.string.feed_review_phone,
-                likes = 125,
-                timeAgoResId = R.string.feed_time_two_days
+                review = FeedReviewContent(
+                    productName = stringResource(R.string.feed_product_phone),
+                    productImageResId = R.drawable.electronic_phone,
+                    author = stringResource(R.string.feed_user_phone),
+                    reviewText = stringResource(R.string.feed_review_phone),
+                    likes = 125,
+                    timeAgo = stringResource(R.string.feed_time_two_days),
+                    rating = 5
+                )
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             ReviewBox(
-                elementTypeResId = R.string.feed_product_audio,
-                imageResId = R.drawable.iphone,
-                usernameResId = R.string.feed_user_audio,
-                reviewResId = R.string.feed_review_audio,
-                likes = 128,
-                timeAgoResId = R.string.feed_time_two_days
+                review = FeedReviewContent(
+                    productName = stringResource(R.string.feed_product_audio),
+                    productImageResId = R.drawable.auriculares_logo,
+                    author = stringResource(R.string.feed_user_audio),
+                    reviewText = stringResource(R.string.feed_review_audio),
+                    likes = 86,
+                    timeAgo = stringResource(R.string.feed_time_one_day),
+                    rating = 4
+                )
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             ReviewBox(
-                elementTypeResId = R.string.feed_product_watch,
-                imageResId = R.drawable.iphone,
-                usernameResId = R.string.feed_user_watch,
-                reviewResId = R.string.feed_review_watch,
-                likes = 128,
-                timeAgoResId = R.string.feed_time_two_days
+                review = FeedReviewContent(
+                    productName = stringResource(R.string.feed_product_computer),
+                    productImageResId = R.drawable.electronic_desktop,
+                    author = stringResource(R.string.feed_user_computer),
+                    reviewText = stringResource(R.string.feed_review_computer),
+                    likes = 41,
+                    timeAgo = stringResource(R.string.feed_time_five_hours),
+                    rating = 3
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))

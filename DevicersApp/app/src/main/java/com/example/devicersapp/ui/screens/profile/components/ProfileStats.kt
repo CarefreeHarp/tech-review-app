@@ -11,17 +11,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.models.ProfileContent
+import com.example.devicersapp.ui.models.ProfileStatContent
 
 @Composable
-fun ProfileStats(
-    modifier: Modifier = Modifier
-) {
+fun ProfileStats(profile: ProfileContent, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -38,7 +39,7 @@ fun ProfileStats(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "J",
+                text = profile.avatarInitial,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(R.color.text_primary_light)
@@ -48,14 +49,14 @@ fun ProfileStats(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Juan",
+            text = profile.name,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = colorResource(R.color.text_primary_light)
         )
 
         Text(
-            text = "@usuario",
+            text = profile.handle,
             fontSize = 13.sp,
             color = colorResource(R.color.text_secondary_light)
         )
@@ -63,7 +64,7 @@ fun ProfileStats(
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "Amante de la tecnología y las buenas recomendaciones.",
+            text = profile.biography,
             modifier = Modifier.padding(horizontal = 24.dp),
             fontSize = 13.sp,
             color = colorResource(R.color.text_secondary_light),
@@ -77,20 +78,7 @@ fun ProfileStats(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            ProfileStat(
-                number = "12",
-                label = "Reseñas"
-            )
-
-            ProfileStat(
-                number = "245",
-                label = "Seguidores"
-            )
-
-            ProfileStat(
-                number = "180",
-                label = "Siguiendo"
-            )
+            profile.stats.forEach { stat -> ProfileStat(stat) }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -115,32 +103,50 @@ fun ProfileStats(
     }
 }
 
-/** Muestra una vista previa de las estadísticas del perfil. */
 @Composable
-@Preview(showBackground = true)
-fun ProfileStatsPreview() {
-    ProfileStats()
-}
-
-@Composable
-private fun ProfileStat(
-    number: String,
-    label: String
-) {
+private fun ProfileStat(stat: ProfileStatContent) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = number,
+            text = stat.number,
             fontSize = 17.sp,
             fontWeight = FontWeight.Bold,
             color = colorResource(R.color.text_primary_light)
         )
 
         Text(
-            text = label,
+            text = stat.label,
             fontSize = 11.sp,
             color = colorResource(R.color.text_secondary_light)
         )
     }
 }
+
+/** Muestra una vista previa de las estadísticas del perfil. */
+@Composable
+@Preview(showBackground = true)
+fun ProfileStatsPreview() {
+    ProfileStats(SampleProfileContent)
+}
+
+/** Muestra una vista previa de una estadística individual de perfil. */
+@Composable
+@Preview(showBackground = true)
+fun ProfileStatPreview() {
+    ProfileStat(ProfileStatContent("245", stringResource(R.string.profile_followers)))
+}
+
+/** Contiene datos de ejemplo para las vistas previas del perfil. */
+private val SampleProfileContent
+    @Composable get() = ProfileContent(
+        avatarInitial = stringResource(R.string.profile_avatar_initial),
+        name = stringResource(R.string.profile_name),
+        handle = stringResource(R.string.profile_handle),
+        biography = stringResource(R.string.profile_biography),
+        stats = listOf(
+            ProfileStatContent("12", stringResource(R.string.profile_reviews)),
+            ProfileStatContent("245", stringResource(R.string.profile_followers)),
+            ProfileStatContent("180", stringResource(R.string.profile_following))
+        )
+    )

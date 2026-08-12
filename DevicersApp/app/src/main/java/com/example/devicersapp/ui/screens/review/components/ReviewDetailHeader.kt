@@ -14,10 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 
 /** Muestra el encabezado de detalle con acción de regreso, título y marcador. */
@@ -26,8 +25,7 @@ fun ReviewDetailHeader(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .padding(horizontal = 16.dp),
+            .height(68.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -35,8 +33,8 @@ fun ReviewDetailHeader(modifier: Modifier = Modifier) {
             contentDescription = stringResource(R.string.review_back),
             modifier = Modifier.size(20.dp)
         )
-        Spacer(Modifier.size(16.dp))
-        Text(stringResource(R.string.review_title), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = colorResource(R.color.text_primary_light))
+        Spacer(Modifier.size(18.dp))
+        Text(stringResource(R.string.review_title), style = MaterialTheme.typography.titleLarge, color = colorResource(R.color.text_primary_light))
         Spacer(Modifier.weight(1f))
         Image(
             painter = painterResource(R.drawable.bookmark_icon),

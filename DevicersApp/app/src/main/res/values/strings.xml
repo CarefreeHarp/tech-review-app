@@ -31,7 +31,11 @@
     <string name="password_placeholder">◉◉◉◉◉</string>
     <string name="review_product_image">Imagen del producto</string>
     <string name="review_example_description">Una excelente opción. Tiene buen rendimiento y cumple con lo esperado.</string>
-    <string name="review_rating">★★★★★</string>
+    <string name="rating_stars_five">★★★★★</string>
+    <string name="rating_stars_four">★★★★☆</string>
+    <string name="rating_stars_three">★★★☆☆</string>
+    <string name="rating_stars_two">★★☆☆☆</string>
+    <string name="rating_stars_one">★☆☆☆☆</string>
     <string name="feed">Para ti</string>
     <string name="search_title">Buscar</string>
     <string name="search_placeholder">Buscar dispositivos</string>
@@ -71,7 +75,12 @@
     <string name="feed_user_watch">@usuario.reviews</string>
     <string name="feed_product_watch">Reloj</string>
     <string name="feed_review_watch">Cómodo, preciso y práctico para el día a día.</string>
+    <string name="feed_user_computer">@byte.labs</string>
+    <string name="feed_product_computer">PC Gamer</string>
+    <string name="feed_review_computer">Rinde muy bien al editar video y se mantiene silencioso durante sesiones largas.</string>
     <string name="feed_time_two_days">Hace 2 días</string>
+    <string name="feed_time_one_day">Hace 1 día</string>
+    <string name="feed_time_five_hours">Hace 5 horas</string>
     <string name="review_card_avatar_initial">J</string>
     <string name="review_card_username">@usuario</string>
     <string name="review_card_text">Muy cómodo y con buen sonido.</string>
@@ -82,8 +91,8 @@
     <string name="review_title">Reseña</string>
     <string name="review_save">Guardar reseña</string>
     <string name="review_send">Enviar respuesta</string>
-    <string name="review_product_name">Auriculares FX3 Pro</string>
-    <string name="review_product_brand">Sony</string>
+    <string name="review_product_name">Auriculares</string>
+    <string name="review_product_brand">Marca</string>
     <string name="review_author_initial">D</string>
     <string name="review_author">@usuario</string>
     <string name="review_time">Hace 2 días</string>
@@ -91,11 +100,36 @@
     <string name="review_like">Me gusta</string>
     <string name="review_reply_placeholder">Responder a @usuario</string>
     <string name="review_replies">Respuestas (%1$d)</string>
-    <string name="review_reply_author_one">@papichulo</string>
-    <string name="review_reply_text_one">Súper bueno para móvil.</string>
-    <string name="review_reply_author_two">@jordi</string>
-    <string name="review_reply_text_two">No me gusta la capacidad.</string>
+    <string name="review_reply_author_one">@usuario.audio</string>
+    <string name="review_reply_text_one">¡También me encantaron! El audio es muy limpio.</string>
+    <string name="review_reply_author_two">@usuario.reviews</string>
+    <string name="review_reply_text_two">¡También me encantaron! El audio es muy limpio.</string>
     <string name="review_reply_time">Hace 1 día</string>
     <string name="review_reply_action">Responder</string>
+    <string name="review_reply_first_initial">A</string>
+    <string name="review_reply_second_initial">R</string>
+    <string name="product_title">Auriculares</string>
+    <string name="product_brand_label">Marca</string>
+    <string name="product_average_rating">Calificación promedio</string>
+    <string name="product_average_value">4.6</string>
+    <string name="product_review_count">230 reseñas</string>
+    <string name="product_rate">Calificar producto</string>
+    <string name="profile_avatar_initial">J</string>
+    <string name="profile_name">Juan</string>
+    <string name="profile_handle">@usuario</string>
+    <string name="profile_biography">Amante de la tecnología y las buenas recomendaciones.</string>
+    <string name="profile_reviews">Reseñas</string>
+    <string name="profile_followers">Seguidores</string>
+    <string name="profile_following">Siguiendo</string>
+    <string name="profile_my_reviews">Mis reseñas</string>
+    <string name="profile_review_first_text">El sonido es equilibrado y la batería supera mi jornada completa.</string>
+    <string name="profile_review_second_initial">M</string>
+    <string name="profile_review_second_author">@maria.dev</string>
+    <string name="profile_review_second_text">La conexión fue inmediata y son muy cómodos para caminar.</string>
+    <string name="product_rating_five_percentage" formatted="false">88%</string>
+    <string name="product_rating_four_percentage" formatted="false">52%</string>
+    <string name="product_rating_three_percentage" formatted="false">17%</string>
+    <string name="product_rating_two_percentage" formatted="false">7%</string>
+    <string name="product_rating_one_percentage" formatted="false">5%</string>
 
 </resources>

@@ -7,8 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.SearchControlText
 
 /**
  * Muestra la etiqueta superior de un filtro de búsqueda.
@@ -22,7 +22,7 @@ fun FilterLabel(@StringRes textResId: Int, modifier: Modifier = Modifier) {
         text = stringResource(textResId),
         modifier = modifier,
         color = colorResource(R.color.text_secondary_light),
-        fontSize = 8.sp
+        style = SearchControlText
     )
 }
 

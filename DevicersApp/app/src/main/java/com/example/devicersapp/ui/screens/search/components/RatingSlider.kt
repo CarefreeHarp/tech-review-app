@@ -19,8 +19,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.SearchControlText
 
 /**
  * Muestra el control visual de calificación mínima seleccionado en cuatro estrellas.
@@ -52,15 +52,6 @@ fun RatingSlider(modifier: Modifier = Modifier) {
                         shape = RoundedCornerShape(2.dp)
                     )
             )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(12.dp)
-                    .background(
-                        color = colorResource(R.color.primary_yellow),
-                        shape = RoundedCornerShape(50)
-                    )
-            )
         }
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -68,12 +59,12 @@ fun RatingSlider(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(stringResource(R.string.rating_zero), fontSize = 7.sp)
-            Text(stringResource(R.string.rating_one), fontSize = 7.sp)
-            Text(stringResource(R.string.rating_two), fontSize = 7.sp)
-            Text(stringResource(R.string.rating_three), fontSize = 7.sp)
-            Text(stringResource(R.string.rating_four), fontSize = 7.sp)
-            Text(stringResource(R.string.rating_five), fontSize = 7.sp)
+            Text(stringResource(R.string.rating_zero), style = SearchControlText)
+            Text(stringResource(R.string.rating_one), style = SearchControlText)
+            Text(stringResource(R.string.rating_two), style = SearchControlText)
+            Text(stringResource(R.string.rating_three), style = SearchControlText)
+            Text(stringResource(R.string.rating_four), style = SearchControlText)
+            Text(stringResource(R.string.rating_five), style = SearchControlText)
         }
     }
 }

@@ -8,15 +8,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.models.ProductContent
+import com.example.devicersapp.ui.models.ReplyContent
+import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.review.components.ReplyComposer
 import com.example.devicersapp.ui.screens.review.components.ReplyList
 import com.example.devicersapp.ui.screens.review.components.ReviewDetailCard
@@ -30,6 +34,7 @@ fun ReviewScreen(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize()
             .background(colorResource(R.color.background_light))
+            .statusBarsPadding()
     )
 }
 
@@ -37,23 +42,47 @@ fun ReviewScreen(modifier: Modifier = Modifier) {
 @Composable
 fun ReviewScreenContent(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
-        ReviewDetailHeader()
+        ReviewDetailHeader(modifier = Modifier.padding(horizontal = 18.dp))
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 12.dp)
+                .padding(horizontal = 18.dp)
         ) {
-            ReviewProductSummary()
-            ReviewDetailCard(modifier = Modifier.padding(top = 12.dp))
+            ReviewProductSummary(
+                product = ProductContent(
+                    name = stringResource(R.string.review_product_name),
+                    brand = stringResource(R.string.review_product_brand),
+                    imageResId = R.drawable.auriculares_logo,
+                    imageDescription = stringResource(R.string.review_product_image),
+                    showImage = false
+                )
+            )
+            ReviewDetailCard(
+                review = ReviewContent(
+                    avatarInitial = stringResource(R.string.review_author_initial),
+                    author = stringResource(R.string.review_author),
+                    rating = 5,
+                    text = stringResource(R.string.review_detail_text),
+                    likes = 128,
+                    timeAgo = stringResource(R.string.review_time)
+                ),
+                modifier = Modifier.padding(top = 12.dp)
+            )
             Spacer(modifier = Modifier.height(28.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
-                    .background(Color.LightGray)
+                    .background(colorResource(R.color.border_light))
             )
-            ReplyList(modifier = Modifier.padding(vertical = 20.dp))
+            ReplyList(
+                replies = listOf(
+                    ReplyContent(stringResource(R.string.review_reply_first_initial), stringResource(R.string.review_reply_author_one), stringResource(R.string.review_reply_time), stringResource(R.string.review_reply_text_one)),
+                    ReplyContent(stringResource(R.string.review_reply_second_initial), stringResource(R.string.review_reply_author_two), stringResource(R.string.review_reply_time), stringResource(R.string.review_reply_text_two))
+                ),
+                modifier = Modifier.padding(vertical = 20.dp)
+            )
         }
         ReplyComposer(modifier = Modifier.fillMaxWidth())
     }

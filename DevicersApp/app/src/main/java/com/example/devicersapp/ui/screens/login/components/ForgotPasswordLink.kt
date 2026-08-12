@@ -7,8 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.AuthenticationSupportText
 
 /**
  * Muestra la acción de recuperación de contraseña con la apariencia visual de texto plano.
@@ -20,7 +20,7 @@ fun ForgotPasswordLink(modifier: Modifier = Modifier) {
         Text(
             text = stringResource(R.string.forgot_password),
             color = colorResource(R.color.text_secondary_light),
-            fontSize = 10.sp
+            style = AuthenticationSupportText
         )
     }
 }

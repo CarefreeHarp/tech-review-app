@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.SearchControlText
+import com.example.devicersapp.ui.theme.SearchHeadingText
 import com.example.devicersapp.ui.utils.navigation.FilterChip
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 
@@ -48,14 +50,13 @@ fun SearchFilterPanel(modifier: Modifier = Modifier) {
             Text(
                 text = stringResource(R.string.search_filters),
                 color = colorResource(R.color.text_primary_light),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                style = SearchHeadingText
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = stringResource(R.string.clear_filters),
                 color = colorResource(R.color.text_secondary_light),
-                fontSize = 8.sp
+                style = SearchControlText
             )
         }
 
@@ -96,8 +97,7 @@ fun SearchFilterPanel(modifier: Modifier = Modifier) {
             Text(
                 text = stringResource(R.string.rating_four_or_more),
                 color = colorResource(R.color.text_primary_light),
-                fontSize = 8.sp,
-                fontWeight = FontWeight.Bold
+                style = SearchControlText
             )
         }
         RatingSlider()
@@ -127,8 +127,7 @@ fun SearchFilterPanel(modifier: Modifier = Modifier) {
             Text(
                 text = stringResource(R.string.apply_filters),
                 color = colorResource(R.color.text_primary_light),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold
+                style = SearchControlText
             )
         }
     }

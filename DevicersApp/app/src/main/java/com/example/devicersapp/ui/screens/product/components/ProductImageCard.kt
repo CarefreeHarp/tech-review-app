@@ -13,9 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.models.ProductContent
 
 /**
  * Muestra la imagen principal del producto dentro de una tarjeta de superficie.
@@ -23,9 +25,7 @@ import com.example.devicersapp.R
  * @param modifier Modificador aplicado a la tarjeta.
  */
 @Composable
-fun ProductImageCard(
-    modifier: Modifier = Modifier
-) {
+fun ProductImageCard(product: ProductContent, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -37,8 +37,8 @@ fun ProductImageCard(
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(R.drawable.devicers_headphones_black),
-            contentDescription = null,
+            painter = painterResource(product.imageResId),
+            contentDescription = product.imageDescription,
             modifier = Modifier.size(width = 224.dp, height = 182.dp),
             contentScale = ContentScale.Fit
         )
@@ -49,5 +49,12 @@ fun ProductImageCard(
 @Composable
 @Preview(showBackground = true)
 fun ProductImageCardPreview() {
-    ProductImageCard()
+    ProductImageCard(
+        ProductContent(
+            name = stringResource(R.string.review_product_name),
+            brand = stringResource(R.string.review_product_brand),
+            imageResId = R.drawable.devicers_headphones_black,
+            imageDescription = stringResource(R.string.review_product_image)
+        )
+    )
 }

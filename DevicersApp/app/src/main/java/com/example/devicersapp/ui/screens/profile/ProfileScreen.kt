@@ -13,12 +13,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.statusBarsPadding
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.models.ProfileContent
+import com.example.devicersapp.ui.models.ProfileStatContent
+import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 import com.example.devicersapp.ui.screens.profile.components.ProfileStats
 import com.example.devicersapp.ui.screens.profile.components.ProfileReviewCard
@@ -57,12 +61,24 @@ fun ProfileScreenContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            ProfileStats()
+            ProfileStats(
+                ProfileContent(
+                    avatarInitial = stringResource(R.string.profile_avatar_initial),
+                    name = stringResource(R.string.profile_name),
+                    handle = stringResource(R.string.profile_handle),
+                    biography = stringResource(R.string.profile_biography),
+                    stats = listOf(
+                        ProfileStatContent("12", stringResource(R.string.profile_reviews)),
+                        ProfileStatContent("245", stringResource(R.string.profile_followers)),
+                        ProfileStatContent("180", stringResource(R.string.profile_following))
+                    )
+                )
+            )
 
             Spacer(modifier = Modifier.height(28.dp))
 
             Text(
-                text = "Mis reseñas",
+                text = stringResource(R.string.profile_my_reviews),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(R.color.text_primary_light)
@@ -70,11 +86,27 @@ fun ProfileScreenContent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            ProfileReviewCard()
+            ProfileReviewCard(
+                ReviewContent(
+                    avatarInitial = stringResource(R.string.profile_avatar_initial),
+                    author = stringResource(R.string.profile_handle),
+                    rating = 5,
+                    text = stringResource(R.string.profile_review_first_text),
+                    likes = 23
+                )
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            ProfileReviewCard()
+            ProfileReviewCard(
+                ReviewContent(
+                    avatarInitial = stringResource(R.string.profile_review_second_initial),
+                    author = stringResource(R.string.profile_review_second_author),
+                    rating = 4,
+                    text = stringResource(R.string.profile_review_second_text),
+                    likes = 11
+                )
+            )
 
             Spacer(modifier = Modifier.height(144.dp))
         }
