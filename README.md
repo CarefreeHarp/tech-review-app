@@ -10,14 +10,18 @@ The application is envisioned as a small social network where people can discove
 
 The Devicers interface prototype is available on <a href="https://www.figma.com/design/l7mETjAKWkyAFwtx1VWmIX/Untitled?node-id=1-484&amp;t=p0lttPj7kJNiSUG2-1" target="_blank" rel="noopener noreferrer">Figma</a>.
 
-| Feed preview                                                                | Profile preview                                                                    |
-| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| <img src="images/AppFeedScreen.png" alt="Devicers feed screen" width="280"> | <img src="images/AppProfileScreen.jpeg" alt="Devicers profile screen" width="280"> |
+| Sign-in screen                                                                  | Registration screen                                                                     |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| <img src="images/AppLoginScreen.png" alt="Devicers sign-in screen" width="280"> | <img src="images/AppRegisterScreen.png" alt="Devicers registration screen" width="280"> |
 
-### Logue
+| Feed screen                                                                 | Search screen                                                                   |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| <img src="images/AppFeedScreen.png" alt="Devicers feed screen" width="280"> | <img src="images/AppSearchScreen.png" alt="Devicers search screen" width="280"> |
+
+### Logos
 
 <p align="center">
-  <img src="images/Logue.svg" alt="Devicers logo" width="260">
+  <img src="images/Logues.png" alt="Versiones clara y oscura del logo de Devicers" width="720">
 </p>
 
 ## Data model

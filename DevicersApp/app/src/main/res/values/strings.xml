@@ -62,5 +62,21 @@
     <string name="rating_five">5</string>
     <string name="search">Buscar</string>
     <string name="theme_preview_text">Vista previa del tema</string>
+    <string name="feed_user_phone">@usuario</string>
+    <string name="feed_product_phone">Teléfono</string>
+    <string name="feed_review_phone">Buena relación calidad y batería para todo el día.</string>
+    <string name="feed_user_audio">@usuario.audio</string>
+    <string name="feed_product_audio">Auriculares</string>
+    <string name="feed_review_audio">El sonido y la cancelación de ruido son excelentes.</string>
+    <string name="feed_user_watch">@usuario.reviews</string>
+    <string name="feed_product_watch">Reloj</string>
+    <string name="feed_review_watch">Cómodo, preciso y práctico para el día a día.</string>
+    <string name="feed_time_two_days">Hace 2 días</string>
+    <string name="review_card_avatar_initial">J</string>
+    <string name="review_card_username">@usuario</string>
+    <string name="review_card_text">Muy cómodo y con buen sonido.</string>
+    <string name="review_like_count">%1$d</string>
+    <string name="top_bar_back">‹</string>
+    <string name="top_bar_options">⋮</string>
 
 </resources>
