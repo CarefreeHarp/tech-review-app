@@ -40,34 +40,34 @@ fun RegisterScreenContent(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 30.dp),
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // El espaciado vertical conserva el ritmo visual definido por el prototipo claro.
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(28.dp))
         AuthenticationHeader()
-        Spacer(modifier = Modifier.height(44.dp))
+        Spacer(modifier = Modifier.height(55.dp))
         ScreenTitle(R.string.create_account, R.string.create_account_description)
         Spacer(modifier = Modifier.height(28.dp))
         AuthenticationField(
-            label = R.string.username,
-            placeholder = R.string.username_placeholder
+            labelResId = R.string.username,
+            placeholderResId = R.string.username_placeholder
         )
         Spacer(modifier = Modifier.height(16.dp))
         AuthenticationField(
-            label = R.string.email,
-            placeholder = R.string.email_placeholder
+            labelResId = R.string.email,
+            placeholderResId = R.string.email_placeholder
         )
         Spacer(modifier = Modifier.height(16.dp))
         AuthenticationField(
-            label = R.string.password,
-            placeholder = R.string.password_placeholder,
+            labelResId = R.string.password,
+            placeholderResId = R.string.password_placeholder,
             isPassword = true
         )
         Spacer(modifier = Modifier.height(16.dp))
         AuthenticationField(
-            label = R.string.confirm_password,
-            placeholder = R.string.password_placeholder,
+            labelResId = R.string.confirm_password,
+            placeholderResId = R.string.password_placeholder,
             isPassword = true
         )
         Spacer(modifier = Modifier.height(20.dp))

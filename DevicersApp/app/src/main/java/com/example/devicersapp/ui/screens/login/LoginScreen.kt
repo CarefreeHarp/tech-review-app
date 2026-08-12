@@ -42,17 +42,17 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 30.dp),
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // El espaciado vertical reproduce la composición de la pantalla clara de Figma.
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(28.dp))
         AuthenticationHeader()
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(55.dp))
         ScreenTitle(R.string.sign_in_title, R.string.sign_in_description)
         Spacer(modifier = Modifier.height(60.dp))
         AuthenticationField(R.string.email, R.string.email_placeholder)
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         AuthenticationField(R.string.password, R.string.password_placeholder, isPassword = true)
         ForgotPasswordLink(modifier = Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.height(25.dp))

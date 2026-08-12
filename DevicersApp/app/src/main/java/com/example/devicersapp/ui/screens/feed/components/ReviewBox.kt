@@ -1,6 +1,7 @@
 package com.example.devicersapp.ui.screens.feed.components
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -33,21 +34,22 @@ import com.example.devicersapp.R
  * Permite configurar el tipo de elemento, su imagen, el usuario,
  * la cantidad de likes y el tiempo transcurrido desde su publicación.
  *
- * @param elementType Tipo de elemento asociado a la reseña.
+ * @param elementTypeResId Recurso del tipo de elemento asociado a la reseña.
  * @param imageResId Recurso drawable utilizado como imagen del elemento.
- * @param username Usuario que publicó la reseña.
+ * @param usernameResId Recurso del usuario que publicó la reseña.
+ * @param reviewResId Recurso del texto de la reseña.
  * @param likes Cantidad de likes que tiene la reseña.
- * @param timeAgo Tiempo transcurrido desde la publicación.
+ * @param timeAgoResId Recurso del tiempo transcurrido desde la publicación.
  * @param modifier Permite modificar el diseño externo del componente.
  */
 @Composable
 fun ReviewBox(
-    elementType: String,
+    @StringRes elementTypeResId: Int,
     @DrawableRes imageResId: Int,
-    username: String,
-    review: String,
+    @StringRes usernameResId: Int,
+    @StringRes reviewResId: Int,
     likes: Int,
-    timeAgo: String,
+    @StringRes timeAgoResId: Int,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -75,7 +77,7 @@ fun ReviewBox(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = username,
+                    text = stringResource(usernameResId),
                     color = colorResource(R.color.text_secondary_light),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
@@ -84,7 +86,7 @@ fun ReviewBox(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = elementType,
+                    text = stringResource(elementTypeResId),
                     color = colorResource(R.color.text_primary_light),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
@@ -101,7 +103,7 @@ fun ReviewBox(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = timeAgo,
+                text = stringResource(timeAgoResId),
                 color = colorResource(R.color.text_secondary_light),
                 fontSize = 10.sp
             )
@@ -110,7 +112,7 @@ fun ReviewBox(
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = review,
+            text = stringResource(reviewResId),
             color = colorResource(R.color.text_secondary_light),
             fontSize = 10.sp,
             lineHeight = 14.sp
@@ -156,11 +158,11 @@ fun ReviewBox(
 @Composable
 @Preview(showBackground = true)
 fun ReviewBoxPreview() {
-    ReviewBox(elementType = "Celular",
+    ReviewBox(elementTypeResId = R.string.feed_product_phone,
         imageResId = R.drawable.iphone,
-        username = "@usuario",
-        review = "Magnifico producto",
+        usernameResId = R.string.feed_user_phone,
+        reviewResId = R.string.feed_review_phone,
         likes = 125,
-        timeAgo = "Hace 2 horas"
+        timeAgoResId = R.string.feed_time_two_days
     )
 }

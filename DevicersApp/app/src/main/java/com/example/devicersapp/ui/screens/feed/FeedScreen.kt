@@ -1,6 +1,7 @@
 package com.example.devicersapp.ui.screens.feed
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -16,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -23,9 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
-import com.example.devicersapp.ui.screens.feed.components.FeedHeader
 import com.example.devicersapp.ui.screens.feed.components.ReviewBox
-import com.example.devicersapp.ui.utils.authentication.AuthenticationHeader
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 
 /** Renderiza la pantalla estática del Feed del tema claro de Devicers. */
@@ -38,7 +39,7 @@ fun FeedScreen(modifier: Modifier = Modifier) {
     )
 }
 
-/** Reúne el contenido visual que El Feed */
+/** Reúne el contenido visual de la pantalla de Feed. */
 @Composable
 fun FeedScreenContent(modifier: Modifier = Modifier) {
     Column(
@@ -48,12 +49,16 @@ fun FeedScreenContent(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 30.dp),
+                .padding(horizontal = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            FeedHeader()
+            Image(
+                painter = painterResource(R.drawable.logo_claro),
+                contentDescription = stringResource(R.string.devicers_logo_description),
+                modifier = Modifier.size(width = 186.dp, height = 50.dp)
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -80,13 +85,37 @@ fun FeedScreenContent(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(20.dp))
 
             ReviewBox(
-                elementType = "Celular",
+                elementTypeResId = R.string.feed_product_phone,
                 imageResId = R.drawable.iphone,
-                username = "@usuario",
-                review = "Magnifico producto",
+                usernameResId = R.string.feed_user_phone,
+                reviewResId = R.string.feed_review_phone,
                 likes = 125,
-                timeAgo = "Hace 2 horas"
+                timeAgoResId = R.string.feed_time_two_days
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ReviewBox(
+                elementTypeResId = R.string.feed_product_audio,
+                imageResId = R.drawable.iphone,
+                usernameResId = R.string.feed_user_audio,
+                reviewResId = R.string.feed_review_audio,
+                likes = 128,
+                timeAgoResId = R.string.feed_time_two_days
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ReviewBox(
+                elementTypeResId = R.string.feed_product_watch,
+                imageResId = R.drawable.iphone,
+                usernameResId = R.string.feed_user_watch,
+                reviewResId = R.string.feed_review_watch,
+                likes = 128,
+                timeAgoResId = R.string.feed_time_two_days
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         BottomNavigationBar(
