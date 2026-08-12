@@ -24,7 +24,7 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 | Profile screen                                                                       |
 | ------------------------------------------------------------------------------------ |
-| <img src="images/AppProfileScreen.jpeg" alt="Devicers profile screen" width="280"> |
+| <img src="images/AppProfileScreen.png" alt="Devicers profile screen" width="280"> |
 
 ### Logos
 
