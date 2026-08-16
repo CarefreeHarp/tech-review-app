@@ -60,7 +60,7 @@ fun ReviewScreenContent(modifier: Modifier = Modifier) {
             )
             ReviewDetailCard(
                 review = ReviewContent(
-                    avatarInitial = stringResource(R.string.review_author_initial),
+                    avatarResId = R.drawable.profile_avatar_02,
                     author = stringResource(R.string.review_author),
                     rating = 5,
                     text = stringResource(R.string.review_detail_text),
@@ -78,8 +78,8 @@ fun ReviewScreenContent(modifier: Modifier = Modifier) {
             )
             ReplyList(
                 replies = listOf(
-                    ReplyContent(stringResource(R.string.review_reply_first_initial), stringResource(R.string.review_reply_author_one), stringResource(R.string.review_reply_time), stringResource(R.string.review_reply_text_one)),
-                    ReplyContent(stringResource(R.string.review_reply_second_initial), stringResource(R.string.review_reply_author_two), stringResource(R.string.review_reply_time), stringResource(R.string.review_reply_text_two))
+                    ReplyContent(R.drawable.profile_avatar_03, stringResource(R.string.review_reply_author_one), stringResource(R.string.review_reply_time), stringResource(R.string.review_reply_text_one)),
+                    ReplyContent(R.drawable.profile_avatar_04, stringResource(R.string.review_reply_author_two), stringResource(R.string.review_reply_time), stringResource(R.string.review_reply_text_two))
                 ),
                 modifier = Modifier.padding(vertical = 20.dp)
             )

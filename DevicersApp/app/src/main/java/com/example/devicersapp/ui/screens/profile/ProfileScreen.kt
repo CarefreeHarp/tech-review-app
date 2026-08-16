@@ -63,7 +63,7 @@ fun ProfileScreenContent(
 
             ProfileStats(
                 ProfileContent(
-                    avatarInitial = stringResource(R.string.profile_avatar_initial),
+                    avatarResId = R.drawable.profile_avatar_00,
                     name = stringResource(R.string.profile_name),
                     handle = stringResource(R.string.profile_handle),
                     biography = stringResource(R.string.profile_biography),
@@ -88,7 +88,7 @@ fun ProfileScreenContent(
 
             ProfileReviewCard(
                 ReviewContent(
-                    avatarInitial = stringResource(R.string.profile_avatar_initial),
+                    avatarResId = R.drawable.profile_avatar_00,
                     author = stringResource(R.string.profile_handle),
                     rating = 5,
                     text = stringResource(R.string.profile_review_first_text),
@@ -100,7 +100,7 @@ fun ProfileScreenContent(
 
             ProfileReviewCard(
                 ReviewContent(
-                    avatarInitial = stringResource(R.string.profile_review_second_initial),
+                    avatarResId = R.drawable.profile_avatar_04,
                     author = stringResource(R.string.profile_review_second_author),
                     rating = 4,
                     text = stringResource(R.string.profile_review_second_text),

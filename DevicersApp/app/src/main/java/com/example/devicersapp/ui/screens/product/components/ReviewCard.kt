@@ -3,7 +3,6 @@ package com.example.devicersapp.ui.screens.product.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,11 +26,13 @@ import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.ReviewContentText
+import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 import com.example.devicersapp.ui.utils.rating.ratingStarsResource
 
 /**
  * Muestra una tarjeta de reseña con avatar, autor, calificación y cantidad de me gusta.
  *
+ * @param review Información de la reseña, incluido el recurso del avatar de su autor.
  * @param modifier Modificador aplicado a la tarjeta.
  */
 @Composable
@@ -49,22 +50,10 @@ fun ReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(34.dp)
-                    .background(
-                        color = colorResource(R.color.surface_secondary_light),
-                        shape = RoundedCornerShape(50)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = review.avatarInitial,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.text_primary_light)
-                )
-            }
+            ProfileAvatar(
+                avatarResId = review.avatarResId,
+                modifier = Modifier.size(34.dp)
+            )
 
             Spacer(modifier = Modifier.width(10.dp))
 
@@ -120,7 +109,7 @@ fun ReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
 fun ReviewCardPreview() {
     ReviewCard(
         ReviewContent(
-            avatarInitial = stringResource(R.string.review_card_avatar_initial),
+            avatarResId = R.drawable.profile_avatar_01,
             author = stringResource(R.string.review_card_username),
             rating = 5,
             text = stringResource(R.string.review_card_text),

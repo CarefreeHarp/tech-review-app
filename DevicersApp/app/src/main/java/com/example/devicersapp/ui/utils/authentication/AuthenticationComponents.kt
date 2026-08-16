@@ -27,6 +27,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,11 +41,16 @@ import com.example.devicersapp.ui.theme.AuthenticationSupportText
  *
  * @param textResId Recurso de texto mostrado dentro del botón.
  * @param modifier Modificador aplicado al botón.
+ * @param onClick Acción solicitada al pulsar el botón.
  */
 @Composable
-fun PrimaryButton(@StringRes textResId: Int, modifier: Modifier = Modifier) {
+fun PrimaryButton(
+    @StringRes textResId: Int,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
     Button(
-        onClick = {},
+        onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
@@ -76,13 +83,6 @@ fun AuthenticationHeader(modifier: Modifier = Modifier) {
             painter = painterResource(R.drawable.logo_claro),
             contentDescription = stringResource(R.string.devicers_logo_description),
             modifier = Modifier.size(width = 186.dp, height = 50.dp)
-        )
-        // El espacio flexible mantiene el estado del tema alineado a la derecha.
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = stringResource(R.string.light_theme),
-            color = colorResource(R.color.text_secondary_light),
-            fontSize = 8.sp
         )
     }
 }
@@ -122,16 +122,27 @@ fun ScreenTitle(
  *
  * @param labelResId Recurso de texto de la etiqueta.
  * @param placeholderResId Recurso opcional del texto de ejemplo.
+ * @param value Texto actual controlado por la pantalla que usa el campo.
+ * @param onValueChange Acción que solicita actualizar el texto del campo.
  * @param isPassword Indica si se debe mostrar la acción visual de contraseña.
+ * @param isPasswordVisible Indica si el contenido de la contraseña está visible.
+ * @param onPasswordVisibilityChange Acción que solicita alternar la visibilidad de la contraseña.
  * @param modifier Modificador aplicado al contenedor del campo.
  */
 @Composable
 fun AuthenticationField(
     @StringRes labelResId: Int,
     @StringRes placeholderResId: Int? = null,
+    value: String,
+    onValueChange: (String) -> Unit,
     isPassword: Boolean = false,
+    isPasswordVisible: Boolean = false,
+    onPasswordVisibilityChange: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    // Se reutiliza el carácter especial definido para el placeholder como máscara de contraseña.
+    val passwordMask = stringResource(R.string.password_placeholder).first()
+
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = stringResource(labelResId),
@@ -140,9 +151,8 @@ fun AuthenticationField(
         )
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
-            value = "",
-            // El prototipo conserva un campo estático hasta conectar el estado del formulario.
-            onValueChange = {},
+            value = value,
+            onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(14.dp),
             placeholder = {
@@ -154,10 +164,15 @@ fun AuthenticationField(
             },
             trailingIcon = if (isPassword) {
                 {
-                    IconButton(onClick = {}) {
+                    // La pantalla propietaria cambia el estado para sincronizar campos de contraseña relacionados.
+                    IconButton(onClick = onPasswordVisibilityChange) {
                         Icon(
-                            painter = painterResource(R.drawable.hidden),
-                            contentDescription = stringResource(R.string.show_password),
+                            painter = painterResource(
+                                if (isPasswordVisible) R.drawable.eye else R.drawable.hidden
+                            ),
+                            contentDescription = stringResource(
+                                if (isPasswordVisible) R.string.hide_password else R.string.show_password
+                            ),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -166,6 +181,11 @@ fun AuthenticationField(
                 null
             },
             singleLine = true,
+            visualTransformation = if (isPassword && !isPasswordVisible) {
+                PasswordVisualTransformation(mask = passwordMask)
+            } else {
+                VisualTransformation.None
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = colorResource(R.color.text_primary_light),
                 unfocusedTextColor = colorResource(R.color.text_primary_light),
@@ -295,7 +315,13 @@ fun ScreenTitlePreview() {
 @Composable
 @Preview(showBackground = true)
 fun AuthenticationFieldPreview() {
-    AuthenticationField(R.string.password, R.string.password_placeholder, isPassword = true)
+    AuthenticationField(
+        labelResId = R.string.password,
+        placeholderResId = R.string.password_placeholder,
+        value = "",
+        onValueChange = {},
+        isPassword = true
+    )
 }
 
 /** Muestra una vista previa del texto divisor. */
