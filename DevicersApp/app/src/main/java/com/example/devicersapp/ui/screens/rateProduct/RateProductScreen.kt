@@ -1,0 +1,210 @@
+package com.example.devicersapp.ui.screens.rateProduct
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.devicersapp.R
+import com.example.devicersapp.ui.models.ProductContent
+import com.example.devicersapp.ui.screens.rateProduct.components.RateableProductCard
+import com.example.devicersapp.ui.screens.rateProduct.components.RateProductHeader
+import com.example.devicersapp.ui.screens.rateProduct.components.RatingSelector
+import com.example.devicersapp.ui.screens.rateProduct.components.ReviewForm
+import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
+
+// Configura el estado y la estructura principal de la pantalla para calificar un producto.
+@Composable
+fun RateProductScreen(
+    modifier: Modifier = Modifier
+) {
+
+    var rating by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+
+    var title by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var experience by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var advantage by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var disadvantage by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    val product = ProductContent(
+        name = stringResource(R.string.rate_product_name),
+        brand = stringResource(R.string.rate_product_brand),
+        imageResId = R.drawable.auriculares_logo,
+        imageDescription = stringResource(R.string.rate_product_image_description),
+        showImage = true
+    )
+
+    RateProductScreenContent(
+        product = product,
+
+        rating = rating,
+        onRatingChange = {
+            rating = it
+        },
+
+        title = title,
+        onTitleChange = {
+            title = it
+        },
+
+        experience = experience,
+        onExperienceChange = {
+            experience = it
+        },
+
+        advantage = advantage,
+        onAdvantageChange = {
+            advantage = it
+        },
+
+        disadvantage = disadvantage,
+        onDisadvantageChange = {
+            disadvantage = it
+        },
+
+        onBackClick = {
+            // Navegación hacia atrás
+        },
+
+        onChangeProduct = {
+            // Cambiar producto
+        },
+
+        onPublishClick = {
+            // Publicar calificación
+        },
+
+        modifier = modifier
+            .fillMaxSize()
+            .background(colorResource(R.color.background_light))
+            .statusBarsPadding()
+    )
+}
+
+// Ensambla todos los componentes visibles de la pantalla de calificación.
+@Composable
+fun RateProductScreenContent(
+    product: ProductContent,
+
+    rating: Int,
+    onRatingChange: (Int) -> Unit,
+
+    title: String,
+    onTitleChange: (String) -> Unit,
+
+    experience: String,
+    onExperienceChange: (String) -> Unit,
+
+    advantage: String,
+    onAdvantageChange: (String) -> Unit,
+
+    disadvantage: String,
+    onDisadvantageChange: (String) -> Unit,
+
+    onBackClick: () -> Unit,
+    onChangeProduct: () -> Unit,
+    onPublishClick: () -> Unit,
+
+    modifier: Modifier = Modifier
+) {
+
+    Column(
+        modifier = modifier
+    ) {
+
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp)
+        ) {
+
+            item {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                RateProductHeader(
+                    onBackClick = onBackClick
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            item {
+                RateableProductCard(
+                    product = product,
+                    onChangeProduct = onChangeProduct
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
+            item {
+                RatingSelector(
+                    rating = rating,
+                    onRatingChange = onRatingChange
+                )
+
+                Spacer(modifier = Modifier.height(28.dp))
+            }
+
+            item {
+                ReviewForm(
+                    title = title,
+                    onTitleChange = onTitleChange,
+
+                    experience = experience,
+                    onExperienceChange = onExperienceChange,
+
+                    advantage = advantage,
+                    onAdvantageChange = onAdvantageChange,
+
+                    disadvantage = disadvantage,
+                    onDisadvantageChange = onDisadvantageChange,
+
+                    onPublishClick = onPublishClick
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+        }
+
+        BottomNavigationBar(
+            modifier = Modifier.fillMaxWidth(),
+            selectedItem = "add"
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RateProductScreenPreview() {
+    RateProductScreen()
+}

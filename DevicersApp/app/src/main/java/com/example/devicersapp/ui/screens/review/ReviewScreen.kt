@@ -55,7 +55,7 @@ fun ReviewScreenContent(modifier: Modifier = Modifier) {
                     brand = stringResource(R.string.review_product_brand),
                     imageResId = R.drawable.auriculares_logo,
                     imageDescription = stringResource(R.string.review_product_image),
-                    showImage = false
+                    showImage = true
                 )
             )
             ReviewDetailCard(

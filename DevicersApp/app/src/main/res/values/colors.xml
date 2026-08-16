@@ -27,4 +27,6 @@
     <!-- Devicers: colores compartidos por ambos temas -->
     <color name="primary_yellow">#E8E84F</color>
     <color name="soft_yellow">#F3F3A9</color>
+
+    <color name="rating_selected_light">#ECEA3A</color>
 </resources>
