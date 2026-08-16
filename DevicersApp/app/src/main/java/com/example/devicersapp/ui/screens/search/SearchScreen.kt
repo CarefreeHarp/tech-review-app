@@ -11,6 +11,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -51,6 +55,15 @@ fun SearchScreen(modifier: Modifier = Modifier) {
  */
 @Composable
 fun SearchScreenContent(modifier: Modifier = Modifier) {
+    var searchText by remember { mutableStateOf("") }
+
+    var brand by remember { mutableStateOf("") }
+    var productName by remember { mutableStateOf("") }
+    var launchDate by remember { mutableStateOf("") }
+
+    var selectedCategory by remember { mutableStateOf("all") }
+    var minimumRating by remember { mutableStateOf(4f) }
+    var sortBy by remember { mutableStateOf("recent") }
     Column(
         modifier = modifier
     ) {
@@ -77,12 +90,32 @@ fun SearchScreenContent(modifier: Modifier = Modifier) {
             SearchBar(
                 placeholder = R.string.search_placeholder,
                 backgroundColor = R.color.surface_light,
-                showSearchIcon = true
+                showSearchIcon = true,
+                text = searchText,
+                onTextChange = { searchText = it }
             )
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            SearchFilterPanel()
+            SearchFilterPanel(
+                brand = brand,
+                onBrandChange = { brand = it },
+
+                productName = productName,
+                onProductNameChange = { productName = it },
+
+                launchDate = launchDate,
+                onLaunchDateChange = { launchDate = it },
+
+                selectedCategory = selectedCategory,
+                onCategorySelected = { selectedCategory = it },
+
+                minimumRating = minimumRating,
+                onRatingChange = { minimumRating = it },
+
+                sortBy = sortBy,
+                onSortChange = { sortBy = it }
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
         }

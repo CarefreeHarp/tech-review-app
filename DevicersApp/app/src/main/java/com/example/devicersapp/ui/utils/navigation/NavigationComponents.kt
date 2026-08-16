@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.SearchControlText
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
 
 /**
  * Muestra la barra de navegación inferior de la aplicación.
@@ -104,18 +106,19 @@ fun NavigationItem(
 fun FilterChip(
     @StringRes textResId: Int,
     selected: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .background(
-                color = if (selected) {
+                color = if (selected)
                     colorResource(R.color.primary_yellow)
-                } else {
-                    colorResource(R.color.surface_light)
-                },
+                else
+                    colorResource(R.color.surface_light),
                 shape = RoundedCornerShape(8.dp)
             )
+            .clickable { onClick() }
             .padding(horizontal = 10.dp, vertical = 9.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -141,13 +144,15 @@ fun SearchBar(
     @StringRes placeholder: Int,
     backgroundColor: Int = R.color.background_light,
     showSearchIcon: Boolean = false,
-    modifier: Modifier = Modifier
-) {
-    var text by remember { mutableStateOf("") }
+    modifier: Modifier = Modifier,
+    text: String,
+    onTextChange: (String) -> Unit
+)  {
+
 
     BasicTextField(
         value = text,
-        onValueChange = { text = it },
+        onValueChange = onTextChange,
         modifier = modifier
             .fillMaxWidth()
             .height(42.dp)
@@ -172,8 +177,9 @@ fun SearchBar(
                         contentDescription = null,
                         modifier = Modifier.size(18.dp)
                     )
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(6.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                 }
+
                 Box(
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.CenterStart
@@ -242,14 +248,14 @@ fun NavigationItemPreview() {
 }
 
 /** Muestra una vista previa de una opción de filtro seleccionada. */
-@Composable
+/*@Composable
 @Preview(showBackground = true)
 fun FilterChipPreview() {
     FilterChip(R.string.all, selected = true)
 }
-
+*/
 /** Muestra una vista previa de la barra de búsqueda. */
-@Composable
+/*@Composable
 @Preview(showBackground = true)
 fun SearchBarPreview() {
     SearchBar(
@@ -257,7 +263,7 @@ fun SearchBarPreview() {
         backgroundColor = R.color.surface_light,
         showSearchIcon = true
     )
-}
+}*/
 
 /** Muestra una vista previa de la barra superior compartida. */
 @Composable

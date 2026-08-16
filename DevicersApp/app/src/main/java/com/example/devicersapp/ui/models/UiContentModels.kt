@@ -1,6 +1,7 @@
 package com.example.devicersapp.ui.models
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 
 /** Representa el contenido variable de una reseña mostrada en una tarjeta. */
 data class ReviewContent(
@@ -16,15 +17,19 @@ data class ReviewContent(
 
 /** Representa una reseña compacta publicada dentro del feed. */
 data class FeedReviewContent(
-    val productName: String,
-    @param:DrawableRes val productImageResId: Int,
-    val author: String,
-    val reviewText: String,
+    @StringRes val productName: Int,
+    @DrawableRes val productImageResId: Int,
+    @StringRes val author: Int,
+    @StringRes val reviewText: Int,
     val likes: Int,
-    val timeAgo: String,
+    @StringRes val timeAgo: Int,
     val rating: Int
 ) {
-    init { require(rating in 1..5) { "La calificación debe estar entre 1 y 5." } }
+    init {
+        require(rating in 1..5) {
+            "La calificación debe estar entre 1 y 5."
+        }
+    }
 }
 
 /** Representa la información básica de un producto para las pantallas de detalle. */

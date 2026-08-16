@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
             //ProductScreen()
             //ProfileScreen()
             //ReviewScreen()
-            //SearchScreen()
+            SearchScreen()
         }
     }
 }
