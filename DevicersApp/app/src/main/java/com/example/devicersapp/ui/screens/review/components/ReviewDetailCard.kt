@@ -3,7 +3,6 @@ package com.example.devicersapp.ui.screens.review.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
@@ -28,9 +26,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ReviewContent
+import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 import com.example.devicersapp.ui.utils.rating.ratingStarsResource
 
-/** Muestra el contenido principal de una reseña y sus acciones de interacción. */
+/**
+ * Muestra el contenido principal de una reseña, el avatar de su autor y sus acciones de interacción.
+ *
+ * @param review Información visible de la reseña.
+ * @param modifier Modificador aplicado a la tarjeta.
+ */
 @Composable
 fun ReviewDetailCard(review: ReviewContent, modifier: Modifier = Modifier) {
     Column(
@@ -41,9 +45,10 @@ fun ReviewDetailCard(review: ReviewContent, modifier: Modifier = Modifier) {
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(36.dp).background(colorResource(R.color.surface_secondary_light), CircleShape), Alignment.Center) {
-                Text(review.avatarInitial, style = MaterialTheme.typography.titleSmall, color = colorResource(R.color.text_primary_light))
-            }
+            ProfileAvatar(
+                avatarResId = review.avatarResId,
+                modifier = Modifier.size(36.dp)
+            )
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
                 Text(review.author, style = MaterialTheme.typography.titleSmall, color = colorResource(R.color.text_primary_light))
@@ -90,7 +95,7 @@ fun ReviewDetailCard(review: ReviewContent, modifier: Modifier = Modifier) {
 fun ReviewDetailCardPreview() {
     ReviewDetailCard(
         ReviewContent(
-            avatarInitial = stringResource(R.string.review_author_initial),
+            avatarResId = R.drawable.profile_avatar_02,
             author = stringResource(R.string.review_author),
             rating = 5,
             text = stringResource(R.string.review_detail_text),

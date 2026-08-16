@@ -149,7 +149,7 @@ fun ProductScreenContent(
 
             ReviewCard(
                 ReviewContent(
-                    avatarInitial = stringResource(R.string.review_card_avatar_initial),
+                    avatarResId = R.drawable.profile_avatar_01,
                     author = stringResource(R.string.review_card_username),
                     rating = 5,
                     text = stringResource(R.string.review_card_text),
