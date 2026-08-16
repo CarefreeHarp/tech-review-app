@@ -131,5 +131,13 @@
     <string name="product_rating_three_percentage" formatted="false">17%</string>
     <string name="product_rating_two_percentage" formatted="false">7%</string>
     <string name="product_rating_one_percentage" formatted="false">5%</string>
+    <string name="notifications">Notificaciones</string>
+    <string name="notifications_subtitle">Todo lo que pasó mientras no estabas.</string>
+    <string name="notifications_follow">Seguir</string>
+    <string name="notifications_following">Siguiendo</string>
+    <string name="notifications_time_ago">Hace %1$s</string>
+    <string name="register_validation_email">Ingresa un correo electrónico válido.</string>
+    <string name="register_validation_password">La contraseña debe tener al menos 6 caracteres y 3 números.</string>
+    <string name="register_validation_confirmation">Las contraseñas deben coincidir.</string>
 
 </resources>

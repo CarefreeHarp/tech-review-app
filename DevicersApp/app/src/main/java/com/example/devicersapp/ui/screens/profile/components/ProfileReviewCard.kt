@@ -95,7 +95,7 @@ fun ProfileReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
 fun ProfileReviewCardPreview() {
     ProfileReviewCard(
         ReviewContent(
-            avatarInitial = stringResource(R.string.review_card_avatar_initial),
+            avatarResId = R.drawable.profile_avatar_00,
             author = stringResource(R.string.review_card_username),
             rating = 5,
             text = stringResource(R.string.review_card_text),

@@ -1,8 +1,6 @@
 package com.example.devicersapp.ui.screens.profile.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -20,7 +18,14 @@ import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ProfileStatContent
+import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 
+/**
+ * Muestra el avatar, la información pública, las estadísticas y la acción principal del perfil.
+ *
+ * @param profile Datos visibles del perfil, incluido el recurso de su avatar.
+ * @param modifier Modificador aplicado al contenedor del perfil.
+ */
 @Composable
 fun ProfileStats(profile: ProfileContent, modifier: Modifier = Modifier) {
     Column(
@@ -28,23 +33,10 @@ fun ProfileStats(profile: ProfileContent, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // Foto de perfil temporal
-        Box(
-            modifier = Modifier
-                .size(88.dp)
-                .background(
-                    color = colorResource(R.color.surface_light),
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = profile.avatarInitial,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(R.color.text_primary_light)
-            )
-        }
+        ProfileAvatar(
+            avatarResId = profile.avatarResId,
+            modifier = Modifier.size(88.dp)
+        )
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -103,6 +95,7 @@ fun ProfileStats(profile: ProfileContent, modifier: Modifier = Modifier) {
     }
 }
 
+/** Muestra una estadística individual dentro del resumen del perfil. */
 @Composable
 private fun ProfileStat(stat: ProfileStatContent) {
     Column(
@@ -140,7 +133,7 @@ fun ProfileStatPreview() {
 /** Contiene datos de ejemplo para las vistas previas del perfil. */
 private val SampleProfileContent
     @Composable get() = ProfileContent(
-        avatarInitial = stringResource(R.string.profile_avatar_initial),
+        avatarResId = R.drawable.profile_avatar_00,
         name = stringResource(R.string.profile_name),
         handle = stringResource(R.string.profile_handle),
         biography = stringResource(R.string.profile_biography),
