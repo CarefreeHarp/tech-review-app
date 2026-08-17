@@ -166,10 +166,10 @@ fun ProductScreenContent(
         }
 
         // Barra inferior existente del proyecto
-        BottomNavigationBar(
-            modifier = Modifier.fillMaxWidth(),
-            selectedItem = "search"
-        )
+       // BottomNavigationBar(
+       //     modifier = Modifier.fillMaxWidth(),
+       //     selectedItem = "search"
+       // )
     }
 }
 

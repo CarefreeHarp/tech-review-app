@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.screens.notifications.components.NotificationSection
-import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
+// import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 
 /** Configura la estructura principal de la pantalla de notificaciones y su navegación inferior. */
 @Composable
@@ -42,12 +42,12 @@ fun NotificationsScreen(modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = colorResource(R.color.background_light),
-        bottomBar = {
-            BottomNavigationBar(
-                selectedItem = "favorite",
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        // bottomBar = {
+        //     BottomNavigationBar(
+        //         selectedItem = "favorite",
+        //         modifier = Modifier.fillMaxWidth()
+        //     )
+        // }
     ) { innerPadding ->
         NotificationsScreenContent(
             followedNotificationIds = followedNotificationIds,

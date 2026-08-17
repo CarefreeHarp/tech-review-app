@@ -128,10 +128,10 @@ fun FeedScreenContent(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        BottomNavigationBar(
-            modifier = Modifier.fillMaxWidth(),
-            selectedItem = "home"
-        )
+     //   BottomNavigationBar(
+     //       modifier = Modifier.fillMaxWidth(),
+     //       selectedItem = "home"
+     //   )
     }
 }
 

@@ -111,10 +111,10 @@ fun ProfileScreenContent(
             Spacer(modifier = Modifier.height(144.dp))
         }
 
-        BottomNavigationBar(
-            modifier = Modifier.fillMaxWidth(),
-            selectedItem = "profile"
-        )
+       // BottomNavigationBar(
+       //     modifier = Modifier.fillMaxWidth(),
+       //     selectedItem = "profile"
+       // )
     }
 }
 

@@ -87,10 +87,10 @@ fun SearchScreenContent(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(20.dp))
         }
 
-        BottomNavigationBar(
-            modifier = Modifier.fillMaxWidth(),
-            selectedItem = "search"
-        )
+     //   BottomNavigationBar(
+     //       modifier = Modifier.fillMaxWidth(),
+     //       selectedItem = "search"
+     //   )
     }
 }
 
