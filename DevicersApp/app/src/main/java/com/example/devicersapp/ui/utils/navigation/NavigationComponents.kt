@@ -33,6 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.SearchControlText
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.clickable
 
 /**
  * Muestra la barra de navegación inferior de la aplicación.
@@ -40,55 +44,98 @@ import com.example.devicersapp.ui.theme.SearchControlText
  * @param selectedItem Identificador del elemento que representa la pantalla actual.
  * @param modifier Modificador aplicado a la barra.
  */
+/**
+ * Muestra la barra de navegación inferior de la aplicación.
+ *
+ * @param selectedItem Identificador del elemento que representa la pantalla actual.
+ * @param modifier Modificador aplicado a la barra.
+ * @param onProfileClick Acción ejecutada al presionar el ícono de perfil.
+ */
 @Composable
-fun BottomNavigationBar(selectedItem: String, modifier: Modifier = Modifier) {
+fun BottomNavigationBar(
+    selectedItem: String,
+    modifier: Modifier = Modifier,
+    onProfileClick: () -> Unit = {}
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(55.dp)
-            .background(colorResource(R.color.surface_light))
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        NavigationItem(R.drawable.home_icon, selectedItem == "home")
-        NavigationItem(R.drawable.explore_icon, selectedItem == "search")
-        NavigationItem(R.drawable.create_review_icon, selectedItem == "add")
-        NavigationItem(R.drawable.notifications_icon, selectedItem == "favorite")
-        NavigationItem(R.drawable.profile_icon, selectedItem == "profile")
+
+        NavigationItem(
+            iconResId = R.drawable.home_icon,
+            isSelected = selectedItem == "home"
+        )
+
+        NavigationItem(
+            iconResId = R.drawable.explore_icon,
+            isSelected = selectedItem == "search"
+        )
+
+        NavigationItem(
+            iconResId = R.drawable.create_review_icon,
+            isSelected = selectedItem == "add"
+        )
+
+        NavigationItem(
+            iconResId = R.drawable.notifications_icon,
+            isSelected = selectedItem == "favorite"
+        )
+
+        NavigationItem(
+            iconResId = R.drawable.profile_icon,
+            isSelected = selectedItem == "profile",
+            onClick = onProfileClick
+        )
     }
 }
 
+
 /**
- * Muestra un elemento individual de la navegación inferior con su estado seleccionado.
+ * Muestra un elemento individual de la barra de navegación.
  *
- * @param iconResId Recurso del ícono mostrado.
- * @param isSelected Indica si el elemento representa la pantalla actual.
+ * @param iconResId Recurso del ícono.
+ * @param isSelected Indica si el elemento está seleccionado.
  * @param modifier Modificador aplicado al elemento.
+ * @param onClick Acción ejecutada al presionar el elemento.
  */
 @Composable
 fun NavigationItem(
     @DrawableRes iconResId: Int,
     isSelected: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
             .size(38.dp)
             .background(
                 color = if (isSelected) {
-                    colorResource(R.color.primary_yellow)
+                    MaterialTheme.colorScheme.primary
                 } else {
-                    colorResource(R.color.surface_light)
+                    MaterialTheme.colorScheme.surface
                 },
                 shape = RoundedCornerShape(10.dp)
-            ),
+            )
+            .clickable {
+                onClick()
+            },
         contentAlignment = Alignment.Center
     ) {
-        Image(
+        Icon(
             painter = painterResource(iconResId),
             contentDescription = null,
-            modifier = Modifier.size(28.dp)
+            modifier = Modifier.size(28.dp),
+            tint = if (isSelected) {
+                MaterialTheme.colorScheme.onPrimary
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            }
         )
     }
 }
@@ -210,8 +257,14 @@ fun AppTopBar(modifier: Modifier = Modifier) {
             color = colorResource(R.color.text_primary_light),
             modifier = Modifier.align(Alignment.CenterStart)
         )
+        val logoRes = if (isSystemInDarkTheme()) {
+            R.drawable.logo_icono_oscuro
+        } else {
+            R.drawable.logo_icono_claro
+        }
+
         Image(
-            painter = painterResource(R.drawable.logo_icono_claro),
+            painter = painterResource(logoRes),
             contentDescription = stringResource(R.string.devicers_logo_description),
             modifier = Modifier
                 .height(44.dp)
