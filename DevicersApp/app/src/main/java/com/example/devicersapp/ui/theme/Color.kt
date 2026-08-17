@@ -2,10 +2,43 @@ package com.example.devicersapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// ==========================
+// Colores compartidos
+// ==========================
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val DevicersYellow = Color(0xFFE8E84F)
+val DevicersSoftYellow = Color(0xFFF3F3A9)
+
+
+// ==========================
+// Light Mode
+// ==========================
+
+val BackgroundLight = Color(0xFFF4F4ED)
+
+val SurfaceLight = Color(0xFFD6D6C5)
+
+val SurfaceSecondaryLight = Color(0xFFE7E7DB)
+
+val TextPrimaryLight = Color(0xFF1C1C18)
+
+val TextSecondaryLight = Color(0xFF595950)
+
+val BorderLight = Color(0xFFBDBDAC)
+
+
+// ==========================
+// Dark Mode
+// ==========================
+
+val BackgroundDark = Color(0xFF11110F)
+
+val SurfaceDark = Color(0xFF24241F)
+
+val SurfaceSecondaryDark = Color(0xFF30302A)
+
+val TextPrimaryDark = Color(0xFFF7F7F0)
+
+val TextSecondaryDark = Color(0xFFB8B8AA)
+
+val BorderDark = Color(0xFF44443B)

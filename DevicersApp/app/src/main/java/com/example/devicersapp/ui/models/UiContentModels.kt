@@ -1,10 +1,11 @@
 package com.example.devicersapp.ui.models
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 
 /** Representa el contenido variable de una reseña mostrada en una tarjeta. */
 data class ReviewContent(
-    val avatarInitial: String,
+    @param:DrawableRes val avatarResId: Int,
     val author: String,
     val rating: Int,
     val text: String,
@@ -16,15 +17,19 @@ data class ReviewContent(
 
 /** Representa una reseña compacta publicada dentro del feed. */
 data class FeedReviewContent(
-    val productName: String,
-    @param:DrawableRes val productImageResId: Int,
-    val author: String,
-    val reviewText: String,
+    @StringRes val productName: Int,
+    @DrawableRes val productImageResId: Int,
+    @StringRes val author: Int,
+    @StringRes val reviewText: Int,
     val likes: Int,
-    val timeAgo: String,
+    @StringRes val timeAgo: Int,
     val rating: Int
 ) {
-    init { require(rating in 1..5) { "La calificación debe estar entre 1 y 5." } }
+    init {
+        require(rating in 1..5) {
+            "La calificación debe estar entre 1 y 5."
+        }
+    }
 }
 
 /** Representa la información básica de un producto para las pantallas de detalle. */
@@ -62,7 +67,7 @@ data class ProfileStatContent(
 
 /** Representa la información visible en el encabezado de un perfil. */
 data class ProfileContent(
-    val avatarInitial: String,
+    @param:DrawableRes val avatarResId: Int,
     val name: String,
     val handle: String,
     val biography: String,
@@ -71,8 +76,29 @@ data class ProfileContent(
 
 /** Representa una respuesta publicada dentro del detalle de una reseña. */
 data class ReplyContent(
-    val avatarInitial: String,
+    @param:DrawableRes val avatarResId: Int,
     val author: String,
     val timeAgo: String,
     val text: String
+)
+
+/**
+ * Representa el contenido visible de una notificación dentro de la aplicación.
+ *
+ * @param id Identificador único usado para conservar el estado de seguimiento de la tarjeta.
+ * @param avatarResId Recurso de imagen que representa al autor de la notificación.
+ * @param author Nombre de usuario mostrado como autor de la actividad.
+ * @param action Acción que el autor realizó sobre el contenido del usuario.
+ * @param detail Contexto adicional opcional sobre el producto o comentario relacionado.
+ * @param time Instante de llegada de la notificación en milisegundos desde época Unix.
+ * @param showFollowAction Indica si la tarjeta ofrece la acción visual para seguir al autor.
+ */
+data class NotificationContent(
+    val id: String,
+    @param:DrawableRes val avatarResId: Int,
+    val author: String,
+    val action: String,
+    val detail: String,
+    val time: Long,
+    val showFollowAction: Boolean = false
 )

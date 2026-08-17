@@ -1,59 +1,117 @@
 package com.example.devicersapp.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.devicersapp.R
 
+
+// ==========================
+// Dark Color Scheme
+// ==========================
+
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+
+    // Color principal de Devicers
+    primary = DevicersYellow,
+
+    // Texto o contenido sobre el amarillo
+    onPrimary = TextPrimaryLight,
+
+    // Amarillo secundario
+    secondary = DevicersSoftYellow,
+
+    onSecondary = TextPrimaryLight,
+
+    // Fondo general
+    background = BackgroundDark,
+
+    // Texto principal sobre fondo oscuro
+    onBackground = TextPrimaryDark,
+
+    // Superficies como cards, barras, paneles
+    surface = SurfaceDark,
+
+    // Texto sobre superficies
+    onSurface = TextPrimaryDark,
+
+    // Variante de superficie
+    surfaceVariant = SurfaceSecondaryDark,
+
+    // Texto secundario
+    onSurfaceVariant = TextSecondaryDark,
+
+    // Bordes
+    outline = BorderDark
 )
+
+
+// ==========================
+// Light Color Scheme
+// ==========================
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
 
-    /* Otros colores predeterminados que se pueden reemplazar
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    // Color principal de Devicers
+    primary = DevicersYellow,
+
+    // Texto o contenido sobre el amarillo
+    onPrimary = TextPrimaryLight,
+
+    // Amarillo secundario
+    secondary = DevicersSoftYellow,
+
+    onSecondary = TextPrimaryLight,
+
+    // Fondo general
+    background = BackgroundLight,
+
+    // Texto principal
+    onBackground = TextPrimaryLight,
+
+    // Superficies como cards, filtros y paneles
+    surface = SurfaceLight,
+
+    // Texto sobre superficies
+    onSurface = TextPrimaryLight,
+
+    // Variante de superficie
+    surfaceVariant = SurfaceSecondaryLight,
+
+    // Texto secundario
+    onSurfaceVariant = TextSecondaryLight,
+
+    // Bordes
+    outline = BorderLight
 )
 
-/** Aplica el tema de Material de Devicers al contenido que recibe. */
+
+/**
+ * Aplica el tema visual de Devicers.
+ *
+ * El esquema de colores cambia automáticamente entre
+ * modo claro y oscuro según la configuración del dispositivo.
+ *
+ * @param darkTheme Indica si se debe utilizar el modo oscuro.
+ * @param content Contenido al que se aplicará el tema.
+ */
 @Composable
 fun DevicersAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // El color dinámico está disponible desde Android 12.
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme =
+        if (darkTheme) {
+            DarkColorScheme
+        } else {
+            LightColorScheme
+        }
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -62,11 +120,42 @@ fun DevicersAppTheme(
     )
 }
 
-/** Muestra una vista previa del tema de Devicers con texto de ejemplo. */
+
+/**
+ * Preview del tema claro.
+ */
 @Composable
-@Preview(showBackground = true)
-fun DevicersAppThemePreview() {
-    DevicersAppTheme {
-        Text(text = stringResource(R.string.theme_preview_text))
+@Preview(
+    name = "Devicers Light Mode",
+    showBackground = true
+)
+fun DevicersLightThemePreview() {
+
+    DevicersAppTheme(
+        darkTheme = false
+    ) {
+        Text(
+            text = stringResource(R.string.theme_preview_text)
+        )
+    }
+}
+
+
+/**
+ * Preview del tema oscuro.
+ */
+@Composable
+@Preview(
+    name = "Devicers Dark Mode",
+    showBackground = true
+)
+fun DevicersDarkThemePreview() {
+
+    DevicersAppTheme(
+        darkTheme = true
+    ) {
+        Text(
+            text = stringResource(R.string.theme_preview_text)
+        )
     }
 }
