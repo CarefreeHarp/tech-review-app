@@ -18,14 +18,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             DevicersAppTheme {
-                LoginScreen()
+                //LoginScreen()
                 //RegisterScreen()
                 //FeedScreen()
                 //ProductScreen()
                 //ProfileScreen()
                 //ReviewScreen()
                 //SearchScreen()
-                //NotificationsScreen()
+                NotificationsScreen()
             }
         }
     }
