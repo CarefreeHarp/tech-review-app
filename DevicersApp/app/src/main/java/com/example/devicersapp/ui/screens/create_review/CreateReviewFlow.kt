@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.devicersapp.data.FakeDatabase
+import com.example.devicersapp.data.local.LocalUserReviewsProvider
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.screens.profile.ProfileScreen
 
@@ -79,7 +79,7 @@ fun CreateReviewFlow(
 
                     onPublishClick = { rating, reviewText ->
 
-                        FakeDatabase.addReview(
+                        LocalUserReviewsProvider.addReview(
                             product = product,
                             rating = rating,
                             text = reviewText

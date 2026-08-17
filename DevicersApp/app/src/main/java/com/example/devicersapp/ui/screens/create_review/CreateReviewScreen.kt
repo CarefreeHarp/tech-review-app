@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.devicersapp.data.FakeDatabase
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.screens.create_review.components.CategoryChipRow
 import com.example.devicersapp.ui.screens.create_review.components.CreateReviewFilterDialog
@@ -34,6 +33,7 @@ import com.example.devicersapp.ui.screens.create_review.components.CreateReviewS
 import com.example.devicersapp.ui.screens.create_review.components.ProductReviewItem
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
+import com.example.devicersapp.R
 
 /**
  * Pantalla para seleccionar el producto que el usuario quiere reseñar.
@@ -115,8 +115,19 @@ fun CreateReviewScreenContent(
     /*
      * Productos almacenados actualmente en la base quemada.
      */
-    val headphones = FakeDatabase.products[0]
-    val phone = FakeDatabase.products[1]
+    val headphones = ProductContent(
+        name = "Auriculares",
+        brand = "Marca · Audio",
+        imageResId = R.drawable.devicers_headphones_black,
+        imageDescription = "Auriculares"
+    )
+
+    val phone = ProductContent(
+        name = "Teléfono",
+        brand = "Marca · Celulares",
+        imageResId = R.drawable.electronic_phone,
+        imageDescription = "Teléfono"
+    )
 
     /*
      * Filtrado de Auriculares.
