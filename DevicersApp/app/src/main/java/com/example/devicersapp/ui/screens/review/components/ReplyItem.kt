@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.review.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,12 +36,12 @@ fun ReplyItem(reply: ReplyContent, modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(reply.author, style = MaterialTheme.typography.labelLarge, color = colorResource(R.color.text_primary_light))
-            Text(reply.timeAgo, style = MaterialTheme.typography.bodySmall, color = colorResource(R.color.text_secondary_light))
+            Text(reply.author, style = MaterialTheme.typography.labelLarge, color = LocalDevicersColors.current.textPrimary)
+            Text(reply.timeAgo, style = MaterialTheme.typography.bodySmall, color = LocalDevicersColors.current.textSecondary)
             Spacer(Modifier.height(9.dp))
-            Text(reply.text, style = MaterialTheme.typography.bodyMedium, color = colorResource(R.color.text_primary_light))
+            Text(reply.text, style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textPrimary)
             Spacer(Modifier.height(10.dp))
-            Text(stringResource(R.string.review_reply_action), style = MaterialTheme.typography.labelLarge, color = colorResource(R.color.text_secondary_light))
+            Text(stringResource(R.string.review_reply_action), style = MaterialTheme.typography.labelLarge, color = LocalDevicersColors.current.textSecondary)
         }
     }
 }

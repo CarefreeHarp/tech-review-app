@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.review.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +42,7 @@ fun ReviewDetailCard(review: ReviewContent, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 244.dp)
-            .background(colorResource(R.color.surface_light), RoundedCornerShape(16.dp))
+            .background(LocalDevicersColors.current.surface, RoundedCornerShape(16.dp))
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -51,16 +52,16 @@ fun ReviewDetailCard(review: ReviewContent, modifier: Modifier = Modifier) {
             )
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
-                Text(review.author, style = MaterialTheme.typography.titleSmall, color = colorResource(R.color.text_primary_light))
+                Text(review.author, style = MaterialTheme.typography.titleSmall, color = LocalDevicersColors.current.textPrimary)
                 review.timeAgo?.let { timeAgo ->
-                    Text(timeAgo, style = MaterialTheme.typography.bodySmall, color = colorResource(R.color.text_secondary_light))
+                    Text(timeAgo, style = MaterialTheme.typography.bodySmall, color = LocalDevicersColors.current.textSecondary)
                 }
             }
         }
         Spacer(Modifier.height(12.dp))
-        Text(stringResource(ratingStarsResource(review.rating)), color = colorResource(R.color.primary_yellow), style = MaterialTheme.typography.bodyLarge)
+        Text(stringResource(ratingStarsResource(review.rating)), color = LocalDevicersColors.current.primaryYellow, style = MaterialTheme.typography.bodyLarge)
         Spacer(Modifier.height(20.dp))
-        Text(review.text, style = MaterialTheme.typography.bodyMedium, color = colorResource(R.color.text_primary_light))
+        Text(review.text, style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textPrimary)
         Spacer(Modifier.weight(1f))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -70,7 +71,7 @@ fun ReviewDetailCard(review: ReviewContent, modifier: Modifier = Modifier) {
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(Modifier.width(4.dp))
-                Text(review.likes.toString(), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = colorResource(R.color.text_primary_light))
+                Text(review.likes.toString(), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = LocalDevicersColors.current.textPrimary)
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(

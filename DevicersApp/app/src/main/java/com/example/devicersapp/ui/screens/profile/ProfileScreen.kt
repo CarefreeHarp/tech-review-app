@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.profile
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,7 +36,7 @@ fun ProfileScreen(
     ProfileScreenContent(
         modifier = modifier
             .fillMaxSize()
-            .background(colorResource(R.color.background_light))
+            .background(LocalDevicersColors.current.background)
             .statusBarsPadding()
     )
 }
@@ -81,7 +82,7 @@ fun ProfileScreenContent(
                 text = stringResource(R.string.profile_my_reviews),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(R.color.text_primary_light)
+                color = LocalDevicersColors.current.textPrimary
             )
 
             Spacer(modifier = Modifier.height(12.dp))

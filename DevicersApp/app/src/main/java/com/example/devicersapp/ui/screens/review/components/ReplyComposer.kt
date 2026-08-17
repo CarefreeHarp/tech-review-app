@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.review.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +38,7 @@ fun ReplyComposer(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .height(78.dp)
-            .background(colorResource(R.color.surface_secondary_light))
+            .background(LocalDevicersColors.current.surfaceSecondary)
             .padding(horizontal = 18.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -48,18 +49,18 @@ fun ReplyComposer(modifier: Modifier = Modifier) {
                 .weight(1f)
                 .height(42.dp)
                 .background(
-                    colorResource(R.color.background_light),
+                    LocalDevicersColors.current.background,
                     RoundedCornerShape(14.dp)
                 )
                 .border(
                     width = 1.dp,
-                    color = colorResource(R.color.border_light),
+                    color = LocalDevicersColors.current.border,
                     shape = RoundedCornerShape(14.dp)
                 )
                 .padding(horizontal = 16.dp),
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(
-                color = colorResource(R.color.text_primary_light),
+                color = LocalDevicersColors.current.textPrimary,
                 fontSize = MaterialTheme.typography.bodyMedium.fontSize
             ),
             decorationBox = { innerTextField ->
@@ -68,7 +69,7 @@ fun ReplyComposer(modifier: Modifier = Modifier) {
                         Text(
                             text = stringResource(R.string.review_reply_placeholder),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = colorResource(R.color.text_secondary_light)
+                            color = LocalDevicersColors.current.textSecondary
                         )
                     }
                     innerTextField()
@@ -79,7 +80,7 @@ fun ReplyComposer(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .padding(start = 10.dp)
                 .size(42.dp)
-                .background(colorResource(R.color.primary_yellow), RoundedCornerShape(14.dp)),
+                .background(LocalDevicersColors.current.primaryYellow, RoundedCornerShape(14.dp)),
             contentAlignment = Alignment.Center
         ) {
             Image(

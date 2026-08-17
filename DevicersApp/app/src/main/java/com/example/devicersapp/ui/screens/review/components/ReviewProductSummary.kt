@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.review.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,15 +35,15 @@ fun ReviewProductSummary(product: ProductContent, modifier: Modifier = Modifier)
         modifier = modifier
             .fillMaxWidth()
             .height(70.dp)
-            .background(colorResource(R.color.surface_secondary_light), RoundedCornerShape(15.dp))
-            .border(1.dp, colorResource(R.color.border_light), RoundedCornerShape(15.dp))
+            .background(LocalDevicersColors.current.surfaceSecondary, RoundedCornerShape(15.dp))
+            .border(1.dp, LocalDevicersColors.current.border, RoundedCornerShape(15.dp))
             .padding(horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
                 .size(46.dp)
-                .background(colorResource(R.color.surface_light), RoundedCornerShape(12.dp)),
+                .background(LocalDevicersColors.current.surface, RoundedCornerShape(12.dp)),
             contentAlignment = Alignment.Center
         ) {
             if (product.showImage) {
@@ -55,9 +56,9 @@ fun ReviewProductSummary(product: ProductContent, modifier: Modifier = Modifier)
         }
         Spacer(Modifier.width(14.dp))
         Column {
-            Text(product.name, style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.text_primary_light))
+            Text(product.name, style = MaterialTheme.typography.titleMedium, color = LocalDevicersColors.current.textPrimary)
             Spacer(Modifier.height(2.dp))
-            Text(product.brand, style = MaterialTheme.typography.bodyMedium, color = colorResource(R.color.text_secondary_light))
+            Text(product.brand, style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textSecondary)
         }
     }
 }

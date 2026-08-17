@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.notifications.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,7 +55,7 @@ fun NotificationCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(colorResource(R.color.surface_light), RoundedCornerShape(14.dp))
+            .background(LocalDevicersColors.current.surface, RoundedCornerShape(14.dp))
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -73,24 +74,24 @@ fun NotificationCard(
             Text(
                 text = notification.author,
                 style = MaterialTheme.typography.labelLarge,
-                color = colorResource(R.color.text_primary_light)
+                color = LocalDevicersColors.current.textPrimary
             )
             Text(
                 text = notification.action,
                 style = MaterialTheme.typography.bodySmall,
-                color = colorResource(R.color.text_primary_light)
+                color = LocalDevicersColors.current.textPrimary
             )
             if (notification.detail.isNotBlank()) {
                 Text(
                     text = notification.detail,
                     style = MaterialTheme.typography.bodySmall,
-                    color = colorResource(R.color.text_secondary_light)
+                    color = LocalDevicersColors.current.textSecondary
                 )
             }
             Text(
                 text = stringResource(R.string.notifications_time_ago, elapsedTime),
                 style = MaterialTheme.typography.bodySmall,
-                color = colorResource(R.color.text_secondary_light)
+                color = LocalDevicersColors.current.textSecondary
             )
         }
 
@@ -99,8 +100,8 @@ fun NotificationCard(
             Button(
                 onClick = onFollow,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.background_light),
-                    contentColor = colorResource(R.color.text_primary_light)
+                    containerColor = LocalDevicersColors.current.background,
+                    contentColor = LocalDevicersColors.current.textPrimary
                 ),
                 contentPadding = ButtonDefaults.ContentPadding,
                 modifier = Modifier

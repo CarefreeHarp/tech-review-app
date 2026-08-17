@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.profile.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +40,7 @@ fun ProfileReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = colorResource(R.color.surface_light),
+                color = LocalDevicersColors.current.surface,
                 shape = RoundedCornerShape(14.dp)
             )
             .padding(14.dp)
@@ -49,12 +50,12 @@ fun ProfileReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
                 text = review.author,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = colorResource(R.color.text_primary_light)
+                color = LocalDevicersColors.current.textPrimary
             )
             Text(
                 text = stringResource(ratingStarsResource(review.rating)),
                 fontSize = 12.sp,
-                color = colorResource(R.color.primary_yellow)
+                color = LocalDevicersColors.current.primaryYellow
             )
         }
 
@@ -63,7 +64,7 @@ fun ProfileReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
         Text(
             text = review.text,
             style = ReviewContentText,
-            color = colorResource(R.color.text_secondary_light)
+            color = LocalDevicersColors.current.textSecondary
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -82,7 +83,7 @@ fun ProfileReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
             Text(
                 text = review.likes.toString(),
                 fontSize = 11.sp,
-                color = colorResource(R.color.text_secondary_light),
+                color = LocalDevicersColors.current.textSecondary,
                 fontWeight = FontWeight.Black
             )
         }

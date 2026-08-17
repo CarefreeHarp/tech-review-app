@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.profile.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -8,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -44,13 +45,13 @@ fun ProfileStats(profile: ProfileContent, modifier: Modifier = Modifier) {
             text = profile.name,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            color = colorResource(R.color.text_primary_light)
+            color = LocalDevicersColors.current.textPrimary
         )
 
         Text(
             text = profile.handle,
             fontSize = 13.sp,
-            color = colorResource(R.color.text_secondary_light)
+            color = LocalDevicersColors.current.textSecondary
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -59,7 +60,7 @@ fun ProfileStats(profile: ProfileContent, modifier: Modifier = Modifier) {
             text = profile.biography,
             modifier = Modifier.padding(horizontal = 24.dp),
             fontSize = 13.sp,
-            color = colorResource(R.color.text_secondary_light),
+            color = LocalDevicersColors.current.textSecondary,
             textAlign = TextAlign.Center
         )
 
@@ -82,8 +83,8 @@ fun ProfileStats(profile: ProfileContent, modifier: Modifier = Modifier) {
                 .height(44.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(R.color.primary_yellow),
-                contentColor = colorResource(R.color.text_primary_light)
+                containerColor = LocalDevicersColors.current.primaryYellow,
+                contentColor = LocalDevicersColors.current.textPrimary
             )
         ) {
             Text(
@@ -105,13 +106,13 @@ private fun ProfileStat(stat: ProfileStatContent) {
             text = stat.number,
             fontSize = 17.sp,
             fontWeight = FontWeight.Bold,
-            color = colorResource(R.color.text_primary_light)
+            color = LocalDevicersColors.current.textPrimary
         )
 
         Text(
             text = stat.label,
             fontSize = 11.sp,
-            color = colorResource(R.color.text_secondary_light)
+            color = LocalDevicersColors.current.textSecondary
         )
     }
 }

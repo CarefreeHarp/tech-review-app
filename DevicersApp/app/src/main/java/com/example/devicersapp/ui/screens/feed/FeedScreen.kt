@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.feed
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -17,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +35,7 @@ import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 fun FeedScreen(modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = colorResource(R.color.background_light),
+        containerColor = LocalDevicersColors.current.background,
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = "home",
@@ -79,7 +80,7 @@ fun FeedScreenContent(
                 Text(
                     text = stringResource(R.string.feed),
                     modifier = Modifier.fillMaxWidth(),
-                    color = colorResource(R.color.text_primary_light),
+                    color = LocalDevicersColors.current.textPrimary,
                     style = SearchHeadingText
                 )
 
@@ -93,7 +94,7 @@ fun FeedScreenContent(
                         modifier = Modifier
                             .width(50.dp)
                             .height(2.dp)
-                            .background(colorResource(R.color.primary_yellow))
+                            .background(LocalDevicersColors.current.primaryYellow)
                     )
                 }
 

@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.product.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,7 +27,7 @@ fun RatingSummary(summary: RatingSummaryContent, modifier: Modifier = Modifier) 
             text = summary.title,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = colorResource(R.color.text_primary_light)
+            color = LocalDevicersColors.current.textPrimary
         )
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -44,19 +45,19 @@ fun RatingSummary(summary: RatingSummaryContent, modifier: Modifier = Modifier) 
                     text = summary.average,
                     fontSize = 56.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.text_primary_light)
+                    color = LocalDevicersColors.current.textPrimary
                 )
 
                 Text(
                     text = stringResource(ratingStarsResource(summary.rating)),
                     fontSize = 24.sp,
-                    color = colorResource(R.color.primary_yellow)
+                    color = LocalDevicersColors.current.primaryYellow
                 )
 
                 Text(
                     text = summary.reviewCount,
                     fontSize = 14.sp,
-                    color = colorResource(R.color.text_secondary_light)
+                    color = LocalDevicersColors.current.textSecondary
                 )
             }
 
@@ -85,7 +86,7 @@ private fun RatingBarRow(distribution: RatingDistribution) {
         Text(
             text = distribution.rating,
             fontSize = 11.sp,
-            color = colorResource(R.color.text_secondary_light),
+            color = LocalDevicersColors.current.textSecondary,
             modifier = Modifier.width(14.dp)
         )
 
@@ -94,7 +95,7 @@ private fun RatingBarRow(distribution: RatingDistribution) {
                 .width(145.dp)
                 .height(8.dp)
                 .background(
-                    color = colorResource(R.color.surface_secondary_light),
+                    color = LocalDevicersColors.current.surfaceSecondary,
                     shape = RoundedCornerShape(10.dp)
                 )
         ) {
@@ -103,7 +104,7 @@ private fun RatingBarRow(distribution: RatingDistribution) {
                     .fillMaxWidth(distribution.progress)
                     .height(8.dp)
                     .background(
-                        color = colorResource(R.color.primary_yellow),
+                        color = LocalDevicersColors.current.primaryYellow,
                         shape = RoundedCornerShape(10.dp)
                     )
             )
@@ -114,7 +115,7 @@ private fun RatingBarRow(distribution: RatingDistribution) {
         Text(
             text = distribution.percentage,
             fontSize = 10.sp,
-            color = colorResource(R.color.text_secondary_light),
+            color = LocalDevicersColors.current.textSecondary,
             modifier = Modifier.width(28.dp)
         )
     }

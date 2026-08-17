@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.utils.authentication
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -23,7 +25,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,8 +55,8 @@ fun PrimaryButton(
         modifier = modifier,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.primary_yellow),
-            contentColor = colorResource(R.color.text_primary_light)
+            containerColor = LocalDevicersColors.current.primaryYellow,
+            contentColor = LocalDevicersColors.current.textPrimary
         ),
         contentPadding = PaddingValues(0.dp)
     ) {
@@ -103,14 +104,14 @@ fun ScreenTitle(
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = stringResource(titleResId),
-            color = colorResource(R.color.text_primary_light),
+            color = LocalDevicersColors.current.textPrimary,
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = stringResource(descriptionResId),
-            color = colorResource(R.color.text_secondary_light),
+            color = LocalDevicersColors.current.textSecondary,
             fontSize = 15.sp,
             lineHeight = 15.sp
         )
@@ -146,7 +147,7 @@ fun AuthenticationField(
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = stringResource(labelResId),
-            color = colorResource(R.color.text_primary_light),
+            color = LocalDevicersColors.current.textPrimary,
             style = AuthenticationFieldLabelText
         )
         Spacer(modifier = Modifier.height(5.dp))
@@ -158,7 +159,7 @@ fun AuthenticationField(
             placeholder = {
                 Text(
                     text = placeholderResId?.let { stringResource(it) }.orEmpty(),
-                    color = colorResource(R.color.text_secondary_light),
+                    color = LocalDevicersColors.current.textSecondary,
                     fontSize = 12.sp
                 )
             },
@@ -187,13 +188,13 @@ fun AuthenticationField(
                 VisualTransformation.None
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = colorResource(R.color.text_primary_light),
-                unfocusedTextColor = colorResource(R.color.text_primary_light),
-                focusedContainerColor = colorResource(R.color.surface_secondary_light),
-                unfocusedContainerColor = colorResource(R.color.surface_secondary_light),
-                focusedBorderColor = colorResource(R.color.primary_yellow),
-                unfocusedBorderColor = colorResource(R.color.border_light),
-                cursorColor = colorResource(R.color.primary_yellow)
+                focusedTextColor = LocalDevicersColors.current.textPrimary,
+                unfocusedTextColor = LocalDevicersColors.current.textPrimary,
+                focusedContainerColor = LocalDevicersColors.current.surfaceSecondary,
+                unfocusedContainerColor = LocalDevicersColors.current.surfaceSecondary,
+                focusedBorderColor = LocalDevicersColors.current.primaryYellow,
+                unfocusedBorderColor = LocalDevicersColors.current.border,
+                cursorColor = LocalDevicersColors.current.primaryYellow
             )
         )
     }
@@ -209,7 +210,7 @@ fun AuthenticationDividerText(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(R.string.continue_with),
         modifier = modifier,
-        color = colorResource(R.color.text_secondary_light),
+        color = LocalDevicersColors.current.textSecondary,
         style = AuthenticationSupportText
     )
 }
@@ -232,8 +233,8 @@ fun SocialButton(
         modifier = modifier.height(34.dp),
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.surface_light),
-            contentColor = colorResource(R.color.text_primary_light)
+            containerColor = LocalDevicersColors.current.surface,
+            contentColor = LocalDevicersColors.current.textPrimary
         )
     ) {
         Image(
@@ -277,13 +278,13 @@ fun AuthenticationFooter(
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = stringResource(textResId),
-            color = colorResource(R.color.text_primary_light),
+            color = LocalDevicersColors.current.textPrimary,
             style = AuthenticationSupportText
         )
         TextButton(onClick = {}) {
             Text(
                 text = stringResource(actionResId),
-                color = colorResource(R.color.text_primary_light),
+                color = LocalDevicersColors.current.textPrimary,
                 style = AuthenticationSupportText
             )
         }

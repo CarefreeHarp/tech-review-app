@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.search.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.input.KeyboardType
@@ -77,7 +78,7 @@ fun SearchFilterPanel(
             .fillMaxWidth()
             .padding(top = 14.dp)
             .background(
-                color = colorResource(R.color.surface_secondary_light),
+                color = LocalDevicersColors.current.surfaceSecondary,
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(12.dp)
@@ -88,14 +89,14 @@ fun SearchFilterPanel(
         ) {
             Text(
                 text = stringResource(R.string.search_filters),
-                color = colorResource(R.color.text_primary_light),
+                color = LocalDevicersColors.current.textPrimary,
                 style = SearchHeadingText
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = stringResource(R.string.clear_filters),
                 modifier = Modifier.clickable(onClick = onClearFilters),
-                color = colorResource(R.color.text_secondary_light),
+                color = LocalDevicersColors.current.textSecondary,
                 style = SearchControlText
             )
         }
@@ -105,7 +106,7 @@ fun SearchFilterPanel(
         Spacer(modifier = Modifier.height(5.dp))
         SearchBar(
             placeholder = R.string.brand_placeholder,
-            backgroundColor = R.color.background_light,
+            backgroundColor = LocalDevicersColors.current.background,
             showSearchIcon = false,
             text = brand,
             onTextChange = onBrandChange
@@ -116,7 +117,7 @@ fun SearchFilterPanel(
         Spacer(modifier = Modifier.height(5.dp))
         SearchBar(
             placeholder = R.string.product_name_placeholder,
-            backgroundColor = R.color.background_light,
+            backgroundColor = LocalDevicersColors.current.background,
             showSearchIcon = false,
             text = productName,
             onTextChange = onProductNameChange
@@ -127,7 +128,7 @@ fun SearchFilterPanel(
         Spacer(modifier = Modifier.height(5.dp))
         SearchBar(
             placeholder = R.string.launch_date_placeholder,
-            backgroundColor = R.color.background_light,
+            backgroundColor = LocalDevicersColors.current.background,
             showSearchIcon = false,
             text = launchDate,
             // El filtrado evita letras, incluso cuando el contenido llega por pegado de texto.
@@ -138,7 +139,7 @@ fun SearchFilterPanel(
             Text(
                 text = stringResource(R.string.launch_date_invalid),
                 modifier = Modifier.padding(top = 4.dp),
-                color = colorResource(R.color.text_primary_light),
+                color = LocalDevicersColors.current.textPrimary,
                 style = SearchControlText
             )
         }
@@ -183,7 +184,7 @@ fun SearchFilterPanel(
             FilterLabel(R.string.minimum_rating, Modifier.weight(1f))
             Text(
                 text = stringResource(R.string.minimum_rating_format, minimumRating),
-                color = colorResource(R.color.text_primary_light),
+                color = LocalDevicersColors.current.textPrimary,
                 style = SearchControlText
             )
         }
@@ -222,14 +223,14 @@ fun SearchFilterPanel(
                 .clickable(enabled = isLaunchDateValid, onClick = onApplyFilters)
                 .height(38.dp)
                 .background(
-                    color = colorResource(R.color.primary_yellow),
+                    color = LocalDevicersColors.current.primaryYellow,
                     shape = RoundedCornerShape(10.dp)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = stringResource(R.string.apply_filters),
-                color = colorResource(R.color.text_primary_light),
+                color = LocalDevicersColors.current.textPrimary,
                 style = SearchControlText
             )
         }

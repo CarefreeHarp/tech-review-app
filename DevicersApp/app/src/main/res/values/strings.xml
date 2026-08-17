@@ -68,6 +68,14 @@
     <string name="rating_five">5</string>
     <string name="search">Buscar</string>
     <string name="theme_preview_text">Vista previa del tema</string>
+    <string name="theme_color_primary_yellow">Color amarillo principal</string>
+    <string name="theme_color_soft_yellow">Color amarillo suave</string>
+    <string name="theme_color_background">Color de fondo</string>
+    <string name="theme_color_surface">Color de superficie</string>
+    <string name="theme_color_surface_secondary">Color de superficie secundaria</string>
+    <string name="theme_color_text_primary">Color de texto principal</string>
+    <string name="theme_color_text_secondary">Color de texto secundario</string>
+    <string name="theme_color_border">Color de borde</string>
     <string name="feed_user_phone">@usuario</string>
     <string name="feed_product_phone">Teléfono</string>
     <string name="feed_review_phone">Buena relación calidad y batería para todo el día.</string>

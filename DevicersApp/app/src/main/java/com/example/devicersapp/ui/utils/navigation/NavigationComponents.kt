@@ -25,14 +25,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
@@ -45,11 +46,12 @@ import androidx.compose.foundation.layout.Spacer
  */
 @Composable
 fun BottomNavigationBar(selectedItem: String, modifier: Modifier = Modifier) {
+    val colors = LocalDevicersColors.current
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(55.dp)
-            .background(colorResource(R.color.surface_light))
+            .background(colors.surface)
             .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -75,14 +77,15 @@ fun NavigationItem(
     isSelected: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalDevicersColors.current
     Box(
         modifier = modifier
             .size(38.dp)
             .background(
                 color = if (isSelected) {
-                    colorResource(R.color.primary_yellow)
+                    colors.primaryYellow
                 } else {
-                    colorResource(R.color.surface_light)
+                    colors.surface
                 },
                 shape = RoundedCornerShape(10.dp)
             ),
@@ -110,13 +113,14 @@ fun FilterChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalDevicersColors.current
     Box(
         modifier = modifier
             .background(
                 color = if (selected)
-                    colorResource(R.color.primary_yellow)
+                    colors.primaryYellow
                 else
-                    colorResource(R.color.surface_light),
+                    colors.surface,
                 shape = RoundedCornerShape(8.dp)
             )
             .clickable { onClick() }
@@ -125,7 +129,7 @@ fun FilterChip(
     ) {
         Text(
             text = stringResource(textResId),
-            color = colorResource(R.color.text_primary_light),
+            color = colors.textPrimary,
             style = SearchControlText,
             fontWeight = FontWeight.Bold
         )
@@ -136,7 +140,7 @@ fun FilterChip(
  * Muestra una barra de búsqueda reutilizable con una lupa opcional.
  *
  * @param placeholder Recurso de texto mostrado cuando no hay búsqueda.
- * @param backgroundColor Recurso de color para el fondo del campo.
+ * @param backgroundColor Color para el fondo del campo.
  * @param showSearchIcon Indica si debe mostrarse el ícono de lupa.
  * @param keyboardOptions Configuración del teclado mostrada para el tipo de contenido del campo.
  * @param modifier Modificador aplicado al campo.
@@ -144,14 +148,15 @@ fun FilterChip(
 @Composable
 fun SearchBar(
     @StringRes placeholder: Int,
-    backgroundColor: Int = R.color.background_light,
+    backgroundColor: Color? = null,
     showSearchIcon: Boolean = false,
     modifier: Modifier = Modifier,
     text: String,
     onTextChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 )  {
-
+    val colors = LocalDevicersColors.current
+    val resolvedBackgroundColor = backgroundColor ?: colors.background
 
     BasicTextField(
         value = text,
@@ -160,14 +165,14 @@ fun SearchBar(
             .fillMaxWidth()
             .height(42.dp)
             .background(
-                color = colorResource(backgroundColor),
+                color = resolvedBackgroundColor,
                 shape = RoundedCornerShape(9.dp)
             )
             .padding(horizontal = 12.dp),
         singleLine = true,
         keyboardOptions = keyboardOptions,
         textStyle = LocalTextStyle.current.copy(
-            color = colorResource(R.color.text_primary_light),
+            color = colors.textPrimary,
             fontSize = SearchControlText.fontSize
         ),
         decorationBox = { innerTextField ->
@@ -191,7 +196,7 @@ fun SearchBar(
                     if (text.isEmpty()) {
                         Text(
                             text = stringResource(placeholder),
-                            color = colorResource(R.color.text_secondary_light),
+                            color = colors.textSecondary,
                             style = SearchControlText
                         )
                     }
@@ -209,6 +214,7 @@ fun SearchBar(
  */
 @Composable
 fun AppTopBar(modifier: Modifier = Modifier) {
+    val colors = LocalDevicersColors.current
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -217,7 +223,7 @@ fun AppTopBar(modifier: Modifier = Modifier) {
         Text(
             text = stringResource(R.string.top_bar_back),
             fontSize = 28.sp,
-            color = colorResource(R.color.text_primary_light),
+            color = colors.textPrimary,
             modifier = Modifier.align(Alignment.CenterStart)
         )
         Image(
@@ -231,7 +237,7 @@ fun AppTopBar(modifier: Modifier = Modifier) {
             text = stringResource(R.string.top_bar_options),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = colorResource(R.color.text_primary_light),
+            color = colors.textPrimary,
             modifier = Modifier.align(Alignment.CenterEnd)
         )
     }
@@ -264,7 +270,7 @@ fun FilterChipPreview() {
 fun SearchBarPreview() {
     SearchBar(
         placeholder = R.string.search_placeholder,
-        backgroundColor = R.color.surface_light,
+        backgroundColor = LocalDevicersColors.current.surface,
         showSearchIcon = true
     )
 }*/
