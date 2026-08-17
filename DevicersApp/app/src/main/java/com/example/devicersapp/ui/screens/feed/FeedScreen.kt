@@ -26,9 +26,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalFeedReviewsProvider
 import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.screens.feed.components.ReviewBox
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 
 /** Renderiza la pantalla estática del Feed del tema claro de Devicers. */
 @Composable
@@ -43,91 +46,60 @@ fun FeedScreen(modifier: Modifier = Modifier) {
 /** Reúne el contenido visual de la pantalla de Feed. */
 @Composable
 fun FeedScreenContent(modifier: Modifier = Modifier) {
+    val allReviews = LocalFeedReviewsProvider.reviews
     Column(
         modifier = modifier
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .weight(1f)
-                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
 
-            Image(
-                painter = painterResource(R.drawable.logo_claro),
-                contentDescription = stringResource(R.string.devicers_logo_description),
-                modifier = Modifier.size(width = 186.dp, height = 50.dp)
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                text = stringResource(R.string.feed),
-                modifier = Modifier.fillMaxWidth(),
-                color = colorResource(R.color.text_primary_light),
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .width(50.dp)
-                    .height(2.dp)
-                    .background(
-                        colorResource(R.color.primary_yellow)
-                    )
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            ReviewBox(
-                review = FeedReviewContent(
-                    productName = stringResource(R.string.feed_product_phone),
-                    productImageResId = R.drawable.electronic_phone,
-                    author = stringResource(R.string.feed_user_phone),
-                    reviewText = stringResource(R.string.feed_review_phone),
-                    likes = 125,
-                    timeAgo = stringResource(R.string.feed_time_two_days),
-                    rating = 5
+                Image(
+                    painter = painterResource(R.drawable.logo_claro),
+                    contentDescription = stringResource(R.string.devicers_logo_description),
+                    modifier = Modifier.size(width = 186.dp, height = 50.dp)
                 )
-            )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            ReviewBox(
-                review = FeedReviewContent(
-                    productName = stringResource(R.string.feed_product_audio),
-                    productImageResId = R.drawable.auriculares_logo,
-                    author = stringResource(R.string.feed_user_audio),
-                    reviewText = stringResource(R.string.feed_review_audio),
-                    likes = 86,
-                    timeAgo = stringResource(R.string.feed_time_one_day),
-                    rating = 4
+                Text(
+                    text = stringResource(R.string.feed),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = colorResource(R.color.text_primary_light),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
                 )
-            )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
-            ReviewBox(
-                review = FeedReviewContent(
-                    productName = stringResource(R.string.feed_product_computer),
-                    productImageResId = R.drawable.electronic_desktop,
-                    author = stringResource(R.string.feed_user_computer),
-                    reviewText = stringResource(R.string.feed_review_computer),
-                    likes = 41,
-                    timeAgo = stringResource(R.string.feed_time_five_hours),
-                    rating = 3
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .width(50.dp)
+                        .height(2.dp)
+                        .background(
+                            colorResource(R.color.primary_yellow)
+                        )
                 )
-            )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            items(allReviews) { review ->
+                ReviewBox(review = review)
+
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
-
         BottomNavigationBar(
             modifier = Modifier.fillMaxWidth(),
             selectedItem = "home"

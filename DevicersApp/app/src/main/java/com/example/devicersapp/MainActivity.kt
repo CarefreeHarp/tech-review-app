@@ -22,8 +22,12 @@ class MainActivity : ComponentActivity() {
             //ProductScreen()
             //ProfileScreen()
             //ReviewScreen()
+<<<<<<< HEAD
+            SearchScreen()
+=======
             //SearchScreen()
             //NotificationsScreen()
+>>>>>>> develop
         }
     }
 }

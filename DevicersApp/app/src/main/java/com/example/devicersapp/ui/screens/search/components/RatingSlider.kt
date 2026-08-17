@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.SearchControlText
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 
 /**
  * Muestra el control visual de calificación mínima seleccionado en cuatro estrellas.
@@ -28,31 +30,28 @@ import com.example.devicersapp.ui.theme.SearchControlText
  * @param modifier Modificador aplicado al control.
  */
 @Composable
-fun RatingSlider(modifier: Modifier = Modifier) {
+fun RatingSlider(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier
+){
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 4.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-                .background(
-                    color = colorResource(R.color.border_light),
-                    shape = RoundedCornerShape(2.dp)
-                )
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .height(4.dp)
-                    .background(
-                        color = colorResource(R.color.primary_yellow),
-                        shape = RoundedCornerShape(2.dp)
-                    )
+        Slider(
+            value = value,
+            onValueChange = onValueChange,
+            valueRange = 0f..5f,
+            steps = 4,
+            modifier = Modifier.fillMaxWidth(),
+            colors = SliderDefaults.colors(
+                thumbColor = colorResource(R.color.primary_yellow),
+                activeTrackColor = colorResource(R.color.primary_yellow),
+                inactiveTrackColor = colorResource(R.color.border_light)
             )
-        }
+        )
 
         Spacer(modifier = Modifier.height(5.dp))
         Row(
@@ -70,8 +69,12 @@ fun RatingSlider(modifier: Modifier = Modifier) {
 }
 
 /** Muestra una vista previa del control de calificación. */
-@Composable
 @Preview(showBackground = true)
+@Composable
 fun RatingSliderPreview() {
-    RatingSlider(modifier = Modifier.padding(16.dp))
+    RatingSlider(
+        value = 4f,
+        onValueChange = {},
+        modifier = Modifier.padding(16.dp)
+    )
 }
