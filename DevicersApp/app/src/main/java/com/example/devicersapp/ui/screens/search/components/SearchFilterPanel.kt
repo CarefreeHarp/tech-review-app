@@ -1,6 +1,7 @@
 package com.example.devicersapp.ui.screens.search.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,16 +11,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.theme.SearchHeadingText
@@ -29,6 +30,20 @@ import com.example.devicersapp.ui.utils.navigation.SearchBar
 /**
  * Muestra el panel visual con los filtros disponibles para la búsqueda.
  *
+ * @param brand Marca escrita para filtrar.
+ * @param onBrandChange Acción que solicita actualizar la marca.
+ * @param productName Nombre de producto escrito para filtrar.
+ * @param onProductNameChange Acción que solicita actualizar el nombre de producto.
+ * @param launchDate Fecha de lanzamiento escrita para filtrar.
+ * @param onLaunchDateChange Acción que solicita actualizar la fecha de lanzamiento.
+ * @param selectedCategory Identificador de categoría activa.
+ * @param onCategorySelected Acción que solicita cambiar la categoría.
+ * @param minimumRating Calificación mínima activa.
+ * @param onRatingChange Acción que solicita cambiar la calificación mínima.
+ * @param sortBy Identificador del orden activo.
+ * @param onSortChange Acción que solicita cambiar el orden.
+ * @param onClearFilters Acción que solicita restablecer todos los filtros.
+ * @param onApplyFilters Acción que solicita aplicar los filtros.
  * @param modifier Modificador aplicado al panel.
  */
 @Composable
@@ -50,9 +65,13 @@ fun SearchFilterPanel(
 
     sortBy: String,
     onSortChange: (String) -> Unit,
-
+    onClearFilters: () -> Unit,
+    onApplyFilters: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isLaunchDateValid = launchDate.isBlank() || isValidLaunchDate(launchDate)
+    val showLaunchDateError = launchDate.isNotBlank() && launchDate.filter(Char::isDigit).length == 8 && !isLaunchDateValid
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -75,6 +94,7 @@ fun SearchFilterPanel(
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = stringResource(R.string.clear_filters),
+                modifier = Modifier.clickable(onClick = onClearFilters),
                 color = colorResource(R.color.text_secondary_light),
                 style = SearchControlText
             )
@@ -110,8 +130,18 @@ fun SearchFilterPanel(
             backgroundColor = R.color.background_light,
             showSearchIcon = false,
             text = launchDate,
-            onTextChange = onLaunchDateChange
+            // El filtrado evita letras, incluso cuando el contenido llega por pegado de texto.
+            onTextChange = { onLaunchDateChange(formatLaunchDate(it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
+        if (showLaunchDateError) {
+            Text(
+                text = stringResource(R.string.launch_date_invalid),
+                modifier = Modifier.padding(top = 4.dp),
+                color = colorResource(R.color.text_primary_light),
+                style = SearchControlText
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
         FilterLabel(R.string.category)
@@ -152,7 +182,7 @@ fun SearchFilterPanel(
         ) {
             FilterLabel(R.string.minimum_rating, Modifier.weight(1f))
             Text(
-                text = stringResource(R.string.rating_four_or_more),
+                text = stringResource(R.string.minimum_rating_format, minimumRating),
                 color = colorResource(R.color.text_primary_light),
                 style = SearchControlText
             )
@@ -188,6 +218,8 @@ fun SearchFilterPanel(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                // Una fecha parcial o imposible no puede aplicarse como criterio de búsqueda.
+                .clickable(enabled = isLaunchDateValid, onClick = onApplyFilters)
                 .height(38.dp)
                 .background(
                     color = colorResource(R.color.primary_yellow),
@@ -203,6 +235,53 @@ fun SearchFilterPanel(
         }
     }
 }
+
+/**
+ * Conserva únicamente los ocho dígitos de una fecha y muestra el formato DD / MM / AAAA.
+ *
+ * @param input Contenido recibido desde el campo de fecha.
+ * @return Fecha parcial o completa sin caracteres no numéricos.
+ */
+private fun formatLaunchDate(input: String): String {
+    val digits = input.filter(Char::isDigit).take(8)
+    return buildString {
+        digits.forEachIndexed { index, digit ->
+            if (index == 2 || index == 4) append(" / ")
+            append(digit)
+        }
+    }
+}
+
+/**
+ * Comprueba que una fecha completa tenga un mes y día válidos, incluidos los años bisiestos.
+ *
+ * @param formattedDate Fecha con el formato DD / MM / AAAA.
+ * @return `true` solo si la fecha contiene ocho dígitos y existe en el calendario gregoriano.
+ */
+private fun isValidLaunchDate(formattedDate: String): Boolean {
+    val digits = formattedDate.filter(Char::isDigit)
+    if (digits.length != 8) return false
+
+    val day = digits.substring(0, 2).toInt()
+    val month = digits.substring(2, 4).toInt()
+    val year = digits.substring(4, 8).toInt()
+    val maximumDays = when (month) {
+        1, 3, 5, 7, 8, 10, 12 -> 31
+        4, 6, 9, 11 -> 30
+        2 -> if (isLeapYear(year)) 29 else 28
+        else -> return false
+    }
+
+    return day in 1..maximumDays
+}
+
+/**
+ * Determina si un año es bisiesto según las reglas del calendario gregoriano.
+ *
+ * @param year Año de cuatro dígitos recibido desde el campo de fecha.
+ * @return `true` cuando febrero tiene veintinueve días.
+ */
+private fun isLeapYear(year: Int): Boolean = year % 400 == 0 || year % 4 == 0 && year % 100 != 0
 
 /** Muestra una vista previa del panel de filtros. */
 @Composable
@@ -226,6 +305,8 @@ fun SearchFilterPanelPreview() {
 
         sortBy = "recent",
         onSortChange = {},
+        onClearFilters = {},
+        onApplyFilters = {},
 
         modifier = Modifier.padding(20.dp)
     )

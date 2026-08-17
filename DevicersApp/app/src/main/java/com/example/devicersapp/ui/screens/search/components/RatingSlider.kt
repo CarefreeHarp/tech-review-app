@@ -25,8 +25,10 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 
 /**
- * Muestra el control visual de calificación mínima seleccionado en cuatro estrellas.
+ * Muestra el control para seleccionar la calificación mínima de cero a cinco estrellas.
  *
+ * @param value Calificación mínima seleccionada.
+ * @param onValueChange Acción que solicita cambiar la calificación mínima.
  * @param modifier Modificador aplicado al control.
  */
 @Composable
@@ -34,7 +36,7 @@ fun RatingSlider(
     value: Float,
     onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()

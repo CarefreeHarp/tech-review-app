@@ -16,18 +16,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LoginScreen()
+            //LoginScreen()
             //RegisterScreen()
             //FeedScreen()
             //ProductScreen()
             //ProfileScreen()
             //ReviewScreen()
-<<<<<<< HEAD
-            SearchScreen()
-=======
             //SearchScreen()
             //NotificationsScreen()
->>>>>>> develop
         }
     }
 }

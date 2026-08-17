@@ -47,6 +47,7 @@
     <string name="product_name_placeholder">Ej. Auriculares</string>
     <string name="launch_date">FECHA DE LANZAMIENTO</string>
     <string name="launch_date_placeholder">DD / MM / AAAA</string>
+    <string name="launch_date_invalid">Ingresa una fecha válida.</string>
     <string name="category">CATEGORÍA</string>
     <string name="all">Todos</string>
     <string name="cellphones">Celulares</string>
@@ -54,6 +55,7 @@
     <string name="computers">Computadores</string>
     <string name="minimum_rating">CALIFICACIÓN MÍNIMA</string>
     <string name="rating_four_or_more">4.0 o más</string>
+    <string name="minimum_rating_format">%1$.0f o más</string>
     <string name="sort_by">ORDENAR POR</string>
     <string name="most_recent">Más recientes</string>
     <string name="best_rated">Mejor valorados</string>

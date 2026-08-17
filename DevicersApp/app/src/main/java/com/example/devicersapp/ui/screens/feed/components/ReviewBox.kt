@@ -18,10 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.theme.ReviewContentText
@@ -43,13 +42,13 @@ fun ReviewBox(review: FeedReviewContent, modifier: Modifier = Modifier) {
             )
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text(stringResource(review.author), color = colorResource(R.color.text_secondary_light), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(review.author), color = colorResource(R.color.text_secondary_light), style = MaterialTheme.typography.labelSmall)
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(review.productName), color = colorResource(R.color.text_primary_light), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(review.productName), color = colorResource(R.color.text_primary_light), style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(ratingStarsResource(review.rating)), color = colorResource(R.color.primary_yellow), fontSize = 12.sp)
+                Text(stringResource(ratingStarsResource(review.rating)), color = colorResource(R.color.primary_yellow), style = MaterialTheme.typography.bodySmall)
             }
-            Text(stringResource(review.timeAgo), color = colorResource(R.color.text_secondary_light), fontSize = 10.sp)
+            Text(stringResource(review.timeAgo), color = colorResource(R.color.text_secondary_light), style = MaterialTheme.typography.labelSmall)
         }
         Spacer(Modifier.height(10.dp))
         Text(
@@ -61,7 +60,7 @@ fun ReviewBox(review: FeedReviewContent, modifier: Modifier = Modifier) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Image(painterResource(R.drawable.like_icon), null, Modifier.size(18.dp))
             Spacer(Modifier.width(4.dp))
-            Text(review.likes.toString(), color = colorResource(R.color.text_secondary_light), fontSize = 10.sp, fontWeight = FontWeight.Black)
+            Text(review.likes.toString(), color = colorResource(R.color.text_secondary_light), style = MaterialTheme.typography.labelSmall)
             Spacer(Modifier.weight(1f))
             Image(painterResource(R.drawable.send_icon), null, Modifier.size(18.dp))
             Spacer(Modifier.width(40.dp))

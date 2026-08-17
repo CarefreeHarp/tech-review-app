@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -137,6 +138,7 @@ fun FilterChip(
  * @param placeholder Recurso de texto mostrado cuando no hay búsqueda.
  * @param backgroundColor Recurso de color para el fondo del campo.
  * @param showSearchIcon Indica si debe mostrarse el ícono de lupa.
+ * @param keyboardOptions Configuración del teclado mostrada para el tipo de contenido del campo.
  * @param modifier Modificador aplicado al campo.
  */
 @Composable
@@ -146,7 +148,8 @@ fun SearchBar(
     showSearchIcon: Boolean = false,
     modifier: Modifier = Modifier,
     text: String,
-    onTextChange: (String) -> Unit
+    onTextChange: (String) -> Unit,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 )  {
 
 
@@ -162,6 +165,7 @@ fun SearchBar(
             )
             .padding(horizontal = 12.dp),
         singleLine = true,
+        keyboardOptions = keyboardOptions,
         textStyle = LocalTextStyle.current.copy(
             color = colorResource(R.color.text_primary_light),
             fontSize = SearchControlText.fontSize

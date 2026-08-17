@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalNotificationsProvider
 import com.example.devicersapp.ui.screens.notifications.components.NotificationSection
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 
@@ -77,7 +78,9 @@ fun NotificationsScreenContent(
     modifier: Modifier = Modifier
 ) {
     // Una sola referencia de tiempo mantiene coherentes los valores relativos de toda la lista.
-    val notificationGroups = notificationsSampleData(currentTimeMillis = System.currentTimeMillis())
+    val notificationGroups = LocalNotificationsProvider.notificationGroups(
+        currentTimeMillis = System.currentTimeMillis()
+    )
 
     LazyColumn(
         modifier = modifier.background(colorResource(R.color.background_light)),
