@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.review.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +35,7 @@ fun ReviewDetailHeader(modifier: Modifier = Modifier) {
             modifier = Modifier.size(20.dp)
         )
         Spacer(Modifier.size(18.dp))
-        Text(stringResource(R.string.review_title), style = MaterialTheme.typography.titleLarge, color = colorResource(R.color.text_primary_light))
+        Text(stringResource(R.string.review_title), style = MaterialTheme.typography.titleLarge, color = LocalDevicersColors.current.textPrimary)
         Spacer(Modifier.weight(1f))
         Image(
             painter = painterResource(R.drawable.bookmark_icon),

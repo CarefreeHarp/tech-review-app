@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.search
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +52,7 @@ fun SearchScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = colorResource(R.color.background_light),
+        containerColor = LocalDevicersColors.current.background,
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = "search",
@@ -144,7 +145,7 @@ fun SearchScreenContent(
             Text(
                 text = stringResource(R.string.search),
                 modifier = Modifier.fillMaxWidth(),
-                color = colorResource(R.color.text_primary_light),
+                color = LocalDevicersColors.current.textPrimary,
                 style = SearchScreenTitleText,
                 textAlign = TextAlign.Center
             )
@@ -153,7 +154,7 @@ fun SearchScreenContent(
 
             SearchBar(
                 placeholder = R.string.search_placeholder,
-                backgroundColor = R.color.surface_light,
+                backgroundColor = LocalDevicersColors.current.surface,
                 showSearchIcon = true,
                 text = searchText,
                 onTextChange = onSearchTextChange

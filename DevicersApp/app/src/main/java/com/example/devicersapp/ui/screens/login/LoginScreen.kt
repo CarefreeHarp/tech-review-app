@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.login
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
@@ -47,7 +48,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
         onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
         modifier = modifier
             .fillMaxSize()
-            .background(colorResource(R.color.background_light))
+            .background(LocalDevicersColors.current.background)
     )
 }
 

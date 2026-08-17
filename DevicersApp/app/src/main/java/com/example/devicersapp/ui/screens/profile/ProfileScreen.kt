@@ -1,5 +1,6 @@
 package com.example.devicersapp.ui.screens.profile
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -36,7 +37,8 @@ import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 /**
  * Pantalla principal del perfil.
  *
- * Obtiene las reseñas directamente desde FakeDatabase.
+ * Obtiene las reseñas creadas por el usuario desde
+ * LocalUserReviewsProvider.
  */
 @Composable
 fun ProfileScreen(
@@ -145,7 +147,7 @@ fun ProfileScreenContent(
                 text = stringResource(R.string.profile_my_reviews),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = LocalDevicersColors.current.textPrimary
             )
 
             Spacer(

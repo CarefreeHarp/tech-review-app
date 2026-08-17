@@ -1,10 +1,11 @@
 package com.example.devicersapp.ui.screens.search.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.annotation.StringRes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.devicersapp.R
@@ -21,7 +22,7 @@ fun FilterLabel(@StringRes textResId: Int, modifier: Modifier = Modifier) {
     Text(
         text = stringResource(textResId),
         modifier = modifier,
-        color = colorResource(R.color.text_secondary_light),
+        color = LocalDevicersColors.current.textSecondary,
         style = SearchControlText
     )
 }

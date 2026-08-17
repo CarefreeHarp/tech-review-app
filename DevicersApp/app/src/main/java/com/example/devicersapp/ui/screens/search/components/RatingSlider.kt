@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.search.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,9 +50,9 @@ fun RatingSlider(
             steps = 4,
             modifier = Modifier.fillMaxWidth(),
             colors = SliderDefaults.colors(
-                thumbColor = colorResource(R.color.primary_yellow),
-                activeTrackColor = colorResource(R.color.primary_yellow),
-                inactiveTrackColor = colorResource(R.color.border_light)
+                thumbColor = LocalDevicersColors.current.primaryYellow,
+                activeTrackColor = LocalDevicersColors.current.primaryYellow,
+                inactiveTrackColor = LocalDevicersColors.current.border
             )
         )
 

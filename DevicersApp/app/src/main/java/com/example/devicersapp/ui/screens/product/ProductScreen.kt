@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.product
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +16,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +41,7 @@ fun ProductScreen(
         modifier = modifier
             .fillMaxSize()
             .background(
-                colorResource(R.color.background_light)
+                LocalDevicersColors.current.background
             )
             .statusBarsPadding()
     )
@@ -76,7 +77,7 @@ fun ProductScreenContent(
             // Nombre del producto
             Text(
                 text = stringResource(R.string.product_title),
-                color = colorResource(R.color.text_primary_light),
+                color = LocalDevicersColors.current.textPrimary,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -84,7 +85,7 @@ fun ProductScreenContent(
             // Marca
             Text(
                 text = stringResource(R.string.product_brand_label),
-                color = colorResource(R.color.text_secondary_light),
+                color = LocalDevicersColors.current.textSecondary,
                 fontSize = 14.sp
             )
 
@@ -130,8 +131,8 @@ fun ProductScreenContent(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.primary_yellow),
-                    contentColor = colorResource(R.color.text_primary_light)
+                    containerColor = LocalDevicersColors.current.primaryYellow,
+                    contentColor = LocalDevicersColors.current.textPrimary
                 )
             ) {
                 Text(

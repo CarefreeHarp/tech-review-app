@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.notifications
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +43,7 @@ fun NotificationsScreen(modifier: Modifier = Modifier) {
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = colorResource(R.color.background_light),
+        containerColor = LocalDevicersColors.current.background,
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = "favorite",
@@ -83,7 +84,7 @@ fun NotificationsScreenContent(
     )
 
     LazyColumn(
-        modifier = modifier.background(colorResource(R.color.background_light)),
+        modifier = modifier.background(LocalDevicersColors.current.background),
         contentPadding = PaddingValues(
             start = 18.dp,
             end = 18.dp,
@@ -105,12 +106,12 @@ fun NotificationsScreenContent(
                     text = stringResource(R.string.notifications),
                     modifier = Modifier.padding(top = 20.dp),
                     style = MaterialTheme.typography.headlineSmall,
-                    color = colorResource(R.color.text_primary_light)
+                    color = LocalDevicersColors.current.textPrimary
                 )
                 Text(
                     text = stringResource(R.string.notifications_subtitle),
                     style = MaterialTheme.typography.bodySmall,
-                    color = colorResource(R.color.text_secondary_light)
+                    color = LocalDevicersColors.current.textSecondary
                 )
             }
         }
