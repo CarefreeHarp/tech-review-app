@@ -16,7 +16,9 @@ data class DevicersColorPalette(
     val surfaceSecondary: Color,
     val textPrimary: Color,
     val textSecondary: Color,
-    val border: Color
+    val textOnPrimary: Color,
+    val border: Color,
+    val selectedIcon: Color
 )
 
 
@@ -32,7 +34,9 @@ val LightDevicersColors = DevicersColorPalette(
     surfaceSecondary = Color(0xFFE7E7DB),
     textPrimary = Color(0xFF1C1C18),
     textSecondary = Color(0xFF595950),
-    border = Color(0xFFBDBDAC)
+    textOnPrimary = Color(0xFF000000),
+    border = Color(0xFFBDBDAC),
+    selectedIcon = Color(0xFF1C1C18)
 )
 
 
@@ -48,7 +52,9 @@ val DarkDevicersColors = DevicersColorPalette(
     surfaceSecondary = Color(0xFF30302A),
     textPrimary = Color(0xFFF7F7F0),
     textSecondary = Color(0xFFB8B8AA),
-    border = Color(0xFF44443B)
+    textOnPrimary = Color(0xFF000000),
+    border = Color(0xFF44443B),
+    selectedIcon = Color(0xFF1C1C18)
 )
 
 /** Expone la paleta activa a todos los composables de la aplicación. */

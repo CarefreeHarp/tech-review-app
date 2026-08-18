@@ -56,7 +56,7 @@ fun PrimaryButton(
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = LocalDevicersColors.current.primaryYellow,
-            contentColor = LocalDevicersColors.current.textPrimary
+            contentColor = LocalDevicersColors.current.textOnPrimary
         ),
         contentPadding = PaddingValues(0.dp)
     ) {

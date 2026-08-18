@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.screens.search.components.SearchFilterPanel
 import com.example.devicersapp.ui.theme.SearchScreenTitleText
-import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 
 /**
@@ -50,17 +48,7 @@ fun SearchScreen(
     var minimumRating by remember { mutableStateOf(4f) }
     var sortBy by remember { mutableStateOf("recent") }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = LocalDevicersColors.current.background,
-        bottomBar = {
-            BottomNavigationBar(
-                selectedItem = "search",
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    ) { innerPadding ->
-        SearchScreenContent(
+    SearchScreenContent(
             searchText = searchText,
             onSearchTextChange = { searchText = it },
             brand = brand,
@@ -84,11 +72,8 @@ fun SearchScreen(
                 sortBy = "recent"
             },
             onApplyFilters = onApplyFilters,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        )
-    }
+            modifier = modifier.fillMaxSize().background(LocalDevicersColors.current.background)
+    )
 }
 
 /**

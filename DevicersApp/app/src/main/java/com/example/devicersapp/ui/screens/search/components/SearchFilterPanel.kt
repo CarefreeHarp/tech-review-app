@@ -230,7 +230,7 @@ fun SearchFilterPanel(
         ) {
             Text(
                 text = stringResource(R.string.apply_filters),
-                color = LocalDevicersColors.current.textPrimary,
+                color = LocalDevicersColors.current.textOnPrimary,
                 style = SearchControlText
             )
         }

@@ -2,18 +2,13 @@ package com.example.devicersapp.ui.screens.create_review
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,7 +27,7 @@ import com.example.devicersapp.ui.screens.create_review.components.CreateReviewH
 import com.example.devicersapp.ui.screens.create_review.components.CreateReviewSearchRow
 import com.example.devicersapp.ui.screens.create_review.components.ProductReviewItem
 import com.example.devicersapp.ui.theme.DevicersAppTheme
-import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
+import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.R
 
 /**
@@ -47,7 +42,6 @@ fun CreateReviewScreen(
     onBackClick: () -> Unit = {},
     onFiltersClick: () -> Unit = {},
     onProductClick: (ProductContent) -> Unit = {},
-    onProfileClick: () -> Unit = {}
 ) {
 
     var searchText by remember {
@@ -79,7 +73,6 @@ fun CreateReviewScreen(
             onFiltersClick()
         },
         onProductClick = onProductClick,
-        onProfileClick = onProfileClick,
         modifier = modifier
     )
 
@@ -108,7 +101,6 @@ fun CreateReviewScreenContent(
     onBackClick: () -> Unit,
     onFiltersClick: () -> Unit,
     onProductClick: (ProductContent) -> Unit,
-    onProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -163,106 +155,73 @@ fun CreateReviewScreenContent(
                                 )
                         )
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp)
+    ) {
+        CreateReviewHeader(
+            onBackClick = onBackClick,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-        containerColor = MaterialTheme.colorScheme.background,
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
 
-        contentWindowInsets = WindowInsets.safeDrawing,
+        Text(
+            text = "Busca el producto que quieres reseñar.",
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 13.sp
+        )
 
-        topBar = {
-            CreateReviewHeader(
-                onBackClick = onBackClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-            )
-        },
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
 
-        bottomBar = {
-            BottomNavigationBar(
-                selectedItem = "add",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding(),
-                onProfileClick = onProfileClick
-            )
-        }
-    ) { innerPadding ->
+        CreateReviewSearchRow(
+            searchText = searchText,
+            onSearchTextChange = onSearchTextChange,
+            onFiltersClick = onFiltersClick
+        )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
-        ) {
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
 
-            Spacer(
-                modifier = Modifier.height(8.dp)
-            )
+        CategoryChipRow(
+            selectedCategory = selectedCategory,
+            onCategoryChange = onCategoryChange
+        )
 
-            Text(
-                text = "Busca el producto que quieres reseñar.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 13.sp
-            )
+        Spacer(
+            modifier = Modifier.height(14.dp)
+        )
 
-            Spacer(
-                modifier = Modifier.height(12.dp)
-            )
+        Text(
+            text = "CATEGORÍAS",
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Bold
+        )
 
-            /*
-             * Barra de búsqueda + botón Filtros.
-             */
-            CreateReviewSearchRow(
-                searchText = searchText,
-                onSearchTextChange = onSearchTextChange,
-                onFiltersClick = onFiltersClick
-            )
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
 
-            Spacer(
-                modifier = Modifier.height(12.dp)
-            )
+        Text(
+            text = "RESULTADOS POPULARES",
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold
+        )
 
-            /*
-             * Categorías seleccionables.
-             */
-            CategoryChipRow(
-                selectedCategory = selectedCategory,
-                onCategoryChange = onCategoryChange
-            )
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
 
-            Spacer(
-                modifier = Modifier.height(14.dp)
-            )
-
-            Text(
-                text = "CATEGORÍAS",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(
-                modifier = Modifier.height(10.dp)
-            )
-
-            Text(
-                text = "RESULTADOS POPULARES",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(
-                modifier = Modifier.height(10.dp)
-            )
-
-            /*
-             * Producto: Auriculares.
-             */
-            if (showHeadphones) {
+        if (showHeadphones) {
 
                 ProductReviewItem(
                     title = headphones.name,
@@ -277,12 +236,9 @@ fun CreateReviewScreenContent(
                 Spacer(
                     modifier = Modifier.height(12.dp)
                 )
-            }
+        }
 
-            /*
-             * Producto: Teléfono.
-             */
-            if (showPhone) {
+        if (showPhone) {
 
                 ProductReviewItem(
                     title = phone.name,
@@ -297,12 +253,9 @@ fun CreateReviewScreenContent(
                 Spacer(
                     modifier = Modifier.height(12.dp)
                 )
-            }
+        }
 
-            /*
-             * Mensaje cuando ningún producto coincide.
-             */
-            if (!showHeadphones && !showPhone) {
+        if (!showHeadphones && !showPhone) {
 
                 Text(
                     text = "No encontramos productos con esos filtros.",
@@ -313,33 +266,32 @@ fun CreateReviewScreenContent(
                 Spacer(
                     modifier = Modifier.height(16.dp)
                 )
-            }
-
-            Spacer(
-                modifier = Modifier.height(6.dp)
-            )
-
-            Text(
-                text = "¿No encuentras tu producto?",
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold,
-                fontSize = 13.sp
-            )
-
-            Spacer(
-                modifier = Modifier.height(3.dp)
-            )
-
-            Text(
-                text = "Prueba buscando por marca o modelo.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 12.sp
-            )
-
-            Spacer(
-                modifier = Modifier.height(28.dp)
-            )
         }
+
+        Spacer(
+            modifier = Modifier.height(6.dp)
+        )
+
+        Text(
+            text = "¿No encuentras tu producto?",
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.Bold,
+            fontSize = 13.sp
+        )
+
+        Spacer(
+            modifier = Modifier.height(3.dp)
+        )
+
+        Text(
+            text = "Prueba buscando por marca o modelo.",
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 12.sp
+        )
+
+        Spacer(
+            modifier = Modifier.height(28.dp)
+        )
     }
 }
 
@@ -352,7 +304,9 @@ fun CreateReviewLightPreview() {
     DevicersAppTheme(
         darkTheme = false
     ) {
-        CreateReviewScreen()
+        DevicersScaffold(selectedItem = "add") { innerPadding ->
+            CreateReviewScreen(modifier = Modifier.padding(innerPadding))
+        }
     }
 }
 
@@ -365,6 +319,8 @@ fun CreateReviewDarkPreview() {
     DevicersAppTheme(
         darkTheme = true
     ) {
-        CreateReviewScreen()
+        DevicersScaffold(selectedItem = "add") { innerPadding ->
+            CreateReviewScreen(modifier = Modifier.padding(innerPadding))
+        }
     }
 }

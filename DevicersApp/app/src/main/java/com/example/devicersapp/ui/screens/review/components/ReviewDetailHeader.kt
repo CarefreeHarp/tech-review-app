@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,9 +30,10 @@ fun ReviewDetailHeader(modifier: Modifier = Modifier) {
             .height(68.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
+        Icon(
             painter = painterResource(R.drawable.back_icon),
             contentDescription = stringResource(R.string.review_back),
+            tint = LocalDevicersColors.current.textPrimary,
             modifier = Modifier.size(20.dp)
         )
         Spacer(Modifier.size(18.dp))

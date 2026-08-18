@@ -1,11 +1,8 @@
 <resources>
     <string name="app_name">Devicers</string>
-    <string name="welcome_message">Bienvenido a Devicers</string>
     <string name="sign_in">Iniciar sesión</string>
     <string name="create_account">Crear cuenta</string>
     <string name="devicers_logo_description">Logotipo de Devicers</string>
-    <string name="first_name">Nombre</string>
-    <string name="last_name">Apellido</string>
     <string name="email">Correo electrónico</string>
     <string name="email_placeholder">tu@correo.com</string>
     <string name="password">Contraseña</string>
@@ -14,13 +11,9 @@
     <string name="continue_with">o continúa con</string>
     <string name="no_account">¿No tienes cuenta?</string>
     <string name="already_have_account">¿Ya tienes cuenta?</string>
-    <string name="social_google">G</string>
-    <string name="social_facebook">f</string>
-    <string name="social_phone">☎</string>
     <string name="google_sign_in">Continuar con Google</string>
     <string name="facebook_sign_in">Continuar con Facebook</string>
     <string name="phone_sign_in">Continuar con teléfono</string>
-    <string name="light_theme">Tema claro</string>
     <string name="sign_in_title">Inicia sesión</string>
     <string name="sign_in_description">Accede para ver reseñas y calificar tus dispositivos.</string>
     <string name="create_account_description">Crea tu perfil para publicar y guardar tus reseñas.</string>
@@ -30,14 +23,12 @@
     <string name="hide_password">Ocultar contraseña</string>
     <string name="password_placeholder">◉◉◉◉◉</string>
     <string name="review_product_image">Imagen del producto</string>
-    <string name="review_example_description">Una excelente opción. Tiene buen rendimiento y cumple con lo esperado.</string>
     <string name="rating_stars_five">★★★★★</string>
     <string name="rating_stars_four">★★★★☆</string>
     <string name="rating_stars_three">★★★☆☆</string>
     <string name="rating_stars_two">★★☆☆☆</string>
     <string name="rating_stars_one">★☆☆☆☆</string>
     <string name="feed">Para ti</string>
-    <string name="search_title">Buscar</string>
     <string name="search_placeholder">Buscar dispositivos</string>
     <string name="search_filters">Filtros de búsqueda</string>
     <string name="clear_filters">Limpiar</string>
@@ -54,7 +45,6 @@
     <string name="audio">Audio</string>
     <string name="computers">Computadores</string>
     <string name="minimum_rating">CALIFICACIÓN MÍNIMA</string>
-    <string name="rating_four_or_more">4.0 o más</string>
     <string name="minimum_rating_format">%1$.0f o más</string>
     <string name="sort_by">ORDENAR POR</string>
     <string name="most_recent">Más recientes</string>
@@ -67,7 +57,6 @@
     <string name="rating_four">4</string>
     <string name="rating_five">5</string>
     <string name="search">Buscar</string>
-    <string name="theme_preview_text">Vista previa del tema</string>
     <string name="theme_color_primary_yellow">Color amarillo principal</string>
     <string name="theme_color_soft_yellow">Color amarillo suave</string>
     <string name="theme_color_background">Color de fondo</string>
@@ -75,26 +64,22 @@
     <string name="theme_color_surface_secondary">Color de superficie secundaria</string>
     <string name="theme_color_text_primary">Color de texto principal</string>
     <string name="theme_color_text_secondary">Color de texto secundario</string>
+    <string name="theme_color_text_on_primary">Color de texto sobre amarillo</string>
     <string name="theme_color_border">Color de borde</string>
-    <string name="feed_user_phone">@usuario</string>
+    <string name="feed_user_phone">\@usuario</string>
     <string name="feed_product_phone">Teléfono</string>
     <string name="feed_review_phone">Buena relación calidad y batería para todo el día.</string>
-    <string name="feed_user_audio">@usuario.audio</string>
+    <string name="feed_user_audio">\@usuario.audio</string>
     <string name="feed_product_audio">Auriculares</string>
     <string name="feed_review_audio">El sonido y la cancelación de ruido son excelentes.</string>
-    <string name="feed_user_watch">@usuario.reviews</string>
-    <string name="feed_product_watch">Reloj</string>
-    <string name="feed_review_watch">Cómodo, preciso y práctico para el día a día.</string>
-    <string name="feed_user_computer">@byte.labs</string>
+    <string name="feed_user_computer">\@byte.labs</string>
     <string name="feed_product_computer">PC Gamer</string>
     <string name="feed_review_computer">Rinde muy bien al editar video y se mantiene silencioso durante sesiones largas.</string>
     <string name="feed_time_two_days">Hace 2 días</string>
     <string name="feed_time_one_day">Hace 1 día</string>
     <string name="feed_time_five_hours">Hace 5 horas</string>
-    <string name="review_card_avatar_initial">J</string>
-    <string name="review_card_username">@usuario</string>
+    <string name="review_card_username">\@usuario</string>
     <string name="review_card_text">Muy cómodo y con buen sonido.</string>
-    <string name="review_like_count">%1$d</string>
     <string name="top_bar_back">‹</string>
     <string name="top_bar_options">⋮</string>
     <string name="review_back">Volver</string>
@@ -103,8 +88,7 @@
     <string name="review_send">Enviar respuesta</string>
     <string name="review_product_name">Auriculares</string>
     <string name="review_product_brand">Marca</string>
-    <string name="review_author_initial">D</string>
-    <string name="review_author">@usuario</string>
+    <string name="review_author">\@usuario</string>
     <string name="review_time">Hace 2 días</string>
     <string name="review_detail_text">El sonido es claro, la batería dura bastante y la cancelación de ruido ayuda mucho para estudiar o trabajar.</string>
     <string name="review_like">Me gusta</string>
@@ -116,25 +100,21 @@
     <string name="review_reply_text_two">¡También me encantaron! El audio es muy limpio.</string>
     <string name="review_reply_time">Hace 1 día</string>
     <string name="review_reply_action">Responder</string>
-    <string name="review_reply_first_initial">A</string>
-    <string name="review_reply_second_initial">R</string>
     <string name="product_title">Auriculares</string>
     <string name="product_brand_label">Marca</string>
     <string name="product_average_rating">Calificación promedio</string>
     <string name="product_average_value">4.6</string>
     <string name="product_review_count">230 reseñas</string>
     <string name="product_rate">Calificar producto</string>
-    <string name="profile_avatar_initial">J</string>
     <string name="profile_name">Juan</string>
-    <string name="profile_handle">@usuario</string>
+    <string name="profile_handle">\@usuario</string>
     <string name="profile_biography">Amante de la tecnología y las buenas recomendaciones.</string>
     <string name="profile_reviews">Reseñas</string>
     <string name="profile_followers">Seguidores</string>
     <string name="profile_following">Siguiendo</string>
     <string name="profile_my_reviews">Mis reseñas</string>
     <string name="profile_review_first_text">El sonido es equilibrado y la batería supera mi jornada completa.</string>
-    <string name="profile_review_second_initial">M</string>
-    <string name="profile_review_second_author">@maria.dev</string>
+    <string name="profile_review_second_author">\@maria.dev</string>
     <string name="profile_review_second_text">La conexión fue inmediata y son muy cómodos para caminar.</string>
     <string name="product_rating_five_percentage" formatted="false">88%</string>
     <string name="product_rating_four_percentage" formatted="false">52%</string>
@@ -150,4 +130,28 @@
     <string name="register_validation_password">La contraseña debe tener al menos 6 caracteres y 3 números.</string>
     <string name="register_validation_confirmation">Las contraseñas deben coincidir.</string>
 
+    <string name="rate_product_back">Volver</string>
+    <string name="rate_product_title">Calificar producto</string>
+    <string name="rate_product_subtitle">Comparte tu experiencia con este producto.</string>
+    <string name="rate_product_change">Cambiar</string>
+    <string name="rate_product_rating_title">¿Cómo lo calificarías?</string>
+    <string name="rate_product_rating_subtitle">Selecciona una puntuación del 1 al 5.</string>
+    <string name="rate_product_review_title">Título de tu reseña</string>
+    <string name="rate_product_review_title_placeholder">Ej. Cómodos y con buen sonido</string>
+
+    <string name="rate_product_experience">Cuéntanos tu experiencia</string>
+    <string name="rate_product_experience_placeholder">¿Qué te gustó? ¿Qué mejorarías?</string>
+
+    <string name="rate_product_advantages">Ventajas</string>
+    <string name="rate_product_advantage_placeholder">Añade una ventaja</string>
+
+    <string name="rate_product_disadvantages">Desventajas</string>
+    <string name="rate_product_disadvantage_placeholder">Añade un aspecto</string>
+
+    <string name="rate_product_publish">Publicar calificación</string>
+    <string name="rate_product_name">Auriculares</string>
+    <string name="rate_product_brand">Marca · Audio</string>
+    <string name="rate_product_image_description">Imagen de auriculares</string>
+    <string name="rate_product_rating_value">%1$d</string>
+    <string name="rate_product_character_count">%1$d/%2$d</string>
 </resources>

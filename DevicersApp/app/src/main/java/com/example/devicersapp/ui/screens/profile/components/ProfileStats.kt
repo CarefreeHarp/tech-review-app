@@ -84,7 +84,7 @@ fun ProfileStats(profile: ProfileContent, modifier: Modifier = Modifier) {
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = LocalDevicersColors.current.primaryYellow,
-                contentColor = LocalDevicersColors.current.textPrimary
+                contentColor = LocalDevicersColors.current.textOnPrimary
             )
         ) {
             Text(

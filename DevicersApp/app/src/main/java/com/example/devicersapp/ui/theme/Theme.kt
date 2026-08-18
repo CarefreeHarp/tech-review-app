@@ -39,12 +39,12 @@ private val DarkColorScheme = darkColorScheme(
     primary = DarkDevicersColors.primaryYellow,
 
     // Texto o contenido sobre el amarillo
-    onPrimary = DarkDevicersColors.textPrimary,
+    onPrimary = DarkDevicersColors.textOnPrimary,
 
     // Amarillo secundario
     secondary = DarkDevicersColors.softYellow,
 
-    onSecondary = DarkDevicersColors.textPrimary,
+    onSecondary = DarkDevicersColors.textOnPrimary,
 
     // Fondo general
     background = DarkDevicersColors.background,
@@ -79,12 +79,12 @@ private val LightColorScheme = lightColorScheme(
     primary = LightDevicersColors.primaryYellow,
 
     // Texto o contenido sobre el amarillo
-    onPrimary = LightDevicersColors.textPrimary,
+    onPrimary = LightDevicersColors.textOnPrimary,
 
     // Amarillo secundario
     secondary = LightDevicersColors.softYellow,
 
-    onSecondary = LightDevicersColors.textPrimary,
+    onSecondary = LightDevicersColors.textOnPrimary,
 
     // Fondo general
     background = LightDevicersColors.background,
@@ -190,6 +190,7 @@ private fun ThemeColorPalettePreview(modifier: Modifier = Modifier) {
         ThemeColorPreviewItem(R.string.theme_color_surface_secondary, colors.surfaceSecondary),
         ThemeColorPreviewItem(R.string.theme_color_text_primary, colors.textPrimary),
         ThemeColorPreviewItem(R.string.theme_color_text_secondary, colors.textSecondary),
+        ThemeColorPreviewItem(R.string.theme_color_text_on_primary, colors.textOnPrimary),
         ThemeColorPreviewItem(R.string.theme_color_border, colors.border)
     )
 
