@@ -13,12 +13,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalRateProductScreenProvider
 import com.example.devicersapp.ui.models.ProductContent
-import com.example.devicersapp.ui.screens.rateProduct.components.RateProductHeader
 import com.example.devicersapp.ui.screens.rateProduct.components.RateableProductCard
 import com.example.devicersapp.ui.screens.rateProduct.components.RatingSelector
 import com.example.devicersapp.ui.screens.rateProduct.components.ReviewForm
@@ -34,7 +32,7 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 fun RateProductScreen(
     modifier: Modifier = Modifier
 ) {
-
+    // El formulario conserva sus valores ante recomposiciones y cambios de configuración.
     var rating by rememberSaveable {
         mutableIntStateOf(0)
     }
@@ -55,16 +53,8 @@ fun RateProductScreen(
         mutableStateOf("")
     }
 
-    val product = ProductContent(
-        name = stringResource(R.string.rate_product_name),
-        brand = stringResource(R.string.rate_product_brand),
-        imageResId = R.drawable.auriculares_logo,
-        imageDescription = stringResource(R.string.rate_product_image_description),
-        showImage = true
-    )
-
     RateProductScreenContent(
-        product = product,
+        product = LocalRateProductScreenProvider.product,
 
         rating = rating,
         onRatingChange = {
@@ -91,9 +81,6 @@ fun RateProductScreen(
             disadvantage = it
         },
 
-        onBackClick = {
-            // TODO: Implementar el regreso a la pantalla de producto.
-        },
         onChangeProduct = {
             // TODO: Implementar la selección de otro producto.
         },
@@ -120,7 +107,6 @@ fun RateProductScreen(
  * @param onAdvantageChange Acción al cambiar la ventaja.
  * @param disadvantage Desventaja escrita para el producto.
  * @param onDisadvantageChange Acción al cambiar la desventaja.
- * @param onBackClick Acción de regreso.
  * @param onChangeProduct Acción para cambiar de producto.
  * @param onPublishClick Acción para publicar la calificación.
  * @param modifier Modificador aplicado a la lista raíz.
@@ -144,7 +130,6 @@ fun RateProductScreenContent(
     disadvantage: String,
     onDisadvantageChange: (String) -> Unit,
 
-    onBackClick: () -> Unit,
     onChangeProduct: () -> Unit,
     onPublishClick: () -> Unit,
 
@@ -159,11 +144,6 @@ fun RateProductScreenContent(
 
         item {
             Spacer(modifier = Modifier.height(12.dp))
-
-            RateProductHeader(
-                onBackClick = onBackClick
-            )
-
             Spacer(modifier = Modifier.height(20.dp))
         }
 
@@ -218,7 +198,9 @@ fun RateProductScreenWithScaffoldPreview() {
     DevicersAppTheme {
 
         DevicersScaffold(
-            selectedItem = "add"
+            selectedItem = "add",
+            showBottomBar = true,
+            topBarNumber = 2
         ) { innerPadding ->
 
             RateProductScreen(

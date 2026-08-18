@@ -139,7 +139,7 @@ fun SearchFilterPanel(
             Text(
                 text = stringResource(R.string.launch_date_invalid),
                 modifier = Modifier.padding(top = 4.dp),
-                color = LocalDevicersColors.current.textPrimary,
+                color = LocalDevicersColors.current.error,
                 style = SearchControlText
             )
         }

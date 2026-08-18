@@ -1,13 +1,13 @@
 package com.example.devicersapp.ui.screens.create_review
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,310 +16,184 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.devicersapp.ui.models.ProductContent
+import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalCreateReviewScreenProvider
+import com.example.devicersapp.ui.models.ProductCategoryContent
+import com.example.devicersapp.ui.models.ProductSearchContent
 import com.example.devicersapp.ui.screens.create_review.components.CategoryChipRow
 import com.example.devicersapp.ui.screens.create_review.components.CreateReviewFilterDialog
-import com.example.devicersapp.ui.screens.create_review.components.CreateReviewHeader
 import com.example.devicersapp.ui.screens.create_review.components.CreateReviewSearchRow
 import com.example.devicersapp.ui.screens.create_review.components.ProductReviewItem
 import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
-import com.example.devicersapp.R
 
 /**
- * Pantalla para seleccionar el producto que el usuario quiere reseñar.
+ * Configura la búsqueda, la categoría y el diálogo de filtros de creación de reseñas.
  *
- * Administra el estado de búsqueda, categoría y filtros.
- * Los eventos se envían a los componentes hijos mediante state hoisting.
+ * @param onFiltersClick Acción adicional solicitada al abrir filtros.
+ * @param onProductClick Acción solicitada al elegir un producto.
+ * @param modifier Modificador aplicado a la pantalla.
  */
 @Composable
 fun CreateReviewScreen(
-    modifier: Modifier = Modifier,
-    onBackClick: () -> Unit = {},
     onFiltersClick: () -> Unit = {},
-    onProductClick: (ProductContent) -> Unit = {},
+    onProductClick: (ProductSearchContent) -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
-
-    var searchText by remember {
-        mutableStateOf("")
-    }
-
-    var selectedCategory by remember {
-        mutableStateOf("Todos")
-    }
-
-    var showFilters by remember {
-        mutableStateOf(false)
-    }
+    // Este estado se eleva desde los componentes para conservarlos presentacionales.
+    var searchText by remember { mutableStateOf("") }
+    var selectedCategoryId by remember { mutableStateOf("all") }
+    var showFilters by remember { mutableStateOf(false) }
 
     CreateReviewScreenContent(
+        categories = LocalCreateReviewScreenProvider.categories,
+        products = LocalCreateReviewScreenProvider.products,
         searchText = searchText,
-        onSearchTextChange = {
-            searchText = it
-        },
-        selectedCategory = selectedCategory,
-        onCategoryChange = {
-            selectedCategory = it
-        },
-        onBackClick = onBackClick,
+        onSearchTextChange = { searchText = it },
+        selectedCategoryId = selectedCategoryId,
+        onCategoryChange = { selectedCategoryId = it },
         onFiltersClick = {
             showFilters = true
-
-            // Conservamos también el callback externo.
             onFiltersClick()
         },
         onProductClick = onProductClick,
         modifier = modifier
+            .fillMaxSize()
+            .background(LocalDevicersColors.current.background)
     )
 
     if (showFilters) {
         CreateReviewFilterDialog(
-            selectedCategory = selectedCategory,
-            onCategoryChange = {
-                selectedCategory = it
-            },
-            onDismiss = {
-                showFilters = false
-            }
+            categories = LocalCreateReviewScreenProvider.categories,
+            selectedCategoryId = selectedCategoryId,
+            onCategoryChange = { selectedCategoryId = it },
+            onDismiss = { showFilters = false }
         )
     }
 }
 
 /**
- * Contenido visual de la pantalla Crear reseña.
+ * Ensambla las categorías y los resultados locales filtrados de creación de reseña.
+ *
+ * @param categories Categorías que se pueden seleccionar.
+ * @param products Productos locales disponibles para reseñar.
+ * @param searchText Texto actual de búsqueda.
+ * @param onSearchTextChange Acción que solicita actualizar el texto.
+ * @param selectedCategoryId Identificador de la categoría activa.
+ * @param onCategoryChange Acción que solicita actualizar la categoría.
+ * @param onFiltersClick Acción que solicita abrir los filtros.
+ * @param onProductClick Acción solicitada al elegir un producto.
+ * @param modifier Modificador aplicado a la lista raíz.
  */
 @Composable
 fun CreateReviewScreenContent(
+    categories: List<ProductCategoryContent>,
+    products: List<ProductSearchContent>,
     searchText: String,
     onSearchTextChange: (String) -> Unit,
-    selectedCategory: String,
+    selectedCategoryId: String,
     onCategoryChange: (String) -> Unit,
-    onBackClick: () -> Unit,
     onFiltersClick: () -> Unit,
-    onProductClick: (ProductContent) -> Unit,
+    onProductClick: (ProductSearchContent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // La búsqueda conserva la escritura, pero por decisión actual solo la categoría modifica resultados.
+    val filteredProducts = products.filter { product ->
+        val matchesCategory = selectedCategoryId == "all" || product.categoryId == selectedCategoryId
+        matchesCategory
+    }
+    val colors = LocalDevicersColors.current
 
-    /*
-     * Productos almacenados actualmente en la base quemada.
-     */
-    val headphones = ProductContent(
-        name = "Auriculares",
-        brand = "Marca · Audio",
-        imageResId = R.drawable.devicers_headphones_black,
-        imageDescription = "Auriculares"
-    )
-
-    val phone = ProductContent(
-        name = "Teléfono",
-        brand = "Marca · Celulares",
-        imageResId = R.drawable.electronic_phone,
-        imageDescription = "Teléfono"
-    )
-
-    /*
-     * Filtrado de Auriculares.
-     */
-    val showHeadphones =
-        (selectedCategory == "Todos" || selectedCategory == "Audio") &&
-                (
-                        searchText.isBlank() ||
-                                headphones.name.contains(
-                                    searchText,
-                                    ignoreCase = true
-                                ) ||
-                                headphones.brand.contains(
-                                    searchText,
-                                    ignoreCase = true
-                                )
-                        )
-
-    /*
-     * Filtrado de Teléfono.
-     */
-    val showPhone =
-        (selectedCategory == "Todos" || selectedCategory == "Celulares") &&
-                (
-                        searchText.isBlank() ||
-                                phone.name.contains(
-                                    searchText,
-                                    ignoreCase = true
-                                ) ||
-                                phone.brand.contains(
-                                    searchText,
-                                    ignoreCase = true
-                                )
-                        )
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+    LazyColumn(
+        modifier = modifier.padding(horizontal = 16.dp)
     ) {
-        CreateReviewHeader(
-            onBackClick = onBackClick,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(
-            modifier = Modifier.height(8.dp)
-        )
-
-        Text(
-            text = "Busca el producto que quieres reseñar.",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 13.sp
-        )
-
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
-
-        CreateReviewSearchRow(
-            searchText = searchText,
-            onSearchTextChange = onSearchTextChange,
-            onFiltersClick = onFiltersClick
-        )
-
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
-
-        CategoryChipRow(
-            selectedCategory = selectedCategory,
-            onCategoryChange = onCategoryChange
-        )
-
-        Spacer(
-            modifier = Modifier.height(14.dp)
-        )
-
-        Text(
-            text = "CATEGORÍAS",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(
-            modifier = Modifier.height(10.dp)
-        )
-
-        Text(
-            text = "RESULTADOS POPULARES",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(
-            modifier = Modifier.height(10.dp)
-        )
-
-        if (showHeadphones) {
-
-                ProductReviewItem(
-                    title = headphones.name,
-                    subtitle = headphones.brand,
-                    imageResId = headphones.imageResId,
-                    rating = 5,
-                    onRateClick = {
-                        onProductClick(headphones)
-                    }
-                )
-
-                Spacer(
-                    modifier = Modifier.height(12.dp)
-                )
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.create_review_subtitle),
+                color = colors.textSecondary,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            CreateReviewSearchRow(
+                searchText = searchText,
+                onSearchTextChange = onSearchTextChange,
+                onFiltersClick = onFiltersClick
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            CategoryChipRow(
+                categories = categories,
+                selectedCategoryId = selectedCategoryId,
+                onCategoryChange = onCategoryChange
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+            Text(
+                text = stringResource(R.string.create_review_categories),
+                color = colors.textSecondary,
+                style = MaterialTheme.typography.labelSmall
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = stringResource(R.string.create_review_popular_results),
+                color = colors.textSecondary,
+                style = MaterialTheme.typography.labelSmall
+            )
+            Spacer(modifier = Modifier.height(10.dp))
         }
-
-        if (showPhone) {
-
-                ProductReviewItem(
-                    title = phone.name,
-                    subtitle = phone.brand,
-                    imageResId = phone.imageResId,
-                    rating = 5,
-                    onRateClick = {
-                        onProductClick(phone)
-                    }
-                )
-
-                Spacer(
-                    modifier = Modifier.height(12.dp)
-                )
-        }
-
-        if (!showHeadphones && !showPhone) {
-
+        if (filteredProducts.isEmpty()) {
+            item {
                 Text(
-                    text = "No encontramos productos con esos filtros.",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 13.sp
+                    text = stringResource(R.string.create_review_empty_results),
+                    color = colors.textSecondary,
+                    style = MaterialTheme.typography.bodySmall
                 )
-
-                Spacer(
-                    modifier = Modifier.height(16.dp)
-                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        } else {
+            items(filteredProducts, key = { it.id }) { product ->
+                ProductReviewItem(product = product, onRateClick = { onProductClick(product) })
+                Spacer(modifier = Modifier.height(12.dp))
+            }
         }
-
-        Spacer(
-            modifier = Modifier.height(6.dp)
-        )
-
-        Text(
-            text = "¿No encuentras tu producto?",
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
-            fontSize = 13.sp
-        )
-
-        Spacer(
-            modifier = Modifier.height(3.dp)
-        )
-
-        Text(
-            text = "Prueba buscando por marca o modelo.",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 12.sp
-        )
-
-        Spacer(
-            modifier = Modifier.height(28.dp)
-        )
+        item {
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = stringResource(R.string.create_review_product_missing_title),
+                color = colors.textPrimary,
+                style = MaterialTheme.typography.labelLarge
+            )
+            Spacer(modifier = Modifier.height(3.dp))
+            Text(
+                text = stringResource(R.string.create_review_product_missing_description),
+                color = colors.textSecondary,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.height(28.dp))
+        }
     }
 }
 
-/**
- * Preview modo claro.
- */
+/** Muestra una vista previa clara de la pantalla de creación de reseña. */
 @Composable
-@Preview(showBackground = true)
+@Preview(name = "Crear reseña claro", showBackground = true)
 fun CreateReviewLightPreview() {
-    DevicersAppTheme(
-        darkTheme = false
-    ) {
-        DevicersScaffold(selectedItem = "add") { innerPadding ->
+    DevicersAppTheme(darkTheme = false) {
+        DevicersScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 3) { innerPadding ->
             CreateReviewScreen(modifier = Modifier.padding(innerPadding))
         }
     }
 }
 
-/**
- * Preview modo oscuro.
- */
+/** Muestra una vista previa oscura de la pantalla de creación de reseña. */
 @Composable
-@Preview(showBackground = true)
+@Preview(name = "Crear reseña oscuro", showBackground = true)
 fun CreateReviewDarkPreview() {
-    DevicersAppTheme(
-        darkTheme = true
-    ) {
-        DevicersScaffold(selectedItem = "add") { innerPadding ->
+    DevicersAppTheme(darkTheme = true) {
+        DevicersScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 3) { innerPadding ->
             CreateReviewScreen(modifier = Modifier.padding(innerPadding))
         }
     }

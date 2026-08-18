@@ -2,7 +2,6 @@ package com.example.devicersapp.ui.screens.review.components
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,37 +52,40 @@ fun ReviewDetailCard(review: ReviewContent, modifier: Modifier = Modifier) {
             )
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
-                Text(review.author, style = MaterialTheme.typography.titleSmall, color = LocalDevicersColors.current.textPrimary)
-                review.timeAgo?.let { timeAgo ->
-                    Text(timeAgo, style = MaterialTheme.typography.bodySmall, color = LocalDevicersColors.current.textSecondary)
+                Text(stringResource(review.authorResId), style = MaterialTheme.typography.titleSmall, color = LocalDevicersColors.current.textPrimary)
+                review.timeAgoResId?.let { timeAgoResId ->
+                    Text(stringResource(timeAgoResId), style = MaterialTheme.typography.bodySmall, color = LocalDevicersColors.current.textSecondary)
                 }
             }
         }
         Spacer(Modifier.height(12.dp))
         Text(stringResource(ratingStarsResource(review.rating)), color = LocalDevicersColors.current.primaryYellow, style = MaterialTheme.typography.bodyLarge)
         Spacer(Modifier.height(20.dp))
-        Text(review.text, style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textPrimary)
+        Text(stringResource(review.textResId), style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textPrimary)
         Spacer(Modifier.weight(1f))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
+                Icon(
                     painter = painterResource(R.drawable.like_icon),
                     contentDescription = stringResource(R.string.review_like),
+                    tint = LocalDevicersColors.current.textPrimary,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(review.likes.toString(), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = LocalDevicersColors.current.textPrimary)
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
+                Icon(
                     painter = painterResource(R.drawable.send_icon),
                     contentDescription = stringResource(R.string.review_send),
+                    tint = LocalDevicersColors.current.textPrimary,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(Modifier.width(20.dp))
-                Image(
+                Icon(
                     painter = painterResource(R.drawable.bookmark_icon),
                     contentDescription = stringResource(R.string.review_save),
+                    tint = LocalDevicersColors.current.textPrimary,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -97,11 +100,11 @@ fun ReviewDetailCardPreview() {
     ReviewDetailCard(
         ReviewContent(
             avatarResId = R.drawable.profile_avatar_02,
-            author = stringResource(R.string.review_author),
+            authorResId = R.string.review_author,
             rating = 5,
-            text = stringResource(R.string.review_detail_text),
+            textResId = R.string.review_detail_text,
             likes = 128,
-            timeAgo = stringResource(R.string.review_time)
+            timeAgoResId = R.string.review_time
         )
     )
 }

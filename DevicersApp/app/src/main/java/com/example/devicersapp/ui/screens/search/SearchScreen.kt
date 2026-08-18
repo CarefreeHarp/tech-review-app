@@ -40,6 +40,7 @@ fun SearchScreen(
     onApplyFilters: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    // La pantalla es propietaria del estado y los componentes reciben valores y callbacks.
     var searchText by remember { mutableStateOf("") }
     var brand by remember { mutableStateOf("") }
     var productName by remember { mutableStateOf("") }

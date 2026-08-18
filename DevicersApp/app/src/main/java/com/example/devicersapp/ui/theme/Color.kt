@@ -9,6 +9,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 
 /** Agrupa los colores de Devicers que cambian según el tema activo. */
 data class DevicersColorPalette(
+    val isDarkTheme: Boolean,
     val primaryYellow: Color,
     val softYellow: Color,
     val background: Color,
@@ -18,15 +19,17 @@ data class DevicersColorPalette(
     val textSecondary: Color,
     val textOnPrimary: Color,
     val border: Color,
-    val selectedIcon: Color
+    val selectedIcon: Color,
+    val error: Color
 )
 
 
 // ==========================
-// Light Mode
+// Modo claro
 // ==========================
 
 val LightDevicersColors = DevicersColorPalette(
+    isDarkTheme = false,
     primaryYellow = Color(0xFFE8E84F),
     softYellow = Color(0xFFF3F3A9),
     background = Color(0xFFF4F4ED),
@@ -36,15 +39,17 @@ val LightDevicersColors = DevicersColorPalette(
     textSecondary = Color(0xFF595950),
     textOnPrimary = Color(0xFF000000),
     border = Color(0xFFBDBDAC),
-    selectedIcon = Color(0xFF1C1C18)
+    selectedIcon = Color(0xFF1C1C18),
+    error = Color(0xFFB3261E)
 )
 
 
 // ==========================
-// Dark Mode
+// Modo oscuro
 // ==========================
 
 val DarkDevicersColors = DevicersColorPalette(
+    isDarkTheme = true,
     primaryYellow = Color(0xFFE8E84F),
     softYellow = Color(0xFFF3F3A9),
     background = Color(0xFF11110F),
@@ -54,7 +59,8 @@ val DarkDevicersColors = DevicersColorPalette(
     textSecondary = Color(0xFFB8B8AA),
     textOnPrimary = Color(0xFF000000),
     border = Color(0xFF44443B),
-    selectedIcon = Color(0xFF1C1C18)
+    selectedIcon = Color(0xFF1C1C18),
+    error = Color(0xFFFFB4AB)
 )
 
 /** Expone la paleta activa a todos los composables de la aplicación. */

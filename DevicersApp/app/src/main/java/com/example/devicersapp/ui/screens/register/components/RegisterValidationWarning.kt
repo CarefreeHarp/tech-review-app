@@ -44,21 +44,21 @@ fun RegisterValidationWarning(
             Text(
                 text = stringResource(R.string.register_validation_email),
                 style = MaterialTheme.typography.bodySmall,
-                color = LocalDevicersColors.current.textPrimary
+                color = LocalDevicersColors.current.error
             )
         }
         if (!isPasswordValid) {
             Text(
                 text = stringResource(R.string.register_validation_password),
                 style = MaterialTheme.typography.bodySmall,
-                color = LocalDevicersColors.current.textPrimary
+                color = LocalDevicersColors.current.error
             )
         }
         if (!isConfirmationPasswordValid) {
             Text(
                 text = stringResource(R.string.register_validation_confirmation),
                 style = MaterialTheme.typography.bodySmall,
-                color = LocalDevicersColors.current.textPrimary
+                color = LocalDevicersColors.current.error
             )
         }
     }

@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalFeedReviewsProvider
+import com.example.devicersapp.data.local.LocalFeedScreenProvider
 import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.screens.feed.components.ReviewBox
 import com.example.devicersapp.ui.theme.SearchHeadingText
@@ -32,7 +32,7 @@ import com.example.devicersapp.ui.theme.SearchHeadingText
 @Composable
 fun FeedScreen(modifier: Modifier = Modifier) {
     FeedScreenContent(
-        reviews = LocalFeedReviewsProvider.reviews,
+        reviews = LocalFeedScreenProvider.reviews,
         modifier = modifier.fillMaxSize().background(LocalDevicersColors.current.background)
     )
 }
@@ -48,6 +48,12 @@ fun FeedScreenContent(
     reviews: List<FeedReviewContent>,
     modifier: Modifier = Modifier
 ) {
+    val logoRes = if (LocalDevicersColors.current.isDarkTheme) {
+        R.drawable.logo_oscuro
+    } else {
+        R.drawable.logo_claro
+    }
+
     LazyColumn(
         modifier = modifier.padding(horizontal = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -55,7 +61,7 @@ fun FeedScreenContent(
             item {
 
                 Image(
-                    painter = painterResource(R.drawable.logo_claro),
+                    painter = painterResource(logoRes),
                     contentDescription = stringResource(R.string.devicers_logo_description),
                     modifier = Modifier.size(width = 186.dp, height = 50.dp)
                 )

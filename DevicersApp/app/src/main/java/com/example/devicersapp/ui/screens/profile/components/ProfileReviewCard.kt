@@ -15,18 +15,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.ReviewContentText
+import com.example.devicersapp.ui.theme.RatingStarsText
+import com.example.devicersapp.ui.theme.ReactionCountText
 import com.example.devicersapp.ui.utils.rating.ratingStarsResource
 
 /**
@@ -47,14 +49,13 @@ fun ProfileReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = review.author,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
+                text = stringResource(review.authorResId),
+                style = MaterialTheme.typography.labelLarge,
                 color = LocalDevicersColors.current.textPrimary
             )
             Text(
-                text = stringResource(ratingStarsResource(review.rating)),
-                fontSize = 12.sp,
+                    text = stringResource(ratingStarsResource(review.rating)),
+                style = RatingStarsText,
                 color = LocalDevicersColors.current.primaryYellow
             )
         }
@@ -62,7 +63,7 @@ fun ProfileReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = review.text,
+            text = stringResource(review.textResId),
             style = ReviewContentText,
             color = LocalDevicersColors.current.textSecondary
         )
@@ -74,17 +75,17 @@ fun ProfileReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
+            Icon(
                 painter = painterResource(R.drawable.like_icon),
                 contentDescription = null,
+                tint = LocalDevicersColors.current.textPrimary,
                 modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = review.likes.toString(),
-                fontSize = 11.sp,
+                style = ReactionCountText,
                 color = LocalDevicersColors.current.textSecondary,
-                fontWeight = FontWeight.Black
             )
         }
     }
@@ -97,9 +98,9 @@ fun ProfileReviewCardPreview() {
     ProfileReviewCard(
         ReviewContent(
             avatarResId = R.drawable.profile_avatar_00,
-            author = stringResource(R.string.review_card_username),
+            authorResId = R.string.review_card_username,
             rating = 5,
-            text = stringResource(R.string.review_card_text),
+            textResId = R.string.review_card_text,
             likes = 23
         )
     )

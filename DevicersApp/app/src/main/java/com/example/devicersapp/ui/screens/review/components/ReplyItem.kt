@@ -36,10 +36,10 @@ fun ReplyItem(reply: ReplyContent, modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(reply.author, style = MaterialTheme.typography.labelLarge, color = LocalDevicersColors.current.textPrimary)
-            Text(reply.timeAgo, style = MaterialTheme.typography.bodySmall, color = LocalDevicersColors.current.textSecondary)
+            Text(stringResource(reply.authorResId), style = MaterialTheme.typography.labelLarge, color = LocalDevicersColors.current.textPrimary)
+            Text(stringResource(reply.timeAgoResId), style = MaterialTheme.typography.bodySmall, color = LocalDevicersColors.current.textSecondary)
             Spacer(Modifier.height(9.dp))
-            Text(reply.text, style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textPrimary)
+            Text(stringResource(reply.textResId), style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textPrimary)
             Spacer(Modifier.height(10.dp))
             Text(stringResource(R.string.review_reply_action), style = MaterialTheme.typography.labelLarge, color = LocalDevicersColors.current.textSecondary)
         }
@@ -53,9 +53,9 @@ fun ReplyItemPreview() {
     ReplyItem(
         ReplyContent(
             avatarResId = R.drawable.profile_avatar_03,
-            author = stringResource(R.string.review_reply_author_one),
-            timeAgo = stringResource(R.string.review_reply_time),
-            text = stringResource(R.string.review_reply_text_one)
+            authorResId = R.string.review_reply_author_one,
+            timeAgoResId = R.string.review_reply_time,
+            textResId = R.string.review_reply_text_one
         )
     )
 }

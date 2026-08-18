@@ -31,13 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Icon
 
 /**
@@ -45,19 +43,13 @@ import androidx.compose.material3.Icon
  *
  * @param selectedItem Identificador del elemento que representa la pantalla actual.
  * @param modifier Modificador aplicado a la barra.
- */
-/**
- * Muestra la barra de navegación inferior de la aplicación.
- *
- * @param selectedItem Identificador del elemento que representa la pantalla actual.
- * @param modifier Modificador aplicado a la barra.
- * @param onProfileClick Acción ejecutada al presionar el ícono de perfil.
+ * @param onItemClick Acción solicitada al seleccionar un elemento de navegación.
  */
 @Composable
 fun BottomNavigationBar(
     selectedItem: String,
     modifier: Modifier = Modifier,
-    onProfileClick: () -> Unit = {}
+    onItemClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
     Row(
@@ -72,28 +64,32 @@ fun BottomNavigationBar(
 
         NavigationItem(
             iconResId = R.drawable.home_icon,
-            isSelected = selectedItem == "home"
+            isSelected = selectedItem == "home",
+            onClick = { onItemClick("home") }
         )
 
         NavigationItem(
             iconResId = R.drawable.explore_icon,
-            isSelected = selectedItem == "search"
+            isSelected = selectedItem == "search",
+            onClick = { onItemClick("search") }
         )
 
         NavigationItem(
             iconResId = R.drawable.create_review_icon,
-            isSelected = selectedItem == "add"
+            isSelected = selectedItem == "add",
+            onClick = { onItemClick("add") }
         )
 
         NavigationItem(
             iconResId = R.drawable.notifications_icon,
-            isSelected = selectedItem == "favorite"
+            isSelected = selectedItem == "favorite",
+            onClick = { onItemClick("favorite") }
         )
 
         NavigationItem(
             iconResId = R.drawable.profile_icon,
             isSelected = selectedItem == "profile",
-            onClick = onProfileClick
+            onClick = { onItemClick("profile") }
         )
     }
 }
@@ -252,48 +248,6 @@ fun SearchBar(
     )
 }
 
-/**
- * Muestra la barra superior compartida de detalle, con regreso, ícono de marca y opciones.
- *
- * @param modifier Modificador aplicado al contenedor de la barra.
- */
-@Composable
-fun AppTopBar(modifier: Modifier = Modifier) {
-    val colors = LocalDevicersColors.current
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.top_bar_back),
-            fontSize = 28.sp,
-            color = colors.textPrimary,
-            modifier = Modifier.align(Alignment.CenterStart)
-        )
-        val logoRes = if (isSystemInDarkTheme()) {
-            R.drawable.logo_icono_oscuro
-        } else {
-            R.drawable.logo_icono_claro
-        }
-
-        Image(
-            painter = painterResource(logoRes),
-            contentDescription = stringResource(R.string.devicers_logo_description),
-            modifier = Modifier
-                .height(44.dp)
-                .align(Alignment.Center)
-        )
-        Text(
-            text = stringResource(R.string.top_bar_options),
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = colors.textPrimary,
-            modifier = Modifier.align(Alignment.CenterEnd)
-        )
-    }
-}
-
 /** Muestra una vista previa de la navegación inferior. */
 @Composable
 @Preview(showBackground = true)
@@ -326,11 +280,4 @@ fun SearchBarPreview() {
         text = "",
         onTextChange = {}
     )
-}
-
-/** Muestra una vista previa de la barra superior compartida. */
-@Composable
-@Preview(showBackground = true)
-fun AppTopBarPreview() {
-    AppTopBar()
 }

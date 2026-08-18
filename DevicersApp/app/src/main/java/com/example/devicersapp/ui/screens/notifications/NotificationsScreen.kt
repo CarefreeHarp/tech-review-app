@@ -30,7 +30,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalNotificationsProvider
+import com.example.devicersapp.data.local.LocalNotificationsScreenProvider
+import com.example.devicersapp.ui.models.NotificationGroupContent
 import com.example.devicersapp.ui.screens.notifications.components.NotificationSection
 
 /** Configura la estructura principal de la pantalla de notificaciones y su navegación inferior. */
@@ -38,8 +39,13 @@ import com.example.devicersapp.ui.screens.notifications.components.NotificationS
 fun NotificationsScreen(modifier: Modifier = Modifier) {
     // Estado elevado que determina qué tarjetas deben mostrar la acción "Siguiendo".
     var followedNotificationIds by remember { mutableStateOf(emptySet<String>()) }
+    // La referencia temporal se conserva para que los textos relativos no cambien en cada recomposición.
+    val notificationGroups = remember {
+        LocalNotificationsScreenProvider.notificationGroups(currentTimeMillis = System.currentTimeMillis())
+    }
 
     NotificationsScreenContent(
+        notificationGroups = notificationGroups,
         followedNotificationIds = followedNotificationIds,
         onFollow = { notificationId -> followedNotificationIds = followedNotificationIds + notificationId },
         modifier = modifier.fillMaxSize().background(LocalDevicersColors.current.background)
@@ -49,20 +55,23 @@ fun NotificationsScreen(modifier: Modifier = Modifier) {
 /**
  * Ensambla el encabezado y la lista agrupada de notificaciones.
  *
+ * @param notificationGroups Grupos locales de notificaciones que se mostrarán.
  * @param followedNotificationIds Identificadores de notificaciones cuyos autores ya se siguen.
  * @param onFollow Acción solicitada al seleccionar seguir.
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
 fun NotificationsScreenContent(
+    notificationGroups: List<NotificationGroupContent>,
     followedNotificationIds: Set<String>,
     onFollow: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Una sola referencia de tiempo mantiene coherentes los valores relativos de toda la lista.
-    val notificationGroups = LocalNotificationsProvider.notificationGroups(
-        currentTimeMillis = System.currentTimeMillis()
-    )
+    val logoRes = if (LocalDevicersColors.current.isDarkTheme) {
+        R.drawable.logo_oscuro
+    } else {
+        R.drawable.logo_claro
+    }
 
     LazyColumn(
         modifier = modifier.background(LocalDevicersColors.current.background),
@@ -77,7 +86,7 @@ fun NotificationsScreenContent(
         item {
             Column {
                 Image(
-                    painter = painterResource(R.drawable.logo_claro),
+                    painter = painterResource(logoRes),
                     contentDescription = stringResource(R.string.devicers_logo_description),
                     modifier = Modifier
                         .size(width = 172.dp, height = 46.dp)
@@ -96,10 +105,10 @@ fun NotificationsScreenContent(
                 )
             }
         }
-        items(notificationGroups, key = { it.first }) { (title, notifications) ->
+        items(notificationGroups, key = { it.id }) { group ->
             NotificationSection(
-                title = title,
-                notifications = notifications,
+                titleResId = group.titleResId,
+                notifications = group.notifications,
                 followedNotificationIds = followedNotificationIds,
                 onFollow = onFollow
             )

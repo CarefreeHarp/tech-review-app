@@ -1,5 +1,6 @@
 package com.example.devicersapp.ui.screens.notifications.components
 
+import android.content.res.Resources
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.Image
@@ -21,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -50,7 +52,7 @@ fun NotificationCard(
     modifier: Modifier = Modifier
 ) {
     // El tiempo se deriva al renderizar para evitar guardar textos como "Hace 5 m" en los datos.
-    val elapsedTime = formatElapsedTime(notification.time)
+    val elapsedTime = formatElapsedTime(LocalContext.current.resources, notification.time)
 
     Row(
         modifier = modifier
@@ -72,18 +74,18 @@ fun NotificationCard(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = notification.author,
+                text = stringResource(notification.authorResId),
                 style = MaterialTheme.typography.labelLarge,
                 color = LocalDevicersColors.current.textPrimary
             )
             Text(
-                text = notification.action,
+                text = stringResource(notification.actionResId),
                 style = MaterialTheme.typography.bodySmall,
                 color = LocalDevicersColors.current.textPrimary
             )
-            if (notification.detail.isNotBlank()) {
+            notification.detailResId?.let { detailResId ->
                 Text(
-                    text = notification.detail,
+                    text = stringResource(detailResId),
                     style = MaterialTheme.typography.bodySmall,
                     color = LocalDevicersColors.current.textSecondary
                 )
@@ -123,12 +125,21 @@ fun NotificationCard(
  * @param time Instante de llegada de la notificación en milisegundos desde época Unix.
  * @return Texto compacto con la unidad más apropiada, como `5 m`, `1 h` o `3 d`.
  */
-private fun formatElapsedTime(time: Long): String {
+private fun formatElapsedTime(resources: Resources, time: Long): String {
     val elapsedMillis = (System.currentTimeMillis() - time).coerceAtLeast(0L)
     return when {
-        elapsedMillis < HOUR_IN_MILLIS -> "${(elapsedMillis / MINUTE_IN_MILLIS).coerceAtLeast(1L)} m"
-        elapsedMillis < DAY_IN_MILLIS -> "${elapsedMillis / HOUR_IN_MILLIS} h"
-        else -> "${elapsedMillis / DAY_IN_MILLIS} d"
+        elapsedMillis < HOUR_IN_MILLIS -> resources.getString(
+            R.string.notifications_elapsed_minutes,
+            (elapsedMillis / MINUTE_IN_MILLIS).coerceAtLeast(1L)
+        )
+        elapsedMillis < DAY_IN_MILLIS -> resources.getString(
+            R.string.notifications_elapsed_hours,
+            elapsedMillis / HOUR_IN_MILLIS
+        )
+        else -> resources.getString(
+            R.string.notifications_elapsed_days,
+            elapsedMillis / DAY_IN_MILLIS
+        )
     }
 }
 
@@ -140,9 +151,8 @@ fun NotificationCardPreview() {
         notification = NotificationContent(
             id = "preview",
             avatarResId = R.drawable.profile_avatar_00,
-            author = "@usuario.reviews",
-            action = "Comenzó a seguirte",
-            detail = "",
+            authorResId = R.string.notification_author_lina,
+            actionResId = R.string.notification_action_followed,
             time = System.currentTimeMillis() - DAY_IN_MILLIS,
             showFollowAction = true
         ),

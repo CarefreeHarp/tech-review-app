@@ -66,7 +66,7 @@ fun RateableProductCard(
             if (product.showImage) {
                 Image(
                     painter = painterResource(product.imageResId),
-                    contentDescription = product.imageDescription,
+                    contentDescription = stringResource(product.imageDescriptionResId),
                     modifier = Modifier.size(46.dp)
                 )
             }
@@ -78,7 +78,7 @@ fun RateableProductCard(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = product.name,
+                text = stringResource(product.nameResId),
                 style = MaterialTheme.typography.titleMedium,
                 color = colors.textPrimary
             )
@@ -86,7 +86,7 @@ fun RateableProductCard(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = product.brand,
+                text = stringResource(product.brandResId),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colors.textSecondary
             )
@@ -109,10 +109,10 @@ fun RateableProductCardPreview() {
     DevicersAppTheme {
         RateableProductCard(
             product = ProductContent(
-                name = stringResource(R.string.rate_product_name),
-                brand = stringResource(R.string.rate_product_brand),
+                nameResId = R.string.rate_product_name,
+                brandResId = R.string.rate_product_brand,
                 imageResId = R.drawable.auriculares_logo,
-                imageDescription = stringResource(R.string.rate_product_image_description)
+                imageDescriptionResId = R.string.rate_product_image_description
             ),
             onChangeProduct = {}
         )

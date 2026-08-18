@@ -22,11 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.screens.login.components.ForgotPasswordLink
 import com.example.devicersapp.ui.utils.authentication.AuthenticationDividerText
 import com.example.devicersapp.ui.utils.authentication.AuthenticationField
 import com.example.devicersapp.ui.utils.authentication.AuthenticationFooter
-import com.example.devicersapp.ui.utils.authentication.AuthenticationHeader
 import com.example.devicersapp.ui.utils.authentication.PrimaryButton
 import com.example.devicersapp.ui.utils.authentication.ScreenTitle
 import com.example.devicersapp.ui.utils.authentication.SocialButtons
@@ -79,9 +80,7 @@ fun LoginScreenContent(
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // El espaciado vertical reproduce la composición de la pantalla clara de Figma.
-        Spacer(modifier = Modifier.height(28.dp))
-        AuthenticationHeader()
+        // La marca se muestra desde TopBar5, gestionada por el Scaffold compartido.
         Spacer(modifier = Modifier.height(55.dp))
         ScreenTitle(R.string.sign_in_title, R.string.sign_in_description)
         Spacer(modifier = Modifier.height(60.dp))
@@ -117,5 +116,9 @@ fun LoginScreenContent(
 @Composable
 @Preview(showBackground = true)
 fun LoginScreenPreview() {
-    LoginScreen()
+    DevicersAppTheme {
+        DevicersScaffold(topBarNumber = 5) { innerPadding ->
+            LoginScreen(modifier = Modifier.padding(innerPadding))
+        }
+    }
 }

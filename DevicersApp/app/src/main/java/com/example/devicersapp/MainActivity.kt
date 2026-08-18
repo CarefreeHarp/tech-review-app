@@ -28,69 +28,87 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DevicersAppTheme {
-
                 // =========================
                 // PANTALLAS SIN BOTTOM BAR
                 // =========================
 
-                // LoginScreen()
+                // ScreenWithScaffold(selectedItem = "login", topBarNumber = 5) {
+                //     LoginScreen(modifier = it)
+                // }
 
-                // RegisterScreen()
+                // ScreenWithScaffold(selectedItem = "register", topBarNumber = 5) {
+                //     RegisterScreen(modifier = it)
+                // }
 
-                // ReviewScreen()
-
+                // ScreenWithScaffold(selectedItem = "review", topBarNumber = 4) {
+                //     ReviewScreen(modifier = it)
+                // }
 
                 // =========================
                 // PANTALLAS CON BOTTOM BAR
                 // =========================
 
-                // ScreenWithBottomBar("home") {
+                // ScreenWithScaffold(selectedItem = "home", showBottomBar = true) {
                 //     FeedScreen(modifier = it)
                 // }
 
-                // ScreenWithBottomBar("search") {
+                // ScreenWithScaffold(selectedItem = "search", showBottomBar = true) {
                 //     SearchScreen(modifier = it)
                 // }
 
-                //ScreenWithBottomBar("add") {
-                //    RateProductScreen(modifier = it)
-                //}
+                // ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 2) {
+                //     RateProductScreen(modifier = it)
+                // }
 
-                // ScreenWithBottomBar("favorite") {
+                // ScreenWithScaffold(selectedItem = "favorite", showBottomBar = true) {
                 //     NotificationsScreen(modifier = it)
                 // }
 
-                // ScreenWithBottomBar("profile") {
+                // ScreenWithScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1) {
                 //     ProfileScreen(modifier = it)
                 // }
 
-                 //ScreenWithBottomBar("search") {
-                 //    ProductScreen(modifier = it)
-                 //}
-
-                ScreenWithBottomBar("add"){
-                    CreateReviewScreen(modifier = it)
+                // Cambia este bloque por otra pantalla de ejemplo durante el desarrollo visual.
+                ScreenWithScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 1) {
+                    ProductScreen(modifier = it)
                 }
+
+                // ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 3) {
+                //     CreateReviewScreen(modifier = it)
+                // }
             }
         }
     }
 }
-
-
 /**
- * Envuelve una pantalla con el Scaffold general de Devicers y muestra la barra de navegación inferior.
+ * Envuelve una pantalla con el Scaffold general de Devicers.
  * @param selectedItem Elemento que debe aparecer seleccionado en la barra de navegación.
+ * @param showBottomBar Indica si se debe mostrar la barra de navegación inferior.
+ * @param topBarNumber Número de la barra superior que se debe mostrar, o `null` si no corresponde.
  * @param content Pantalla que se mostrará dentro del Scaffold.
+ * @param modifier Modificador aplicado al Scaffold compartido.
+ * @param onNavigationItemClick Acción solicitada al seleccionar un elemento de navegación.
+ * @param onTopBarBackClick Acción solicitada al seleccionar volver en una barra superior interactiva.
  */
 @Composable
-fun ScreenWithBottomBar(
+fun ScreenWithScaffold(
     selectedItem: String,
+    showBottomBar: Boolean = false,
+    topBarNumber: Int? = null,
+    modifier: Modifier = Modifier,
+    onNavigationItemClick: (String) -> Unit = {},
+    onTopBarBackClick: () -> Unit = {},
     content: @Composable (Modifier) -> Unit
 ) {
     DevicersScaffold(
-        selectedItem = selectedItem
+        selectedItem = selectedItem,
+        showBottomBar = showBottomBar,
+        topBarNumber = topBarNumber,
+        modifier = modifier,
+        onNavigationItemClick = onNavigationItemClick,
+        onTopBarBackClick = onTopBarBackClick
     ) { innerPadding ->
-
+        // El contenido recibe los insets del Scaffold para no invadir las barras del sistema.
         content(
             Modifier
                 .fillMaxSize()

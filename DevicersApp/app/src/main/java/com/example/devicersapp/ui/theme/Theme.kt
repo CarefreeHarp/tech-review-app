@@ -30,7 +30,7 @@ import com.example.devicersapp.R
 
 
 // ==========================
-// Dark Color Scheme
+// Esquema de colores oscuro
 // ==========================
 
 private val DarkColorScheme = darkColorScheme(
@@ -65,12 +65,15 @@ private val DarkColorScheme = darkColorScheme(
     onSurfaceVariant = DarkDevicersColors.textSecondary,
 
     // Bordes
-    outline = DarkDevicersColors.border
+    outline = DarkDevicersColors.border,
+
+    // Mensajes y estados de error
+    error = DarkDevicersColors.error
 )
 
 
 // ==========================
-// Light Color Scheme
+// Esquema de colores claro
 // ==========================
 
 private val LightColorScheme = lightColorScheme(
@@ -105,7 +108,10 @@ private val LightColorScheme = lightColorScheme(
     onSurfaceVariant = LightDevicersColors.textSecondary,
 
     // Bordes
-    outline = LightDevicersColors.border
+    outline = LightDevicersColors.border,
+
+    // Mensajes y estados de error
+    error = LightDevicersColors.error
 )
 
 /** Representa un color de la paleta mostrado en las vistas previas del tema. */
@@ -191,7 +197,8 @@ private fun ThemeColorPalettePreview(modifier: Modifier = Modifier) {
         ThemeColorPreviewItem(R.string.theme_color_text_primary, colors.textPrimary),
         ThemeColorPreviewItem(R.string.theme_color_text_secondary, colors.textSecondary),
         ThemeColorPreviewItem(R.string.theme_color_text_on_primary, colors.textOnPrimary),
-        ThemeColorPreviewItem(R.string.theme_color_border, colors.border)
+        ThemeColorPreviewItem(R.string.theme_color_border, colors.border),
+        ThemeColorPreviewItem(R.string.theme_color_error, colors.error)
     )
 
     Surface(

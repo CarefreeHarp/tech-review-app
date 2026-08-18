@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -27,15 +28,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.AuthenticationFieldLabelText
+import com.example.devicersapp.ui.theme.AuthenticationButtonText
+import com.example.devicersapp.ui.theme.AuthenticationDescriptionText
 import com.example.devicersapp.ui.theme.AuthenticationSupportText
+import com.example.devicersapp.ui.theme.AuthenticationTitleText
 
 /**
  * Renderiza el botón de acción principal compartido por las pantallas de autenticación.
@@ -62,9 +64,7 @@ fun PrimaryButton(
     ) {
         Text(
             text = stringResource(textResId),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            lineHeight = 19.sp
+            style = AuthenticationButtonText
         )
     }
 }
@@ -76,12 +76,18 @@ fun PrimaryButton(
  */
 @Composable
 fun AuthenticationHeader(modifier: Modifier = Modifier) {
+    val logoRes = if (LocalDevicersColors.current.isDarkTheme) {
+        R.drawable.logo_oscuro
+    } else {
+        R.drawable.logo_claro
+    }
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(R.drawable.logo_claro),
+            painter = painterResource(logoRes),
             contentDescription = stringResource(R.string.devicers_logo_description),
             modifier = Modifier.size(width = 186.dp, height = 50.dp)
         )
@@ -105,15 +111,13 @@ fun ScreenTitle(
         Text(
             text = stringResource(titleResId),
             color = LocalDevicersColors.current.textPrimary,
-            fontSize = 23.sp,
-            fontWeight = FontWeight.Bold
+            style = AuthenticationTitleText
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = stringResource(descriptionResId),
             color = LocalDevicersColors.current.textSecondary,
-            fontSize = 15.sp,
-            lineHeight = 15.sp
+            style = AuthenticationDescriptionText
         )
     }
 }
@@ -160,7 +164,7 @@ fun AuthenticationField(
                 Text(
                     text = placeholderResId?.let { stringResource(it) }.orEmpty(),
                     color = LocalDevicersColors.current.textSecondary,
-                    fontSize = 12.sp
+                    style = MaterialTheme.typography.bodySmall
                 )
             },
             trailingIcon = if (isPassword) {
@@ -237,9 +241,10 @@ fun SocialButton(
             contentColor = LocalDevicersColors.current.textPrimary
         )
     ) {
-        Image(
+        Icon(
             painter = painterResource(iconResId),
             contentDescription = stringResource(contentDescriptionResId),
+            tint = LocalDevicersColors.current.textPrimary,
             modifier = Modifier.size(20.dp)
         )
     }

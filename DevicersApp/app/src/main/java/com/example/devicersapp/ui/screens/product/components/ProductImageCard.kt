@@ -39,7 +39,7 @@ fun ProductImageCard(product: ProductContent, modifier: Modifier = Modifier) {
     ) {
         Image(
             painter = painterResource(product.imageResId),
-            contentDescription = product.imageDescription,
+            contentDescription = stringResource(product.imageDescriptionResId),
             modifier = Modifier.size(width = 224.dp, height = 182.dp),
             contentScale = ContentScale.Fit
         )
@@ -52,10 +52,10 @@ fun ProductImageCard(product: ProductContent, modifier: Modifier = Modifier) {
 fun ProductImageCardPreview() {
     ProductImageCard(
         ProductContent(
-            name = stringResource(R.string.review_product_name),
-            brand = stringResource(R.string.review_product_brand),
+            nameResId = R.string.review_product_name,
+            brandResId = R.string.review_product_brand,
             imageResId = R.drawable.devicers_headphones_black,
-            imageDescription = stringResource(R.string.review_product_image)
+            imageDescriptionResId = R.string.review_product_image
         )
     )
 }

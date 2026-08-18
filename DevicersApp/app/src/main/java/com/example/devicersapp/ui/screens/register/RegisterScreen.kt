@@ -21,11 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.screens.register.components.RegisterValidationWarning
 import com.example.devicersapp.ui.utils.authentication.AuthenticationDividerText
 import com.example.devicersapp.ui.utils.authentication.AuthenticationField
 import com.example.devicersapp.ui.utils.authentication.AuthenticationFooter
-import com.example.devicersapp.ui.utils.authentication.AuthenticationHeader
 import com.example.devicersapp.ui.utils.authentication.PrimaryButton
 import com.example.devicersapp.ui.utils.authentication.ScreenTitle
 import com.example.devicersapp.ui.utils.authentication.SocialButtons
@@ -119,9 +120,7 @@ fun RegisterScreenContent(
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // El espaciado vertical conserva el ritmo visual definido por el prototipo claro.
-        Spacer(modifier = Modifier.height(28.dp))
-        AuthenticationHeader()
+        // La marca se muestra desde TopBar5, gestionada por el Scaffold compartido.
         Spacer(modifier = Modifier.height(55.dp))
         ScreenTitle(R.string.create_account, R.string.create_account_description)
         Spacer(modifier = Modifier.height(28.dp))
@@ -189,5 +188,9 @@ fun RegisterScreenContent(
 @Composable
 @Preview(showBackground = true)
 fun RegisterScreenPreview() {
-    RegisterScreen()
+    DevicersAppTheme {
+        DevicersScaffold(topBarNumber = 5) { innerPadding ->
+            RegisterScreen(modifier = Modifier.padding(innerPadding))
+        }
+    }
 }

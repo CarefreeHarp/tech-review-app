@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,7 +22,7 @@ import com.example.devicersapp.ui.models.NotificationContent
 /**
  * Agrupa las notificaciones que comparten el mismo periodo de tiempo.
  *
- * @param title Encabezado quemado del grupo.
+ * @param titleResId Recurso del encabezado del grupo.
  * @param notifications Notificaciones que se mostrarán debajo del encabezado.
  * @param followedNotificationIds Identificadores de los perfiles seguidos.
  * @param onFollow Solicita seguir el perfil de una notificación.
@@ -28,7 +30,7 @@ import com.example.devicersapp.ui.models.NotificationContent
  */
 @Composable
 fun NotificationSection(
-    title: String,
+    @StringRes titleResId: Int,
     notifications: List<NotificationContent>,
     followedNotificationIds: Set<String>,
     onFollow: (String) -> Unit,
@@ -36,7 +38,7 @@ fun NotificationSection(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = title,
+            text = stringResource(titleResId),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
             color = LocalDevicersColors.current.textSecondary
@@ -59,14 +61,14 @@ fun NotificationSection(
 @Preview(showBackground = true)
 fun NotificationSectionPreview() {
     NotificationSection(
-        title = "HOY",
+        titleResId = R.string.notifications_group_today,
         notifications = listOf(
             NotificationContent(
                 id = "preview",
                 avatarResId = R.drawable.profile_avatar_00,
-                author = "@usuario",
-                action = "Le gustó tu reseña",
-                detail = "Auriculares",
+                authorResId = R.string.notification_author_camila,
+                actionResId = R.string.notification_action_liked_review,
+                detailResId = R.string.notification_detail_headphones,
                 time = System.currentTimeMillis() - 5 * 60_000L
             )
         ),

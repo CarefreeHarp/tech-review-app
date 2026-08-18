@@ -10,15 +10,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 /**
- * Agrupa el campo de búsqueda y el botón de filtros.
+ * Agrupa el campo de búsqueda controlado y la acción que abre los filtros.
  *
- * El estado de búsqueda se recibe desde el componente padre
- * siguiendo el patrón de state hoisting.
+ * @param searchText Texto actual de búsqueda.
+ * @param onSearchTextChange Acción que solicita actualizar el texto.
+ * @param onFiltersClick Acción que solicita mostrar los filtros.
+ * @param modifier Modificador aplicado a la fila.
  */
 @Composable
 fun CreateReviewSearchRow(
@@ -27,32 +32,35 @@ fun CreateReviewSearchRow(
     onFiltersClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth()
-    ) {
+    val colors = LocalDevicersColors.current
 
+    Row(modifier = modifier.fillMaxWidth()) {
         CreateReviewSearchBar(
             value = searchText,
             onValueChange = onSearchTextChange,
             modifier = Modifier.weight(1f)
         )
-
-        Spacer(
-            modifier = Modifier.width(8.dp)
-        )
-
+        Spacer(modifier = Modifier.width(8.dp))
         Button(
             onClick = onFiltersClick,
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                containerColor = colors.surfaceSecondary,
+                contentColor = colors.textPrimary
             )
         ) {
             Text(
-                text = "Filtros",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold
+                text = stringResource(R.string.create_review_filters),
+                style = MaterialTheme.typography.labelSmall
             )
         }
+    }
+}
+
+/** Muestra una vista previa de la fila de búsqueda y filtros. */
+@Composable
+@Preview(showBackground = true)
+fun CreateReviewSearchRowPreview() {
+    DevicersAppTheme {
+        CreateReviewSearchRow(searchText = "", onSearchTextChange = {}, onFiltersClick = {})
     }
 }

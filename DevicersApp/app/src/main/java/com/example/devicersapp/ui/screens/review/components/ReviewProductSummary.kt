@@ -49,16 +49,16 @@ fun ReviewProductSummary(product: ProductContent, modifier: Modifier = Modifier)
             if (product.showImage) {
                 Image(
                     painter = painterResource(product.imageResId),
-                    contentDescription = product.imageDescription,
+                    contentDescription = stringResource(product.imageDescriptionResId),
                     modifier = Modifier.size(42.dp)
                 )
             }
         }
         Spacer(Modifier.width(14.dp))
         Column {
-            Text(product.name, style = MaterialTheme.typography.titleMedium, color = LocalDevicersColors.current.textPrimary)
+            Text(stringResource(product.nameResId), style = MaterialTheme.typography.titleMedium, color = LocalDevicersColors.current.textPrimary)
             Spacer(Modifier.height(2.dp))
-            Text(product.brand, style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textSecondary)
+            Text(stringResource(product.brandResId), style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textSecondary)
         }
     }
 }
@@ -69,10 +69,10 @@ fun ReviewProductSummary(product: ProductContent, modifier: Modifier = Modifier)
 fun ReviewProductSummaryPreview() {
     ReviewProductSummary(
         ProductContent(
-            name = stringResource(R.string.review_product_name),
-            brand = stringResource(R.string.review_product_brand),
+            nameResId = R.string.review_product_name,
+            brandResId = R.string.review_product_brand,
             imageResId = R.drawable.auriculares_logo,
-            imageDescription = stringResource(R.string.review_product_image),
+            imageDescriptionResId = R.string.review_product_image,
             showImage = false
         )
     )

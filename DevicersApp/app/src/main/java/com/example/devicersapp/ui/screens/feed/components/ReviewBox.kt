@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,13 +60,13 @@ fun ReviewBox(review: FeedReviewContent, modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.height(10.dp))
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Image(painterResource(R.drawable.like_icon), null, Modifier.size(18.dp))
+            Icon(painterResource(R.drawable.like_icon), null, Modifier.size(18.dp), tint = LocalDevicersColors.current.textPrimary)
             Spacer(Modifier.width(4.dp))
             Text(review.likes.toString(), color = LocalDevicersColors.current.textSecondary, style = MaterialTheme.typography.labelSmall)
             Spacer(Modifier.weight(1f))
-            Image(painterResource(R.drawable.send_icon), null, Modifier.size(18.dp))
+            Icon(painterResource(R.drawable.send_icon), null, Modifier.size(18.dp), tint = LocalDevicersColors.current.textPrimary)
             Spacer(Modifier.width(40.dp))
-            Image(painterResource(R.drawable.bookmark_icon), null, Modifier.size(18.dp))
+            Icon(painterResource(R.drawable.bookmark_icon), null, Modifier.size(18.dp), tint = LocalDevicersColors.current.textPrimary)
         }
     }
 }
