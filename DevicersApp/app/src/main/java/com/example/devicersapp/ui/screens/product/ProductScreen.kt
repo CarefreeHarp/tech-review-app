@@ -27,7 +27,6 @@ import com.example.devicersapp.ui.models.RatingDistribution
 import com.example.devicersapp.ui.models.RatingSummaryContent
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
-import androidx.compose.foundation.layout.statusBarsPadding
 import com.example.devicersapp.ui.screens.product.components.ProductImageCard
 import com.example.devicersapp.ui.screens.product.components.RatingSummary
 import com.example.devicersapp.ui.screens.product.components.ReviewCard
@@ -43,7 +42,6 @@ fun ProductScreen(
             .background(
                 LocalDevicersColors.current.background
             )
-            .statusBarsPadding()
     )
 }
 
@@ -62,10 +60,6 @@ fun ProductScreenContent(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 12.dp)
         ) {
-
-            Spacer(
-                modifier = Modifier.height(6.dp)
-            )
 
             // Header: volver + logo + opciones
             AppTopBar()
@@ -132,7 +126,7 @@ fun ProductScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = LocalDevicersColors.current.primaryYellow,
-                    contentColor = LocalDevicersColors.current.textPrimary
+                    contentColor = LocalDevicersColors.current.textOnPrimary
                 )
             ) {
                 Text(
@@ -167,10 +161,10 @@ fun ProductScreenContent(
         }
 
         // Barra inferior existente del proyecto
-        BottomNavigationBar(
-            modifier = Modifier.fillMaxWidth(),
-            selectedItem = "search"
-        )
+       // BottomNavigationBar(
+       //     modifier = Modifier.fillMaxWidth(),
+       //     selectedItem = "search"
+       // )
     }
 }
 

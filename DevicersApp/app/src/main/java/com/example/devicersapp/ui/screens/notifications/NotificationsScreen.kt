@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalNotificationsProvider
 import com.example.devicersapp.ui.screens.notifications.components.NotificationSection
-import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 
 /** Configura la estructura principal de la pantalla de notificaciones y su navegación inferior. */
 @Composable
@@ -41,26 +39,11 @@ fun NotificationsScreen(modifier: Modifier = Modifier) {
     // Estado elevado que determina qué tarjetas deben mostrar la acción "Siguiendo".
     var followedNotificationIds by remember { mutableStateOf(emptySet<String>()) }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = LocalDevicersColors.current.background,
-        bottomBar = {
-            BottomNavigationBar(
-                selectedItem = "favorite",
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    ) { innerPadding ->
-        NotificationsScreenContent(
-            followedNotificationIds = followedNotificationIds,
-            onFollow = { notificationId ->
-                // Se crea un conjunto nuevo para que Compose detecte el cambio y recomponga la tarjeta.
-                followedNotificationIds = followedNotificationIds + notificationId
-            },
-            contentPadding = innerPadding,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
+    NotificationsScreenContent(
+        followedNotificationIds = followedNotificationIds,
+        onFollow = { notificationId -> followedNotificationIds = followedNotificationIds + notificationId },
+        modifier = modifier.fillMaxSize().background(LocalDevicersColors.current.background)
+    )
 }
 
 /**
@@ -68,14 +51,12 @@ fun NotificationsScreen(modifier: Modifier = Modifier) {
  *
  * @param followedNotificationIds Identificadores de notificaciones cuyos autores ya se siguen.
  * @param onFollow Acción solicitada al seleccionar seguir.
- * @param contentPadding Espaciado estructural entregado por el contenedor de la pantalla.
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
 fun NotificationsScreenContent(
     followedNotificationIds: Set<String>,
     onFollow: (String) -> Unit,
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     // Una sola referencia de tiempo mantiene coherentes los valores relativos de toda la lista.
@@ -88,7 +69,7 @@ fun NotificationsScreenContent(
         contentPadding = PaddingValues(
             start = 18.dp,
             end = 18.dp,
-            top = contentPadding.calculateTopPadding(),
+            top = 0.dp,
             bottom = 20.dp
         ),
         verticalArrangement = Arrangement.spacedBy(22.dp)

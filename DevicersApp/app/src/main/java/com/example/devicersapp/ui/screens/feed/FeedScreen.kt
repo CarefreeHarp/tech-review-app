@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,28 +27,14 @@ import com.example.devicersapp.data.local.LocalFeedReviewsProvider
 import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.screens.feed.components.ReviewBox
 import com.example.devicersapp.ui.theme.SearchHeadingText
-import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 
 /** Configura la estructura del Feed y la navegación inferior. */
 @Composable
 fun FeedScreen(modifier: Modifier = Modifier) {
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = LocalDevicersColors.current.background,
-        bottomBar = {
-            BottomNavigationBar(
-                selectedItem = "home",
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    ) { innerPadding ->
-        FeedScreenContent(
-            reviews = LocalFeedReviewsProvider.reviews,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        )
-    }
+    FeedScreenContent(
+        reviews = LocalFeedReviewsProvider.reviews,
+        modifier = modifier.fillMaxSize().background(LocalDevicersColors.current.background)
+    )
 }
 
 /**
@@ -105,10 +90,6 @@ fun FeedScreenContent(
                 ReviewBox(review = review)
 
                 Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
             }
     }
 }

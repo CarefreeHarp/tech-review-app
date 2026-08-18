@@ -19,7 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.layout.statusBarsPadding
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ProfileStatContent
@@ -37,7 +36,6 @@ fun ProfileScreen(
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
-            .statusBarsPadding()
     )
 }
 
@@ -112,10 +110,10 @@ fun ProfileScreenContent(
             Spacer(modifier = Modifier.height(144.dp))
         }
 
-        BottomNavigationBar(
-            modifier = Modifier.fillMaxWidth(),
-            selectedItem = "profile"
-        )
+       // BottomNavigationBar(
+       //     modifier = Modifier.fillMaxWidth(),
+       //     selectedItem = "profile"
+       // )
     }
 }
 

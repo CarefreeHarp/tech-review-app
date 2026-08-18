@@ -13,3 +13,4 @@ fun ratingStarsResource(rating: Int): Int = when (rating) {
     1 -> R.string.rating_stars_one
     else -> throw IllegalArgumentException("La calificación debe estar entre 1 y 5.")
 }
+
