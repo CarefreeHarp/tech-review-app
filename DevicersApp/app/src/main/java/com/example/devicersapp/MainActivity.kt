@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.devicersapp.ui.screens.create_review.CreateReviewScreen
 import com.example.devicersapp.ui.screens.feed.FeedScreen
 import com.example.devicersapp.ui.screens.login.LoginScreen
 import com.example.devicersapp.ui.screens.notifications.NotificationsScreen
@@ -51,9 +52,9 @@ class MainActivity : ComponentActivity() {
                 //     SearchScreen(modifier = it)
                 // }
 
-                  ScreenWithBottomBar("add") {
-                      RateProductScreen(modifier = it)
-                  }
+                //ScreenWithBottomBar("add") {
+                //    RateProductScreen(modifier = it)
+                //}
 
                 // ScreenWithBottomBar("favorite") {
                 //     NotificationsScreen(modifier = it)
@@ -66,6 +67,10 @@ class MainActivity : ComponentActivity() {
                  //ScreenWithBottomBar("search") {
                  //    ProductScreen(modifier = it)
                  //}
+
+                ScreenWithBottomBar("add"){
+                    CreateReviewScreen(modifier = it)
+                }
             }
         }
     }
