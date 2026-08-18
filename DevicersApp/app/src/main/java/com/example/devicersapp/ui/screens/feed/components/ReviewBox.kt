@@ -78,7 +78,7 @@ fun ReviewBoxPreview() {
     ReviewBox(
         FeedReviewContent(
             productName = R.string.feed_product_phone,
-            productImageResId = R.drawable.electronic_phone,
+            productImageResId = R.drawable.device_02,
             author = R.string.feed_user_phone,
             reviewText = R.string.feed_review_phone,
             likes = 125,

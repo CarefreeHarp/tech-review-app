@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
@@ -71,7 +70,7 @@ fun ReviewProductSummaryPreview() {
         ProductContent(
             nameResId = R.string.review_product_name,
             brandResId = R.string.review_product_brand,
-            imageResId = R.drawable.auriculares_logo,
+            imageResId = R.drawable.device_00,
             imageDescriptionResId = R.string.review_product_image,
             showImage = false
         )

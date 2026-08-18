@@ -32,50 +32,59 @@ class MainActivity : ComponentActivity() {
                 // PANTALLAS SIN BOTTOM BAR
                 // =========================
 
-                // ScreenWithScaffold(selectedItem = "login", topBarNumber = 5) {
-                //     LoginScreen(modifier = it)
-                // }
-
-                // ScreenWithScaffold(selectedItem = "register", topBarNumber = 5) {
-                //     RegisterScreen(modifier = it)
-                // }
-
-                // ScreenWithScaffold(selectedItem = "review", topBarNumber = 4) {
-                //     ReviewScreen(modifier = it)
-                // }
-
+                 ScreenWithScaffold(selectedItem = "login", topBarNumber = 5) {
+                     LoginScreen(modifier = it)
+                 }
+                
+                /*
+                 ScreenWithScaffold(selectedItem = "register", topBarNumber = 5) {
+                     RegisterScreen(modifier = it)
+                 }
+                 */
+                /*
+                 ScreenWithScaffold(selectedItem = "review", topBarNumber = 4) {
+                     ReviewScreen(modifier = it)
+                 }
+                */
                 // =========================
                 // PANTALLAS CON BOTTOM BAR
                 // =========================
-
-                // ScreenWithScaffold(selectedItem = "home", showBottomBar = true) {
-                //     FeedScreen(modifier = it)
-                // }
-
-                // ScreenWithScaffold(selectedItem = "search", showBottomBar = true) {
-                //     SearchScreen(modifier = it)
-                // }
-
-                // ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 2) {
-                //     RateProductScreen(modifier = it)
-                // }
-
-                // ScreenWithScaffold(selectedItem = "favorite", showBottomBar = true) {
-                //     NotificationsScreen(modifier = it)
-                // }
-
+                /*
+                ScreenWithScaffold(selectedItem = "home", showBottomBar = true) {
+                     FeedScreen(modifier = it)
+                 }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "search", showBottomBar = true) {
+                     SearchScreen(modifier = it)
+                 }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 2) {
+                     RateProductScreen(modifier = it)
+                 }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "favorite", showBottomBar = true) {
+                     NotificationsScreen(modifier = it)
+                 }
+                */
+                /*
                  ScreenWithScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1) {
                      ProfileScreen(modifier = it)
                  }
+                */
+                /*
+                ScreenWithScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 1) {
+                   ProductScreen(modifier = it)
+                }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 3) {
+                     CreateReviewScreen(modifier = it)
+                 }
 
-                // Cambia este bloque por otra pantalla de ejemplo durante el desarrollo visual.
-                //ScreenWithScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 1) {
-                //    ProductScreen(modifier = it)
-                //}
-
-                // ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 3) {
-                //     CreateReviewScreen(modifier = it)
-                // }
+                 */
             }
         }
     }

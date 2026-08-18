@@ -111,7 +111,7 @@ fun RateableProductCardPreview() {
             product = ProductContent(
                 nameResId = R.string.rate_product_name,
                 brandResId = R.string.rate_product_brand,
-                imageResId = R.drawable.auriculares_logo,
+                imageResId = R.drawable.device_00,
                 imageDescriptionResId = R.string.rate_product_image_description
             ),
             onChangeProduct = {}

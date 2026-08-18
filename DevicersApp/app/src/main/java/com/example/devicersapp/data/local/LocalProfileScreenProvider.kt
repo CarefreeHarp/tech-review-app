@@ -5,7 +5,6 @@ import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ProfileStatContent
 import com.example.devicersapp.ui.models.ReviewContent
 
-/** Provee el perfil y las reseñas locales mostradas en la pantalla de perfil. */
 object LocalProfileScreenProvider {
 
     val profile = ProfileContent(
@@ -29,7 +28,7 @@ object LocalProfileScreenProvider {
             likes = 23
         ),
         ReviewContent(
-            avatarResId = R.drawable.profile_avatar_04,
+            avatarResId = R.drawable.profile_avatar_01,
             authorResId = R.string.profile_review_second_author,
             rating = 4,
             textResId = R.string.profile_review_second_text,
@@ -43,7 +42,7 @@ object LocalProfileScreenProvider {
             likes = 34
         ),
         ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
+            avatarResId = R.drawable.profile_avatar_01,
             authorResId = R.string.profile_handle,
             rating = 4,
             textResId = R.string.profile_review_fourth_text,
@@ -57,7 +56,7 @@ object LocalProfileScreenProvider {
             likes = 46
         ),
         ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
+            avatarResId = R.drawable.profile_avatar_01,
             authorResId = R.string.profile_handle,
             rating = 4,
             textResId = R.string.profile_review_sixth_text,
@@ -71,7 +70,7 @@ object LocalProfileScreenProvider {
             likes = 52
         ),
         ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
+            avatarResId = R.drawable.profile_avatar_01,
             authorResId = R.string.profile_handle,
             rating = 4,
             textResId = R.string.profile_review_eighth_text,
@@ -85,7 +84,7 @@ object LocalProfileScreenProvider {
             likes = 39
         ),
         ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
+            avatarResId = R.drawable.profile_avatar_01,
             authorResId = R.string.profile_handle,
             rating = 4,
             textResId = R.string.profile_review_tenth_text,
@@ -99,7 +98,7 @@ object LocalProfileScreenProvider {
             likes = 31
         ),
         ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
+            avatarResId = R.drawable.profile_avatar_01,
             authorResId = R.string.profile_handle,
             rating = 4,
             textResId = R.string.profile_review_twelfth_text,

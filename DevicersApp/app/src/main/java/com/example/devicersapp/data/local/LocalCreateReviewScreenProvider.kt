@@ -23,7 +23,7 @@ object LocalCreateReviewScreenProvider {
             brandResId = R.string.rate_product_brand,
             categoryResId = R.string.audio,
             imageDescriptionResId = R.string.rate_product_image_description,
-            imageResId = R.drawable.devicers_headphones_black,
+            imageResId = R.drawable.device_00,
             rating = 5
         ),
         ProductSearchContent(
@@ -34,7 +34,7 @@ object LocalCreateReviewScreenProvider {
             brandResId = R.string.create_review_phone_brand,
             categoryResId = R.string.cellphones,
             imageDescriptionResId = R.string.create_review_phone_image_description,
-            imageResId = R.drawable.electronic_phone,
+            imageResId = R.drawable.device_02,
             rating = 5
         ),
         ProductSearchContent(
@@ -45,7 +45,7 @@ object LocalCreateReviewScreenProvider {
             brandResId = R.string.create_review_product_three_brand,
             categoryResId = R.string.computers,
             imageDescriptionResId = R.string.create_review_product_three_image,
-            imageResId = R.drawable.electronic_desktop,
+            imageResId = R.drawable.device_01,
             rating = 5
         ),
         ProductSearchContent(
@@ -56,7 +56,7 @@ object LocalCreateReviewScreenProvider {
             brandResId = R.string.create_review_product_four_brand,
             categoryResId = R.string.audio,
             imageDescriptionResId = R.string.create_review_product_four_image,
-            imageResId = R.drawable.auriculares_logo,
+            imageResId = R.drawable.device_08,
             rating = 4
         ),
         ProductSearchContent(
@@ -67,7 +67,7 @@ object LocalCreateReviewScreenProvider {
             brandResId = R.string.create_review_product_five_brand,
             categoryResId = R.string.cellphones,
             imageDescriptionResId = R.string.create_review_product_five_image,
-            imageResId = R.drawable.electronic_phone,
+            imageResId = R.drawable.device_03,
             rating = 5
         ),
         ProductSearchContent(
@@ -78,7 +78,7 @@ object LocalCreateReviewScreenProvider {
             brandResId = R.string.create_review_product_six_brand,
             categoryResId = R.string.computers,
             imageDescriptionResId = R.string.create_review_product_six_image,
-            imageResId = R.drawable.electronic_desktop,
+            imageResId = R.drawable.device_04,
             rating = 4
         ),
         ProductSearchContent(
@@ -89,7 +89,7 @@ object LocalCreateReviewScreenProvider {
             brandResId = R.string.create_review_product_seven_brand,
             categoryResId = R.string.audio,
             imageDescriptionResId = R.string.create_review_product_seven_image,
-            imageResId = R.drawable.auriculares_logo,
+            imageResId = R.drawable.device_05,
             rating = 4
         ),
         ProductSearchContent(
@@ -100,7 +100,7 @@ object LocalCreateReviewScreenProvider {
             brandResId = R.string.create_review_product_eight_brand,
             categoryResId = R.string.cellphones,
             imageDescriptionResId = R.string.create_review_product_eight_image,
-            imageResId = R.drawable.electronic_phone,
+            imageResId = R.drawable.device_06,
             rating = 5
         ),
         ProductSearchContent(
@@ -111,7 +111,7 @@ object LocalCreateReviewScreenProvider {
             brandResId = R.string.create_review_product_nine_brand,
             categoryResId = R.string.computers,
             imageDescriptionResId = R.string.create_review_product_nine_image,
-            imageResId = R.drawable.electronic_desktop,
+            imageResId = R.drawable.device_07,
             rating = 4
         ),
         ProductSearchContent(
@@ -122,7 +122,7 @@ object LocalCreateReviewScreenProvider {
             brandResId = R.string.create_review_product_ten_brand,
             categoryResId = R.string.audio,
             imageDescriptionResId = R.string.create_review_product_ten_image,
-            imageResId = R.drawable.auriculares_logo,
+            imageResId = R.drawable.device_09,
             rating = 5
         )
     )

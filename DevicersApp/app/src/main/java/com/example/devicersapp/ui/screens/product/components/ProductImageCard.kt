@@ -54,7 +54,7 @@ fun ProductImageCardPreview() {
         ProductContent(
             nameResId = R.string.review_product_name,
             brandResId = R.string.review_product_brand,
-            imageResId = R.drawable.devicers_headphones_black,
+            imageResId = R.drawable.device_00,
             imageDescriptionResId = R.string.review_product_image
         )
     )
