@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalCreateReviewScreenProvider
 import com.example.devicersapp.ui.models.ProductCategoryContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors

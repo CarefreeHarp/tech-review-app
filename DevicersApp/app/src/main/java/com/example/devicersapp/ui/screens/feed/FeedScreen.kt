@@ -23,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalFeedScreenProvider
 import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.screens.feed.components.ReviewBox
 import com.example.devicersapp.ui.theme.SearchHeadingText

@@ -3,7 +3,6 @@ package com.example.devicersapp.ui.screens.create_review
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalCreateReviewScreenProvider
 import com.example.devicersapp.ui.models.ProductCategoryContent
 import com.example.devicersapp.ui.models.ProductSearchContent
 import com.example.devicersapp.ui.screens.create_review.components.CategoryChipRow
