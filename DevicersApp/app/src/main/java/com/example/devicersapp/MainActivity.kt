@@ -64,9 +64,9 @@ class MainActivity : ComponentActivity() {
                 //     NotificationsScreen(modifier = it)
                 // }
 
-                 //ScreenWithScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1) {
-                 //    ProfileScreen(modifier = it)
-                 //}
+                 ScreenWithScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1) {
+                     ProfileScreen(modifier = it)
+                 }
 
                 // Cambia este bloque por otra pantalla de ejemplo durante el desarrollo visual.
                 //ScreenWithScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 1) {
