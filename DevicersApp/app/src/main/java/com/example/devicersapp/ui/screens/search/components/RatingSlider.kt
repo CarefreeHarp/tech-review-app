@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.search.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,44 +17,44 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.SearchControlText
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 
 /**
- * Muestra el control visual de calificación mínima seleccionado en cuatro estrellas.
+ * Muestra el control para seleccionar la calificación mínima de cero a cinco estrellas.
  *
+ * @param value Calificación mínima seleccionada.
+ * @param onValueChange Acción que solicita cambiar la calificación mínima.
  * @param modifier Modificador aplicado al control.
  */
 @Composable
-fun RatingSlider(modifier: Modifier = Modifier) {
+fun RatingSlider(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 4.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-                .background(
-                    color = colorResource(R.color.border_light),
-                    shape = RoundedCornerShape(2.dp)
-                )
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .height(4.dp)
-                    .background(
-                        color = colorResource(R.color.primary_yellow),
-                        shape = RoundedCornerShape(2.dp)
-                    )
+        Slider(
+            value = value,
+            onValueChange = onValueChange,
+            valueRange = 0f..5f,
+            steps = 4,
+            modifier = Modifier.fillMaxWidth(),
+            colors = SliderDefaults.colors(
+                thumbColor = LocalDevicersColors.current.primaryYellow,
+                activeTrackColor = LocalDevicersColors.current.primaryYellow,
+                inactiveTrackColor = LocalDevicersColors.current.border
             )
-        }
+        )
 
         Spacer(modifier = Modifier.height(5.dp))
         Row(
@@ -70,8 +72,12 @@ fun RatingSlider(modifier: Modifier = Modifier) {
 }
 
 /** Muestra una vista previa del control de calificación. */
-@Composable
 @Preview(showBackground = true)
+@Composable
 fun RatingSliderPreview() {
-    RatingSlider(modifier = Modifier.padding(16.dp))
+    RatingSlider(
+        value = 4f,
+        onValueChange = {},
+        modifier = Modifier.padding(16.dp)
+    )
 }

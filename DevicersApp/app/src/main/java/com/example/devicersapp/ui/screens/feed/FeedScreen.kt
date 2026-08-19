@@ -1,9 +1,10 @@
 package com.example.devicersapp.ui.screens.feed
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,127 +12,91 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalFeedScreenProvider
 import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.screens.feed.components.ReviewBox
-import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
+import com.example.devicersapp.ui.theme.SearchHeadingText
 
-/** Renderiza la pantalla estática del Feed del tema claro de Devicers. */
+/** Configura la estructura del Feed y la navegación inferior. */
 @Composable
 fun FeedScreen(modifier: Modifier = Modifier) {
     FeedScreenContent(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colorResource(R.color.background_light))
+        reviews = LocalFeedScreenProvider.reviews,
+        modifier = modifier.fillMaxSize().background(LocalDevicersColors.current.background)
     )
 }
 
-/** Reúne el contenido visual de la pantalla de Feed. */
+/**
+ * Muestra el encabezado y la lista de reseñas del Feed.
+ *
+ * @param reviews Reseñas disponibles para mostrar.
+ * @param modifier Modificador aplicado a la lista.
+ */
 @Composable
-fun FeedScreenContent(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
+fun FeedScreenContent(
+    reviews: List<FeedReviewContent>,
+    modifier: Modifier = Modifier
+) {
+    val logoRes = if (LocalDevicersColors.current.isDarkTheme) {
+        R.drawable.logo_oscuro
+    } else {
+        R.drawable.logo_claro
+    }
+
+    LazyColumn(
+        modifier = modifier.padding(horizontal = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            item {
 
-            Image(
-                painter = painterResource(R.drawable.logo_claro),
-                contentDescription = stringResource(R.string.devicers_logo_description),
-                modifier = Modifier.size(width = 186.dp, height = 50.dp)
-            )
+                Image(
+                    painter = painterResource(logoRes),
+                    contentDescription = stringResource(R.string.devicers_logo_description),
+                    modifier = Modifier.size(width = 186.dp, height = 50.dp)
+                )
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                text = stringResource(R.string.feed),
-                modifier = Modifier.fillMaxWidth(),
-                color = colorResource(R.color.text_primary_light),
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
+                Text(
+                    text = stringResource(R.string.feed),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = LocalDevicersColors.current.textPrimary,
+                    style = SearchHeadingText
+                )
 
-            Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .width(50.dp)
-                    .height(2.dp)
-                    .background(
-                        colorResource(R.color.primary_yellow)
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(2.dp)
+                            .background(LocalDevicersColors.current.primaryYellow)
                     )
-            )
+                }
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
+            }
 
-            ReviewBox(
-                review = FeedReviewContent(
-                    productName = stringResource(R.string.feed_product_phone),
-                    productImageResId = R.drawable.electronic_phone,
-                    author = stringResource(R.string.feed_user_phone),
-                    reviewText = stringResource(R.string.feed_review_phone),
-                    likes = 125,
-                    timeAgo = stringResource(R.string.feed_time_two_days),
-                    rating = 5
-                )
-            )
+            items(reviews) { review ->
+                ReviewBox(review = review)
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            ReviewBox(
-                review = FeedReviewContent(
-                    productName = stringResource(R.string.feed_product_audio),
-                    productImageResId = R.drawable.auriculares_logo,
-                    author = stringResource(R.string.feed_user_audio),
-                    reviewText = stringResource(R.string.feed_review_audio),
-                    likes = 86,
-                    timeAgo = stringResource(R.string.feed_time_one_day),
-                    rating = 4
-                )
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            ReviewBox(
-                review = FeedReviewContent(
-                    productName = stringResource(R.string.feed_product_computer),
-                    productImageResId = R.drawable.electronic_desktop,
-                    author = stringResource(R.string.feed_user_computer),
-                    reviewText = stringResource(R.string.feed_review_computer),
-                    likes = 41,
-                    timeAgo = stringResource(R.string.feed_time_five_hours),
-                    rating = 3
-                )
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        BottomNavigationBar(
-            modifier = Modifier.fillMaxWidth(),
-            selectedItem = "home"
-        )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
     }
 }
 

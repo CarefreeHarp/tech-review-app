@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.utils.authentication
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -16,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -23,40 +26,45 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.AuthenticationFieldLabelText
+import com.example.devicersapp.ui.theme.AuthenticationButtonText
+import com.example.devicersapp.ui.theme.AuthenticationDescriptionText
 import com.example.devicersapp.ui.theme.AuthenticationSupportText
+import com.example.devicersapp.ui.theme.AuthenticationTitleText
 
 /**
  * Renderiza el botón de acción principal compartido por las pantallas de autenticación.
  *
  * @param textResId Recurso de texto mostrado dentro del botón.
  * @param modifier Modificador aplicado al botón.
+ * @param onClick Acción solicitada al pulsar el botón.
  */
 @Composable
-fun PrimaryButton(@StringRes textResId: Int, modifier: Modifier = Modifier) {
+fun PrimaryButton(
+    @StringRes textResId: Int,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
     Button(
-        onClick = {},
+        onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.primary_yellow),
-            contentColor = colorResource(R.color.text_primary_light)
+            containerColor = LocalDevicersColors.current.primaryYellow,
+            contentColor = LocalDevicersColors.current.textOnPrimary
         ),
         contentPadding = PaddingValues(0.dp)
     ) {
         Text(
             text = stringResource(textResId),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            lineHeight = 19.sp
+            style = AuthenticationButtonText
         )
     }
 }
@@ -68,21 +76,20 @@ fun PrimaryButton(@StringRes textResId: Int, modifier: Modifier = Modifier) {
  */
 @Composable
 fun AuthenticationHeader(modifier: Modifier = Modifier) {
+    val logoRes = if (LocalDevicersColors.current.isDarkTheme) {
+        R.drawable.logo_oscuro
+    } else {
+        R.drawable.logo_claro
+    }
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(R.drawable.logo_claro),
+            painter = painterResource(logoRes),
             contentDescription = stringResource(R.string.devicers_logo_description),
             modifier = Modifier.size(width = 186.dp, height = 50.dp)
-        )
-        // El espacio flexible mantiene el estado del tema alineado a la derecha.
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = stringResource(R.string.light_theme),
-            color = colorResource(R.color.text_secondary_light),
-            fontSize = 8.sp
         )
     }
 }
@@ -103,16 +110,14 @@ fun ScreenTitle(
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = stringResource(titleResId),
-            color = colorResource(R.color.text_primary_light),
-            fontSize = 23.sp,
-            fontWeight = FontWeight.Bold
+            color = LocalDevicersColors.current.textPrimary,
+            style = AuthenticationTitleText
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = stringResource(descriptionResId),
-            color = colorResource(R.color.text_secondary_light),
-            fontSize = 15.sp,
-            lineHeight = 15.sp
+            color = LocalDevicersColors.current.textSecondary,
+            style = AuthenticationDescriptionText
         )
     }
 }
@@ -122,42 +127,57 @@ fun ScreenTitle(
  *
  * @param labelResId Recurso de texto de la etiqueta.
  * @param placeholderResId Recurso opcional del texto de ejemplo.
+ * @param value Texto actual controlado por la pantalla que usa el campo.
+ * @param onValueChange Acción que solicita actualizar el texto del campo.
  * @param isPassword Indica si se debe mostrar la acción visual de contraseña.
+ * @param isPasswordVisible Indica si el contenido de la contraseña está visible.
+ * @param onPasswordVisibilityChange Acción que solicita alternar la visibilidad de la contraseña.
  * @param modifier Modificador aplicado al contenedor del campo.
  */
 @Composable
 fun AuthenticationField(
     @StringRes labelResId: Int,
     @StringRes placeholderResId: Int? = null,
+    value: String,
+    onValueChange: (String) -> Unit,
     isPassword: Boolean = false,
+    isPasswordVisible: Boolean = false,
+    onPasswordVisibilityChange: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    // Mantiene el punto personalizado para ocultar cada carácter de la contraseña.
+    val passwordMask = stringResource(R.string.password_mask_character).first()
+
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = stringResource(labelResId),
-            color = colorResource(R.color.text_primary_light),
+            color = LocalDevicersColors.current.textPrimary,
             style = AuthenticationFieldLabelText
         )
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
-            value = "",
-            // El prototipo conserva un campo estático hasta conectar el estado del formulario.
-            onValueChange = {},
+            value = value,
+            onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(14.dp),
             placeholder = {
                 Text(
                     text = placeholderResId?.let { stringResource(it) }.orEmpty(),
-                    color = colorResource(R.color.text_secondary_light),
-                    fontSize = 12.sp
+                    color = LocalDevicersColors.current.textSecondary,
+                    style = MaterialTheme.typography.bodySmall
                 )
             },
             trailingIcon = if (isPassword) {
                 {
-                    IconButton(onClick = {}) {
+                    // La pantalla propietaria cambia el estado para sincronizar campos de contraseña relacionados.
+                    IconButton(onClick = onPasswordVisibilityChange) {
                         Icon(
-                            painter = painterResource(R.drawable.hidden),
-                            contentDescription = stringResource(R.string.show_password),
+                            painter = painterResource(
+                                if (isPasswordVisible) R.drawable.eye else R.drawable.hidden
+                            ),
+                            contentDescription = stringResource(
+                                if (isPasswordVisible) R.string.hide_password else R.string.show_password
+                            ),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -166,14 +186,19 @@ fun AuthenticationField(
                 null
             },
             singleLine = true,
+            visualTransformation = if (isPassword && !isPasswordVisible) {
+                PasswordVisualTransformation(mask = passwordMask)
+            } else {
+                VisualTransformation.None
+            },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = colorResource(R.color.text_primary_light),
-                unfocusedTextColor = colorResource(R.color.text_primary_light),
-                focusedContainerColor = colorResource(R.color.surface_secondary_light),
-                unfocusedContainerColor = colorResource(R.color.surface_secondary_light),
-                focusedBorderColor = colorResource(R.color.primary_yellow),
-                unfocusedBorderColor = colorResource(R.color.border_light),
-                cursorColor = colorResource(R.color.primary_yellow)
+                focusedTextColor = LocalDevicersColors.current.textPrimary,
+                unfocusedTextColor = LocalDevicersColors.current.textPrimary,
+                focusedContainerColor = LocalDevicersColors.current.surfaceSecondary,
+                unfocusedContainerColor = LocalDevicersColors.current.surfaceSecondary,
+                focusedBorderColor = LocalDevicersColors.current.primaryYellow,
+                unfocusedBorderColor = LocalDevicersColors.current.border,
+                cursorColor = LocalDevicersColors.current.primaryYellow
             )
         )
     }
@@ -189,7 +214,7 @@ fun AuthenticationDividerText(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(R.string.continue_with),
         modifier = modifier,
-        color = colorResource(R.color.text_secondary_light),
+        color = LocalDevicersColors.current.textSecondary,
         style = AuthenticationSupportText
     )
 }
@@ -212,13 +237,14 @@ fun SocialButton(
         modifier = modifier.height(34.dp),
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.surface_light),
-            contentColor = colorResource(R.color.text_primary_light)
+            containerColor = LocalDevicersColors.current.surface,
+            contentColor = LocalDevicersColors.current.textPrimary
         )
     ) {
-        Image(
+        Icon(
             painter = painterResource(iconResId),
             contentDescription = stringResource(contentDescriptionResId),
+            tint = LocalDevicersColors.current.textPrimary,
             modifier = Modifier.size(20.dp)
         )
     }
@@ -257,13 +283,13 @@ fun AuthenticationFooter(
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = stringResource(textResId),
-            color = colorResource(R.color.text_primary_light),
+            color = LocalDevicersColors.current.textPrimary,
             style = AuthenticationSupportText
         )
         TextButton(onClick = {}) {
             Text(
                 text = stringResource(actionResId),
-                color = colorResource(R.color.text_primary_light),
+                color = LocalDevicersColors.current.textPrimary,
                 style = AuthenticationSupportText
             )
         }
@@ -295,7 +321,13 @@ fun ScreenTitlePreview() {
 @Composable
 @Preview(showBackground = true)
 fun AuthenticationFieldPreview() {
-    AuthenticationField(R.string.password, R.string.password_placeholder, isPassword = true)
+    AuthenticationField(
+        labelResId = R.string.password,
+        placeholderResId = R.string.password_placeholder,
+        value = "",
+        onValueChange = {},
+        isPassword = true
+    )
 }
 
 /** Muestra una vista previa del texto divisor. */

@@ -34,8 +34,8 @@ fun ReplyList(replies: List<ReplyContent>, modifier: Modifier = Modifier) {
 fun ReplyListPreview() {
     ReplyList(
         listOf(
-            ReplyContent(stringResource(R.string.review_reply_first_initial), stringResource(R.string.review_reply_author_one), stringResource(R.string.review_reply_time), stringResource(R.string.review_reply_text_one)),
-            ReplyContent(stringResource(R.string.review_reply_second_initial), stringResource(R.string.review_reply_author_two), stringResource(R.string.review_reply_time), stringResource(R.string.review_reply_text_two))
+            ReplyContent(R.drawable.profile_avatar_03, R.string.review_reply_author_one, R.string.review_reply_time, R.string.review_reply_text_one),
+            ReplyContent(R.drawable.profile_avatar_04, R.string.review_reply_author_two, R.string.review_reply_time, R.string.review_reply_text_two)
         )
     )
 }

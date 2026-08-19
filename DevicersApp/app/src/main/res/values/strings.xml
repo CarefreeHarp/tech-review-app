@@ -1,135 +1,574 @@
 <resources>
+
+    <!-- APP -->
     <string name="app_name">Devicers</string>
-    <string name="welcome_message">Bienvenido a Devicers</string>
+    <string name="devicers_logo_description">Logotipo de Devicers</string>
+
+    <!-- LOGIN -->
     <string name="sign_in">Iniciar sesión</string>
     <string name="create_account">Crear cuenta</string>
-    <string name="devicers_logo_description">Logotipo de Devicers</string>
-    <string name="first_name">Nombre</string>
-    <string name="last_name">Apellido</string>
+
     <string name="email">Correo electrónico</string>
     <string name="email_placeholder">tu@correo.com</string>
+
     <string name="password">Contraseña</string>
+    <string name="password_placeholder">◉◉◉◉</string>
+    <string name="password_mask_character">◉</string>
     <string name="confirm_password">Repite tu contraseña</string>
+
     <string name="forgot_password">¿Olvidaste tu contraseña?</string>
     <string name="continue_with">o continúa con</string>
+
     <string name="no_account">¿No tienes cuenta?</string>
     <string name="already_have_account">¿Ya tienes cuenta?</string>
-    <string name="social_google">G</string>
-    <string name="social_facebook">f</string>
-    <string name="social_phone">☎</string>
+
     <string name="google_sign_in">Continuar con Google</string>
     <string name="facebook_sign_in">Continuar con Facebook</string>
     <string name="phone_sign_in">Continuar con teléfono</string>
-    <string name="light_theme">Tema claro</string>
+
     <string name="sign_in_title">Inicia sesión</string>
-    <string name="sign_in_description">Accede para ver reseñas y calificar tus dispositivos.</string>
-    <string name="create_account_description">Crea tu perfil para publicar y guardar tus reseñas.</string>
+    <string name="sign_in_description">
+        Accede para ver reseñas y calificar tus dispositivos.
+    </string>
+
+    <string name="create_account_description">
+        Crea tu perfil para publicar y guardar tus reseñas.
+    </string>
+
     <string name="username">Nombre de usuario</string>
     <string name="username_placeholder">usuario</string>
+
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
-    <string name="password_placeholder">◉◉◉◉◉</string>
-    <string name="review_product_image">Imagen del producto</string>
-    <string name="review_example_description">Una excelente opción. Tiene buen rendimiento y cumple con lo esperado.</string>
-    <string name="rating_stars_five">★★★★★</string>
-    <string name="rating_stars_four">★★★★☆</string>
-    <string name="rating_stars_three">★★★☆☆</string>
-    <string name="rating_stars_two">★★☆☆☆</string>
-    <string name="rating_stars_one">★☆☆☆☆</string>
+
+    <!-- VALIDACIONES -->
+    <string name="register_validation_email">
+        Ingresa un correo electrónico válido.
+    </string>
+
+    <string name="register_validation_password">
+        La contraseña debe tener al menos 6 caracteres y 3 números.
+    </string>
+
+    <string name="register_validation_confirmation">
+        Las contraseñas deben coincidir.
+    </string>
+
+    <!-- SEARCH -->
     <string name="feed">Para ti</string>
-    <string name="search_title">Buscar</string>
+    <string name="search">Buscar</string>
+
     <string name="search_placeholder">Buscar dispositivos</string>
     <string name="search_filters">Filtros de búsqueda</string>
     <string name="clear_filters">Limpiar</string>
+
     <string name="brand">MARCA</string>
     <string name="brand_placeholder">Escribe una marca</string>
+
     <string name="product_name">NOMBRE DEL PRODUCTO</string>
     <string name="product_name_placeholder">Ej. Auriculares</string>
+
     <string name="launch_date">FECHA DE LANZAMIENTO</string>
     <string name="launch_date_placeholder">DD / MM / AAAA</string>
+    <string name="launch_date_invalid">Ingresa una fecha válida.</string>
+
     <string name="category">CATEGORÍA</string>
+
     <string name="all">Todos</string>
     <string name="cellphones">Celulares</string>
     <string name="audio">Audio</string>
     <string name="computers">Computadores</string>
+
     <string name="minimum_rating">CALIFICACIÓN MÍNIMA</string>
-    <string name="rating_four_or_more">4.0 o más</string>
+    <string name="minimum_rating_format">%1$.0f o más</string>
+
     <string name="sort_by">ORDENAR POR</string>
     <string name="most_recent">Más recientes</string>
     <string name="best_rated">Mejor valorados</string>
+
     <string name="apply_filters">Aplicar filtros</string>
+
+    <!-- RATINGS -->
     <string name="rating_zero">0</string>
     <string name="rating_one">1</string>
     <string name="rating_two">2</string>
     <string name="rating_three">3</string>
     <string name="rating_four">4</string>
     <string name="rating_five">5</string>
-    <string name="search">Buscar</string>
-    <string name="theme_preview_text">Vista previa del tema</string>
-    <string name="feed_user_phone">@usuario</string>
-    <string name="feed_product_phone">Teléfono</string>
-    <string name="feed_review_phone">Buena relación calidad y batería para todo el día.</string>
-    <string name="feed_user_audio">@usuario.audio</string>
-    <string name="feed_product_audio">Auriculares</string>
-    <string name="feed_review_audio">El sonido y la cancelación de ruido son excelentes.</string>
-    <string name="feed_user_watch">@usuario.reviews</string>
-    <string name="feed_product_watch">Reloj</string>
-    <string name="feed_review_watch">Cómodo, preciso y práctico para el día a día.</string>
-    <string name="feed_user_computer">@byte.labs</string>
-    <string name="feed_product_computer">PC Gamer</string>
-    <string name="feed_review_computer">Rinde muy bien al editar video y se mantiene silencioso durante sesiones largas.</string>
-    <string name="feed_time_two_days">Hace 2 días</string>
-    <string name="feed_time_one_day">Hace 1 día</string>
+
+    <string name="rating_star_character">★</string>
+
+    <!-- THEME -->
+    <string name="theme_color_primary_yellow">Color amarillo principal</string>
+    <string name="theme_color_soft_yellow">Color amarillo suave</string>
+    <string name="theme_color_background">Color de fondo</string>
+    <string name="theme_color_surface">Color de superficie</string>
+    <string name="theme_color_surface_secondary">Color de superficie secundaria</string>
+    <string name="theme_color_text_primary">Color de texto principal</string>
+    <string name="theme_color_text_secondary">Color de texto secundario</string>
+    <string name="theme_color_text_on_primary">Color de texto sobre amarillo</string>
+    <string name="theme_color_border">Color de borde</string>
+    <string name="theme_color_error">Color de error</string>
+
+    <!-- TOP BAR -->
+    <string name="top_bar_back">Volver</string>
+    <string name="top_bar_options">Más opciones</string>
+
+    <!-- TIEMPOS -->
     <string name="feed_time_five_hours">Hace 5 horas</string>
-    <string name="review_card_avatar_initial">J</string>
-    <string name="review_card_username">@usuario</string>
-    <string name="review_card_text">Muy cómodo y con buen sonido.</string>
-    <string name="review_like_count">%1$d</string>
-    <string name="top_bar_back">‹</string>
-    <string name="top_bar_options">⋮</string>
-    <string name="review_back">Volver</string>
-    <string name="review_title">Reseña</string>
-    <string name="review_save">Guardar reseña</string>
-    <string name="review_send">Enviar respuesta</string>
-    <string name="review_product_name">Auriculares</string>
-    <string name="review_product_brand">Marca</string>
-    <string name="review_author_initial">D</string>
-    <string name="review_author">@usuario</string>
-    <string name="review_time">Hace 2 días</string>
-    <string name="review_detail_text">El sonido es claro, la batería dura bastante y la cancelación de ruido ayuda mucho para estudiar o trabajar.</string>
-    <string name="review_like">Me gusta</string>
-    <string name="review_reply_placeholder">Responder a @usuario</string>
-    <string name="review_replies">Respuestas (%1$d)</string>
-    <string name="review_reply_author_one">@usuario.audio</string>
-    <string name="review_reply_text_one">¡También me encantaron! El audio es muy limpio.</string>
-    <string name="review_reply_author_two">@usuario.reviews</string>
-    <string name="review_reply_text_two">¡También me encantaron! El audio es muy limpio.</string>
-    <string name="review_reply_time">Hace 1 día</string>
-    <string name="review_reply_action">Responder</string>
-    <string name="review_reply_first_initial">A</string>
-    <string name="review_reply_second_initial">R</string>
+    <string name="feed_time_one_day">Hace 1 día</string>
+    <string name="feed_time_two_days">Hace 2 días</string>
+
+    <!-- FEED USERS -->
+    <string name="feed_user_phone">@usuario</string>
+    <string name="feed_user_audio">@usuario.audio</string>
+    <string name="feed_user_computer">@byte.labs</string>
+    <string name="feed_user_four">@ana.tech</string>
+    <string name="feed_user_five">@carlos.audio</string>
+    <string name="feed_user_six">@sofia.devices</string>
+    <string name="feed_user_seven">@mateo.review</string>
+    <string name="feed_user_eight">@laura.music</string>
+    <string name="feed_user_nine">@juan_gadgets</string>
+    <string name="feed_user_ten">@valen.tech</string>
+    <string name="feed_user_eleven">@dani_audio</string>
+    <string name="feed_user_twelve">@camila.reseñas</string>
+    <string name="feed_user_thirteen">@nico.mobile</string>
+
+    <!-- FEED PRODUCTS -->
+    <string name="feed_product_phone">Teléfono</string>
+    <string name="feed_product_audio">Auriculares</string>
+    <string name="feed_product_computer">Portátil Pro</string>
+    <string name="feed_product_four">Reloj inteligente</string>
+    <string name="feed_product_five">Tablet Air</string>
+    <string name="feed_product_six">Teclado mecánico</string>
+    <string name="feed_product_seven">Cámara deportiva</string>
+    <string name="feed_product_eight">Monitor ultrawide</string>
+    <string name="feed_product_nine">Mouse inalámbrico</string>
+    <string name="feed_product_ten">Parlante portátil</string>
+    <string name="feed_product_eleven">Consola portátil</string>
+    <string name="feed_product_twelve">SSD NVMe</string>
+    <string name="feed_product_thirteen">Drone Mini</string>
+
+    <!-- FEED REVIEWS -->
+    <string name="feed_review_phone">Después de dos semanas usando este smartphone, la batería supera fácilmente el día completo y la pantalla AMOLED se ve increíble incluso bajo el sol. La cámara nocturna me sorprendió bastante por el nivel de detalle.</string>
+
+    <string name="feed_review_audio">Estos audífonos tienen un sonido muy equilibrado y unos graves limpios. La cancelación de ruido funciona excelente en el transporte público y la comodidad es ideal para sesiones largas.</string>
+
+    <string name="feed_review_computer">Es un portátil sólido para estudiar y programar. El rendimiento es bueno con Android Studio, aunque el ventilador se hace notar cuando compilo proyectos pesados.</string>
+
+    <string name="feed_review_four">El reloj inteligente destaca por su diseño elegante y la precisión del monitoreo deportivo. La sincronización con el teléfono es rápida y las notificaciones llegan al instante.</string>
+
+    <string name="feed_review_five">Una tablet perfecta para consumir contenido y tomar apuntes. La pantalla tiene muy buena fidelidad de color y el lápiz responde con bastante precisión al escribir.</string>
+
+    <string name="feed_review_six">Este teclado mecánico ofrece una experiencia muy cómoda al escribir. Los switches son suaves, la iluminación RGB es personalizable y la construcción transmite mucha calidad.</string>
+
+    <string name="feed_review_seven">Probé esta cámara durante un viaje y el estabilizador hizo un trabajo excelente. El enfoque automático es rápido y el vídeo en 4K mantiene una nitidez impresionante.</string>
+
+    <string name="feed_review_eight">El monitor ultrawide mejora muchísimo la productividad. Tener varias ventanas abiertas al mismo tiempo hace que editar documentos y programar sea mucho más cómodo.</string>
+
+    <string name="feed_review_nine">Un mouse inalámbrico muy ligero con excelente autonomía. La precisión del sensor es ideal tanto para trabajo como para juegos ocasionales, y el agarre resulta bastante natural.</string>
+
+    <string name="feed_review_ten">Este parlante portátil tiene un volumen sorprendente para su tamaño. Los bajos tienen buena presencia y la certificación contra agua lo hace perfecto para exteriores.</string>
+
+    <string name="feed_review_eleven">La consola portátil ofrece un rendimiento excelente en juegos independientes y emulación. La pantalla tiene colores vivos y los controles responden con mucha precisión.</string>
+
+    <string name="feed_review_twelve">Este SSD redujo considerablemente los tiempos de carga de mi computador. La instalación fue sencilla y las velocidades de lectura son muy cercanas a las especificaciones.</string>
+
+    <string name="feed_review_thirteen">El dron es muy estable incluso con algo de viento. La aplicación es intuitiva y las fotografías aéreas tienen una calidad suficiente para compartir en redes sociales.</string>
+    <!-- ========================= -->
+    <!-- PRODUCT -->
+    <!-- ========================= -->
+
+    <string name="review_product_image">Imagen del producto</string>
+
     <string name="product_title">Auriculares</string>
     <string name="product_brand_label">Marca</string>
+
     <string name="product_average_rating">Calificación promedio</string>
     <string name="product_average_value">4.6</string>
     <string name="product_review_count">230 reseñas</string>
+
     <string name="product_rate">Calificar producto</string>
-    <string name="profile_avatar_initial">J</string>
-    <string name="profile_name">Juan</string>
-    <string name="profile_handle">@usuario</string>
-    <string name="profile_biography">Amante de la tecnología y las buenas recomendaciones.</string>
-    <string name="profile_reviews">Reseñas</string>
-    <string name="profile_followers">Seguidores</string>
-    <string name="profile_following">Siguiendo</string>
-    <string name="profile_my_reviews">Mis reseñas</string>
-    <string name="profile_review_first_text">El sonido es equilibrado y la batería supera mi jornada completa.</string>
-    <string name="profile_review_second_initial">M</string>
-    <string name="profile_review_second_author">@maria.dev</string>
-    <string name="profile_review_second_text">La conexión fue inmediata y son muy cómodos para caminar.</string>
+
     <string name="product_rating_five_percentage" formatted="false">88%</string>
     <string name="product_rating_four_percentage" formatted="false">52%</string>
     <string name="product_rating_three_percentage" formatted="false">17%</string>
     <string name="product_rating_two_percentage" formatted="false">7%</string>
     <string name="product_rating_one_percentage" formatted="false">5%</string>
+
+    <!-- Product Reviews -->
+
+    <string name="review_card_username">@usuario</string>
+
+    <string name="review_card_text">
+        La calidad de sonido es excelente y la cancelación de ruido supera mis expectativas. Los he usado durante jornadas completas de trabajo y siguen siendo muy cómodos.
+    </string>
+
+    <string name="product_review_author_two">@ana.tech</string>
+    <string name="product_review_text_two">
+        Los materiales se sienten premium y el estuche carga bastante rápido. La única mejora que me gustaría ver es una aplicación con más opciones de ecualización.
+    </string>
+
+    <string name="product_review_author_three">@carlos.audio</string>
+    <string name="product_review_text_three">
+        Después de un mes de uso la batería continúa ofreciendo cerca de 30 horas en total con el estuche. La conexión Bluetooth nunca se ha desconectado inesperadamente.
+    </string>
+
+    <string name="product_review_author_four">@laura.music</string>
+    <string name="product_review_text_four">
+        Son ideales para estudiar en la universidad. Aíslan muy bien el ruido exterior y los micrófonos ofrecen una voz clara durante videollamadas y reuniones.
+    </string>
+
+    <string name="product_review_author_five">@juan_gadgets</string>
+    <string name="product_review_text_five">
+        Los graves tienen buena presencia sin opacar las voces. Escucho música de distintos géneros y el balance de audio me parece bastante natural para este precio.
+    </string>
+
+    <string name="product_review_author_six">@valen.tech</string>
+    <string name="product_review_text_six">
+        Una de las mejores compras que he hecho este año. Son cómodos, ligeros y la carga rápida permite obtener varias horas de reproducción en muy pocos minutos.
+    </string>
+
+    <!-- ========================= -->
+    <!-- PROFILE -->
+    <!-- ========================= -->
+
+    <string name="profile_name">Juan</string>
+    <string name="profile_handle">@usuario</string>
+
+    <string name="profile_biography">
+        Amante de la tecnología y las buenas recomendaciones.
+    </string>
+
+    <string name="profile_reviews">Reseñas</string>
+    <string name="profile_followers">Seguidores</string>
+    <string name="profile_following">Siguiendo</string>
+
+    <string name="profile_reviews_count">12</string>
+    <string name="profile_followers_count">245</string>
+    <string name="profile_following_count">180</string>
+
+    <string name="profile_my_reviews">Mis reseñas</string>
+    <string name="profile_edit">Editar perfil</string>
+
+    <string name="profile_review_second_author">@maria.dev</string>
+
+    <!-- Profile Reviews -->
+
+    <string name="profile_review_first_text">
+        Después de probar este monitor durante una semana puedo decir que la calidad de imagen es excelente. Los colores son muy precisos y la tasa de refresco hace que todo se vea mucho más fluido.
+    </string>
+
+    <string name="profile_review_second_text">
+        Buen dispositivo para el día a día. La construcción es resistente y la batería aguanta perfectamente una jornada completa de uso intensivo.
+    </string>
+
+    <string name="profile_review_third_text">
+        Me sorprendió el rendimiento considerando su precio. La interfaz es rápida, las aplicaciones abren al instante y la experiencia general es muy estable.
+    </string>
+
+    <string name="profile_review_fourth_text">
+        Lo utilicé principalmente para estudiar y tomar apuntes. La pantalla tiene buena resolución y el brillo es suficiente incluso en espacios iluminados.
+    </string>
+
+    <string name="profile_review_fifth_text">
+        La calidad del audio supera mis expectativas. Los graves son profundos, las voces se escuchan claras y la conexión Bluetooth es muy estable.
+    </string>
+
+    <string name="profile_review_sixth_text">
+        El teclado tiene un tacto muy agradable y resulta cómodo para escribir durante varias horas. Además, la iluminación RGB es totalmente personalizable.
+    </string>
+
+    <string name="profile_review_seventh_text">
+        Una cámara muy recomendable para creadores de contenido. El enfoque automático responde rápido y el estabilizador produce videos realmente suaves.
+    </string>
+
+    <string name="profile_review_eighth_text">
+        El diseño minimalista fue lo primero que llamó mi atención. Después de usarlo varios días, también puedo destacar la excelente calidad de sus materiales.
+    </string>
+
+    <string name="profile_review_ninth_text">
+        Este mouse inalámbrico es ligero, preciso y muy cómodo para trabajar. La batería dura semanas sin necesidad de recargarlo constantemente.
+    </string>
+
+    <string name="profile_review_tenth_text">
+        El parlante ofrece un sonido potente para su tamaño. Incluso al máximo volumen mantiene una buena claridad y muy poca distorsión.
+    </string>
+
+    <string name="profile_review_eleventh_text">
+        Una de las mejores compras tecnológicas que he hecho recientemente. El rendimiento ha sido consistente y no he encontrado problemas importantes.
+    </string>
+
+    <string name="profile_review_twelfth_text">
+        Después de varias semanas de uso sigue funcionando como el primer día. Es un producto muy equilibrado entre calidad, diseño y precio.
+    </string>
+    <!-- ========================= -->
+    <!-- REVIEW -->
+    <!-- ========================= -->
+
+    <string name="review_back">Volver</string>
+    <string name="review_title">Reseña</string>
+    <string name="review_save">Guardar reseña</string>
+    <string name="review_send">Enviar respuesta</string>
+
+    <string name="review_product_name">Auriculares</string>
+    <string name="review_product_brand">Marca</string>
+
+    <string name="review_author">@usuario</string>
+    <string name="review_time">Hace 2 días</string>
+
+    <string name="review_detail_text">
+        Después de utilizar estos audífonos durante varias semanas puedo decir que ofrecen una experiencia sobresaliente. La cancelación activa de ruido reduce muy bien el sonido del entorno, la batería dura varios días con un uso moderado y la calidad de construcción transmite mucha confianza. Definitivamente son una excelente opción para estudiar, trabajar o viajar.
+    </string>
+
+    <string name="review_like">Me gusta</string>
+    <string name="review_reply_placeholder">Responder a @usuario</string>
+    <string name="review_replies">Respuestas (%1$d)</string>
+    <string name="review_reply_action">Responder</string>
+
+    <!-- Reply Authors -->
+
+    <string name="review_reply_author_one">@usuario.audio</string>
+    <string name="review_reply_author_two">@usuario.reviews</string>
+    <string name="review_reply_author_three">@ana.tech</string>
+    <string name="review_reply_author_four">@carlos.audio</string>
+    <string name="review_reply_author_five">@sofia.devices</string>
+    <string name="review_reply_author_six">@mateo.review</string>
+    <string name="review_reply_author_seven">@laura.music</string>
+    <string name="review_reply_author_eight">@juan_gadgets</string>
+    <string name="review_reply_author_nine">@valen.tech</string>
+    <string name="review_reply_author_ten">@dani_audio</string>
+    <string name="review_reply_author_eleven">@camila.reseñas</string>
+    <string name="review_reply_author_twelve">@nico.mobile</string>
+
+    <!-- Reply Times -->
+
+    <string name="review_reply_time">Hace 1 día</string>
+    <string name="review_reply_time_three">Hace 3 horas</string>
+    <string name="review_reply_time_four">Hace 5 horas</string>
+    <string name="review_reply_time_five">Hace 7 horas</string>
+    <string name="review_reply_time_six">Hace 9 horas</string>
+    <string name="review_reply_time_seven">Hace 12 horas</string>
+    <string name="review_reply_time_eight">Hace 15 horas</string>
+    <string name="review_reply_time_nine">Hace 18 horas</string>
+    <string name="review_reply_time_ten">Hace 1 día</string>
+    <string name="review_reply_time_eleven">Hace 1 día</string>
+    <string name="review_reply_time_twelve">Hace 2 días</string>
+
+    <!-- Reply Texts -->
+
+    <string name="review_reply_text_one">
+        Totalmente de acuerdo. También me sorprendió lo cómodos que son incluso después de usarlos durante varias horas seguidas.
+    </string>
+
+    <string name="review_reply_text_two">
+        ¿Has probado la aplicación oficial? Tiene un ecualizador bastante completo que mejora mucho el sonido.
+    </string>
+
+    <string name="review_reply_text_three">
+        Los compré hace un mes y la batería sigue rindiendo exactamente como el primer día. Muy recomendados.
+    </string>
+
+    <string name="review_reply_text_four">
+        Lo que más me gustó fue la calidad de los micrófonos. En videollamadas la voz se escucha muy limpia.
+    </string>
+
+    <string name="review_reply_text_five">
+        Excelente reseña. Estaba entre este modelo y otro de la misma gama, pero creo que ya me decidí.
+    </string>
+
+    <string name="review_reply_text_six">
+        Confirmo lo de la cancelación de ruido; en el transporte público hace una diferencia enorme.
+    </string>
+
+    <string name="review_reply_text_seven">
+        ¿Qué tal funcionan para hacer ejercicio? Me interesa saber si permanecen bien sujetos al correr.
+    </string>
+
+    <string name="review_reply_text_eight">
+        Los uso principalmente para programar mientras escucho música y la comodidad es de lo mejor que he probado.
+    </string>
+
+    <string name="review_reply_text_nine">
+        Gracias por compartir tu experiencia. Me ayudó bastante porque estaba buscando una opinión real antes de comprarlos.
+    </string>
+
+    <string name="review_reply_text_ten">
+        La carga rápida también merece una mención. Con unos minutos conectados obtengo varias horas de reproducción.
+    </string>
+
+    <string name="review_reply_text_eleven">
+        Coincido con la calidad de construcción. El estuche se siente resistente y el acabado es muy elegante.
+    </string>
+
+    <string name="review_reply_text_twelve">
+        Después de leer todos los comentarios creo que será mi próxima compra. Parece un producto muy equilibrado.
+    </string>
+
+    <!-- ========================= -->
+    <!-- NOTIFICATIONS -->
+    <!-- ========================= -->
+
+    <string name="notifications">Notificaciones</string>
+    <string name="notifications_subtitle">Todo lo que pasó mientras no estabas.</string>
+
+    <string name="notifications_follow">Seguir</string>
+    <string name="notifications_following">Siguiendo</string>
+
+    <string name="notifications_time_ago">Hace %1$s</string>
+    <string name="notifications_elapsed_minutes">%1$d m</string>
+    <string name="notifications_elapsed_hours">%1$d h</string>
+    <string name="notifications_elapsed_days">%1$d d</string>
+
+    <string name="notifications_group_today">HOY</string>
+    <string name="notifications_group_yesterday">AYER</string>
+
+    <string name="notification_author_camila">@camila.vargas</string>
+    <string name="notification_author_david">@davidtechea</string>
+    <string name="notification_author_mateo">@mateo.dev</string>
+    <string name="notification_author_lina">@lina.labs</string>
+
+    <string name="notification_action_liked_review">Le gustó tu reseña</string>
+    <string name="notification_action_replied_comment">Respondió a tu comentario</string>
+    <string name="notification_action_followed">Comenzó a seguirte</string>
+
+    <string name="notification_detail_headphones">
+        Sony WH-1000XM5 • Cancelación de ruido
+    </string>
+
+    <string name="notification_detail_comment">
+        “La autonomía del Pixel 9 Pro sí mejora con el uso.”
+    </string>
+
+    <string name="notification_detail_keyboard">
+        Keychron K2 Pro • Switches Brown
+    </string>
+
+    <string name="notification_detail_profile">
+        Publica reseñas de tecnología y periféricos.
+    </string>
+
+    <!-- ========================= -->
+    <!-- RATE PRODUCT -->
+    <!-- ========================= -->
+
+    <string name="rate_product_back">Volver</string>
+    <string name="rate_product_title">Calificar producto</string>
+
+    <string name="rate_product_subtitle">
+        Comparte tu experiencia con este producto.
+    </string>
+
+    <string name="rate_product_change">Cambiar</string>
+
+    <string name="rate_product_rating_title">¿Cómo lo calificarías?</string>
+
+    <string name="rate_product_rating_subtitle">
+        Selecciona una puntuación del 1 al 5.
+    </string>
+
+    <string name="rate_product_review_title">Título de tu reseña</string>
+
+    <string name="rate_product_review_title_placeholder">
+        Ej. Cómodos y con buen sonido
+    </string>
+
+    <string name="rate_product_experience">Cuéntanos tu experiencia</string>
+
+    <string name="rate_product_experience_placeholder">
+        ¿Qué te gustó? ¿Qué mejorarías?
+    </string>
+
+    <string name="rate_product_advantages">Ventajas</string>
+    <string name="rate_product_advantage_placeholder">Añade una ventaja</string>
+
+    <string name="rate_product_disadvantages">Desventajas</string>
+    <string name="rate_product_disadvantage_placeholder">Añade un aspecto</string>
+
+    <string name="rate_product_publish">Publicar calificación</string>
+
+    <string name="rate_product_name">Auriculares</string>
+    <string name="rate_product_brand">Marca • Audio</string>
+
+    <string name="rate_product_image_description">
+        Imagen de auriculares
+    </string>
+
+    <string name="rate_product_rating_value">%1$d</string>
+    <string name="rate_product_character_count">%1$d/%2$d</string>
+
+    <!-- ========================= -->
+    <!-- CREATE REVIEW -->
+    <!-- ========================= -->
+
+    <string name="create_review_title">Crear reseña</string>
+
+    <string name="create_review_subtitle">
+        Busca el producto que quieres reseñar.
+    </string>
+
+    <string name="create_review_categories">CATEGORÍAS</string>
+    <string name="create_review_popular_results">RESULTADOS POPULARES</string>
+
+    <string name="create_review_filter_title">Filtrar productos</string>
+    <string name="create_review_filters">Filtros</string>
+    <string name="create_review_filter_close">Cerrar</string>
+
+    <string name="create_review_selected_category">• %1$s</string>
+
+    <string name="create_review_rate">Calificar</string>
+
+    <string name="create_review_empty_results">
+        No encontramos productos con esos filtros.
+    </string>
+
+    <string name="create_review_product_missing_title">
+        ¿No encuentras tu producto?
+    </string>
+
+    <string name="create_review_product_missing_description">
+        Prueba buscando por marca o modelo.
+    </string>
+
+    <!-- Products -->
+
+    <string name="create_review_phone_brand">Marca • Celulares</string>
+    <string name="create_review_phone_image_description">Imagen de teléfono</string>
+
+    <string name="create_review_product_three_name">Laptop Pro</string>
+    <string name="create_review_product_three_brand">Nova • Computadores</string>
+    <string name="create_review_product_three_image">
+        Imagen de computador portátil
+    </string>
+
+    <string name="create_review_product_four_name">Audífonos inalámbricos</string>
+    <string name="create_review_product_four_brand">SoundWave • Audio</string>
+    <string name="create_review_product_four_image">
+        Imagen de audífonos inalámbricos
+    </string>
+
+    <string name="create_review_product_five_name">Celular Plus</string>
+    <string name="create_review_product_five_brand">Pixelar • Celulares</string>
+    <string name="create_review_product_five_image">Imagen de celular</string>
+
+    <string name="create_review_product_six_name">Monitor Ultra</string>
+    <string name="create_review_product_six_brand">Vision • Computadores</string>
+    <string name="create_review_product_six_image">Imagen de monitor</string>
+
+    <string name="create_review_product_seven_name">Parlante Mini</string>
+    <string name="create_review_product_seven_brand">Boom • Audio</string>
+    <string name="create_review_product_seven_image">Imagen de parlante</string>
+
+    <string name="create_review_product_eight_name">Tablet Air</string>
+    <string name="create_review_product_eight_brand">Orbital • Celulares</string>
+    <string name="create_review_product_eight_image">Imagen de tablet</string>
+
+    <string name="create_review_product_nine_name">Teclado mecánico</string>
+    <string name="create_review_product_nine_brand">KeyPro • Computadores</string>
+    <string name="create_review_product_nine_image">Imagen de teclado</string>
+
+    <string name="create_review_product_ten_name">Micrófono USB</string>
+    <string name="create_review_product_ten_brand">Vocal • Audio</string>
+    <string name="create_review_product_ten_image">Imagen de micrófono</string>
 
 </resources>

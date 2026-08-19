@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.product.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,14 +32,14 @@ fun ProductImageCard(product: ProductContent, modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .height(190.dp)
             .background(
-                color = colorResource(R.color.surface_light),
+                color = LocalDevicersColors.current.surface,
                 shape = RoundedCornerShape(14.dp)
             ),
         contentAlignment = Alignment.Center
     ) {
         Image(
             painter = painterResource(product.imageResId),
-            contentDescription = product.imageDescription,
+            contentDescription = stringResource(product.imageDescriptionResId),
             modifier = Modifier.size(width = 224.dp, height = 182.dp),
             contentScale = ContentScale.Fit
         )
@@ -51,10 +52,10 @@ fun ProductImageCard(product: ProductContent, modifier: Modifier = Modifier) {
 fun ProductImageCardPreview() {
     ProductImageCard(
         ProductContent(
-            name = stringResource(R.string.review_product_name),
-            brand = stringResource(R.string.review_product_brand),
-            imageResId = R.drawable.devicers_headphones_black,
-            imageDescription = stringResource(R.string.review_product_image)
+            nameResId = R.string.review_product_name,
+            brandResId = R.string.review_product_brand,
+            imageResId = R.drawable.device_00,
+            imageDescriptionResId = R.string.review_product_image
         )
     )
 }

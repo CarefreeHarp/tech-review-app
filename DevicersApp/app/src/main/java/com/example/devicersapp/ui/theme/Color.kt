@@ -1,11 +1,67 @@
 package com.example.devicersapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.staticCompositionLocalOf
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// ==========================
+// Colores compartidos
+// ==========================
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+/** Agrupa los colores de Devicers que cambian según el tema activo. */
+data class DevicersColorPalette(
+    val isDarkTheme: Boolean,
+    val primaryYellow: Color,
+    val softYellow: Color,
+    val background: Color,
+    val surface: Color,
+    val surfaceSecondary: Color,
+    val textPrimary: Color,
+    val textSecondary: Color,
+    val textOnPrimary: Color,
+    val border: Color,
+    val selectedIcon: Color,
+    val error: Color
+)
+
+
+// ==========================
+// Modo claro
+// ==========================
+
+val LightDevicersColors = DevicersColorPalette(
+    isDarkTheme = false,
+    primaryYellow = Color(0xFFE8E84F),
+    softYellow = Color(0xFFF3F3A9),
+    background = Color(0xFFF4F4ED),
+    surface = Color(0xFFD6D6C5),
+    surfaceSecondary = Color(0xFFE7E7DB),
+    textPrimary = Color(0xFF1C1C18),
+    textSecondary = Color(0xFF595950),
+    textOnPrimary = Color(0xFF000000),
+    border = Color(0xFFBDBDAC),
+    selectedIcon = Color(0xFF1C1C18),
+    error = Color(0xFFB3261E)
+)
+
+
+// ==========================
+// Modo oscuro
+// ==========================
+
+val DarkDevicersColors = DevicersColorPalette(
+    isDarkTheme = true,
+    primaryYellow = Color(0xFFE8E84F),
+    softYellow = Color(0xFFF3F3A9),
+    background = Color(0xFF11110F),
+    surface = Color(0xFF24241F),
+    surfaceSecondary = Color(0xFF30302A),
+    textPrimary = Color(0xFFF7F7F0),
+    textSecondary = Color(0xFFB8B8AA),
+    textOnPrimary = Color(0xFF000000),
+    border = Color(0xFF44443B),
+    selectedIcon = Color(0xFF1C1C18),
+    error = Color(0xFFFFB4AB)
+)
+
+/** Expone la paleta activa a todos los composables de la aplicación. */
+val LocalDevicersColors = staticCompositionLocalOf { LightDevicersColors }

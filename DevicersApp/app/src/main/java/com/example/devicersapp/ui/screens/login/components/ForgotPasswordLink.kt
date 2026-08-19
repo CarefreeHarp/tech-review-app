@@ -1,10 +1,11 @@
 package com.example.devicersapp.ui.screens.login.components
 
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.devicersapp.R
@@ -19,7 +20,7 @@ fun ForgotPasswordLink(modifier: Modifier = Modifier) {
     TextButton(onClick = {}, modifier = modifier) {
         Text(
             text = stringResource(R.string.forgot_password),
-            color = colorResource(R.color.text_secondary_light),
+            color = LocalDevicersColors.current.textSecondary,
             style = AuthenticationSupportText
         )
     }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,71 +25,117 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material3.Icon
 
 /**
  * Muestra la barra de navegación inferior de la aplicación.
  *
  * @param selectedItem Identificador del elemento que representa la pantalla actual.
  * @param modifier Modificador aplicado a la barra.
+ * @param onItemClick Acción solicitada al seleccionar un elemento de navegación.
  */
 @Composable
-fun BottomNavigationBar(selectedItem: String, modifier: Modifier = Modifier) {
+fun BottomNavigationBar(
+    selectedItem: String,
+    modifier: Modifier = Modifier,
+    onItemClick: (String) -> Unit = {}
+) {
+    val colors = LocalDevicersColors.current
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(55.dp)
-            .background(colorResource(R.color.surface_light))
+            .background(colors.surface)
             .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        NavigationItem(R.drawable.home_icon, selectedItem == "home")
-        NavigationItem(R.drawable.explore_icon, selectedItem == "search")
-        NavigationItem(R.drawable.create_review_icon, selectedItem == "add")
-        NavigationItem(R.drawable.notifications_icon, selectedItem == "favorite")
-        NavigationItem(R.drawable.profile_icon, selectedItem == "profile")
+
+        NavigationItem(
+            iconResId = R.drawable.home_icon,
+            isSelected = selectedItem == "home",
+            onClick = { onItemClick("home") }
+        )
+
+        NavigationItem(
+            iconResId = R.drawable.explore_icon,
+            isSelected = selectedItem == "search",
+            onClick = { onItemClick("search") }
+        )
+
+        NavigationItem(
+            iconResId = R.drawable.create_review_icon,
+            isSelected = selectedItem == "add",
+            onClick = { onItemClick("add") }
+        )
+
+        NavigationItem(
+            iconResId = R.drawable.notifications_icon,
+            isSelected = selectedItem == "favorite",
+            onClick = { onItemClick("favorite") }
+        )
+
+        NavigationItem(
+            iconResId = R.drawable.profile_icon,
+            isSelected = selectedItem == "profile",
+            onClick = { onItemClick("profile") }
+        )
     }
 }
 
+
 /**
- * Muestra un elemento individual de la navegación inferior con su estado seleccionado.
+ * Muestra un elemento individual de la barra de navegación.
  *
- * @param iconResId Recurso del ícono mostrado.
- * @param isSelected Indica si el elemento representa la pantalla actual.
+ * @param iconResId Recurso del ícono.
+ * @param isSelected Indica si el elemento está seleccionado.
  * @param modifier Modificador aplicado al elemento.
+ * @param onClick Acción ejecutada al presionar el elemento.
  */
 @Composable
 fun NavigationItem(
     @DrawableRes iconResId: Int,
     isSelected: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
+    val colors = LocalDevicersColors.current
     Box(
         modifier = modifier
             .size(38.dp)
             .background(
                 color = if (isSelected) {
-                    colorResource(R.color.primary_yellow)
+                    colors.primaryYellow
                 } else {
-                    colorResource(R.color.surface_light)
+                    colors.surface
                 },
                 shape = RoundedCornerShape(10.dp)
-            ),
+            )
+            .clickable {
+                onClick()
+            },
         contentAlignment = Alignment.Center
     ) {
-        Image(
+        Icon(
             painter = painterResource(iconResId),
             contentDescription = null,
-            modifier = Modifier.size(28.dp)
+            modifier = Modifier.size(28.dp),
+            tint = if (isSelected) {
+                colors.selectedIcon
+            } else {
+                colors.textPrimary
+            }
         )
     }
 }
@@ -104,24 +151,26 @@ fun NavigationItem(
 fun FilterChip(
     @StringRes textResId: Int,
     selected: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalDevicersColors.current
     Box(
         modifier = modifier
             .background(
-                color = if (selected) {
-                    colorResource(R.color.primary_yellow)
-                } else {
-                    colorResource(R.color.surface_light)
-                },
+                color = if (selected)
+                    colors.primaryYellow
+                else
+                    colors.surface,
                 shape = RoundedCornerShape(8.dp)
             )
+            .clickable { onClick() }
             .padding(horizontal = 10.dp, vertical = 9.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = stringResource(textResId),
-            color = colorResource(R.color.text_primary_light),
+            color = if (selected) colors.textOnPrimary else colors.textPrimary,
             style = SearchControlText,
             fontWeight = FontWeight.Bold
         )
@@ -132,33 +181,39 @@ fun FilterChip(
  * Muestra una barra de búsqueda reutilizable con una lupa opcional.
  *
  * @param placeholder Recurso de texto mostrado cuando no hay búsqueda.
- * @param backgroundColor Recurso de color para el fondo del campo.
+ * @param backgroundColor Color para el fondo del campo.
  * @param showSearchIcon Indica si debe mostrarse el ícono de lupa.
+ * @param keyboardOptions Configuración del teclado mostrada para el tipo de contenido del campo.
  * @param modifier Modificador aplicado al campo.
  */
 @Composable
 fun SearchBar(
     @StringRes placeholder: Int,
-    backgroundColor: Int = R.color.background_light,
+    backgroundColor: Color? = null,
     showSearchIcon: Boolean = false,
-    modifier: Modifier = Modifier
-) {
-    var text by remember { mutableStateOf("") }
+    modifier: Modifier = Modifier,
+    text: String,
+    onTextChange: (String) -> Unit,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+)  {
+    val colors = LocalDevicersColors.current
+    val resolvedBackgroundColor = backgroundColor ?: colors.background
 
     BasicTextField(
         value = text,
-        onValueChange = { text = it },
+        onValueChange = onTextChange,
         modifier = modifier
             .fillMaxWidth()
             .height(42.dp)
             .background(
-                color = colorResource(backgroundColor),
+                color = resolvedBackgroundColor,
                 shape = RoundedCornerShape(9.dp)
             )
             .padding(horizontal = 12.dp),
         singleLine = true,
+        keyboardOptions = keyboardOptions,
         textStyle = LocalTextStyle.current.copy(
-            color = colorResource(R.color.text_primary_light),
+            color = colors.textPrimary,
             fontSize = SearchControlText.fontSize
         ),
         decorationBox = { innerTextField ->
@@ -172,8 +227,9 @@ fun SearchBar(
                         contentDescription = null,
                         modifier = Modifier.size(18.dp)
                     )
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(6.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                 }
+
                 Box(
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.CenterStart
@@ -181,7 +237,7 @@ fun SearchBar(
                     if (text.isEmpty()) {
                         Text(
                             text = stringResource(placeholder),
-                            color = colorResource(R.color.text_secondary_light),
+                            color = colors.textSecondary,
                             style = SearchControlText
                         )
                     }
@@ -190,41 +246,6 @@ fun SearchBar(
             }
         }
     )
-}
-
-/**
- * Muestra la barra superior compartida de detalle, con regreso, ícono de marca y opciones.
- *
- * @param modifier Modificador aplicado al contenedor de la barra.
- */
-@Composable
-fun AppTopBar(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.top_bar_back),
-            fontSize = 28.sp,
-            color = colorResource(R.color.text_primary_light),
-            modifier = Modifier.align(Alignment.CenterStart)
-        )
-        Image(
-            painter = painterResource(R.drawable.logo_icono_claro),
-            contentDescription = stringResource(R.string.devicers_logo_description),
-            modifier = Modifier
-                .height(44.dp)
-                .align(Alignment.Center)
-        )
-        Text(
-            text = stringResource(R.string.top_bar_options),
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = colorResource(R.color.text_primary_light),
-            modifier = Modifier.align(Alignment.CenterEnd)
-        )
-    }
 }
 
 /** Muestra una vista previa de la navegación inferior. */
@@ -245,7 +266,7 @@ fun NavigationItemPreview() {
 @Composable
 @Preview(showBackground = true)
 fun FilterChipPreview() {
-    FilterChip(R.string.all, selected = true)
+    FilterChip(R.string.all, selected = true, onClick = {})
 }
 
 /** Muestra una vista previa de la barra de búsqueda. */
@@ -254,14 +275,9 @@ fun FilterChipPreview() {
 fun SearchBarPreview() {
     SearchBar(
         placeholder = R.string.search_placeholder,
-        backgroundColor = R.color.surface_light,
-        showSearchIcon = true
+        backgroundColor = LocalDevicersColors.current.surface,
+        showSearchIcon = true,
+        text = "",
+        onTextChange = {}
     )
-}
-
-/** Muestra una vista previa de la barra superior compartida. */
-@Composable
-@Preview(showBackground = true)
-fun AppTopBarPreview() {
-    AppTopBar()
 }
