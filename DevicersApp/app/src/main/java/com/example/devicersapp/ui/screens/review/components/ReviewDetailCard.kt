@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
-import com.example.devicersapp.ui.utils.rating.ratingStarsResource
+import com.example.devicersapp.ui.utils.rating.ratingStars
 
 /**
  * Muestra el contenido principal de una reseña, el avatar de su autor y sus acciones de interacción.
@@ -59,7 +59,7 @@ fun ReviewDetailCard(review: ReviewContent, modifier: Modifier = Modifier) {
             }
         }
         Spacer(Modifier.height(12.dp))
-        Text(stringResource(ratingStarsResource(review.rating)), color = LocalDevicersColors.current.primaryYellow, style = MaterialTheme.typography.bodyLarge)
+        Text(ratingStars(review.rating), color = LocalDevicersColors.current.primaryYellow, style = MaterialTheme.typography.bodyLarge)
         Spacer(Modifier.height(20.dp))
         Text(stringResource(review.textResId), style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textPrimary)
         Spacer(Modifier.weight(1f))

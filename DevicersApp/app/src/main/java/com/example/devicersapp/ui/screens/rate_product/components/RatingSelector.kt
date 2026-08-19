@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.rateProduct.components
+package com.example.devicersapp.ui.screens.rate_product.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

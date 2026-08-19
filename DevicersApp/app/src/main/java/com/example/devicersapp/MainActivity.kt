@@ -14,7 +14,7 @@ import com.example.devicersapp.ui.screens.login.LoginScreen
 import com.example.devicersapp.ui.screens.notifications.NotificationsScreen
 import com.example.devicersapp.ui.screens.product.ProductScreen
 import com.example.devicersapp.ui.screens.profile.ProfileScreen
-import com.example.devicersapp.ui.screens.rateProduct.RateProductScreen
+import com.example.devicersapp.ui.screens.rate_product.RateProductScreen
 import com.example.devicersapp.ui.screens.register.RegisterScreen
 import com.example.devicersapp.ui.screens.review.ReviewScreen
 import com.example.devicersapp.ui.screens.search.SearchScreen
@@ -32,38 +32,38 @@ class MainActivity : ComponentActivity() {
                 // PANTALLAS SIN BOTTOM BAR
                 // =========================
 
-                 ScreenWithScaffold(selectedItem = "login", topBarNumber = 5) {
+                 /*ScreenWithScaffold(selectedItem = "login", topBarNumber = 5) {
                      LoginScreen(modifier = it)
-                 }
+                 }*/
                 
-                /*
-                 ScreenWithScaffold(selectedItem = "register", topBarNumber = 5) {
+
+                 /*ScreenWithScaffold(selectedItem = "register", topBarNumber = 5) {
                      RegisterScreen(modifier = it)
-                 }
-                 */
-                /*
+                 }*/
+
+
                  ScreenWithScaffold(selectedItem = "review", topBarNumber = 4) {
                      ReviewScreen(modifier = it)
                  }
-                */
+
                 // =========================
                 // PANTALLAS CON BOTTOM BAR
                 // =========================
-                /*
-                ScreenWithScaffold(selectedItem = "home", showBottomBar = true) {
+
+                /*ScreenWithScaffold(selectedItem = "home", showBottomBar = true) {
                      FeedScreen(modifier = it)
-                 }
-                */
-                /*
-                 ScreenWithScaffold(selectedItem = "search", showBottomBar = true) {
+                 }*/
+
+
+                 /*ScreenWithScaffold(selectedItem = "search", showBottomBar = true) {
                      SearchScreen(modifier = it)
-                 }
-                */
-                /*
-                 ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 2) {
+                 }*/
+
+
+                 /*ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 2) {
                      RateProductScreen(modifier = it)
-                 }
-                */
+                 }*/
+
                 /*
                  ScreenWithScaffold(selectedItem = "favorite", showBottomBar = true) {
                      NotificationsScreen(modifier = it)

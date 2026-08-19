@@ -145,8 +145,8 @@ fun AuthenticationField(
     onPasswordVisibilityChange: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    // Se reutiliza el carácter especial definido para el placeholder como máscara de contraseña.
-    val passwordMask = stringResource(R.string.password_placeholder).first()
+    // Mantiene el punto personalizado para ocultar cada carácter de la contraseña.
+    val passwordMask = stringResource(R.string.password_mask_character).first()
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(

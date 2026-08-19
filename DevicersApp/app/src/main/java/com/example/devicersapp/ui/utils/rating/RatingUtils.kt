@@ -1,16 +1,24 @@
 package com.example.devicersapp.ui.utils.rating
 
-import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.DevicersAppTheme
 
-/** Devuelve el recurso de estrellas que corresponde a una calificación de uno a cinco. */
-@StringRes
-fun ratingStarsResource(rating: Int): Int = when (rating) {
-    5 -> R.string.rating_stars_five
-    4 -> R.string.rating_stars_four
-    3 -> R.string.rating_stars_three
-    2 -> R.string.rating_stars_two
-    1 -> R.string.rating_stars_one
-    else -> throw IllegalArgumentException("La calificación debe estar entre 1 y 5.")
+/** Genera una secuencia de estrellas según la calificación recibida. */
+@Composable
+fun ratingStars(rating: Int): String {
+    require(rating in 1..5) { "La calificación debe estar entre 1 y 5." }
+    return stringResource(R.string.rating_star_character).repeat(rating)
 }
 
+/** Muestra una vista previa de la secuencia de estrellas generada. */
+@Composable
+@Preview(showBackground = true)
+fun RatingStarsPreview() {
+    DevicersAppTheme {
+        Text(ratingStars(5))
+    }
+}

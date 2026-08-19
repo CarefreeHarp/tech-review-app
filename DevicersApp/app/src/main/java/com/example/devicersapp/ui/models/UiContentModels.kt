@@ -43,10 +43,14 @@ data class ProductContent(
 
 /** Representa una fila de la distribución de calificaciones. */
 data class RatingDistribution(
-    @param:StringRes val ratingResId: Int,
+    val rating: Int,
     val progress: Float,
     @param:StringRes val percentageResId: Int
-)
+) {
+    init {
+        require(rating in 1..5) { "La calificación debe estar entre 1 y 5." }
+    }
+}
 
 /** Representa el resumen de calificaciones de un producto. */
 data class RatingSummaryContent(

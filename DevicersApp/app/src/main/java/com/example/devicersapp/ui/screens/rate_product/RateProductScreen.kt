@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.rateProduct
+package com.example.devicersapp.ui.screens.rate_product
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,9 +17,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.data.local.LocalRateProductScreenProvider
 import com.example.devicersapp.ui.models.ProductContent
-import com.example.devicersapp.ui.screens.rateProduct.components.RateableProductCard
-import com.example.devicersapp.ui.screens.rateProduct.components.RatingSelector
-import com.example.devicersapp.ui.screens.rateProduct.components.ReviewForm
+import com.example.devicersapp.ui.screens.rate_product.components.RateableProductCard
+import com.example.devicersapp.ui.screens.rate_product.components.RatingSelector
+import com.example.devicersapp.ui.screens.rate_product.components.ReviewForm
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 

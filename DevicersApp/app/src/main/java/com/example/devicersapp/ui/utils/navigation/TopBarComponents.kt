@@ -1,5 +1,6 @@
 package com.example.devicersapp.ui.utils.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
-import com.example.devicersapp.ui.theme.TopBarActionText
 import com.example.devicersapp.ui.utils.authentication.AuthenticationHeader
 
 /** Muestra la barra superior común de producto y perfil. */
@@ -35,6 +37,8 @@ fun TopBar1(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
+            .statusBarsPadding()
             .height(48.dp)
             .padding(horizontal = 12.dp)
     ) {
@@ -57,12 +61,22 @@ fun TopBar1(
                 .height(44.dp)
                 .align(Alignment.Center)
         )
-        Text(
-            text = stringResource(R.string.top_bar_options),
-            style = TopBarActionText,
-            color = colors.textPrimary,
-            modifier = Modifier.align(Alignment.CenterEnd)
-        )
+        Row(
+            modifier = Modifier
+                .align(Alignment.CenterEnd),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            repeat(3) { index ->
+                Box(
+                    modifier = Modifier
+                        .size(4.dp)
+                        .background(colors.textPrimary, CircleShape)
+                )
+                if (index < 2) {
+                    Spacer(modifier = Modifier.size(3.dp))
+                }
+            }
+        }
     }
 }
 
@@ -73,8 +87,14 @@ fun TopBar2(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 18.dp)) {
-        Box(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
+            .statusBarsPadding()
+            .padding(horizontal = 18.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
             IconButton(
                 onClick = onBackClick,
                 modifier = Modifier.align(Alignment.CenterStart)
@@ -111,6 +131,8 @@ fun TopBar3(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
+            .statusBarsPadding()
             .height(48.dp)
             .padding(horizontal = 16.dp)
     ) {
@@ -143,7 +165,8 @@ fun TopBar4(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(68.dp)
+            // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
+            .statusBarsPadding()
             .padding(horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -168,7 +191,10 @@ fun TopBar4(
 @Composable
 fun TopBar5(modifier: Modifier = Modifier) {
     AuthenticationHeader(
-        modifier = modifier.padding(start = 20.dp, top = 28.dp)
+        modifier = modifier
+            // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
+            .statusBarsPadding()
+            .padding(start = 20.dp)
     )
 }
 

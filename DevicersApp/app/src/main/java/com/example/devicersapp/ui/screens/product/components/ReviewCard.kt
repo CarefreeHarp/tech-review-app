@@ -30,7 +30,7 @@ import com.example.devicersapp.ui.theme.ReviewContentText
 import com.example.devicersapp.ui.theme.RatingStarsText
 import com.example.devicersapp.ui.theme.ReactionCountText
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
-import com.example.devicersapp.ui.utils.rating.ratingStarsResource
+import com.example.devicersapp.ui.utils.rating.ratingStars
 
 /**
  * Muestra una tarjeta de reseña con avatar, autor, calificación y cantidad de me gusta.
@@ -67,7 +67,7 @@ fun ReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
                     color = LocalDevicersColors.current.textPrimary
                 )
                 Text(
-                    text = stringResource(ratingStarsResource(review.rating)),
+                    text = ratingStars(review.rating),
                     style = RatingStarsText,
                     color = LocalDevicersColors.current.primaryYellow
                 )

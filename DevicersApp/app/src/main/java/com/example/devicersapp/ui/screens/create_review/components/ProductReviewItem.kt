@@ -28,7 +28,7 @@ import com.example.devicersapp.data.local.LocalCreateReviewScreenProvider
 import com.example.devicersapp.ui.models.ProductSearchContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
-import com.example.devicersapp.ui.utils.rating.ratingStarsResource
+import com.example.devicersapp.ui.utils.rating.ratingStars
 
 /**
  * Muestra un producto local que puede seleccionarse para comenzar una reseña.
@@ -76,7 +76,7 @@ fun ProductReviewItem(
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = stringResource(ratingStarsResource(product.rating)),
+                text = ratingStars(product.rating),
                 color = colors.primaryYellow,
                 style = MaterialTheme.typography.bodySmall
             )

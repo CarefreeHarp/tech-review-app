@@ -14,8 +14,14 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.RatingDistribution
 import com.example.devicersapp.ui.models.RatingSummaryContent
-import com.example.devicersapp.ui.utils.rating.ratingStarsResource
+import com.example.devicersapp.ui.utils.rating.ratingStars
 
+/**
+ * Muestra el promedio, las estrellas y la distribución de calificaciones de un producto.
+ *
+ * @param summary Datos locales que se representan en el resumen.
+ * @param modifier Modificador aplicado al contenedor del resumen.
+ */
 @Composable
 fun RatingSummary(summary: RatingSummaryContent, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -44,7 +50,7 @@ fun RatingSummary(summary: RatingSummaryContent, modifier: Modifier = Modifier) 
                 )
 
                 Text(
-                    text = stringResource(ratingStarsResource(summary.rating)),
+                    text = ratingStars(summary.rating),
                     style = MaterialTheme.typography.titleLarge,
                     color = LocalDevicersColors.current.primaryYellow
                 )
@@ -85,10 +91,10 @@ private fun sampleRatingSummary() = RatingSummaryContent(
     rating = 5,
     reviewCountResId = R.string.product_review_count,
     distribution = listOf(
-        RatingDistribution(R.string.rating_five, 0.88f, R.string.product_rating_five_percentage),
-        RatingDistribution(R.string.rating_four, 0.52f, R.string.product_rating_four_percentage),
-        RatingDistribution(R.string.rating_three, 0.17f, R.string.product_rating_three_percentage),
-        RatingDistribution(R.string.rating_two, 0.07f, R.string.product_rating_two_percentage),
-        RatingDistribution(R.string.rating_one, 0.05f, R.string.product_rating_one_percentage)
+        RatingDistribution(5, 0.88f, R.string.product_rating_five_percentage),
+        RatingDistribution(4, 0.52f, R.string.product_rating_four_percentage),
+        RatingDistribution(3, 0.17f, R.string.product_rating_three_percentage),
+        RatingDistribution(2, 0.07f, R.string.product_rating_two_percentage),
+        RatingDistribution(1, 0.05f, R.string.product_rating_one_percentage)
     )
 )

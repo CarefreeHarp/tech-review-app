@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.theme.ReviewContentText
-import com.example.devicersapp.ui.utils.rating.ratingStarsResource
+import com.example.devicersapp.ui.utils.rating.ratingStars
 
 /** Muestra una reseña configurable de producto dentro del feed. */
 @Composable
@@ -48,7 +48,7 @@ fun ReviewBox(review: FeedReviewContent, modifier: Modifier = Modifier) {
                 Spacer(Modifier.height(4.dp))
                 Text(stringResource(review.productName), color = LocalDevicersColors.current.textPrimary, style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(ratingStarsResource(review.rating)), color = LocalDevicersColors.current.primaryYellow, style = MaterialTheme.typography.bodySmall)
+                Text(ratingStars(review.rating), color = LocalDevicersColors.current.primaryYellow, style = MaterialTheme.typography.bodySmall)
             }
             Text(stringResource(review.timeAgo), color = LocalDevicersColors.current.textSecondary, style = MaterialTheme.typography.labelSmall)
         }

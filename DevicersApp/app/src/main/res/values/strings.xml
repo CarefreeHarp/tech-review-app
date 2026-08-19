@@ -12,7 +12,8 @@
     <string name="email_placeholder">tu@correo.com</string>
 
     <string name="password">Contraseña</string>
-    <string name="password_placeholder">•••••</string>
+    <string name="password_placeholder">◉◉◉◉</string>
+    <string name="password_mask_character">◉</string>
     <string name="confirm_password">Repite tu contraseña</string>
 
     <string name="forgot_password">¿Olvidaste tu contraseña?</string>
@@ -95,11 +96,7 @@
     <string name="rating_four">4</string>
     <string name="rating_five">5</string>
 
-    <string name="rating_stars_one">1 estrella</string>
-    <string name="rating_stars_two">2 estrellas</string>
-    <string name="rating_stars_three">3 estrellas</string>
-    <string name="rating_stars_four">4 estrellas</string>
-    <string name="rating_stars_five">5 estrellas</string>
+    <string name="rating_star_character">★</string>
 
     <!-- THEME -->
     <string name="theme_color_primary_yellow">Color amarillo principal</string>
@@ -575,4 +572,3 @@
     <string name="create_review_product_ten_image">Imagen de micrófono</string>
 
 </resources>
-

@@ -21,11 +21,11 @@ object LocalProductScreenProvider {
         rating = 5,
         reviewCountResId = R.string.product_review_count,
         distribution = listOf(
-            RatingDistribution(R.string.rating_five, 0.88f, R.string.product_rating_five_percentage),
-            RatingDistribution(R.string.rating_four, 0.52f, R.string.product_rating_four_percentage),
-            RatingDistribution(R.string.rating_three, 0.17f, R.string.product_rating_three_percentage),
-            RatingDistribution(R.string.rating_two, 0.07f, R.string.product_rating_two_percentage),
-            RatingDistribution(R.string.rating_one, 0.05f, R.string.product_rating_one_percentage)
+            RatingDistribution(5, 0.88f, R.string.product_rating_five_percentage),
+            RatingDistribution(4, 0.52f, R.string.product_rating_four_percentage),
+            RatingDistribution(3, 0.17f, R.string.product_rating_three_percentage),
+            RatingDistribution(2, 0.07f, R.string.product_rating_two_percentage),
+            RatingDistribution(1, 0.05f, R.string.product_rating_one_percentage)
         )
     )
 

@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.rateProduct.components
+package com.example.devicersapp.ui.screens.rate_product.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

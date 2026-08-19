@@ -39,7 +39,7 @@ fun RatingBarRow(
         modifier = modifier.fillMaxWidth()
     ) {
         Text(
-            text = stringResource(distribution.ratingResId),
+            text = distribution.rating.toString(),
             style = MaterialTheme.typography.labelSmall,
             color = colors.textSecondary,
             modifier = Modifier.width(14.dp)
@@ -74,7 +74,7 @@ fun RatingBarRowPreview() {
     DevicersAppTheme {
         RatingBarRow(
             distribution = RatingDistribution(
-                ratingResId = R.string.rating_five,
+                rating = 5,
                 progress = 0.88f,
                 percentageResId = R.string.product_rating_five_percentage
             )
