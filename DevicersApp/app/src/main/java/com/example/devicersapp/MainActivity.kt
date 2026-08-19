@@ -42,9 +42,9 @@ class MainActivity : ComponentActivity() {
                  }*/
 
 
-                 ScreenWithScaffold(selectedItem = "review", topBarNumber = 4) {
+                 /*ScreenWithScaffold(selectedItem = "review", topBarNumber = 4) {
                      ReviewScreen(modifier = it)
-                 }
+                 }*/
 
                 // =========================
                 // PANTALLAS CON BOTTOM BAR
@@ -64,27 +64,25 @@ class MainActivity : ComponentActivity() {
                      RateProductScreen(modifier = it)
                  }*/
 
-                /*
-                 ScreenWithScaffold(selectedItem = "favorite", showBottomBar = true) {
+
+                 /*ScreenWithScaffold(selectedItem = "favorite", showBottomBar = true) {
                      NotificationsScreen(modifier = it)
-                 }
-                */
-                /*
-                 ScreenWithScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1) {
+                 }*/
+
+
+                 /*ScreenWithScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1) {
                      ProfileScreen(modifier = it)
-                 }
-                */
-                /*
-                ScreenWithScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 1) {
+                 }*/
+
+
+                /*ScreenWithScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 1) {
                    ProductScreen(modifier = it)
-                }
-                */
-                /*
+                }*/
+
+
                  ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 3) {
                      CreateReviewScreen(modifier = it)
                  }
-
-                 */
             }
         }
     }

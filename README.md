@@ -10,21 +10,25 @@ The application is envisioned as a small social network where people can discove
 
 The Devicers interface prototype is available on <a href="https://www.figma.com/design/l7mETjAKWkyAFwtx1VWmIX/Untitled?node-id=1-484&amp;t=p0lttPj7kJNiSUG2-1" target="_blank" rel="noopener noreferrer">Figma</a>.
 
-| Sign-in screen                                                                  | Registration screen                                                                     |
-| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Sign-in screen | Registration screen |
+| --- | --- |
 | <img src="images/AppLoginScreen.png" alt="Devicers sign-in screen" width="280"> | <img src="images/AppRegisterScreen.png" alt="Devicers registration screen" width="280"> |
 
-| Feed screen                                                                 | Search screen                                                                   |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| <img src="images/AppFeedScreen.png" alt="Devicers feed screen" width="280"> | <img src="images/AppSearchScreen.png" alt="Devicers search screen" width="280"> |
+| Review screen | Feed screen |
+| --- | --- |
+| <img src="images/AppReviewScreen.png" alt="Devicers review detail screen" width="280"> | <img src="images/AppFeedScreen.png" alt="Devicers feed screen" width="280"> |
 
-| Product screen                                                                     | Review screen                                                                    |
-| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| <img src="images/AppProductScreen.png" alt="Devicers product detail screen" width="280"> | <img src="images/AppReviewScreen.png" alt="Devicers review detail screen" width="280"> |
+| Search screen | Rate product screen |
+| --- | --- |
+| <img src="images/AppSearchScreen.png" alt="Devicers search screen" width="280"> | <img src="images/AppRateProductScreen.png" alt="Devicers rate product screen" width="280"> |
 
-| Profile screen                                                                       |
-| ------------------------------------------------------------------------------------ |
-| <img src="images/AppProfileScreen.png" alt="Devicers profile screen" width="280"> |
+| Notifications screen | Profile screen |
+| --- | --- |
+| <img src="images/AppNotificationsScreen.png" alt="Devicers notifications screen" width="280"> | <img src="images/AppProfileScreen.png" alt="Devicers profile screen" width="280"> |
+
+| Product screen | Create review screen |
+| --- | --- |
+| <img src="images/AppProductScreen.png" alt="Devicers product detail screen" width="280"> | <img src="images/AppCreateReviewScreen.png" alt="Devicers create review screen" width="280"> |
 
 ### Logos
 
