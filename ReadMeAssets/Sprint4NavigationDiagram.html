@@ -88,9 +88,42 @@
             return className ? className.slice(prefix.length) : null;
         };
 
+        const setLabelVisibility = (label, isRelated) => {
+            const container = label.querySelector("div");
+            const text = label.querySelector("span");
+            const opacity = isRelated ? "1" : "0.02";
+
+            label.style.setProperty("opacity", opacity, "important");
+            label.querySelector("foreignObject")?.style.setProperty("opacity", opacity, "important");
+
+            if (isRelated) {
+                container?.style.setProperty("background", "#fde047", "important");
+                container?.style.setProperty("border", "2px solid #ca8a04", "important");
+                container?.style.setProperty("border-radius", "5px", "important");
+                container?.style.setProperty("padding", "3px 6px", "important");
+                container?.style.setProperty("box-shadow", "0 2px 5px rgba(15, 23, 42, 0.45)", "important");
+                text?.style.setProperty("color", "#111827", "important");
+                text?.style.setProperty("fill", "#111827", "important");
+                text?.style.setProperty("font-weight", "800", "important");
+                text?.style.setProperty("opacity", "1", "important");
+            } else {
+                ["background", "border", "border-radius", "padding", "box-shadow"].forEach((property) => container?.style.removeProperty(property));
+                ["color", "fill", "font-weight", "opacity"].forEach((property) => text?.style.removeProperty(property));
+            }
+        };
+
         const clearFocus = () => {
             diagram.classList.remove("is-focused");
-            [...nodes, ...links, ...labels].forEach((element) => element.classList.remove("is-related"));
+            [...nodes, ...links].forEach((element) => element.classList.remove("is-related"));
+            labels.forEach((label) => {
+                label.classList.remove("is-related");
+                label.style.removeProperty("opacity");
+                label.querySelector("foreignObject")?.style.removeProperty("opacity");
+                const container = label.querySelector("div");
+                const text = label.querySelector("span");
+                ["background", "border", "border-radius", "padding", "box-shadow"].forEach((property) => container?.style.removeProperty(property));
+                ["color", "fill", "font-weight", "opacity"].forEach((property) => text?.style.removeProperty(property));
+            });
             status.textContent = "Hover over a screen to explore its relationships.";
         };
 
@@ -108,7 +141,11 @@
             diagram.classList.add("is-focused");
             nodes.forEach((node) => node.classList.toggle("is-related", connectedNodeIds.has(node.dataset.id)));
             links.forEach((link) => link.classList.toggle("is-related", relatedLinks.includes(link)));
-            labels.forEach((label) => label.classList.toggle("is-related", relatedLinks.includes(labelToLink.get(label))));
+            labels.forEach((label) => {
+                const isRelated = relatedLinks.includes(labelToLink.get(label));
+                label.classList.toggle("is-related", isRelated);
+                setLabelVisibility(label, isRelated);
+            });
             status.textContent = relatedLinks.length + " navigation relationship(s) for " + nodeId + ".";
         };
 
