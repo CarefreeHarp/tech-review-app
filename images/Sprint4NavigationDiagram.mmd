@@ -1,0 +1,95 @@
+flowchart TD
+    login["Login"]
+    register["Register"]
+    feed["Home / Feed"]
+    search["Search"]
+    product["Product"]
+    publicProfile["Public Profile"]
+    review["Review"]
+    activity["Activity / Notifications"]
+    createReview["Create Review"]
+    rateProduct["Rate Product"]
+    ownProfile["Own Profile"]
+    resultsProducts["Found Products"]
+    requestProduct["Request Product"]
+    searchProfile["Search Profile"]
+    resultsProfiles["Profile Search Results"]
+    bottomNav["Bottom bar"]
+    previous["Previous screen in navigation stack"]
+    exitApp(("Exit app"))
+
+    %% Authentication
+    login -->|"Create account"| register
+    login -->|"Sign in"| feed
+    register -->|"I already have an account"| login
+    register -->|"Create account"| feed
+
+    %% Bottom navigation is shared by the authenticated main screens.
+    bottomNav -->|"Feed tab"| feed
+    bottomNav -->|"Search tab"| search
+    bottomNav -->|"Create tab"| createReview
+    bottomNav -->|"Activity tab"| activity
+    bottomNav -->|"Profile tab"| ownProfile
+    feed -->|"Bottom bar"| bottomNav
+    search -->|"Bottom bar"| bottomNav
+    product -->|"Bottom bar"| bottomNav
+    publicProfile -->|"Bottom bar"| bottomNav
+    activity -->|"Bottom bar"| bottomNav
+    createReview -->|"Bottom bar"| bottomNav
+    ownProfile -->|"Bottom bar"| bottomNav
+
+    %% Feed
+    feed -->|"Tap a review"| review
+    feed -->|"System Back"| exitApp
+
+    %% Product search and future profile search.
+    search -->|"Search products"| resultsProducts
+    resultsProducts -->|"Tap a product"| product
+    search -->|"Switch to profile search"| searchProfile
+    searchProfile -->|"Switch to product search"| search
+    searchProfile -->|"Search profiles"| resultsProfiles
+    resultsProfiles -->|"Tap a user"| publicProfile
+    search -->|"System Back"| previous
+    searchProfile -->|"System Back"| previous
+    resultsProducts -->|"System Back"| previous
+    resultsProfiles -->|"System Back"| previous
+
+    %% Details and public profiles.
+    product -->|"Tap Top Reviews"| review
+    product -->|"System Back"| previous
+    publicProfile -->|"Tap a user review"| review
+    publicProfile -->|"System Back"| previous
+    review -->|"Tap the product header"| product
+    review -->|"System Back"| previous
+
+    %% Activity interactions.
+    activity -->|"Follow notification"| publicProfile
+    activity -->|"Like or comment notification"| review
+    activity -->|"System Back"| previous
+
+    %% Review creation and publication.
+    createReview -->|"Select suggested product"| rateProduct
+    createReview -->|"Request product"| requestProduct
+    createReview -->|"System Back"| previous
+    requestProduct -->|"System Back"| createReview
+    rateProduct -->|"Publish review with reviewId"| review
+    rateProduct -->|"System Back"| previous
+    review -->|"System Back after publishing"| feed
+    ownProfile -->|"System Back"| previous
+
+    %% Red: System Back and Bottom bar. Blue: button navigation.
+    %% Purple: specially highlighted detail routes. Green: pending design or implementation.
+    classDef current fill:#FF7556,stroke:#A81E00,color:#FFFFFF
+    classDef future fill:#39A852,stroke:#176B30,color:#FFFFFF
+    classDef context fill:#6B7280,stroke:#374151,color:#FFFFFF
+
+    class login,register,feed,search,product,publicProfile,review,activity,createReview,rateProduct,bottomNav current
+    class ownProfile,resultsProducts,requestProduct,searchProfile,resultsProfiles future
+    class previous,exitApp context
+
+    %% Link order is intentional: 16 and 32 are the two purple special routes.
+    %% Green routes connect to an unimplemented screen or its interaction.
+    linkStyle default stroke:#1565C0,stroke-width:3px
+    linkStyle 4,5,6,7,8,9,10,11,12,13,14,15,17,24,25,26,27,29,31,33,36,39,40,42,43,44 stroke:#C62828,stroke-width:3px
+    linkStyle 18,19,20,21,22,23,38 stroke:#198C36,stroke-width:3px
+    linkStyle 16,32 stroke:#7B1FA2,stroke-width:4px
