@@ -19,7 +19,8 @@
         #diagram svg .edgeLabel div { padding: 2px 4px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.28); }
         #diagram svg .edgeLabel span { color: #0f172a !important; font-weight: 700; }
         #diagram svg.is-focused .node:not(.is-related),
-        #diagram svg.is-focused .flowchart-link:not(.is-related) { opacity: 0.1; }
+        #diagram svg.is-focused .flowchart-link:not(.is-related) { opacity: 0.035; }
+        #diagram svg.is-focused .edgeLabel:not(.is-related) { opacity: 0.02; }
         #diagram svg.is-focused .node.is-related,
         #diagram svg.is-focused .flowchart-link.is-related,
         #diagram svg.is-focused .edgeLabel.is-related { opacity: 1; filter: drop-shadow(0 0 4px rgba(17, 24, 39, 0.45)); }
@@ -77,6 +78,9 @@
             link.setAttribute("marker-end", "url(#" + markerFor(color) + ")");
         });
 
+        // Mermaid emits edge labels in the same declaration order as their paths.
+        const labelToLink = new Map(labels.map((label, index) => [label, links[index]]));
+
         const relatedNodeId = (link, prefix) => {
             const className = Array.from(link.classList).find((name) => name.startsWith(prefix));
             return className ? className.slice(prefix.length) : null;
@@ -102,7 +106,7 @@
             diagram.classList.add("is-focused");
             nodes.forEach((node) => node.classList.toggle("is-related", connectedNodeIds.has(node.dataset.id)));
             links.forEach((link) => link.classList.toggle("is-related", relatedLinks.includes(link)));
-            labels.forEach((label, index) => label.classList.toggle("is-related", relatedLinks.includes(links[index])));
+            labels.forEach((label) => label.classList.toggle("is-related", relatedLinks.includes(labelToLink.get(label))));
             status.textContent = relatedLinks.length + " navigation relationship(s) for " + nodeId + ".";
         };
 
@@ -113,6 +117,9 @@
         });
 
         diagram.addEventListener("mouseleave", clearFocus);
+
+        const initialNodeId = new URLSearchParams(window.location.search).get("focus");
+        if (nodes.some((node) => node.dataset.id === initialNodeId)) focusNode(initialNodeId);
     </script>
 </body>
 </html>
