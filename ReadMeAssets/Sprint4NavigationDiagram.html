@@ -51,9 +51,15 @@
             bottomBarNode.classList.remove("current");
             bottomBarNode.querySelector(".nodeLabel").textContent = "BOTOM BAR";
 
+            const label = bottomBarNode.querySelector(".label");
+            label?.setAttribute("transform", "translate(-50, -9)");
+            const labelContainer = label?.querySelector("foreignObject");
+            labelContainer?.setAttribute("width", "100");
+            labelContainer?.style.setProperty("overflow", "visible");
+
             const rectangle = bottomBarNode.querySelector("rect.basic");
             const circle = document.createElementNS(svgNamespace, "circle");
-            circle.setAttribute("r", "55");
+            circle.setAttribute("r", "58");
             circle.style.setProperty("fill", "#C62828", "important");
             circle.style.setProperty("stroke", "#7F1D1D", "important");
             circle.style.setProperty("stroke-width", "3px", "important");
@@ -73,7 +79,7 @@
             const marker = document.createElementNS(svgNamespace, "marker");
             marker.setAttribute("id", markerId);
             marker.setAttribute("viewBox", "0 0 10 10");
-            marker.setAttribute("refX", "8");
+            marker.setAttribute("refX", "10");
             marker.setAttribute("refY", "5");
             marker.setAttribute("markerWidth", "8");
             marker.setAttribute("markerHeight", "8");
