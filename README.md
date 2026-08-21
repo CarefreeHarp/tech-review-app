@@ -38,7 +38,7 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 ## Sprint 4 — Navigation map
 
-![Sprint 4 navigation map](ReadMeAssets/Sprint4NavigationDiagram.svg)
+[Open the interactive navigation map](ReadMeAssets/Sprint4NavigationDiagram.html)
 
 ### Navigation conventions
 
