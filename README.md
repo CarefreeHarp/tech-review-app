@@ -36,6 +36,116 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
   <img src="images/Logues.png" alt="Versiones clara y oscura del logo de Devicers" width="720">
 </p>
 
+## Sprint 4 — Navigation map
+
+> This diagram is written in [Mermaid](https://mermaid.js.org/), so it can be updated directly in this README as the application evolves. Every arrow labels the user action that triggers the transition.
+
+```mermaid
+flowchart TD
+    login["Login"]
+    register["Register"]
+    feed["Home / Feed"]
+    search["Search"]
+    product["Product"]
+    publicProfile["Public Profile"]
+    review["Review"]
+    activity["Activity / Notifications"]
+    createReview["Create Review"]
+    rateProduct["Rate Product"]
+    ownProfile["Own Profile"]
+    resultsProducts["Found Products"]
+    requestProduct["Request Product"]
+    searchProfile["Search Profile"]
+    resultsProfiles["Profile Search Results"]
+    bottomNav["Bottom bar"]
+    previous["Previous screen in navigation stack"]
+    exitApp(("Exit app"))
+
+    %% Authentication
+    login -->|"Create account"| register
+    login -->|"Sign in"| feed
+    register -->|"I already have an account"| login
+    register -->|"Create account"| feed
+
+    %% Bottom navigation is shared by the authenticated main screens.
+    bottomNav -->|"Feed tab"| feed
+    bottomNav -->|"Search tab"| search
+    bottomNav -->|"Create tab"| createReview
+    bottomNav -->|"Activity tab"| activity
+    bottomNav -->|"Profile tab"| ownProfile
+    feed -->|"Bottom bar"| bottomNav
+    search -->|"Bottom bar"| bottomNav
+    product -->|"Bottom bar"| bottomNav
+    publicProfile -->|"Bottom bar"| bottomNav
+    activity -->|"Bottom bar"| bottomNav
+    createReview -->|"Bottom bar"| bottomNav
+    ownProfile -->|"Bottom bar"| bottomNav
+
+    %% Feed
+    feed -->|"Tap a review"| review
+    feed -->|"System Back"| exitApp
+
+    %% Product search and future profile search.
+    search -->|"Search products"| resultsProducts
+    resultsProducts -->|"Tap a product"| product
+    search -->|"Switch to profile search"| searchProfile
+    searchProfile -->|"Switch to product search"| search
+    searchProfile -->|"Search profiles"| resultsProfiles
+    resultsProfiles -->|"Tap a user"| publicProfile
+    search -->|"System Back"| previous
+    searchProfile -->|"System Back"| previous
+    resultsProducts -->|"System Back"| previous
+    resultsProfiles -->|"System Back"| previous
+
+    %% Details and public profiles.
+    product -->|"Tap Top Reviews"| review
+    product -->|"System Back"| previous
+    publicProfile -->|"Tap a user review"| review
+    publicProfile -->|"System Back"| previous
+    review -->|"Tap the product header"| product
+    review -->|"System Back"| previous
+
+    %% Activity interactions.
+    activity -->|"Follow notification"| publicProfile
+    activity -->|"Like or comment notification"| review
+    activity -->|"System Back"| previous
+
+    %% Review creation and publication.
+    createReview -->|"Select suggested product"| rateProduct
+    createReview -->|"Request product"| requestProduct
+    createReview -->|"System Back"| previous
+    requestProduct -->|"System Back"| createReview
+    rateProduct -->|"Publish review with reviewId"| review
+    rateProduct -->|"System Back"| previous
+    review -->|"System Back after publishing"| feed
+    ownProfile -->|"System Back"| previous
+
+    %% Red: current or planned Sprint 4 navigation. Blue: specially highlighted routes.
+    %% Green: screens and routes that still need design or implementation.
+    classDef current fill:#FFEBEE,stroke:#C62828,color:#1E1E1E
+    classDef future fill:#E8F5E9,stroke:#2E7D32,color:#1E1E1E
+    classDef context fill:#F5F5F5,stroke:#757575,color:#1E1E1E
+
+    class login,register,feed,search,product,publicProfile,review,activity,createReview,rateProduct,bottomNav current
+    class ownProfile,resultsProducts,requestProduct,searchProfile,resultsProfiles future
+    class previous,exitApp context
+
+    %% Link order is intentional: 16 and 32 are the two blue special routes.
+    %% Green routes connect to an unimplemented screen or its interaction.
+    linkStyle default stroke:#C62828,stroke-width:2px
+    linkStyle 18,19,20,21,22,23,38,40 stroke:#2E7D32,stroke-width:2px
+    linkStyle 16,32 stroke:#1976D2,stroke-width:3px
+```
+
+### Navigation conventions
+
+- **Red routes** are current or planned Sprint 4 navigation paths.
+- **Blue routes** are the two special detail relationships: **Feed → Review** when a review is selected, and **Review → Product** when the product header is selected.
+- **Green routes and screens** are pending design or implementation: Found Products, Request Product, Own Profile, Search Profile, and Profile Search Results.
+- The Bottom bar leads to Home / Feed, Search, Create Review, Activity / Notifications, and Own Profile. Rate Product does not display it.
+- System Back exits the application from Home / Feed. It returns to the prior entry in the navigation stack from the other screens. Search has no visual Back button, but still supports System Back.
+- Publishing from Rate Product opens the newly created Review using its `reviewId`. The Rate Product destination must be removed from the stack, so System Back from that Review returns to Home / Feed.
+
 ## Data model
 
 ## Object-oriented class diagram
