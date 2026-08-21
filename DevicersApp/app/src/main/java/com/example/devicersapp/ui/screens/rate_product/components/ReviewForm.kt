@@ -1,7 +1,5 @@
 package com.example.devicersapp.ui.screens.rate_product.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,7 +62,7 @@ fun ReviewForm(
             color = colors.textPrimary
         )
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         ReviewInputField(
             value = title,
@@ -78,7 +78,7 @@ fun ReviewForm(
             color = colors.textPrimary
         )
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         ReviewInputField(
             value = experience,
@@ -137,23 +137,23 @@ fun ReviewForm(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = stringResource(R.string.rate_product_publish),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = colors.textOnPrimary,
+        Button(
+            onClick = onPublishClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    color = colors.primaryYellow,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .clickable {
-                    onPublishClick()
-                }
-                .padding(vertical = 14.dp),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-        )
+                .height(52.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.primary,
+                contentColor = colors.textOnPrimary
+            )
+        ) {
+            Text(
+                text = stringResource(R.string.rate_product_publish),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
@@ -170,7 +170,8 @@ fun ReviewFormPreview() {
             onAdvantageChange = {},
             disadvantage = "",
             onDisadvantageChange = {},
-            onPublishClick = {}
+            onPublishClick = {},
+            modifier = Modifier.padding(16.dp)
         )
     }
 }

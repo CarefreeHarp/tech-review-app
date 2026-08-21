@@ -18,11 +18,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.theme.SearchHeadingText
 import com.example.devicersapp.ui.utils.navigation.FilterChip
@@ -76,12 +79,14 @@ fun SearchFilterPanel(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 14.dp)
+            // La sombra suave despega la tarjeta del fondo, como en el diseño editorial.
+            .shadow(elevation = 8.dp, shape = RoundedCornerShape(18.dp))
+            // La superficie secundaria agrupa los filtros y los separa del fondo de la pantalla.
             .background(
                 color = LocalDevicersColors.current.surfaceSecondary,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(18.dp)
             )
-            .padding(12.dp)
+            .padding(18.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -96,40 +101,44 @@ fun SearchFilterPanel(
             Text(
                 text = stringResource(R.string.clear_filters),
                 modifier = Modifier.clickable(onClick = onClearFilters),
-                color = LocalDevicersColors.current.textSecondary,
-                style = SearchControlText
+                color = LocalDevicersColors.current.primaryText,
+                style = SearchControlText,
+                fontWeight = FontWeight.Bold
             )
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(18.dp))
         FilterLabel(R.string.brand)
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(7.dp))
         SearchBar(
             placeholder = R.string.brand_placeholder,
-            backgroundColor = LocalDevicersColors.current.background,
+            backgroundColor = LocalDevicersColors.current.surface,
             showSearchIcon = false,
+            height = 42.dp,
             text = brand,
             onTextChange = onBrandChange
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         FilterLabel(R.string.product_name)
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(7.dp))
         SearchBar(
             placeholder = R.string.product_name_placeholder,
-            backgroundColor = LocalDevicersColors.current.background,
+            backgroundColor = LocalDevicersColors.current.surface,
             showSearchIcon = false,
+            height = 42.dp,
             text = productName,
             onTextChange = onProductNameChange
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         FilterLabel(R.string.launch_date)
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(7.dp))
         SearchBar(
             placeholder = R.string.launch_date_placeholder,
-            backgroundColor = LocalDevicersColors.current.background,
+            backgroundColor = LocalDevicersColors.current.surface,
             showSearchIcon = false,
+            height = 42.dp,
             text = launchDate,
             // El filtrado evita letras, incluso cuando el contenido llega por pegado de texto.
             onTextChange = { onLaunchDateChange(formatLaunchDate(it)) },
@@ -144,39 +153,43 @@ fun SearchFilterPanel(
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         FilterLabel(R.string.category)
         Spacer(modifier = Modifier.height(5.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FilterChip(
                 R.string.all,
                 selected = selectedCategory == "all",
-                onClick = { onCategorySelected("all") }
+                onClick = { onCategorySelected("all") },
+                modifier = Modifier.weight(1f)
             )
 
             FilterChip(
                 R.string.cellphones,
                 selected = selectedCategory == "cellphones",
-                onClick = { onCategorySelected("cellphones") }
+                onClick = { onCategorySelected("cellphones") },
+                modifier = Modifier.weight(1f)
             )
 
             FilterChip(
                 R.string.audio,
                 selected = selectedCategory == "audio",
-                onClick = { onCategorySelected("audio") }
+                onClick = { onCategorySelected("audio") },
+                modifier = Modifier.weight(1f)
             )
 
             FilterChip(
                 R.string.computers,
                 selected = selectedCategory == "computers",
-                onClick = { onCategorySelected("computers") }
+                onClick = { onCategorySelected("computers") },
+                modifier = Modifier.weight(1f)
             )
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(18.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -185,7 +198,8 @@ fun SearchFilterPanel(
             Text(
                 text = stringResource(R.string.minimum_rating_format, minimumRating),
                 color = LocalDevicersColors.current.textPrimary,
-                style = SearchControlText
+                style = SearchControlText,
+                fontWeight = FontWeight.Bold
             )
         }
         RatingSlider(
@@ -193,12 +207,12 @@ fun SearchFilterPanel(
             onValueChange = onRatingChange
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         FilterLabel(R.string.sort_by)
         Spacer(modifier = Modifier.height(5.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FilterChip(
                 R.string.most_recent,
@@ -215,23 +229,24 @@ fun SearchFilterPanel(
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(22.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 // Una fecha parcial o imposible no puede aplicarse como criterio de búsqueda.
                 .clickable(enabled = isLaunchDateValid, onClick = onApplyFilters)
-                .height(38.dp)
+                .height(46.dp)
                 .background(
-                    color = LocalDevicersColors.current.primaryYellow,
-                    shape = RoundedCornerShape(10.dp)
+                    color = LocalDevicersColors.current.primary,
+                    shape = RoundedCornerShape(12.dp)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = stringResource(R.string.apply_filters),
                 color = LocalDevicersColors.current.textOnPrimary,
-                style = SearchControlText
+                style = SearchControlText,
+                fontWeight = FontWeight.Bold
             )
         }
     }
@@ -286,29 +301,31 @@ private fun isLeapYear(year: Int): Boolean = year % 400 == 0 || year % 4 == 0 &&
 
 /** Muestra una vista previa del panel de filtros. */
 @Composable
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 700)
 fun SearchFilterPanelPreview() {
-    SearchFilterPanel(
-        brand = "",
-        onBrandChange = {},
+    DevicersAppTheme {
+        SearchFilterPanel(
+            brand = "",
+            onBrandChange = {},
 
-        productName = "",
-        onProductNameChange = {},
+            productName = "",
+            onProductNameChange = {},
 
-        launchDate = "",
-        onLaunchDateChange = {},
+            launchDate = "",
+            onLaunchDateChange = {},
 
-        selectedCategory = "all",
-        onCategorySelected = {},
+            selectedCategory = "all",
+            onCategorySelected = {},
 
-        minimumRating = 4f,
-        onRatingChange = {},
+            minimumRating = 4f,
+            onRatingChange = {},
 
-        sortBy = "recent",
-        onSortChange = {},
-        onClearFilters = {},
-        onApplyFilters = {},
+            sortBy = "recent",
+            onSortChange = {},
+            onClearFilters = {},
+            onApplyFilters = {},
 
-        modifier = Modifier.padding(20.dp)
-    )
+            modifier = Modifier.padding(20.dp)
+        )
+    }
 }

@@ -14,11 +14,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ReplyContent
+import com.example.devicersapp.ui.theme.CardHighlightText
+import com.example.devicersapp.ui.theme.CardMetadataText
+import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 
 /**
@@ -36,12 +40,29 @@ fun ReplyItem(reply: ReplyContent, modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(stringResource(reply.authorResId), style = MaterialTheme.typography.labelLarge, color = LocalDevicersColors.current.textPrimary)
-            Text(stringResource(reply.timeAgoResId), style = MaterialTheme.typography.bodySmall, color = LocalDevicersColors.current.textSecondary)
-            Spacer(Modifier.height(9.dp))
-            Text(stringResource(reply.textResId), style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textPrimary)
-            Spacer(Modifier.height(10.dp))
-            Text(stringResource(R.string.review_reply_action), style = MaterialTheme.typography.labelLarge, color = LocalDevicersColors.current.textSecondary)
+            Text(
+                text = stringResource(reply.authorResId),
+                style = CardHighlightText,
+                color = LocalDevicersColors.current.textPrimary
+            )
+            Text(
+                text = stringResource(reply.timeAgoResId),
+                style = CardMetadataText,
+                color = LocalDevicersColors.current.textSecondary
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(reply.textResId),
+                style = MaterialTheme.typography.bodyMedium,
+                color = LocalDevicersColors.current.textSecondary
+            )
+            Spacer(Modifier.height(8.dp))
+            // La acción de responder se lee como enlace de acento.
+            Text(
+                text = stringResource(R.string.review_reply_action),
+                style = CardMetadataText,
+                color = LocalDevicersColors.current.primaryText
+            )
         }
     }
 }
@@ -50,12 +71,15 @@ fun ReplyItem(reply: ReplyContent, modifier: Modifier = Modifier) {
 @Composable
 @Preview(showBackground = true)
 fun ReplyItemPreview() {
+    DevicersAppTheme {
     ReplyItem(
         ReplyContent(
             avatarResId = R.drawable.profile_avatar_03,
             authorResId = R.string.review_reply_author_one,
             timeAgoResId = R.string.review_reply_time,
             textResId = R.string.review_reply_text_one
-        )
+        ),
+        modifier = Modifier.padding(16.dp)
     )
+    }
 }

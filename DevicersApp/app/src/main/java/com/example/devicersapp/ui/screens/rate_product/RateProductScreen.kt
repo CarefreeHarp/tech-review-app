@@ -1,5 +1,6 @@
 package com.example.devicersapp.ui.screens.rate_product
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import com.example.devicersapp.ui.screens.rate_product.components.RateableProduc
 import com.example.devicersapp.ui.screens.rate_product.components.RatingSelector
 import com.example.devicersapp.ui.screens.rate_product.components.ReviewForm
 import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
 /**
@@ -88,7 +90,9 @@ fun RateProductScreen(
             // TODO: Implementar la publicación de la calificación.
         },
 
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .background(LocalDevicersColors.current.background)
     )
 }
 
@@ -139,11 +143,10 @@ fun RateProductScreenContent(
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp)
+            .padding(horizontal = 20.dp)
     ) {
 
         item {
-            Spacer(modifier = Modifier.height(12.dp))
             Spacer(modifier = Modifier.height(20.dp))
         }
 
@@ -182,31 +185,47 @@ fun RateProductScreenContent(
                 onPublishClick = onPublishClick
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            // Deja aire para que la barra flotante no tape el botón de publicar.
+            Spacer(modifier = Modifier.height(120.dp))
         }
     }
 }
 
 
 
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
+/** Muestra una vista previa de la calificación de producto en el tema claro. */
 @Composable
-fun RateProductScreenWithScaffoldPreview() {
-    DevicersAppTheme {
-
+@Preview(showBackground = true, heightDp = 1100)
+fun RateProductScreenPreview() {
+    DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(
-            selectedItem = "add",
+            selectedItem = "create",
             showBottomBar = true,
             topBarNumber = 2
         ) { innerPadding ->
-
             RateProductScreen(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(top = innerPadding.calculateTopPadding())
+            )
+        }
+    }
+}
+
+/** Muestra una vista previa de la calificación de producto en el tema oscuro. */
+@Composable
+@Preview(showBackground = true, heightDp = 1100)
+fun RateProductScreenDarkPreview() {
+    DevicersAppTheme(darkTheme = true) {
+        DevicersScaffold(
+            selectedItem = "create",
+            showBottomBar = true,
+            topBarNumber = 2
+        ) { innerPadding ->
+            RateProductScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding())
             )
         }
     }

@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.login
+package com.example.devicersapp.ui.screens.access
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -24,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
-import com.example.devicersapp.ui.screens.login.components.ForgotPasswordLink
+import com.example.devicersapp.ui.screens.access.components.ForgotPasswordLink
 import com.example.devicersapp.ui.utils.authentication.AuthenticationDividerText
 import com.example.devicersapp.ui.utils.authentication.AuthenticationField
 import com.example.devicersapp.ui.utils.authentication.AuthenticationFooter
@@ -32,15 +31,15 @@ import com.example.devicersapp.ui.utils.authentication.PrimaryButton
 import com.example.devicersapp.ui.utils.authentication.ScreenTitle
 import com.example.devicersapp.ui.utils.authentication.SocialButtons
 
-/** Renderiza la pantalla estática de inicio de sesión del tema claro de Devicers. */
+/** Renderiza la pantalla de acceso, la puerta de entrada a la comunidad de Devicers. */
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun AccessScreen(modifier: Modifier = Modifier) {
     // La pantalla conserva el estado; los campos reutilizables solo lo muestran y emiten cambios.
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    LoginScreenContent(
+    AccessScreenContent(
         email = email,
         password = password,
         isPasswordVisible = isPasswordVisible,
@@ -54,10 +53,10 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 }
 
 /**
- * Reúne el contenido visual que muestra [LoginScreen].
+ * Reúne el contenido visual que muestra [AccessScreen].
  *
- * @param email Correo controlado por la pantalla de inicio de sesión.
- * @param password Contraseña controlada por la pantalla de inicio de sesión.
+ * @param email Correo controlado por la pantalla de acceso.
+ * @param password Contraseña controlada por la pantalla de acceso.
  * @param isPasswordVisible Indica si la contraseña se muestra sin ocultar.
  * @param onEmailChange Acción que solicita actualizar el correo.
  * @param onPasswordChange Acción que solicita actualizar la contraseña.
@@ -65,7 +64,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
-fun LoginScreenContent(
+fun AccessScreenContent(
     email: String,
     password: String,
     isPasswordVisible: Boolean,
@@ -77,20 +76,20 @@ fun LoginScreenContent(
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // La marca se muestra desde TopBar5, gestionada por el Scaffold compartido.
-        Spacer(modifier = Modifier.height(55.dp))
+        Spacer(modifier = Modifier.height(36.dp))
         ScreenTitle(R.string.sign_in_title, R.string.sign_in_description)
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(32.dp))
         AuthenticationField(
             labelResId = R.string.email,
             placeholderResId = R.string.email_placeholder,
             value = email,
             onValueChange = onEmailChange
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(18.dp))
         AuthenticationField(
             labelResId = R.string.password,
             placeholderResId = R.string.password_placeholder,
@@ -100,25 +99,38 @@ fun LoginScreenContent(
             isPasswordVisible = isPasswordVisible,
             onPasswordVisibilityChange = onPasswordVisibilityChange
         )
+        // El enlace de recuperación se alinea al borde derecho del formulario.
         ForgotPasswordLink(modifier = Modifier.align(Alignment.End))
-        Spacer(modifier = Modifier.height(25.dp))
-        PrimaryButton(R.string.sign_in, Modifier.fillMaxWidth().height(48.dp))
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(18.dp))
+        PrimaryButton(R.string.sign_in, Modifier.fillMaxWidth().height(52.dp))
+        Spacer(modifier = Modifier.height(26.dp))
         AuthenticationDividerText()
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(18.dp))
         SocialButtons()
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(28.dp))
         AuthenticationFooter(R.string.no_account, R.string.create_account)
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
-/** Muestra una vista previa de la composición completa de inicio de sesión. */
+/** Muestra una vista previa de la composición completa de acceso en el tema claro. */
 @Composable
-@Preview(showBackground = true)
-fun LoginScreenPreview() {
-    DevicersAppTheme {
+@Preview(showBackground = true, heightDp = 800)
+fun AccessScreenPreview() {
+    DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            LoginScreen(modifier = Modifier.padding(innerPadding))
+            AccessScreen(modifier = Modifier.padding(innerPadding))
+        }
+    }
+}
+
+/** Muestra una vista previa de la composición completa de acceso en el tema oscuro. */
+@Composable
+@Preview(showBackground = true, heightDp = 800)
+fun AccessScreenDarkPreview() {
+    DevicersAppTheme(darkTheme = true) {
+        DevicersScaffold(topBarNumber = 5) { innerPadding ->
+            AccessScreen(modifier = Modifier.padding(innerPadding))
         }
     }
 }

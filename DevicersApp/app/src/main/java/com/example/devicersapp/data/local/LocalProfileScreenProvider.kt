@@ -3,13 +3,13 @@ package com.example.devicersapp.data.local
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ProfileStatContent
-import com.example.devicersapp.ui.models.ReviewContent
+import com.example.devicersapp.ui.models.RatedProductContent
 
+/** Provee la información de ejemplo del perfil y de los productos que ya calificó. */
 object LocalProfileScreenProvider {
 
     val profile = ProfileContent(
         avatarResId = R.drawable.profile_avatar_00,
-        nameResId = R.string.profile_name,
         handleResId = R.string.profile_handle,
         biographyResId = R.string.profile_biography,
         stats = listOf(
@@ -19,90 +19,42 @@ object LocalProfileScreenProvider {
         )
     )
 
-    val reviews = listOf(
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
-            authorResId = R.string.profile_handle,
-            rating = 5,
-            textResId = R.string.profile_review_first_text,
-            likes = 23
+    val ratedProducts = listOf(
+        RatedProductContent(
+            nameResId = R.string.profile_product_first,
+            imageResId = R.drawable.device_00,
+            imageDescriptionResId = R.string.profile_product_image,
+            rating = 5
         ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_01,
-            authorResId = R.string.profile_review_second_author,
-            rating = 4,
-            textResId = R.string.profile_review_second_text,
-            likes = 11
+        RatedProductContent(
+            nameResId = R.string.profile_product_second,
+            imageResId = R.drawable.device_03,
+            imageDescriptionResId = R.string.profile_product_image,
+            rating = 5
         ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
-            authorResId = R.string.profile_handle,
-            rating = 5,
-            textResId = R.string.profile_review_third_text,
-            likes = 34
+        RatedProductContent(
+            nameResId = R.string.profile_product_third,
+            imageResId = R.drawable.device_04,
+            imageDescriptionResId = R.string.profile_product_image,
+            rating = 4
         ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_01,
-            authorResId = R.string.profile_handle,
-            rating = 4,
-            textResId = R.string.profile_review_fourth_text,
-            likes = 19
+        RatedProductContent(
+            nameResId = R.string.profile_product_fourth,
+            imageResId = R.drawable.device_05,
+            imageDescriptionResId = R.string.profile_product_image,
+            rating = 5
         ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
-            authorResId = R.string.profile_handle,
-            rating = 5,
-            textResId = R.string.profile_review_fifth_text,
-            likes = 46
+        RatedProductContent(
+            nameResId = R.string.profile_product_fifth,
+            imageResId = R.drawable.device_01,
+            imageDescriptionResId = R.string.profile_product_image,
+            rating = 4
         ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_01,
-            authorResId = R.string.profile_handle,
-            rating = 4,
-            textResId = R.string.profile_review_sixth_text,
-            likes = 28
-        ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
-            authorResId = R.string.profile_handle,
-            rating = 5,
-            textResId = R.string.profile_review_seventh_text,
-            likes = 52
-        ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_01,
-            authorResId = R.string.profile_handle,
-            rating = 4,
-            textResId = R.string.profile_review_eighth_text,
-            likes = 17
-        ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
-            authorResId = R.string.profile_handle,
-            rating = 5,
-            textResId = R.string.profile_review_ninth_text,
-            likes = 39
-        ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_01,
-            authorResId = R.string.profile_handle,
-            rating = 4,
-            textResId = R.string.profile_review_tenth_text,
-            likes = 24
-        ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_00,
-            authorResId = R.string.profile_handle,
-            rating = 5,
-            textResId = R.string.profile_review_eleventh_text,
-            likes = 31
-        ),
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_01,
-            authorResId = R.string.profile_handle,
-            rating = 4,
-            textResId = R.string.profile_review_twelfth_text,
-            likes = 22
+        RatedProductContent(
+            nameResId = R.string.profile_product_sixth,
+            imageResId = R.drawable.device_02,
+            imageDescriptionResId = R.string.profile_product_image,
+            rating = 5
         )
     )
 }

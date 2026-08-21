@@ -8,18 +8,26 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ReplyContent
+import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.theme.LocalDevicersColors
+import com.example.devicersapp.ui.theme.SearchHeadingText
 
 /** Muestra el resumen y los mensajes de respuesta asociados a la reseña. */
 @Composable
 fun ReplyList(replies: List<ReplyContent>, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Text(stringResource(R.string.review_replies, replies.size), style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = stringResource(R.string.review_replies, replies.size),
+            style = SearchHeadingText,
+            color = LocalDevicersColors.current.textPrimary
+        )
         Spacer(Modifier.height(18.dp))
         replies.forEachIndexed { index, reply ->
             ReplyItem(reply)
@@ -32,10 +40,13 @@ fun ReplyList(replies: List<ReplyContent>, modifier: Modifier = Modifier) {
 @Composable
 @Preview(showBackground = true)
 fun ReplyListPreview() {
+    DevicersAppTheme {
     ReplyList(
         listOf(
             ReplyContent(R.drawable.profile_avatar_03, R.string.review_reply_author_one, R.string.review_reply_time, R.string.review_reply_text_one),
             ReplyContent(R.drawable.profile_avatar_04, R.string.review_reply_author_two, R.string.review_reply_time, R.string.review_reply_text_two)
-        )
+        ),
+        modifier = Modifier.padding(16.dp)
     )
+    }
 }

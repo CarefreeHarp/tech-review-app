@@ -14,6 +14,7 @@ import com.example.devicersapp.ui.utils.navigation.TopBar2
 import com.example.devicersapp.ui.utils.navigation.TopBar3
 import com.example.devicersapp.ui.utils.navigation.TopBar4
 import com.example.devicersapp.ui.utils.navigation.TopBar5
+import com.example.devicersapp.ui.utils.navigation.TopBar6
 
 /**
  * Define la estructura general de las pantallas de Devicers.
@@ -48,6 +49,7 @@ fun DevicersScaffold(
                 3 -> TopBar3(onBackClick = onTopBarBackClick)
                 4 -> TopBar4(onBackClick = onTopBarBackClick)
                 5 -> TopBar5()
+                6 -> TopBar6(onBackClick = onTopBarBackClick)
             }
         },
         bottomBar = {

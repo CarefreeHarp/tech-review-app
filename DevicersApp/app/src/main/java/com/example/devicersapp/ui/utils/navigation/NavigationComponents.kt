@@ -4,8 +4,10 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,21 +30,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
+import com.example.devicersapp.ui.theme.NavigationLabelText
 import com.example.devicersapp.ui.theme.SearchControlText
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.Icon
 
 /**
- * Muestra la barra de navegación inferior de la aplicación.
+ * Muestra la barra de navegación inferior con forma de óvalo flotante.
  *
  * @param selectedItem Identificador del elemento que representa la pantalla actual.
  * @param modifier Modificador aplicado a la barra.
@@ -55,40 +64,55 @@ fun BottomNavigationBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(55.dp)
-            .background(colors.surface)
-            .padding(horizontal = 20.dp),
+            .navigationBarsPadding()
+            .padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
+            .height(66.dp)
+            // Sin `clip = false` la sombra recorta a los hijos y corta el botón que sobresale.
+            .shadow(elevation = 10.dp, shape = RoundedCornerShape(33.dp), clip = false)
+            .background(colors.surface, RoundedCornerShape(33.dp))
+            .padding(start = 8.dp, end = 8.dp, bottom = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        // Alinear por la base deja todas las etiquetas sobre una misma línea.
+        verticalAlignment = Alignment.Bottom
     ) {
-
         NavigationItem(
             iconResId = R.drawable.home_icon,
+            labelResId = R.string.navigation_home,
             isSelected = selectedItem == "home",
+            modifier = Modifier.weight(1f),
             onClick = { onItemClick("home") }
         )
 
         NavigationItem(
             iconResId = R.drawable.explore_icon,
+            labelResId = R.string.navigation_search,
             isSelected = selectedItem == "search",
+            modifier = Modifier.weight(1f),
             onClick = { onItemClick("search") }
         )
 
-        NavigationItem(
-            iconResId = R.drawable.create_review_icon,
-            isSelected = selectedItem == "add",
-            onClick = { onItemClick("add") }
+        CreateNavigationButton(
+            isSelected = selectedItem == "create",
+            // El botón mide más alto que el óvalo, así que se le permite desbordarlo hacia arriba.
+            modifier = Modifier
+                .weight(1f)
+                .wrapContentHeight(align = Alignment.Bottom, unbounded = true),
+            onClick = { onItemClick("create") }
         )
 
         NavigationItem(
             iconResId = R.drawable.notifications_icon,
-            isSelected = selectedItem == "favorite",
-            onClick = { onItemClick("favorite") }
+            labelResId = R.string.navigation_activity,
+            isSelected = selectedItem == "activity",
+            modifier = Modifier.weight(1f),
+            onClick = { onItemClick("activity") }
         )
 
         NavigationItem(
             iconResId = R.drawable.profile_icon,
+            labelResId = R.string.navigation_profile,
             isSelected = selectedItem == "profile",
+            modifier = Modifier.weight(1f),
             onClick = { onItemClick("profile") }
         )
     }
@@ -96,9 +120,54 @@ fun BottomNavigationBar(
 
 
 /**
- * Muestra un elemento individual de la barra de navegación.
+ * Muestra el botón central y elevado que inicia la creación de una reseña.
+ *
+ * @param isSelected Indica si la pantalla de creación es la pantalla actual.
+ * @param modifier Modificador aplicado al botón.
+ * @param onClick Acción ejecutada al presionar el botón.
+ */
+@Composable
+fun CreateNavigationButton(
+    isSelected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    val colors = LocalDevicersColors.current
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(54.dp)
+                .shadow(elevation = 8.dp, shape = CircleShape)
+                // El botón conserva siempre el color de acción, esté seleccionado o no.
+                .background(colors.primary, CircleShape)
+                .clickable { onClick() },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.create_review_icon),
+                contentDescription = stringResource(R.string.navigation_create),
+                modifier = Modifier.size(26.dp),
+                tint = colors.textOnPrimary
+            )
+        }
+        Spacer(modifier = Modifier.height(3.dp))
+        Text(
+            text = stringResource(R.string.navigation_create),
+            color = if (isSelected) colors.primaryText else colors.textSecondary,
+            style = NavigationLabelText
+        )
+    }
+}
+
+
+/**
+ * Muestra un destino individual de la barra de navegación con su ícono y su etiqueta.
  *
  * @param iconResId Recurso del ícono.
+ * @param labelResId Recurso de la etiqueta mostrada bajo el ícono.
  * @param isSelected Indica si el elemento está seleccionado.
  * @param modifier Modificador aplicado al elemento.
  * @param onClick Acción ejecutada al presionar el elemento.
@@ -106,36 +175,31 @@ fun BottomNavigationBar(
 @Composable
 fun NavigationItem(
     @DrawableRes iconResId: Int,
+    @StringRes labelResId: Int,
     isSelected: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
-    Box(
-        modifier = modifier
-            .size(38.dp)
-            .background(
-                color = if (isSelected) {
-                    colors.primaryYellow
-                } else {
-                    colors.surface
-                },
-                shape = RoundedCornerShape(10.dp)
-            )
-            .clickable {
-                onClick()
-            },
-        contentAlignment = Alignment.Center
+    // El destino activo se distingue solo por color, sin cambiar su tamaño ni su posición.
+    val destinationColor = if (isSelected) colors.primaryText else colors.textSecondary
+
+    Column(
+        modifier = modifier.clickable { onClick() },
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             painter = painterResource(iconResId),
             contentDescription = null,
-            modifier = Modifier.size(28.dp),
-            tint = if (isSelected) {
-                colors.selectedIcon
-            } else {
-                colors.textPrimary
-            }
+            modifier = Modifier.size(24.dp),
+            tint = destinationColor
+        )
+        Spacer(modifier = Modifier.height(3.dp))
+        Text(
+            text = stringResource(labelResId),
+            color = destinationColor,
+            style = NavigationLabelText,
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
         )
     }
 }
@@ -155,24 +219,29 @@ fun FilterChip(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
+    // La pastilla completa y el borde distinguen la opción activa sin cambiar su tamaño.
+    val chipShape = RoundedCornerShape(percent = 50)
     Box(
         modifier = modifier
             .background(
-                color = if (selected)
-                    colors.primaryYellow
-                else
-                    colors.surface,
-                shape = RoundedCornerShape(8.dp)
+                color = if (selected) colors.selection else colors.surface,
+                shape = chipShape
+            )
+            .border(
+                width = 1.dp,
+                color = if (selected) colors.selection else colors.border,
+                shape = chipShape
             )
             .clickable { onClick() }
-            .padding(horizontal = 10.dp, vertical = 9.dp),
+            .padding(horizontal = 14.dp, vertical = 9.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = stringResource(textResId),
-            color = if (selected) colors.textOnPrimary else colors.textPrimary,
+            color = if (selected) colors.textOnSelection else colors.textPrimary,
             style = SearchControlText,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            maxLines = 1
         )
     }
 }
@@ -191,6 +260,7 @@ fun SearchBar(
     @StringRes placeholder: Int,
     backgroundColor: Color? = null,
     showSearchIcon: Boolean = false,
+    height: Dp = 46.dp,
     modifier: Modifier = Modifier,
     text: String,
     onTextChange: (String) -> Unit,
@@ -204,12 +274,17 @@ fun SearchBar(
         onValueChange = onTextChange,
         modifier = modifier
             .fillMaxWidth()
-            .height(42.dp)
+            .height(height)
             .background(
                 color = resolvedBackgroundColor,
-                shape = RoundedCornerShape(9.dp)
+                shape = RoundedCornerShape(12.dp)
             )
-            .padding(horizontal = 12.dp),
+            .border(
+                width = 1.dp,
+                color = colors.border,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(horizontal = 14.dp),
         singleLine = true,
         keyboardOptions = keyboardOptions,
         textStyle = LocalTextStyle.current.copy(
@@ -222,12 +297,13 @@ fun SearchBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (showSearchIcon) {
-                    Image(
+                    Icon(
                         painter = painterResource(R.drawable.explore_icon),
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(19.dp),
+                        tint = colors.textSecondary
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
+                    Spacer(modifier = Modifier.width(9.dp))
                 }
 
                 Box(
@@ -252,14 +328,25 @@ fun SearchBar(
 @Composable
 @Preview(showBackground = true)
 fun BottomNavigationBarPreview() {
-    BottomNavigationBar(selectedItem = "search")
+    DevicersAppTheme { BottomNavigationBar(selectedItem = "home") }
 }
 
 /** Muestra una vista previa de un elemento seleccionado de navegación. */
 @Composable
 @Preview(showBackground = true)
 fun NavigationItemPreview() {
-    NavigationItem(R.drawable.home_icon, isSelected = true)
+    NavigationItem(
+        iconResId = R.drawable.home_icon,
+        labelResId = R.string.navigation_home,
+        isSelected = true
+    )
+}
+
+/** Muestra una vista previa del botón elevado de creación. */
+@Composable
+@Preview(showBackground = true)
+fun CreateNavigationButtonPreview() {
+    DevicersAppTheme { CreateNavigationButton(isSelected = false) }
 }
 
 /** Muestra una vista previa de una opción de filtro seleccionada. */

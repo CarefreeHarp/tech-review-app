@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -25,8 +26,10 @@ import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.product.components.ProductImageCard
 import com.example.devicersapp.ui.screens.product.components.RatingSummary
 import com.example.devicersapp.ui.screens.product.components.ReviewCard
+import com.example.devicersapp.ui.theme.CardMetadataText
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
+import com.example.devicersapp.ui.theme.SearchHeadingText
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
 /** Configura el detalle del producto usando los datos locales de ejemplo. */
@@ -63,32 +66,36 @@ fun ProductScreenContent(
     onRateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier.padding(horizontal = 12.dp)
-    ) {
+    val colors = LocalDevicersColors.current
+
+    LazyColumn(modifier = modifier.padding(horizontal = 20.dp)) {
         item {
-            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = stringResource(product.nameResId),
-                color = LocalDevicersColors.current.textPrimary,
+                color = colors.textPrimary,
                 style = MaterialTheme.typography.headlineSmall
             )
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = stringResource(product.brandResId),
-                color = LocalDevicersColors.current.textSecondary,
-                style = MaterialTheme.typography.bodyMedium
+                color = colors.textSecondary,
+                style = CardMetadataText
             )
-            Spacer(modifier = Modifier.height(14.dp))
+
+            Spacer(modifier = Modifier.height(18.dp))
             ProductImageCard(product)
-            Spacer(modifier = Modifier.height(20.dp))
+
+            Spacer(modifier = Modifier.height(24.dp))
             RatingSummary(ratingSummary)
-            Spacer(modifier = Modifier.height(38.dp))
+
+            Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = onRateClick,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = LocalDevicersColors.current.primaryYellow,
-                    contentColor = LocalDevicersColors.current.textOnPrimary
+                    containerColor = colors.primary,
+                    contentColor = colors.textOnPrimary
                 )
             ) {
                 Text(
@@ -96,22 +103,54 @@ fun ProductScreenContent(
                     style = MaterialTheme.typography.labelLarge
                 )
             }
-            Spacer(modifier = Modifier.height(25.dp))
+
+            Spacer(modifier = Modifier.height(28.dp))
+            Text(
+                text = stringResource(R.string.product_top_reviews),
+                color = colors.textPrimary,
+                style = SearchHeadingText
+            )
+            Spacer(modifier = Modifier.height(14.dp))
         }
+
         items(reviews) { review ->
             ReviewCard(review)
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(14.dp))
+        }
+
+        item {
+            // Deja aire para que la barra flotante no tape la última reseña.
+            Spacer(modifier = Modifier.height(110.dp))
         }
     }
 }
 
-/** Muestra una vista previa de la composición completa del producto. */
+/** Muestra una vista previa del detalle de producto en el tema claro. */
 @Composable
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 1100)
 fun ProductScreenPreview() {
-    DevicersAppTheme {
-        DevicersScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 1) { innerPadding ->
-            ProductScreen(modifier = Modifier.padding(innerPadding))
+    DevicersAppTheme(darkTheme = false) {
+        DevicersScaffold(
+            selectedItem = "search",
+            showBottomBar = true,
+            topBarNumber = 6
+        ) { innerPadding ->
+            ProductScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+        }
+    }
+}
+
+/** Muestra una vista previa del detalle de producto en el tema oscuro. */
+@Composable
+@Preview(showBackground = true, heightDp = 1100)
+fun ProductScreenDarkPreview() {
+    DevicersAppTheme(darkTheme = true) {
+        DevicersScaffold(
+            selectedItem = "search",
+            showBottomBar = true,
+            topBarNumber = 6
+        ) { innerPadding ->
+            ProductScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }
     }
 }

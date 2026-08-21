@@ -37,7 +37,7 @@ private val EmailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$
 /** Exige una contraseña de seis caracteres o más que contenga al menos tres dígitos. */
 private val PasswordRegex = Regex("^(?=(?:.*\\d){3,}).{6,}$")
 
-/** Renderiza la pantalla estática de creación de cuenta del tema claro de Devicers. */
+/** Renderiza la pantalla de registro, donde se crea el perfil de la comunidad. */
 @Composable
 fun RegisterScreen(modifier: Modifier = Modifier) {
     // Estado elevado del formulario para que los campos compartidos no conserven datos de negocio.
@@ -117,27 +117,27 @@ fun RegisterScreenContent(
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // La marca se muestra desde TopBar5, gestionada por el Scaffold compartido.
-        Spacer(modifier = Modifier.height(55.dp))
-        ScreenTitle(R.string.create_account, R.string.create_account_description)
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(36.dp))
+        ScreenTitle(R.string.create_account_title, R.string.create_account_description)
+        Spacer(modifier = Modifier.height(32.dp))
         AuthenticationField(
             labelResId = R.string.username,
             placeholderResId = R.string.username_placeholder,
             value = username,
             onValueChange = onUsernameChange
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
         AuthenticationField(
             labelResId = R.string.email,
             placeholderResId = R.string.email_placeholder,
             value = email,
             onValueChange = onEmailChange
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
         AuthenticationField(
             labelResId = R.string.password,
             placeholderResId = R.string.password_placeholder,
@@ -147,7 +147,7 @@ fun RegisterScreenContent(
             isPasswordVisible = isPasswordVisible,
             onPasswordVisibilityChange = onPasswordVisibilityChange
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
         AuthenticationField(
             labelResId = R.string.confirm_password,
             placeholderResId = R.string.password_placeholder,
@@ -157,7 +157,7 @@ fun RegisterScreenContent(
             isPasswordVisible = isPasswordVisible,
             onPasswordVisibilityChange = onPasswordVisibilityChange
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         // La advertencia se muestra únicamente después de que el usuario intenta crear la cuenta.
         if (showValidationWarning && (
                 !isEmailValid || !isPasswordValid || !isConfirmationPasswordValid
@@ -172,23 +172,35 @@ fun RegisterScreenContent(
         }
         PrimaryButton(
             textResId = R.string.create_account,
-            modifier = Modifier.fillMaxWidth().height(48.dp),
+            modifier = Modifier.fillMaxWidth().height(52.dp),
             onClick = onCreateAccount
         )
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(26.dp))
         AuthenticationDividerText()
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(18.dp))
         SocialButtons()
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(28.dp))
         AuthenticationFooter(R.string.already_have_account, R.string.sign_in)
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
-/** Muestra una vista previa de la composición completa de creación de cuenta. */
+/** Muestra una vista previa de la composición completa de registro en el tema claro. */
 @Composable
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 900)
 fun RegisterScreenPreview() {
-    DevicersAppTheme {
+    DevicersAppTheme(darkTheme = false) {
+        DevicersScaffold(topBarNumber = 5) { innerPadding ->
+            RegisterScreen(modifier = Modifier.padding(innerPadding))
+        }
+    }
+}
+
+/** Muestra una vista previa de la composición completa de registro en el tema oscuro. */
+@Composable
+@Preview(showBackground = true, heightDp = 900)
+fun RegisterScreenDarkPreview() {
+    DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
             RegisterScreen(modifier = Modifier.padding(innerPadding))
         }

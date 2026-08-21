@@ -7,6 +7,7 @@
     <!-- LOGIN -->
     <string name="sign_in">Iniciar sesión</string>
     <string name="create_account">Crear cuenta</string>
+    <string name="create_account_title">Crea tu cuenta</string>
 
     <string name="email">Correo electrónico</string>
     <string name="email_placeholder">tu@correo.com</string>
@@ -19,24 +20,28 @@
     <string name="forgot_password">¿Olvidaste tu contraseña?</string>
     <string name="continue_with">o continúa con</string>
 
-    <string name="no_account">¿No tienes cuenta?</string>
+    <string name="no_account">¿Nuevo en Devicers?</string>
     <string name="already_have_account">¿Ya tienes cuenta?</string>
+
+    <string name="social_google">Google</string>
+    <string name="social_facebook">Facebook</string>
+    <string name="social_phone">Teléfono</string>
 
     <string name="google_sign_in">Continuar con Google</string>
     <string name="facebook_sign_in">Continuar con Facebook</string>
     <string name="phone_sign_in">Continuar con teléfono</string>
 
-    <string name="sign_in_title">Inicia sesión</string>
+    <string name="sign_in_title">Bienvenido de nuevo</string>
     <string name="sign_in_description">
-        Accede para ver reseñas y calificar tus dispositivos.
+        Descubre dispositivos y reseñas honestas de tu comunidad.
     </string>
 
     <string name="create_account_description">
-        Crea tu perfil para publicar y guardar tus reseñas.
+        Construye un perfil tech confiable y guarda cada reseña.
     </string>
 
     <string name="username">Nombre de usuario</string>
-    <string name="username_placeholder">usuario</string>
+    <string name="username_placeholder">@usuario</string>
 
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
@@ -55,20 +60,21 @@
     </string>
 
     <!-- SEARCH -->
-    <string name="feed">Para ti</string>
+    <string name="home_tab_for_you">Para ti</string>
+    <string name="home_tab_following">Siguiendo</string>
     <string name="search">Buscar</string>
 
     <string name="search_placeholder">Buscar dispositivos</string>
     <string name="search_filters">Filtros de búsqueda</string>
     <string name="clear_filters">Limpiar</string>
 
-    <string name="brand">MARCA</string>
+    <string name="brand">Marca</string>
     <string name="brand_placeholder">Escribe una marca</string>
 
-    <string name="product_name">NOMBRE DEL PRODUCTO</string>
-    <string name="product_name_placeholder">Ej. Auriculares</string>
+    <string name="product_name">Nombre del producto</string>
+    <string name="product_name_placeholder">Ej. auriculares</string>
 
-    <string name="launch_date">FECHA DE LANZAMIENTO</string>
+    <string name="launch_date">Fecha de lanzamiento</string>
     <string name="launch_date_placeholder">DD / MM / AAAA</string>
     <string name="launch_date_invalid">Ingresa una fecha válida.</string>
 
@@ -80,13 +86,27 @@
     <string name="computers">Computadores</string>
 
     <string name="minimum_rating">CALIFICACIÓN MÍNIMA</string>
-    <string name="minimum_rating_format">%1$.0f o más</string>
+    <string name="minimum_rating_format">%1$.1f+</string>
 
     <string name="sort_by">ORDENAR POR</string>
     <string name="most_recent">Más recientes</string>
     <string name="best_rated">Mejor valorados</string>
 
     <string name="apply_filters">Aplicar filtros</string>
+
+
+    <!-- NAVEGACIÓN -->
+    <string name="navigation_home">Inicio</string>
+    <string name="navigation_search">Buscar</string>
+    <string name="navigation_create">Crear</string>
+    <string name="navigation_activity">Actividad</string>
+    <string name="navigation_profile">Perfil</string>
+
+    <!-- ACCIONES DE RESEÑA -->
+    <string name="review_action_like">Me gusta</string>
+    <string name="review_action_comment">Comentar</string>
+    <string name="review_action_send">Compartir</string>
+    <string name="review_action_save">Guardar</string>
 
     <!-- RATINGS -->
     <string name="rating_zero">0</string>
@@ -99,20 +119,28 @@
     <string name="rating_star_character">★</string>
 
     <!-- THEME -->
-    <string name="theme_color_primary_yellow">Color amarillo principal</string>
-    <string name="theme_color_soft_yellow">Color amarillo suave</string>
+    <string name="theme_color_primary">Color burgundy principal</string>
+    <string name="theme_color_primary_soft">Color rosa suave</string>
+    <string name="theme_color_primary_text">Color de acento de texto</string>
+    <string name="theme_color_selection">Color de selección</string>
+    <string name="theme_color_text_on_selection">Color de texto sobre selección</string>
     <string name="theme_color_background">Color de fondo</string>
     <string name="theme_color_surface">Color de superficie</string>
     <string name="theme_color_surface_secondary">Color de superficie secundaria</string>
     <string name="theme_color_text_primary">Color de texto principal</string>
     <string name="theme_color_text_secondary">Color de texto secundario</string>
-    <string name="theme_color_text_on_primary">Color de texto sobre amarillo</string>
+    <string name="theme_color_text_on_primary">Color de texto sobre burgundy</string>
     <string name="theme_color_border">Color de borde</string>
+    <string name="theme_color_rating">Color de calificación</string>
+    <string name="theme_color_rating_track">Color de estrella sin seleccionar</string>
+    <string name="theme_color_avatar">Color de avatar</string>
+    <string name="theme_color_like_badge">Color de insignia de me gusta</string>
+    <string name="theme_color_comment_badge">Color de insignia de comentario</string>
+    <string name="theme_color_follow_badge">Color de insignia de nuevo seguidor</string>
     <string name="theme_color_error">Color de error</string>
 
     <!-- TOP BAR -->
     <string name="top_bar_back">Volver</string>
-    <string name="top_bar_options">Más opciones</string>
 
     <!-- TIEMPOS -->
     <string name="feed_time_five_hours">Hace 5 horas</string>
@@ -149,6 +177,37 @@
     <string name="feed_product_twelve">SSD NVMe</string>
     <string name="feed_product_thirteen">Drone Mini</string>
 
+
+    <!-- FEED METADATA -->
+    <string name="feed_metadata_phone">Samsung • Celulares</string>
+    <string name="feed_metadata_audio">Sony • Audio</string>
+    <string name="feed_metadata_computer">Lenovo • Computadores</string>
+    <string name="feed_metadata_four">Garmin • Celulares</string>
+    <string name="feed_metadata_five">Apple • Computadores</string>
+    <string name="feed_metadata_six">Keychron • Computadores</string>
+    <string name="feed_metadata_seven">GoPro • Celulares</string>
+    <string name="feed_metadata_eight">LG • Computadores</string>
+    <string name="feed_metadata_nine">Logitech • Computadores</string>
+    <string name="feed_metadata_ten">JBL • Audio</string>
+    <string name="feed_metadata_eleven">Valve • Computadores</string>
+    <string name="feed_metadata_twelve">Samsung • Computadores</string>
+    <string name="feed_metadata_thirteen">DJI • Celulares</string>
+
+    <!-- FEED PROMEDIOS -->
+    <string name="feed_average_phone">4.7</string>
+    <string name="feed_average_audio">4.8</string>
+    <string name="feed_average_computer">4.4</string>
+    <string name="feed_average_four">4.5</string>
+    <string name="feed_average_five">4.6</string>
+    <string name="feed_average_six">4.3</string>
+    <string name="feed_average_seven">4.2</string>
+    <string name="feed_average_eight">4.5</string>
+    <string name="feed_average_nine">4.6</string>
+    <string name="feed_average_ten">4.4</string>
+    <string name="feed_average_eleven">4.7</string>
+    <string name="feed_average_twelve">4.8</string>
+    <string name="feed_average_thirteen">4.5</string>
+
     <!-- FEED REVIEWS -->
     <string name="feed_review_phone">Después de dos semanas usando este smartphone, la batería supera fácilmente el día completo y la pantalla AMOLED se ve increíble incluso bajo el sol. La cámara nocturna me sorprendió bastante por el nivel de detalle.</string>
 
@@ -182,19 +241,20 @@
     <string name="review_product_image">Imagen del producto</string>
 
     <string name="product_title">Auriculares</string>
-    <string name="product_brand_label">Marca</string>
+    <string name="product_brand_label">Sony • Audio</string>
 
-    <string name="product_average_rating">Calificación promedio</string>
     <string name="product_average_value">4.6</string>
-    <string name="product_review_count">230 reseñas</string>
+    <string name="product_review_count">256 reseñas</string>
 
     <string name="product_rate">Calificar producto</string>
+    <string name="product_top_reviews">Mejores reseñas</string>
+    <string name="product_save">Guardar producto</string>
 
-    <string name="product_rating_five_percentage" formatted="false">88%</string>
-    <string name="product_rating_four_percentage" formatted="false">52%</string>
-    <string name="product_rating_three_percentage" formatted="false">17%</string>
-    <string name="product_rating_two_percentage" formatted="false">7%</string>
-    <string name="product_rating_one_percentage" formatted="false">5%</string>
+    <string name="product_rating_five_percentage" formatted="false">68%</string>
+    <string name="product_rating_four_percentage" formatted="false">22%</string>
+    <string name="product_rating_three_percentage" formatted="false">7%</string>
+    <string name="product_rating_two_percentage" formatted="false">2%</string>
+    <string name="product_rating_one_percentage" formatted="false">1%</string>
 
     <!-- Product Reviews -->
 
@@ -233,75 +293,47 @@
     <!-- PROFILE -->
     <!-- ========================= -->
 
-    <string name="profile_name">Juan</string>
     <string name="profile_handle">@usuario</string>
 
     <string name="profile_biography">
-        Amante de la tecnología y las buenas recomendaciones.
+        Entusiasta de la tecnología. Comparto reseñas claras y honestas para ayudarte a elegir mejor.
     </string>
 
     <string name="profile_reviews">Reseñas</string>
     <string name="profile_followers">Seguidores</string>
     <string name="profile_following">Siguiendo</string>
 
-    <string name="profile_reviews_count">12</string>
-    <string name="profile_followers_count">245</string>
-    <string name="profile_following_count">180</string>
+    <string name="profile_reviews_count">42</string>
+    <string name="profile_followers_count">1.2K</string>
+    <string name="profile_following_count">320</string>
 
-    <string name="profile_my_reviews">Mis reseñas</string>
+    <string name="profile_saved">Guardados</string>
+
+    <!-- PERFIL: PRODUCTOS CALIFICADOS -->
+    <string name="profile_product_first">Teléfono</string>
+    <string name="profile_product_second">Galaxy S24</string>
+    <string name="profile_product_third">iPhone 15</string>
+    <string name="profile_product_fourth">Pixel 8</string>
+    <string name="profile_product_fifth">Auriculares</string>
+    <string name="profile_product_sixth">Portátil Pro</string>
+    <string name="profile_product_image">Producto calificado</string>
+
     <string name="profile_edit">Editar perfil</string>
 
-    <string name="profile_review_second_author">@maria.dev</string>
 
     <!-- Profile Reviews -->
 
-    <string name="profile_review_first_text">
-        Después de probar este monitor durante una semana puedo decir que la calidad de imagen es excelente. Los colores son muy precisos y la tasa de refresco hace que todo se vea mucho más fluido.
-    </string>
 
-    <string name="profile_review_second_text">
-        Buen dispositivo para el día a día. La construcción es resistente y la batería aguanta perfectamente una jornada completa de uso intensivo.
-    </string>
 
-    <string name="profile_review_third_text">
-        Me sorprendió el rendimiento considerando su precio. La interfaz es rápida, las aplicaciones abren al instante y la experiencia general es muy estable.
-    </string>
 
-    <string name="profile_review_fourth_text">
-        Lo utilicé principalmente para estudiar y tomar apuntes. La pantalla tiene buena resolución y el brillo es suficiente incluso en espacios iluminados.
-    </string>
 
-    <string name="profile_review_fifth_text">
-        La calidad del audio supera mis expectativas. Los graves son profundos, las voces se escuchan claras y la conexión Bluetooth es muy estable.
-    </string>
 
-    <string name="profile_review_sixth_text">
-        El teclado tiene un tacto muy agradable y resulta cómodo para escribir durante varias horas. Además, la iluminación RGB es totalmente personalizable.
-    </string>
 
-    <string name="profile_review_seventh_text">
-        Una cámara muy recomendable para creadores de contenido. El enfoque automático responde rápido y el estabilizador produce videos realmente suaves.
-    </string>
 
-    <string name="profile_review_eighth_text">
-        El diseño minimalista fue lo primero que llamó mi atención. Después de usarlo varios días, también puedo destacar la excelente calidad de sus materiales.
-    </string>
 
-    <string name="profile_review_ninth_text">
-        Este mouse inalámbrico es ligero, preciso y muy cómodo para trabajar. La batería dura semanas sin necesidad de recargarlo constantemente.
-    </string>
 
-    <string name="profile_review_tenth_text">
-        El parlante ofrece un sonido potente para su tamaño. Incluso al máximo volumen mantiene una buena claridad y muy poca distorsión.
-    </string>
 
-    <string name="profile_review_eleventh_text">
-        Una de las mejores compras tecnológicas que he hecho recientemente. El rendimiento ha sido consistente y no he encontrado problemas importantes.
-    </string>
 
-    <string name="profile_review_twelfth_text">
-        Después de varias semanas de uso sigue funcionando como el primer día. Es un producto muy equilibrado entre calidad, diseño y precio.
-    </string>
     <!-- ========================= -->
     <!-- REVIEW -->
     <!-- ========================= -->
@@ -321,7 +353,6 @@
         Después de utilizar estos audífonos durante varias semanas puedo decir que ofrecen una experiencia sobresaliente. La cancelación activa de ruido reduce muy bien el sonido del entorno, la batería dura varios días con un uso moderado y la calidad de construcción transmite mucha confianza. Definitivamente son una excelente opción para estudiar, trabajar o viajar.
     </string>
 
-    <string name="review_like">Me gusta</string>
     <string name="review_reply_placeholder">Responder a @usuario</string>
     <string name="review_replies">Respuestas (%1$d)</string>
     <string name="review_reply_action">Responder</string>
@@ -338,8 +369,6 @@
     <string name="review_reply_author_eight">@juan_gadgets</string>
     <string name="review_reply_author_nine">@valen.tech</string>
     <string name="review_reply_author_ten">@dani_audio</string>
-    <string name="review_reply_author_eleven">@camila.reseñas</string>
-    <string name="review_reply_author_twelve">@nico.mobile</string>
 
     <!-- Reply Times -->
 
@@ -352,8 +381,6 @@
     <string name="review_reply_time_eight">Hace 15 horas</string>
     <string name="review_reply_time_nine">Hace 18 horas</string>
     <string name="review_reply_time_ten">Hace 1 día</string>
-    <string name="review_reply_time_eleven">Hace 1 día</string>
-    <string name="review_reply_time_twelve">Hace 2 días</string>
 
     <!-- Reply Texts -->
 
@@ -397,54 +424,54 @@
         La carga rápida también merece una mención. Con unos minutos conectados obtengo varias horas de reproducción.
     </string>
 
-    <string name="review_reply_text_eleven">
-        Coincido con la calidad de construcción. El estuche se siente resistente y el acabado es muy elegante.
-    </string>
 
-    <string name="review_reply_text_twelve">
-        Después de leer todos los comentarios creo que será mi próxima compra. Parece un producto muy equilibrado.
-    </string>
 
     <!-- ========================= -->
     <!-- NOTIFICATIONS -->
     <!-- ========================= -->
 
-    <string name="notifications">Notificaciones</string>
-    <string name="notifications_subtitle">Todo lo que pasó mientras no estabas.</string>
+    <string name="activity_title">Actividad</string>
+    <string name="activity_subtitle">Todo lo que pasó alrededor de tus reseñas.</string>
 
-    <string name="notifications_follow">Seguir</string>
-    <string name="notifications_following">Siguiendo</string>
+    <string name="activity_badge_like">Reacción</string>
+    <string name="activity_badge_comment">Comentario</string>
+    <string name="activity_badge_follow">Nuevo seguidor</string>
 
-    <string name="notifications_time_ago">Hace %1$s</string>
-    <string name="notifications_elapsed_minutes">%1$d m</string>
-    <string name="notifications_elapsed_hours">%1$d h</string>
-    <string name="notifications_elapsed_days">%1$d d</string>
+    <string name="activity_follow">Seguir</string>
+    <string name="activity_following">Siguiendo</string>
 
-    <string name="notifications_group_today">HOY</string>
-    <string name="notifications_group_yesterday">AYER</string>
+    <string name="activity_time_ago">Hace %1$s</string>
+    <string name="activity_detail_format">%1$s • %2$s</string>
+    <string name="activity_elapsed_minutes">%1$d m</string>
+    <string name="activity_elapsed_hours">%1$d h</string>
+    <string name="activity_elapsed_days">%1$d d</string>
 
-    <string name="notification_author_camila">@camila.vargas</string>
-    <string name="notification_author_david">@davidtechea</string>
-    <string name="notification_author_mateo">@mateo.dev</string>
-    <string name="notification_author_lina">@lina.labs</string>
+    <string name="activity_group_today">HOY</string>
+    <string name="activity_group_yesterday">AYER</string>
+    <string name="activity_group_earlier">ANTERIORES</string>
 
-    <string name="notification_action_liked_review">Le gustó tu reseña</string>
-    <string name="notification_action_replied_comment">Respondió a tu comentario</string>
-    <string name="notification_action_followed">Comenzó a seguirte</string>
+    <string name="activity_author_camila">@camila.vargas</string>
+    <string name="activity_author_david">@davidtechea</string>
+    <string name="activity_author_mateo">@mateo.dev</string>
+    <string name="activity_author_lina">@lina.labs</string>
 
-    <string name="notification_detail_headphones">
+    <string name="activity_action_liked_review">Le gustó tu reseña</string>
+    <string name="activity_action_replied_comment">Respondió a tu comentario</string>
+    <string name="activity_action_followed">Comenzó a seguirte</string>
+
+    <string name="activity_detail_headphones">
         Sony WH-1000XM5 • Cancelación de ruido
     </string>
 
-    <string name="notification_detail_comment">
+    <string name="activity_detail_comment">
         “La autonomía del Pixel 9 Pro sí mejora con el uso.”
     </string>
 
-    <string name="notification_detail_keyboard">
+    <string name="activity_detail_keyboard">
         Keychron K2 Pro • Switches Brown
     </string>
 
-    <string name="notification_detail_profile">
+    <string name="activity_detail_profile">
         Publica reseñas de tecnología y periféricos.
     </string>
 
@@ -452,12 +479,8 @@
     <!-- RATE PRODUCT -->
     <!-- ========================= -->
 
-    <string name="rate_product_back">Volver</string>
     <string name="rate_product_title">Calificar producto</string>
-
-    <string name="rate_product_subtitle">
-        Comparte tu experiencia con este producto.
-    </string>
+    <string name="rate_product_step">PASO 2 DE 2 • Comparte tu experiencia</string>
 
     <string name="rate_product_change">Cambiar</string>
 
@@ -467,13 +490,13 @@
         Selecciona una puntuación del 1 al 5.
     </string>
 
-    <string name="rate_product_review_title">Título de tu reseña</string>
+    <string name="rate_product_review_title">Título</string>
 
     <string name="rate_product_review_title_placeholder">
         Ej. Cómodos y con buen sonido
     </string>
 
-    <string name="rate_product_experience">Cuéntanos tu experiencia</string>
+    <string name="rate_product_experience">Tu reseña</string>
 
     <string name="rate_product_experience_placeholder">
         ¿Qué te gustó? ¿Qué mejorarías?
@@ -485,16 +508,17 @@
     <string name="rate_product_disadvantages">Desventajas</string>
     <string name="rate_product_disadvantage_placeholder">Añade un aspecto</string>
 
-    <string name="rate_product_publish">Publicar calificación</string>
+    <string name="rate_product_publish">Publicar reseña</string>
 
     <string name="rate_product_name">Auriculares</string>
-    <string name="rate_product_brand">Marca • Audio</string>
+    <string name="rate_product_brand">Sony • Audio</string>
 
     <string name="rate_product_image_description">
         Imagen de auriculares
     </string>
 
     <string name="rate_product_rating_value">%1$d</string>
+    <string name="rate_product_rating_star">Estrella</string>
     <string name="rate_product_character_count">%1$d/%2$d</string>
 
     <!-- ========================= -->
@@ -502,21 +526,12 @@
     <!-- ========================= -->
 
     <string name="create_review_title">Crear reseña</string>
+    <string name="create_review_step">PASO 1 DE 2 • Elige un producto</string>
 
-    <string name="create_review_subtitle">
-        Busca el producto que quieres reseñar.
-    </string>
+    <string name="create_review_search_placeholder">Busca un producto</string>
+    <string name="create_review_suggested">Productos sugeridos</string>
 
-    <string name="create_review_categories">CATEGORÍAS</string>
-    <string name="create_review_popular_results">RESULTADOS POPULARES</string>
-
-    <string name="create_review_filter_title">Filtrar productos</string>
-    <string name="create_review_filters">Filtros</string>
-    <string name="create_review_filter_close">Cerrar</string>
-
-    <string name="create_review_selected_category">• %1$s</string>
-
-    <string name="create_review_rate">Calificar</string>
+    <string name="create_review_rate">Elegir</string>
 
     <string name="create_review_empty_results">
         No encontramos productos con esos filtros.
@@ -527,8 +542,10 @@
     </string>
 
     <string name="create_review_product_missing_description">
-        Prueba buscando por marca o modelo.
+        Lo agregamos al catálogo.
     </string>
+
+    <string name="create_review_request_product">Solicitar producto</string>
 
     <!-- Products -->
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,19 +43,19 @@ fun RatingSelector(
             color = colors.textPrimary
         )
 
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = stringResource(R.string.rate_product_rating_subtitle),
-            style = MaterialTheme.typography.bodyMedium,
+            text = stringResource(R.string.rate_product_rating_subtitle).trim(),
+            style = MaterialTheme.typography.bodySmall,
             color = colors.textSecondary
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             (1..5).forEach { value ->
 
@@ -74,5 +75,11 @@ fun RatingSelector(
 @Preview(showBackground = true)
 @Composable
 fun RatingSelectorPreview() {
-    DevicersAppTheme { RatingSelector(rating = 5, onRatingChange = {}) }
+    DevicersAppTheme {
+        RatingSelector(
+            rating = 3,
+            onRatingChange = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }

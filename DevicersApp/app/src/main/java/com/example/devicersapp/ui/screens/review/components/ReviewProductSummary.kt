@@ -4,7 +4,6 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,12 +19,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProductContent
+import com.example.devicersapp.ui.theme.CardMetadataText
+import com.example.devicersapp.ui.theme.DevicersAppTheme
 
 /** Muestra el producto asociado a la reseña con su imagen, nombre y marca. */
 @Composable
@@ -33,31 +35,40 @@ fun ReviewProductSummary(product: ProductContent, modifier: Modifier = Modifier)
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(70.dp)
-            .background(LocalDevicersColors.current.surfaceSecondary, RoundedCornerShape(15.dp))
-            .border(1.dp, LocalDevicersColors.current.border, RoundedCornerShape(15.dp))
-            .padding(horizontal = 10.dp),
+            .height(96.dp)
+            // La sombra suave despega la tarjeta del fondo, como en el diseño editorial.
+            .shadow(elevation = 6.dp, shape = RoundedCornerShape(16.dp))
+            .background(LocalDevicersColors.current.surface, RoundedCornerShape(16.dp))
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(46.dp)
-                .background(LocalDevicersColors.current.surface, RoundedCornerShape(12.dp)),
+                .size(66.dp)
+                .background(LocalDevicersColors.current.background, RoundedCornerShape(14.dp)),
             contentAlignment = Alignment.Center
         ) {
             if (product.showImage) {
                 Image(
                     painter = painterResource(product.imageResId),
                     contentDescription = stringResource(product.imageDescriptionResId),
-                    modifier = Modifier.size(42.dp)
+                    modifier = Modifier.size(54.dp)
                 )
             }
         }
-        Spacer(Modifier.width(14.dp))
+        Spacer(Modifier.width(16.dp))
         Column {
-            Text(stringResource(product.nameResId), style = MaterialTheme.typography.titleMedium, color = LocalDevicersColors.current.textPrimary)
-            Spacer(Modifier.height(2.dp))
-            Text(stringResource(product.brandResId), style = MaterialTheme.typography.bodyMedium, color = LocalDevicersColors.current.textSecondary)
+            Text(
+                text = stringResource(product.nameResId),
+                style = MaterialTheme.typography.titleMedium,
+                color = LocalDevicersColors.current.textPrimary
+            )
+            Spacer(Modifier.height(3.dp))
+            Text(
+                text = stringResource(product.brandResId),
+                style = MaterialTheme.typography.bodySmall,
+                color = LocalDevicersColors.current.textSecondary
+            )
         }
     }
 }
@@ -66,13 +77,15 @@ fun ReviewProductSummary(product: ProductContent, modifier: Modifier = Modifier)
 @Composable
 @Preview(showBackground = true)
 fun ReviewProductSummaryPreview() {
-    ReviewProductSummary(
-        ProductContent(
-            nameResId = R.string.review_product_name,
-            brandResId = R.string.review_product_brand,
-            imageResId = R.drawable.device_00,
-            imageDescriptionResId = R.string.review_product_image,
-            showImage = false
+    DevicersAppTheme {
+        ReviewProductSummary(
+            ProductContent(
+                nameResId = R.string.review_product_name,
+                brandResId = R.string.review_product_brand,
+                imageResId = R.drawable.device_00,
+                imageDescriptionResId = R.string.review_product_image
+            ),
+            modifier = Modifier.padding(16.dp)
         )
-    )
+    }
 }

@@ -20,6 +20,7 @@ object LocalReviewScreenProvider {
         rating = 5,
         textResId = R.string.review_detail_text,
         likes = 128,
+        comments = 18,
         timeAgoResId = R.string.review_time
     )
 
