@@ -32,8 +32,7 @@ const html = `<!doctype html>
         #diagram svg .edgeLabel div { padding: 2px 4px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.28); }
         #diagram svg .edgeLabel span { color: #0f172a !important; font-weight: 700; }
         #diagram svg.is-focused .node:not(.is-related),
-        #diagram svg.is-focused .flowchart-link:not(.is-related),
-        #diagram svg.is-focused .edgeLabel:not(.is-related) { opacity: 0.1; }
+        #diagram svg.is-focused .flowchart-link:not(.is-related) { opacity: 0.1; }
         #diagram svg.is-focused .node.is-related,
         #diagram svg.is-focused .flowchart-link.is-related,
         #diagram svg.is-focused .edgeLabel.is-related { opacity: 1; filter: drop-shadow(0 0 4px rgba(17, 24, 39, 0.45)); }
@@ -77,8 +76,10 @@ ${diagramSvg}
 
             const tip = document.createElementNS(svgNamespace, "path");
             tip.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
-            tip.setAttribute("fill", color);
-            tip.setAttribute("stroke", color);
+            tip.style.setProperty("fill", color, "important");
+            tip.style.setProperty("stroke", color, "important");
+            marker.style.setProperty("fill", color, "important");
+            marker.style.setProperty("stroke", color, "important");
             marker.append(tip);
             arrowDefinitions.append(marker);
             return markerId;
