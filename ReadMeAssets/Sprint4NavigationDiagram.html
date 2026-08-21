@@ -39,10 +39,22 @@
     </main>
     <script>
         const diagram = document.querySelector("#diagram svg");
-        const nodes = Array.from(diagram.querySelectorAll(".nodes .node[data-id]"));
-        const links = Array.from(diagram.querySelectorAll(".edgePaths .flowchart-link"));
-        const labels = Array.from(diagram.querySelectorAll(".edgeLabels > .edgeLabel"));
+        const allNodes = Array.from(diagram.querySelectorAll(".nodes .node[data-id]"));
+        const allLinks = Array.from(diagram.querySelectorAll(".edgePaths .flowchart-link"));
+        const allLabels = Array.from(diagram.querySelectorAll(".edgeLabels > .edgeLabel"));
+        const nodes = allNodes.filter((node) => node.dataset.id !== "bottomNav");
+        const links = allLinks.filter((link) => !link.classList.contains("LE-bottomNav"));
+        const labels = allLabels.filter((label, index) => links.includes(allLinks[index]));
         const status = document.getElementById("status");
+
+        // La barra inferior es un control persistente, no una pantalla del flujo.
+        allNodes.find((node) => node.dataset.id === "bottomNav")?.remove();
+        allLinks
+            .filter((link) => link.classList.contains("LE-bottomNav"))
+            .forEach((link) => {
+                link.remove();
+                allLabels[allLinks.indexOf(link)]?.remove();
+            });
 
         const svgNamespace = "http://www.w3.org/2000/svg";
         const arrowDefinitions = document.createElementNS(svgNamespace, "defs");
