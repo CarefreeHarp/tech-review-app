@@ -28,6 +28,9 @@ const html = `<!doctype html>
         #diagram svg { display: block; min-width: 1500px; margin: 0 auto; background: #ffffff; border-radius: 12px; }
         #diagram svg .node { cursor: pointer; transition: opacity 160ms ease, filter 160ms ease; }
         #diagram svg .flowchart-link, #diagram svg .edgeLabel { transition: opacity 160ms ease, filter 160ms ease; }
+        #diagram svg .edgeLabel foreignObject { overflow: visible; }
+        #diagram svg .edgeLabel div { padding: 2px 4px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.28); }
+        #diagram svg .edgeLabel span { color: #0f172a !important; font-weight: 700; }
         #diagram svg.is-focused .node:not(.is-related),
         #diagram svg.is-focused .flowchart-link:not(.is-related),
         #diagram svg.is-focused .edgeLabel:not(.is-related) { opacity: 0.1; }
@@ -51,6 +54,40 @@ ${diagramSvg}
         const links = Array.from(diagram.querySelectorAll(".edgePaths .flowchart-link"));
         const labels = Array.from(diagram.querySelectorAll(".edgeLabels > .edgeLabel"));
         const status = document.getElementById("status");
+
+        const svgNamespace = "http://www.w3.org/2000/svg";
+        const arrowDefinitions = document.createElementNS(svgNamespace, "defs");
+        diagram.prepend(arrowDefinitions);
+
+        const markerIdFor = (color) => "arrow-" + color.replace(/[^a-z0-9]/gi, "");
+        const markerFor = (color) => {
+            const markerId = markerIdFor(color);
+            const existingMarker = document.getElementById(markerId);
+
+            if (existingMarker) return markerId;
+
+            const marker = document.createElementNS(svgNamespace, "marker");
+            marker.setAttribute("id", markerId);
+            marker.setAttribute("viewBox", "0 0 10 10");
+            marker.setAttribute("refX", "8");
+            marker.setAttribute("refY", "5");
+            marker.setAttribute("markerWidth", "8");
+            marker.setAttribute("markerHeight", "8");
+            marker.setAttribute("orient", "auto");
+
+            const tip = document.createElementNS(svgNamespace, "path");
+            tip.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+            tip.setAttribute("fill", color);
+            tip.setAttribute("stroke", color);
+            marker.append(tip);
+            arrowDefinitions.append(marker);
+            return markerId;
+        };
+
+        links.forEach((link) => {
+            const color = getComputedStyle(link).stroke;
+            link.setAttribute("marker-end", "url(#" + markerFor(color) + ")");
+        });
 
         const relatedNodeId = (link, prefix) => {
             const className = Array.from(link.classList).find((name) => name.startsWith(prefix));

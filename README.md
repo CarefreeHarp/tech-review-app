@@ -64,21 +64,6 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 ![Devicers entity-relationship diagram](ReadMeAssets/DBdiagram.svg)
 
-## Sprint 1
-
-- **Course:** Mobile Computing — Pontificia Universidad Javeriana.
-- **Professor:** Juan Sebastián Angarita Torres.
-- **Date:** August 2, 2026.
-- **Team:** Daniel Felipe Ramírez Vargas, Edwin Esteban Barreto Gaitán, and Guillermo Andrés Aponte Cárdenas.
-
-### Deliverables
-
-- Functional requirements document.
-- Database entity-relationship diagram.
-- Object-oriented class diagram.
-- Logo, color palette, and application name definition.
-- Four initial screens.
-
 ## Functional requirements
 
 - **FR-01 to FR-04 — Authentication:** create an account with an email address, username, and password; sign in; and restrict features to registered users.
