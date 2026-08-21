@@ -39,24 +39,27 @@
     </main>
     <script>
         const diagram = document.querySelector("#diagram svg");
-        const allNodes = Array.from(diagram.querySelectorAll(".nodes .node[data-id]"));
-        const allLinks = Array.from(diagram.querySelectorAll(".edgePaths .flowchart-link"));
-        const allLabels = Array.from(diagram.querySelectorAll(".edgeLabels > .edgeLabel"));
-        const nodes = allNodes.filter((node) => node.dataset.id !== "bottomNav");
-        const links = allLinks.filter((link) => !link.classList.contains("LE-bottomNav"));
-        const labels = allLabels.filter((label, index) => links.includes(allLinks[index]));
+        const nodes = Array.from(diagram.querySelectorAll(".nodes .node[data-id]"));
+        const links = Array.from(diagram.querySelectorAll(".edgePaths .flowchart-link"));
+        const labels = Array.from(diagram.querySelectorAll(".edgeLabels > .edgeLabel"));
         const status = document.getElementById("status");
-
-        // La barra inferior es un control persistente, no una pantalla del flujo.
-        allNodes.find((node) => node.dataset.id === "bottomNav")?.remove();
-        allLinks
-            .filter((link) => link.classList.contains("LE-bottomNav"))
-            .forEach((link) => {
-                link.remove();
-                allLabels[allLinks.indexOf(link)]?.remove();
-            });
-
         const svgNamespace = "http://www.w3.org/2000/svg";
+
+        // La barra inferior es un control de navegación, por eso se representa como un círculo.
+        const bottomBarNode = nodes.find((node) => node.dataset.id === "bottomNav");
+        if (bottomBarNode) {
+            bottomBarNode.classList.remove("current");
+            bottomBarNode.querySelector(".nodeLabel").textContent = "BOTOM BAR";
+
+            const rectangle = bottomBarNode.querySelector("rect.basic");
+            const circle = document.createElementNS(svgNamespace, "circle");
+            circle.setAttribute("r", "55");
+            circle.style.setProperty("fill", "#C62828", "important");
+            circle.style.setProperty("stroke", "#7F1D1D", "important");
+            circle.style.setProperty("stroke-width", "3px", "important");
+            rectangle?.replaceWith(circle);
+        }
+
         const arrowDefinitions = document.createElementNS(svgNamespace, "defs");
         diagram.prepend(arrowDefinitions);
 
