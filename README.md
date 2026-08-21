@@ -12,39 +12,33 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 | Sign-in screen | Registration screen |
 | --- | --- |
-| <img src="images/AppLoginScreen.png" alt="Devicers sign-in screen" width="280"> | <img src="images/AppRegisterScreen.png" alt="Devicers registration screen" width="280"> |
+| <img src="ReadMeAssets/AppLoginScreen.png" alt="Devicers sign-in screen" width="280"> | <img src="ReadMeAssets/AppRegisterScreen.png" alt="Devicers registration screen" width="280"> |
 
 | Review screen | Feed screen |
 | --- | --- |
-| <img src="images/AppReviewScreen.png" alt="Devicers review detail screen" width="280"> | <img src="images/AppFeedScreen.png" alt="Devicers feed screen" width="280"> |
+| <img src="ReadMeAssets/AppReviewScreen.png" alt="Devicers review detail screen" width="280"> | <img src="ReadMeAssets/AppFeedScreen.png" alt="Devicers feed screen" width="280"> |
 
 | Search screen | Rate product screen |
 | --- | --- |
-| <img src="images/AppSearchScreen.png" alt="Devicers search screen" width="280"> | <img src="images/AppRateProductScreen.png" alt="Devicers rate product screen" width="280"> |
+| <img src="ReadMeAssets/AppSearchScreen.png" alt="Devicers search screen" width="280"> | <img src="ReadMeAssets/AppRateProductScreen.png" alt="Devicers rate product screen" width="280"> |
 
 | Notifications screen | Profile screen |
 | --- | --- |
-| <img src="images/AppNotificationsScreen.png" alt="Devicers notifications screen" width="280"> | <img src="images/AppProfileScreen.png" alt="Devicers profile screen" width="280"> |
+| <img src="ReadMeAssets/AppNotificationsScreen.png" alt="Devicers notifications screen" width="280"> | <img src="ReadMeAssets/AppProfileScreen.png" alt="Devicers profile screen" width="280"> |
 
 | Product screen | Create review screen |
 | --- | --- |
-| <img src="images/AppProductScreen.png" alt="Devicers product detail screen" width="280"> | <img src="images/AppCreateReviewScreen.png" alt="Devicers create review screen" width="280"> |
+| <img src="ReadMeAssets/AppProductScreen.png" alt="Devicers product detail screen" width="280"> | <img src="ReadMeAssets/AppCreateReviewScreen.png" alt="Devicers create review screen" width="280"> |
 
 ### Logos
 
 <p align="center">
-  <img src="images/Logues.png" alt="Versiones clara y oscura del logo de Devicers" width="720">
+  <img src="ReadMeAssets/Logues.png" alt="Versiones clara y oscura del logo de Devicers" width="720">
 </p>
 
 ## Sprint 4 — Navigation map
 
-> The editable Mermaid source is [Sprint4NavigationDiagram.mmd](images/Sprint4NavigationDiagram.mmd). Update that file and regenerate its SVG whenever the navigation changes:
-
-```bash
-npx --yes @mermaid-js/mermaid-cli@10.9.1 -i images/Sprint4NavigationDiagram.mmd -o images/Sprint4NavigationDiagram.svg -b transparent
-```
-
-![Sprint 4 navigation map](images/Sprint4NavigationDiagram.svg)
+![Sprint 4 navigation map](ReadMeAssets/Sprint4NavigationDiagram.svg)
 
 ### Navigation conventions
 
@@ -62,13 +56,13 @@ npx --yes @mermaid-js/mermaid-cli@10.9.1 -i images/Sprint4NavigationDiagram.mmd 
 
 > The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
 
-![Devicers object-oriented class diagram](images/ClassDiagram.svg)
+![Devicers object-oriented class diagram](ReadMeAssets/ClassDiagram.svg)
 
 ### Entity-relationship diagram
 
 > The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
 
-![Devicers entity-relationship diagram](images/DBdiagram.svg)
+![Devicers entity-relationship diagram](ReadMeAssets/DBdiagram.svg)
 
 ## Sprint 1
 
