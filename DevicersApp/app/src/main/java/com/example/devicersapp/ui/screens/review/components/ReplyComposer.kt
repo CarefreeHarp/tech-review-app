@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 /**
@@ -43,9 +46,9 @@ fun ReplyComposer(
 
     Row(
         modifier = modifier
-            .height(78.dp)
-            .background(colors.surfaceSecondary)
-            .padding(horizontal = 18.dp, vertical = 13.dp),
+            .background(colors.background)
+            .navigationBarsPadding()
+            .padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         BasicTextField(
@@ -53,10 +56,11 @@ fun ReplyComposer(
             onValueChange = onValueChange,
             modifier = Modifier
                 .weight(1f)
-                .height(42.dp)
-                .background(colors.background, RoundedCornerShape(14.dp))
-                .border(1.dp, colors.border, RoundedCornerShape(14.dp))
-                .padding(horizontal = 16.dp),
+                .height(48.dp)
+                // La pastilla completa iguala la forma de los demás controles del diseño.
+                .background(colors.surface, CircleShape)
+                .border(1.dp, colors.border, CircleShape)
+                .padding(horizontal = 18.dp),
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(
                 color = colors.textPrimary,
@@ -78,16 +82,17 @@ fun ReplyComposer(
         Box(
             modifier = Modifier
                 .padding(start = 10.dp)
-                .size(42.dp)
-                .background(colors.primaryYellow, RoundedCornerShape(14.dp))
+                .size(48.dp)
+                .background(colors.primary, CircleShape)
                 .clickable(onClick = onSendClick),
             contentAlignment = Alignment.Center
         ) {
-            androidx.compose.material3.Icon(
+            // El ícono de envío va en crema para contrastar con el burgundy del botón.
+            Icon(
                 painter = painterResource(R.drawable.send_icon),
                 contentDescription = stringResource(R.string.review_send),
                 tint = colors.textOnPrimary,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(22.dp)
             )
         }
     }
@@ -97,5 +102,7 @@ fun ReplyComposer(
 @Composable
 @Preview(showBackground = true)
 fun ReplyComposerPreview() {
-    ReplyComposer(value = "", onValueChange = {}, onSendClick = {})
+    DevicersAppTheme {
+        ReplyComposer(value = "", onValueChange = {}, onSendClick = {})
+    }
 }

@@ -9,15 +9,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.devicersapp.ui.screens.create_review.CreateReviewScreen
-import com.example.devicersapp.ui.screens.feed.FeedScreen
-import com.example.devicersapp.ui.screens.login.LoginScreen
-import com.example.devicersapp.ui.screens.notifications.NotificationsScreen
+import com.example.devicersapp.ui.screens.found_products.FoundProductsScreen
+import com.example.devicersapp.ui.screens.home.HomeScreen
+import com.example.devicersapp.ui.screens.own_profile.OwnProfileScreen
+import com.example.devicersapp.ui.screens.profile_saved_reviews.ProfileSavedReviewsScreen
+import com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsScreen
+import com.example.devicersapp.ui.screens.search_profile.SearchProfileScreen
+import com.example.devicersapp.ui.screens.access.AccessScreen
+import com.example.devicersapp.ui.screens.activity.ActivityScreen
 import com.example.devicersapp.ui.screens.product.ProductScreen
 import com.example.devicersapp.ui.screens.profile.ProfileScreen
 import com.example.devicersapp.ui.screens.rate_product.RateProductScreen
 import com.example.devicersapp.ui.screens.register.RegisterScreen
+import com.example.devicersapp.ui.screens.request_product.RequestProductScreen
 import com.example.devicersapp.ui.screens.review.ReviewScreen
-import com.example.devicersapp.ui.screens.search.SearchScreen
+import com.example.devicersapp.ui.screens.search_product.SearchProductScreen
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
@@ -31,58 +37,96 @@ class MainActivity : ComponentActivity() {
                 // =========================
                 // PANTALLAS SIN BOTTOM BAR
                 // =========================
+                 /*
+                 ScreenWithScaffold(selectedItem = "access", topBarNumber = 5) {
+                     AccessScreen(modifier = it)
+                 }
+                */
 
-                 /*ScreenWithScaffold(selectedItem = "login", topBarNumber = 5) {
-                     LoginScreen(modifier = it)
-                 }*/
-                
-
-                 /*ScreenWithScaffold(selectedItem = "register", topBarNumber = 5) {
+                /*
+                ScreenWithScaffold(selectedItem = "register", topBarNumber = 5) {
                      RegisterScreen(modifier = it)
-                 }*/
-
-
-                 /*ScreenWithScaffold(selectedItem = "review", topBarNumber = 4) {
+                 }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "review", topBarNumber = 4) {
                      ReviewScreen(modifier = it)
-                 }*/
-
+                 }
+                */
                 // =========================
                 // PANTALLAS CON BOTTOM BAR
                 // =========================
-
-                /*ScreenWithScaffold(selectedItem = "home", showBottomBar = true) {
-                     FeedScreen(modifier = it)
-                 }*/
-
-
-                 /*ScreenWithScaffold(selectedItem = "search", showBottomBar = true) {
-                     SearchScreen(modifier = it)
-                 }*/
-
-
-                 /*ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 2) {
+                /*
+                ScreenWithScaffold(selectedItem = "home", showBottomBar = true, topBarNumber = 5) {
+                     HomeScreen(modifier = it)
+                 }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "search", showBottomBar = true) {
+                     SearchProductScreen(modifier = it)
+                 }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "create", topBarNumber = 2) {
                      RateProductScreen(modifier = it)
-                 }*/
+                 }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "activity", showBottomBar = true) {
+                     ActivityScreen(modifier = it)
+                 }
+                */
 
-
-                 /*ScreenWithScaffold(selectedItem = "favorite", showBottomBar = true) {
-                     NotificationsScreen(modifier = it)
-                 }*/
-
-
-                 /*ScreenWithScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1) {
+                /*
+                 ScreenWithScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1) {
                      ProfileScreen(modifier = it)
-                 }*/
+                 }
+                */
 
+                /*
+                 ScreenWithScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1) {
+                     OwnProfileScreen(modifier = it)
+                 }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1) {
+                     ProfileSavedReviewsScreen(modifier = it)
+                 }
+                */
 
-                /*ScreenWithScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 1) {
+                /*
+                 ScreenWithScaffold(selectedItem = "search", showBottomBar = true) {
+                     SearchProfileScreen(modifier = it)
+                 }
+                */
+
+                /*
+                 ScreenWithScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 7) {
+                     ProfileSearchResultsScreen(modifier = it)
+                 }
+                */
+
+                /*
+                 ScreenWithScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 8) {
+                     FoundProductsScreen(modifier = it)
+                 }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "create", showBottomBar = true, topBarNumber = 9) {
+                     RequestProductScreen(modifier = it)
+                 }
+                */
+                /*
+                ScreenWithScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 6) {
                    ProductScreen(modifier = it)
-                }*/
-
-
-                 ScreenWithScaffold(selectedItem = "add", showBottomBar = true, topBarNumber = 3) {
+                }
+                */
+                /*
+                 ScreenWithScaffold(selectedItem = "create", showBottomBar = true, topBarNumber = 3) {
                      CreateReviewScreen(modifier = it)
                  }
+                */
+
             }
         }
     }

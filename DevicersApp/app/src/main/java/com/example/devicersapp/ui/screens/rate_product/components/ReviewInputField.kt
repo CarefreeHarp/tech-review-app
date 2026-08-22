@@ -69,13 +69,13 @@ fun ReviewInputField(
                 minLines = minLines,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = colors.border,
+                    focusedBorderColor = colors.primary,
                     unfocusedBorderColor = colors.border,
-                    focusedContainerColor = colors.surfaceSecondary,
-                    unfocusedContainerColor = colors.surfaceSecondary,
+                    focusedContainerColor = colors.surface,
+                    unfocusedContainerColor = colors.surface,
                     focusedTextColor = colors.textPrimary,
                     unfocusedTextColor = colors.textPrimary,
-                    cursorColor = colors.primaryYellow
+                    cursorColor = colors.primary
                 ),
                 modifier = Modifier.fillMaxWidth()
             )

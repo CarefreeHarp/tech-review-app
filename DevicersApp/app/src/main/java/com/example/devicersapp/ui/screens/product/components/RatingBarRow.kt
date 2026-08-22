@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
@@ -44,25 +45,28 @@ fun RatingBarRow(
             color = colors.textSecondary,
             modifier = Modifier.width(14.dp)
         )
+        // La barra ocupa el espacio disponible para adaptarse al ancho de la pantalla.
         Box(
             modifier = Modifier
-                .width(145.dp)
-                .height(8.dp)
-                .background(colors.surfaceSecondary, RoundedCornerShape(10.dp))
+                .weight(1f)
+                .height(7.dp)
+                .background(colors.border, RoundedCornerShape(4.dp))
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(distribution.progress)
-                    .height(8.dp)
-                    .background(colors.primaryYellow, RoundedCornerShape(10.dp))
+                    .height(7.dp)
+                    // El dorado de las calificaciones también mide su distribución.
+                    .background(colors.rating, RoundedCornerShape(4.dp))
             )
         }
-        Spacer(modifier = Modifier.width(6.dp))
+        Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = stringResource(distribution.percentageResId),
             style = MaterialTheme.typography.labelSmall,
             color = colors.textSecondary,
-            modifier = Modifier.width(28.dp)
+            textAlign = TextAlign.End,
+            modifier = Modifier.width(34.dp)
         )
     }
 }

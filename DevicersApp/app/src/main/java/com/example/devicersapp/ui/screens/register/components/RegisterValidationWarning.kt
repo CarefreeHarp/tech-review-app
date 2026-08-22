@@ -3,6 +3,8 @@ package com.example.devicersapp.ui.screens.register.components
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,10 +37,18 @@ fun RegisterValidationWarning(
         modifier = modifier
             .fillMaxWidth()
             .background(
+                // El aviso es un área anidada del formulario, no una tarjeta principal.
                 color = LocalDevicersColors.current.surfaceSecondary,
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(12.dp)
             )
-            .padding(12.dp)
+            .border(
+                width = 1.dp,
+                color = LocalDevicersColors.current.error,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(14.dp),
+        // Cada requisito incumplido necesita aire para leerse como una línea independiente.
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         if (!isEmailValid) {
             Text(
