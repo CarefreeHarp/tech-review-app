@@ -1,26 +1,16 @@
-package com.example.devicersapp.ui.screens.search.components
+package com.example.devicersapp.ui.screens.search_product.components
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,19 +18,18 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.SearchControlText
+import com.example.devicersapp.ui.utils.search.FilterSlider
 
 /**
  * Muestra el control para seleccionar la calificación mínima de cero a cinco estrellas.
  *
- * El control reemplaza la apariencia predeterminada de Material por una línea delgada
- * y un pulgar circular dorado, tal como aparece en el diseño de Devicers.
+ * Añade al control compartido la escala numérica que ayuda a situar cada posición, y lo tiñe
+ * con el dorado con el que la aplicación representa las calificaciones.
  *
  * @param value Calificación mínima seleccionada.
  * @param onValueChange Acción que solicita cambiar la calificación mínima.
  * @param modifier Modificador aplicado al control.
  */
-// El pulgar y la pista propios exigen la variante experimental de `Slider` en Material3 1.4.
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RatingSlider(
     value: Float,
@@ -54,43 +43,12 @@ fun RatingSlider(
             .fillMaxWidth()
             .padding(top = 4.dp)
     ) {
-        Slider(
+        FilterSlider(
             value = value,
             onValueChange = onValueChange,
             valueRange = 0f..5f,
             steps = 4,
-            modifier = Modifier.fillMaxWidth().height(24.dp),
-            thumb = {
-                // El pulgar dorado retoma el color con el que se representan las calificaciones.
-                Box(
-                    modifier = Modifier
-                        .size(18.dp)
-                        .background(colors.rating, CircleShape)
-                        .border(2.dp, colors.surfaceSecondary, CircleShape)
-                )
-            },
-            track = { sliderState ->
-                val progress = (sliderState.value / 5f).coerceIn(0f, 1f)
-                Box(
-                    modifier = Modifier.fillMaxWidth().height(6.dp),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    // Recorrido pendiente del control.
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                            .background(colors.border, RoundedCornerShape(3.dp))
-                    )
-                    // Recorrido ya alcanzado por la calificación mínima elegida.
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(progress)
-                            .fillMaxHeight()
-                            .background(colors.selection, RoundedCornerShape(3.dp))
-                    )
-                }
-            }
+            trackColor = colors.rating
         )
 
         Spacer(modifier = Modifier.height(5.dp))

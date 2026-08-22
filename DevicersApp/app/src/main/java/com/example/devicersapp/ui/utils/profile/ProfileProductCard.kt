@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.profile.components
+package com.example.devicersapp.ui.utils.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -51,23 +51,23 @@ fun ProfileProductCard(
             .shadow(elevation = 6.dp, shape = RoundedCornerShape(16.dp))
             .background(colors.surface, RoundedCornerShape(16.dp))
             .clickable { onClick() }
-            .padding(14.dp)
+            .padding(16.dp)
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(104.dp),
+                .size(58.dp)
+                .background(colors.background, RoundedCornerShape(12.dp)),
             contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(product.imageResId),
                 contentDescription = stringResource(product.imageDescriptionResId),
-                modifier = Modifier.size(92.dp),
+                modifier = Modifier.size(38.dp),
                 contentScale = ContentScale.Fit
             )
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         Text(
             text = stringResource(product.nameResId),

@@ -62,10 +62,10 @@
     <!-- SEARCH -->
     <string name="home_tab_for_you">Para ti</string>
     <string name="home_tab_following">Siguiendo</string>
-    <string name="search">Buscar</string>
+    <string name="search_product_title">Buscar producto</string>
 
-    <string name="search_placeholder">Buscar dispositivos</string>
-    <string name="search_filters">Filtros de búsqueda</string>
+    <string name="search_product_placeholder">Buscar dispositivos</string>
+    <string name="search_filters">Filtros</string>
     <string name="clear_filters">Limpiar</string>
 
     <string name="brand">Marca</string>
@@ -93,6 +93,94 @@
     <string name="best_rated">Mejor valorados</string>
 
     <string name="apply_filters">Aplicar filtros</string>
+
+    <!-- ========================= -->
+    <!-- SEARCH PROFILE -->
+    <!-- ========================= -->
+
+    <string name="search_profile_title">Buscar perfiles</string>
+    <string name="search_profile_placeholder">Buscar usuarios</string>
+
+    <string name="search_profile_interests">Intereses</string>
+    <string name="search_profile_interests_placeholder">Ej. audio, gaming</string>
+
+    <string name="search_profile_minimum_reviews">RESEÑAS MÍNIMAS</string>
+    <string name="search_profile_minimum_reviews_format">%1$.0f+</string>
+
+    <string name="search_profile_relationship">RELACIÓN</string>
+    <string name="search_profile_all_users">Todos</string>
+    <string name="search_profile_following">Siguiendo</string>
+
+    <string name="search_profile_alphabetical">Alfabético</string>
+    <string name="search_profile_most_reviews">Más reseñas</string>
+
+    <!-- ========================= -->
+    <!-- PROFILE SEARCH RESULTS -->
+    <!-- ========================= -->
+
+    <string name="profile_search_results_title">Resultados de perfiles</string>
+    <string name="profile_search_results_count">%1$d perfiles encontrados</string>
+    <string name="profile_search_results_query">audio</string>
+
+    <string name="profile_result_first_handle">@mariana.tech</string>
+    <string name="profile_result_first_interests">Audio · Sony</string>
+    <string name="profile_result_first_reviews">32 reseñas</string>
+
+    <string name="profile_result_second_handle">@camila.audio</string>
+    <string name="profile_result_second_interests">Audio · Logitech</string>
+    <string name="profile_result_second_reviews">18 reseñas</string>
+
+    <string name="profile_result_third_handle">@audio.fan</string>
+    <string name="profile_result_third_interests">Audio · Reseñas</string>
+    <string name="profile_result_third_reviews">46 reseñas</string>
+
+    <!-- ========================= -->
+    <!-- FOUND PRODUCTS -->
+    <!-- ========================= -->
+
+    <string name="found_products_title">Productos encontrados</string>
+    <string name="found_products_count">%1$d productos encontrados</string>
+    <string name="found_products_query">auriculares</string>
+    <string name="found_products_open">Ver producto</string>
+
+    <string name="found_product_first_name">Auriculares</string>
+    <string name="found_product_first_brand">Sony · Audio</string>
+    <string name="found_product_first_average">4.6</string>
+
+    <string name="found_product_second_name">AirPods Pro</string>
+    <string name="found_product_second_brand">Apple · Audio</string>
+    <string name="found_product_second_average">4.7</string>
+
+    <string name="found_product_third_name">WH-1000XM5</string>
+    <string name="found_product_third_brand">Sony · Audio</string>
+    <string name="found_product_third_average">4.8</string>
+
+    <string name="found_product_image">Imagen del producto encontrado</string>
+
+    <!-- ========================= -->
+    <!-- REQUEST PRODUCT -->
+    <!-- ========================= -->
+
+    <string name="request_product_title">Solicitar producto</string>
+    <string name="request_product_subtitle">
+        Ayúdanos a agregar un dispositivo al catálogo.
+    </string>
+
+    <string name="request_product_name">Nombre del producto</string>
+    <string name="request_product_name_placeholder">Ej. WH-1000XM5</string>
+
+    <string name="request_product_category">Categoría</string>
+    <string name="request_product_category_placeholder">Ej. Audio</string>
+
+    <string name="request_product_brand">Marca</string>
+    <string name="request_product_brand_placeholder">Ej. Sony</string>
+
+    <string name="request_product_photo">Foto del producto</string>
+    <string name="request_product_upload">Sube una foto del producto</string>
+    <string name="request_product_upload_hint">JPG o PNG · opcional</string>
+    <string name="request_product_add_photo">Agregar foto</string>
+
+    <string name="request_product_send">Enviar solicitud</string>
 
 
     <!-- NAVEGACIÓN -->
@@ -319,6 +407,32 @@
     <string name="profile_product_image">Producto calificado</string>
 
     <string name="profile_edit">Editar perfil</string>
+    <string name="profile_follow">Seguir</string>
+    <string name="profile_edit_avatar">Cambiar foto de perfil</string>
+
+    <!-- PERFIL: RESEÑAS GUARDADAS -->
+    <string name="profile_saved_image">Producto guardado</string>
+
+    <string name="profile_saved_first_author">@mariana.tech</string>
+    <string name="profile_saved_first_product">Auriculares</string>
+    <string name="profile_saved_first_average">4.8</string>
+    <string name="profile_saved_first_text">
+        Sonido cálido y un aislamiento excelente.
+    </string>
+
+    <string name="profile_saved_second_author">@dani.reviews</string>
+    <string name="profile_saved_second_product">Watch Series 10</string>
+    <string name="profile_saved_second_average">4.5</string>
+    <string name="profile_saved_second_text">
+        Tan cómodo que se puede llevar puesto todo el día.
+    </string>
+
+    <string name="profile_saved_third_author">@juan_gadgets</string>
+    <string name="profile_saved_third_product">Galaxy S24</string>
+    <string name="profile_saved_third_average">4.6</string>
+    <string name="profile_saved_third_text">
+        La batería aguanta sin problema una jornada larga.
+    </string>
 
 
     <!-- Profile Reviews -->
@@ -348,6 +462,7 @@
 
     <string name="review_author">@usuario</string>
     <string name="review_time">Hace 2 días</string>
+    <string name="review_product_average">4.7</string>
 
     <string name="review_detail_text">
         Después de utilizar estos audífonos durante varias semanas puedo decir que ofrecen una experiencia sobresaliente. La cancelación activa de ruido reduce muy bien el sonido del entorno, la batería dura varios días con un uso moderado y la calidad de construcción transmite mucha confianza. Definitivamente son una excelente opción para estudiar, trabajar o viajar.
@@ -356,6 +471,7 @@
     <string name="review_reply_placeholder">Responder a @usuario</string>
     <string name="review_replies">Respuestas (%1$d)</string>
     <string name="review_reply_action">Responder</string>
+    <string name="review_reply_replying_to">Respondiendo a %1$s</string>
 
     <!-- Reply Authors -->
 
@@ -485,10 +601,6 @@
     <string name="rate_product_change">Cambiar</string>
 
     <string name="rate_product_rating_title">¿Cómo lo calificarías?</string>
-
-    <string name="rate_product_rating_subtitle">
-        Selecciona una puntuación del 1 al 5.
-    </string>
 
     <string name="rate_product_review_title">Título</string>
 

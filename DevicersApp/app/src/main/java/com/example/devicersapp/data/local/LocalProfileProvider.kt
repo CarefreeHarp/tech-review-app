@@ -4,9 +4,10 @@ import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ProfileStatContent
 import com.example.devicersapp.ui.models.RatedProductContent
+import com.example.devicersapp.ui.models.SavedReviewContent
 
-/** Provee la información de ejemplo del perfil y de los productos que ya calificó. */
-object LocalProfileScreenProvider {
+/** Provee la información de ejemplo del perfil, sus productos calificados y sus reseñas guardadas. */
+object LocalProfileProvider {
 
     val profile = ProfileContent(
         avatarResId = R.drawable.profile_avatar_00,
@@ -55,6 +56,36 @@ object LocalProfileScreenProvider {
             imageResId = R.drawable.device_02,
             imageDescriptionResId = R.string.profile_product_image,
             rating = 5
+        )
+    )
+
+    val savedReviews = listOf(
+        SavedReviewContent(
+            productNameResId = R.string.profile_saved_first_product,
+            productImageResId = R.drawable.device_01,
+            imageDescriptionResId = R.string.profile_saved_image,
+            authorResId = R.string.profile_saved_first_author,
+            rating = 5,
+            averageResId = R.string.profile_saved_first_average,
+            textResId = R.string.profile_saved_first_text
+        ),
+        SavedReviewContent(
+            productNameResId = R.string.profile_saved_second_product,
+            productImageResId = R.drawable.device_04,
+            imageDescriptionResId = R.string.profile_saved_image,
+            authorResId = R.string.profile_saved_second_author,
+            rating = 4,
+            averageResId = R.string.profile_saved_second_average,
+            textResId = R.string.profile_saved_second_text
+        ),
+        SavedReviewContent(
+            productNameResId = R.string.profile_saved_third_product,
+            productImageResId = R.drawable.device_03,
+            imageDescriptionResId = R.string.profile_saved_image,
+            authorResId = R.string.profile_saved_third_author,
+            rating = 5,
+            averageResId = R.string.profile_saved_third_average,
+            textResId = R.string.profile_saved_third_text
         )
     )
 }

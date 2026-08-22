@@ -14,6 +14,8 @@ import com.example.devicersapp.ui.utils.navigation.TopBar2
 import com.example.devicersapp.ui.utils.navigation.TopBar3
 import com.example.devicersapp.ui.utils.navigation.TopBar4
 import com.example.devicersapp.ui.utils.navigation.TopBar5
+import com.example.devicersapp.R
+import com.example.devicersapp.ui.utils.navigation.TitleTopBar
 import com.example.devicersapp.ui.utils.navigation.TopBar6
 
 /**
@@ -50,6 +52,10 @@ fun DevicersScaffold(
                 4 -> TopBar4(onBackClick = onTopBarBackClick)
                 5 -> TopBar5()
                 6 -> TopBar6(onBackClick = onTopBarBackClick)
+                // Las barras que solo cambian de título reutilizan la misma variante.
+                7 -> TitleTopBar(R.string.profile_search_results_title, onTopBarBackClick)
+                8 -> TitleTopBar(R.string.found_products_title, onTopBarBackClick)
+                9 -> TitleTopBar(R.string.request_product_title, onTopBarBackClick)
             }
         },
         bottomBar = {

@@ -361,7 +361,7 @@ fun FilterChipPreview() {
 @Preview(showBackground = true)
 fun SearchBarPreview() {
     SearchBar(
-        placeholder = R.string.search_placeholder,
+        placeholder = R.string.search_product_placeholder,
         backgroundColor = LocalDevicersColors.current.surface,
         showSearchIcon = true,
         text = "",

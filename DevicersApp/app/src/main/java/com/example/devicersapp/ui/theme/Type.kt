@@ -61,8 +61,8 @@ val AuthenticationSupportText = TextStyle(
     lineHeight = 21.6.sp
 )
 
-/** Define el título principal de la pantalla de búsqueda. */
-val SearchScreenTitleText = TextStyle(
+/** Define el título grande que encabeza una pantalla, como Search product o Activity. */
+val ScreenTitleText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Bold,
     fontSize = 28.8.sp,

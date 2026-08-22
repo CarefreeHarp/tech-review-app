@@ -1,8 +1,11 @@
-package com.example.devicersapp.ui.screens.profile.components
+package com.example.devicersapp.ui.utils.profile
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,23 +13,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ProfileStatContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
-import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 
 /**
  * Muestra el avatar, el nombre de usuario, las métricas, la acción principal y la biografía.
@@ -35,14 +40,22 @@ import com.example.devicersapp.ui.utils.profile.ProfileAvatar
  * después la acción y por último la biografía, separada del botón.
  *
  * @param profile Datos visibles del perfil, incluido el recurso de su avatar.
+ * @param actionLabelResId Texto de la acción principal, que cambia según de quién sea el perfil.
  * @param modifier Modificador aplicado al contenedor del perfil.
- * @param onEditProfileClick Acción solicitada al seleccionar editar perfil.
+ * @param showEditBadge Indica si la foto ofrece la insignia para cambiarla, en el perfil propio.
+ * @param showStats Indica si se muestran las métricas de reseñas, seguidores y seguidos.
+ * @param onActionClick Acción solicitada al pulsar el botón principal.
+ * @param onEditAvatarClick Acción solicitada al pulsar la insignia de edición de la foto.
  */
 @Composable
 fun ProfileHeader(
     profile: ProfileContent,
+    @StringRes actionLabelResId: Int,
     modifier: Modifier = Modifier,
-    onEditProfileClick: () -> Unit = {}
+    showEditBadge: Boolean = false,
+    showStats: Boolean = true,
+    onActionClick: () -> Unit = {},
+    onEditAvatarClick: () -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
 
@@ -50,10 +63,30 @@ fun ProfileHeader(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ProfileAvatar(
-            avatarResId = profile.avatarResId,
-            modifier = Modifier.size(104.dp)
-        )
+        Box {
+            ProfileAvatar(
+                avatarResId = profile.avatarResId,
+                modifier = Modifier.size(84.dp)
+            )
+            // Solo el perfil propio ofrece cambiar la foto, con la insignia sobre su borde.
+            if (showEditBadge) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .align(Alignment.BottomEnd)
+                        .background(colors.textPrimary, CircleShape)
+                        .clickable { onEditAvatarClick() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.edit_icon),
+                        contentDescription = stringResource(R.string.profile_edit_avatar),
+                        tint = colors.background,
+                        modifier = Modifier.size(13.dp)
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(14.dp))
 
@@ -63,20 +96,22 @@ fun ProfileHeader(
             color = colors.textPrimary
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Métricas repartidas por igual para que queden centradas bajo el nombre.
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            profile.stats.forEach { stat -> ProfileStat(stat) }
+        // Las secciones que se concentran en el contenido guardado prescinden de las métricas.
+        if (showStats) {
+            Spacer(modifier = Modifier.height(20.dp))
+            // Métricas repartidas por igual para que queden centradas bajo el nombre.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                profile.stats.forEach { stat -> ProfileStat(stat) }
+            }
         }
 
         Spacer(modifier = Modifier.height(22.dp))
 
         Button(
-            onClick = onEditProfileClick,
+            onClick = onActionClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -87,7 +122,7 @@ fun ProfileHeader(
             )
         ) {
             Text(
-                text = stringResource(R.string.profile_edit),
+                text = stringResource(actionLabelResId),
                 style = MaterialTheme.typography.labelLarge
             )
         }
@@ -96,22 +131,23 @@ fun ProfileHeader(
 
         Text(
             text = stringResource(profile.biographyResId),
-            modifier = Modifier.padding(horizontal = 8.dp),
-            style = MaterialTheme.typography.bodySmall,
-            color = colors.textSecondary,
-            textAlign = TextAlign.Center
+            modifier = Modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.bodyMedium,
+            color = colors.textSecondary
         )
     }
 }
 
-/** Muestra una vista previa del encabezado del perfil. */
+/** Muestra una vista previa del encabezado del perfil propio, con su insignia de edición. */
 @Composable
 @Preview(showBackground = true, heightDp = 460)
 fun ProfileHeaderPreview() {
     DevicersAppTheme {
         ProfileHeader(
-            SampleProfileContent,
-            modifier = Modifier.padding(20.dp)
+            profile = SampleProfileContent,
+            actionLabelResId = R.string.profile_edit,
+            modifier = Modifier.padding(20.dp),
+            showEditBadge = true
         )
     }
 }

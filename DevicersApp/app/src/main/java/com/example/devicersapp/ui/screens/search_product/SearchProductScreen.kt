@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.search
+package com.example.devicersapp.ui.screens.search_product
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
@@ -22,9 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.ui.screens.search.components.SearchFilterPanel
+import com.example.devicersapp.ui.screens.search_product.components.SearchProductFilterPanel
 import com.example.devicersapp.ui.theme.DevicersAppTheme
-import com.example.devicersapp.ui.theme.SearchScreenTitleText
+import com.example.devicersapp.ui.theme.ScreenTitleText
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
@@ -32,14 +32,14 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
  * Configura la pantalla de búsqueda y establece su fondo.
  *
  * La pantalla delega la construcción de su contenido visual a
- * [SearchScreenContent] para mantener separada la configuración
+ * [SearchProductScreenContent] para mantener separada la configuración
  * general de la composición de los elementos.
  *
  * @param onApplyFilters Acción solicitada al aplicar los filtros visibles.
  * @param modifier Permite modificar el diseño externo de la pantalla.
  */
 @Composable
-fun SearchScreen(
+fun SearchProductScreen(
     onApplyFilters: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -52,7 +52,7 @@ fun SearchScreen(
     var minimumRating by remember { mutableStateOf(4f) }
     var sortBy by remember { mutableStateOf("recent") }
 
-    SearchScreenContent(
+    SearchProductScreenContent(
         searchText = searchText,
         onSearchTextChange = { searchText = it },
         brand = brand,
@@ -105,7 +105,7 @@ fun SearchScreen(
  * @param modifier Permite modificar el diseño externo del contenido.
  */
 @Composable
-fun SearchScreenContent(
+fun SearchProductScreenContent(
     searchText: String,
     onSearchTextChange: (String) -> Unit,
     brand: String,
@@ -133,16 +133,16 @@ fun SearchScreenContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = stringResource(R.string.search),
+            text = stringResource(R.string.search_product_title),
             modifier = Modifier.fillMaxWidth(),
             color = LocalDevicersColors.current.textPrimary,
-            style = SearchScreenTitleText
+            style = ScreenTitleText
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         SearchBar(
-            placeholder = R.string.search_placeholder,
+            placeholder = R.string.search_product_placeholder,
             backgroundColor = LocalDevicersColors.current.surface,
             showSearchIcon = true,
             text = searchText,
@@ -151,7 +151,7 @@ fun SearchScreenContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        SearchFilterPanel(
+        SearchProductFilterPanel(
             brand = brand,
             onBrandChange = onBrandChange,
 
@@ -181,10 +181,10 @@ fun SearchScreenContent(
 /** Muestra una vista previa de la pantalla de búsqueda en el tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1000)
-fun SearchScreenPreview() {
+fun SearchProductScreenPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(selectedItem = "search", showBottomBar = true) { innerPadding ->
-            SearchScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+            SearchProductScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }
     }
 }
@@ -192,10 +192,10 @@ fun SearchScreenPreview() {
 /** Muestra una vista previa de la pantalla de búsqueda en el tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1000)
-fun SearchScreenDarkPreview() {
+fun SearchProductScreenDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(selectedItem = "search", showBottomBar = true) { innerPadding ->
-            SearchScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+            SearchProductScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }
     }
 }

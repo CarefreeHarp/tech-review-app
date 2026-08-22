@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.profile
+package com.example.devicersapp.ui.screens.own_profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +11,10 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,23 +22,37 @@ import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.RatedProductContent
-import com.example.devicersapp.ui.utils.profile.ProfileHeader
-import com.example.devicersapp.ui.utils.profile.ProfileProductCard
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
+import com.example.devicersapp.ui.utils.profile.ProfileHeader
+import com.example.devicersapp.ui.utils.profile.ProfileProductCard
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
-import com.example.devicersapp.ui.utils.tabs.SectionTab
+import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
 
-/** Configura el perfil con las entidades locales que la pantalla necesita mostrar. */
+/**
+ * Configura el perfil propio, donde además de las reseñas se puede editar la cuenta.
+ *
+ * @param onEditProfileClick Acción solicitada al editar el perfil.
+ * @param onEditAvatarClick Acción solicitada al cambiar la foto de perfil.
+ * @param modifier Modificador aplicado a la pantalla.
+ */
 @Composable
-fun ProfileScreen(
-    onFollowClick: () -> Unit = {},
+fun OwnProfileScreen(
+    onEditProfileClick: () -> Unit = {},
+    onEditAvatarClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    ProfileScreenContent(
+    // La sección activa es estado de la pantalla, no de la fila de pestañas.
+    var isReviewsSelected by remember { mutableStateOf(true) }
+
+    OwnProfileScreenContent(
         profile = LocalProfileProvider.profile,
         ratedProducts = LocalProfileProvider.ratedProducts,
-        onFollowClick = onFollowClick,
+        isReviewsSelected = isReviewsSelected,
+        onReviewsClick = { isReviewsSelected = true },
+        onSavedClick = { isReviewsSelected = false },
+        onEditProfileClick = onEditProfileClick,
+        onEditAvatarClick = onEditAvatarClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -42,18 +60,26 @@ fun ProfileScreen(
 }
 
 /**
- * Ensambla la cabecera del perfil y la cuadrícula de productos que ya calificó.
+ * Ensambla la cabecera del perfil propio, sus secciones y la cuadrícula de productos calificados.
  *
  * @param profile Información visible del perfil.
- * @param ratedProducts Productos calificados por el perfil.
- * @param onFollowClick Acción solicitada al seguir a la persona del perfil.
+ * @param ratedProducts Productos que el perfil ya calificó.
+ * @param isReviewsSelected Indica si la sección activa es la de reseñas.
+ * @param onReviewsClick Acción que solicita mostrar la sección de reseñas.
+ * @param onSavedClick Acción que solicita mostrar la sección de guardados.
+ * @param onEditProfileClick Acción solicitada al editar el perfil.
+ * @param onEditAvatarClick Acción solicitada al cambiar la foto de perfil.
  * @param modifier Modificador aplicado a la cuadrícula raíz.
  */
 @Composable
-fun ProfileScreenContent(
+fun OwnProfileScreenContent(
     profile: ProfileContent,
     ratedProducts: List<RatedProductContent>,
-    onFollowClick: () -> Unit,
+    isReviewsSelected: Boolean,
+    onReviewsClick: () -> Unit,
+    onSavedClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
+    onEditAvatarClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -62,21 +88,24 @@ fun ProfileScreenContent(
         horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // El encabezado y las pestañas ocupan el ancho completo sobre la cuadrícula.
+        // El encabezado y las secciones ocupan el ancho completo sobre la cuadrícula.
         item(span = { GridItemSpan(maxLineSpan) }) {
             ProfileHeader(
                 profile = profile,
-                actionLabelResId = R.string.profile_follow,
-                onActionClick = onFollowClick
+                actionLabelResId = R.string.profile_edit,
+                showEditBadge = true,
+                onActionClick = onEditProfileClick,
+                onEditAvatarClick = onEditAvatarClick
             )
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {
-            // El perfil ajeno solo expone sus reseñas, así que la sección se muestra acentuada.
-            SectionTab(
-                labelResId = R.string.profile_reviews,
-                isSelected = true,
-                onClick = {},
+            SectionTabsRow(
+                startLabelResId = R.string.profile_reviews,
+                endLabelResId = R.string.profile_saved,
+                isStartSelected = isReviewsSelected,
+                onStartClick = onReviewsClick,
+                onEndClick = onSavedClick,
                 selectedColor = LocalDevicersColors.current.primaryText
             )
         }
@@ -92,32 +121,32 @@ fun ProfileScreenContent(
     }
 }
 
-/** Muestra una vista previa del perfil en el tema claro. */
+/** Muestra una vista previa del perfil propio en el tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
-fun ProfileScreenPreview() {
+fun OwnProfileScreenPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(
             selectedItem = "profile",
             showBottomBar = true,
             topBarNumber = 1
         ) { innerPadding ->
-            ProfileScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+            OwnProfileScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }
     }
 }
 
-/** Muestra una vista previa del perfil en el tema oscuro. */
+/** Muestra una vista previa del perfil propio en el tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
-fun ProfileScreenDarkPreview() {
+fun OwnProfileScreenDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(
             selectedItem = "profile",
             showBottomBar = true,
             topBarNumber = 1
         ) { innerPadding ->
-            ProfileScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+            OwnProfileScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }
     }
 }

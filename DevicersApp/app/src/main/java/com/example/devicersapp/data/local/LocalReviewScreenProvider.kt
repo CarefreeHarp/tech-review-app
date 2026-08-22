@@ -21,7 +21,8 @@ object LocalReviewScreenProvider {
         textResId = R.string.review_detail_text,
         likes = 128,
         comments = 18,
-        timeAgoResId = R.string.review_time
+        timeAgoResId = R.string.review_time,
+        productAverageResId = R.string.review_product_average
     )
 
     val replies = listOf(
@@ -29,61 +30,78 @@ object LocalReviewScreenProvider {
             avatarResId = R.drawable.profile_avatar_02,
             authorResId = R.string.review_reply_author_one,
             timeAgoResId = R.string.review_reply_time,
-            textResId = R.string.review_reply_text_one
+            textResId = R.string.review_reply_text_one,
+            depth = 0
         ),
         ReplyContent(
             avatarResId = R.drawable.profile_avatar_00,
             authorResId = R.string.review_reply_author_two,
             timeAgoResId = R.string.review_reply_time,
-            textResId = R.string.review_reply_text_two
+            textResId = R.string.review_reply_text_two,
+            depth = 1,
+            replyingToResId = R.string.review_reply_author_one
         ),
         ReplyContent(
             avatarResId = R.drawable.profile_avatar_01,
             authorResId = R.string.review_reply_author_three,
             timeAgoResId = R.string.review_reply_time_three,
-            textResId = R.string.review_reply_text_three
+            textResId = R.string.review_reply_text_three,
+            depth = 2,
+            replyingToResId = R.string.review_reply_author_two
         ),
         ReplyContent(
             avatarResId = R.drawable.profile_avatar_03,
             authorResId = R.string.review_reply_author_four,
             timeAgoResId = R.string.review_reply_time_four,
-            textResId = R.string.review_reply_text_four
+            textResId = R.string.review_reply_text_four,
+            depth = 1,
+            replyingToResId = R.string.review_reply_author_one
         ),
         ReplyContent(
             avatarResId = R.drawable.profile_avatar_04,
             authorResId = R.string.review_reply_author_five,
             timeAgoResId = R.string.review_reply_time_five,
-            textResId = R.string.review_reply_text_five
+            textResId = R.string.review_reply_text_five,
+            depth = 0
         ),
         ReplyContent(
             avatarResId = R.drawable.profile_avatar_05,
             authorResId = R.string.review_reply_author_six,
             timeAgoResId = R.string.review_reply_time_six,
-            textResId = R.string.review_reply_text_six
+            textResId = R.string.review_reply_text_six,
+            depth = 1,
+            replyingToResId = R.string.review_reply_author_five
         ),
         ReplyContent(
-            avatarResId = R.drawable.profile_avatar_06,
+            avatarResId = R.drawable.profile_avatar_00,
             authorResId = R.string.review_reply_author_seven,
             timeAgoResId = R.string.review_reply_time_seven,
-            textResId = R.string.review_reply_text_seven
+            textResId = R.string.review_reply_text_seven,
+            depth = 1,
+            replyingToResId = R.string.review_reply_author_five
         ),
         ReplyContent(
-            avatarResId = R.drawable.profile_avatar_07,
+            avatarResId = R.drawable.profile_avatar_01,
             authorResId = R.string.review_reply_author_eight,
             timeAgoResId = R.string.review_reply_time_eight,
-            textResId = R.string.review_reply_text_eight
+            textResId = R.string.review_reply_text_eight,
+            depth = 0
         ),
         ReplyContent(
-            avatarResId = R.drawable.profile_avatar_08,
+            avatarResId = R.drawable.profile_avatar_02,
             authorResId = R.string.review_reply_author_nine,
             timeAgoResId = R.string.review_reply_time_nine,
-            textResId = R.string.review_reply_text_nine
+            textResId = R.string.review_reply_text_nine,
+            depth = 1,
+            replyingToResId = R.string.review_reply_author_eight
         ),
         ReplyContent(
-            avatarResId = R.drawable.profile_avatar_09,
+            avatarResId = R.drawable.profile_avatar_03,
             authorResId = R.string.review_reply_author_ten,
             timeAgoResId = R.string.review_reply_time_ten,
-            textResId = R.string.review_reply_text_ten
+            textResId = R.string.review_reply_text_ten,
+            depth = 2,
+            replyingToResId = R.string.review_reply_author_nine
         )
     )
 }

@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.profile.components
+package com.example.devicersapp.ui.utils.profile
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

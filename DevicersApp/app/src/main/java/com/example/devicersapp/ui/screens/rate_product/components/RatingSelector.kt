@@ -43,14 +43,6 @@ fun RatingSelector(
             color = colors.textPrimary
         )
 
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = stringResource(R.string.rate_product_rating_subtitle).trim(),
-            style = MaterialTheme.typography.bodySmall,
-            color = colors.textSecondary
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(

@@ -13,6 +13,7 @@ import androidx.annotation.StringRes
  * @param likes Cantidad de reacciones recibidas.
  * @param comments Cantidad de comentarios recibidos.
  * @param timeAgoResId Antigüedad de la publicación, cuando la pantalla la muestra.
+ * @param productAverageResId Promedio del producto, cuando la pantalla lo muestra junto a las estrellas.
  */
 data class ReviewContent(
     @param:DrawableRes val avatarResId: Int,
@@ -21,7 +22,8 @@ data class ReviewContent(
     @param:StringRes val textResId: Int,
     val likes: Int,
     val comments: Int = 0,
-    @param:StringRes val timeAgoResId: Int? = null
+    @param:StringRes val timeAgoResId: Int? = null,
+    @param:StringRes val productAverageResId: Int? = null
 ) {
     init { require(rating in 1..5) { "La calificación debe estar entre 1 y 5." } }
 }
@@ -122,12 +124,65 @@ data class RatedProductContent(
     init { require(rating in 1..5) { "La calificación debe estar entre 1 y 5." } }
 }
 
-/** Representa una respuesta publicada dentro del detalle de una reseña. */
+/**
+ * Representa una reseña que el perfil guardó para leer más adelante.
+ *
+ * @param productNameResId Nombre del producto reseñado.
+ * @param productImageResId Imagen del producto, que encabeza la tarjeta.
+ * @param imageDescriptionResId Texto accesible que describe la imagen.
+ * @param authorResId Nombre de usuario que publicó la reseña.
+ * @param rating Calificación entera que el autor otorgó al producto.
+ * @param averageResId Calificación promedio del producto entre toda la comunidad.
+ * @param textResId Cuerpo de la reseña guardada.
+ */
+data class SavedReviewContent(
+    @param:StringRes val productNameResId: Int,
+    @param:DrawableRes val productImageResId: Int,
+    @param:StringRes val imageDescriptionResId: Int,
+    @param:StringRes val authorResId: Int,
+    val rating: Int,
+    @param:StringRes val averageResId: Int,
+    @param:StringRes val textResId: Int
+) {
+    init { require(rating in 1..5) { "La calificación debe estar entre 1 y 5." } }
+}
+
+/**
+ * Representa una respuesta publicada dentro del hilo de una reseña.
+ *
+ * @param avatarResId Imagen de perfil del autor de la respuesta.
+ * @param authorResId Nombre de usuario que publicó la respuesta.
+ * @param timeAgoResId Antigüedad de la respuesta.
+ * @param textResId Cuerpo de la respuesta.
+ * @param depth Nivel de anidación dentro del hilo; cero para una respuesta a la reseña.
+ * @param replyingToResId Autor al que contesta esta respuesta, o `null` si contesta a la reseña.
+ */
 data class ReplyContent(
     @param:DrawableRes val avatarResId: Int,
     @param:StringRes val authorResId: Int,
     @param:StringRes val timeAgoResId: Int,
-    @param:StringRes val textResId: Int
+    @param:StringRes val textResId: Int,
+    val depth: Int = 0,
+    @param:StringRes val replyingToResId: Int? = null
+) {
+    init { require(depth >= 0) { "El nivel de anidación no puede ser negativo." } }
+}
+
+/**
+ * Representa un perfil devuelto por una búsqueda de usuarios.
+ *
+ * @param id Identificador único usado para conservar el estado de seguimiento de la tarjeta.
+ * @param avatarResId Imagen de perfil del usuario encontrado.
+ * @param handleResId Nombre de usuario del perfil.
+ * @param interestsResId Intereses declarados por el perfil.
+ * @param reviewCountResId Cantidad de reseñas que ha publicado.
+ */
+data class ProfileSearchResultContent(
+    val id: String,
+    @param:DrawableRes val avatarResId: Int,
+    @param:StringRes val handleResId: Int,
+    @param:StringRes val interestsResId: Int,
+    @param:StringRes val reviewCountResId: Int
 )
 
 /** Distingue el tipo de evento de actividad para elegir su insignia y su color. */
@@ -163,7 +218,20 @@ data class ActivityGroupContent(
     val activities: List<ActivityContent>
 )
 
-/** Representa un producto que se puede elegir antes de crear una reseña. */
+/**
+ * Representa un producto del catálogo devuelto por una búsqueda.
+ *
+ * @param id Identificador único del producto.
+ * @param categoryId Categoría con la que se filtra el producto.
+ * @param searchTerms Términos con los que el producto responde a una búsqueda por texto.
+ * @param nameResId Nombre del producto.
+ * @param brandResId Marca y categoría mostradas como metadata.
+ * @param categoryResId Nombre visible de su categoría.
+ * @param imageDescriptionResId Texto accesible que describe la imagen.
+ * @param imageResId Imagen del producto.
+ * @param rating Calificación entera representada por las estrellas.
+ * @param averageResId Promedio del producto, cuando la pantalla lo muestra junto a las estrellas.
+ */
 data class ProductSearchContent(
     val id: String,
     val categoryId: String,
@@ -173,7 +241,8 @@ data class ProductSearchContent(
     @param:StringRes val categoryResId: Int,
     @param:StringRes val imageDescriptionResId: Int,
     @param:DrawableRes val imageResId: Int,
-    val rating: Int
+    val rating: Int,
+    @param:StringRes val averageResId: Int? = null
 ) {
     init {
         require(rating in 1..5) { "La calificación debe estar entre 1 y 5." }

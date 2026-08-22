@@ -60,7 +60,7 @@ fun RatingOption(
             painter = painterResource(R.drawable.rating_star),
             contentDescription = stringResource(R.string.rate_product_rating_star),
             // La estrella se tiñe con la paleta en vez de mostrar el naranja del recurso original.
-            tint = if (selected) colors.textPrimary else colors.rating,
+            tint = if (selected) colors.background else colors.rating,
             modifier = Modifier.size(26.dp)
         )
         Spacer(modifier = Modifier.height(4.dp))
@@ -68,7 +68,7 @@ fun RatingOption(
             text = stringResource(R.string.rate_product_rating_value, value),
             style = CardMetadataText,
             fontWeight = FontWeight.Bold,
-            color = if (selected) colors.textPrimary else colors.textSecondary
+            color = if (selected) colors.background else colors.rating
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.example.devicersapp.ui.utils.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -239,6 +240,48 @@ fun TopBar6(
     }
 }
 
+/**
+ * Muestra una barra superior de regreso con el título que reciba.
+ *
+ * Las pantallas cuyo encabezado solo cambia en su texto comparten esta barra en lugar de
+ * declarar una variante propia por cada una.
+ *
+ * @param titleResId Recurso de texto mostrado como título.
+ * @param onBackClick Acción solicitada al volver.
+ * @param modifier Modificador aplicado a la barra.
+ */
+@Composable
+fun TitleTopBar(
+    @StringRes titleResId: Int,
+    onBackClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalDevicersColors.current
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
+            .statusBarsPadding()
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = onBackClick) {
+            Icon(
+                painter = painterResource(R.drawable.back_icon),
+                contentDescription = stringResource(R.string.top_bar_back),
+                tint = colors.textPrimary,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+        Spacer(Modifier.size(6.dp))
+        Text(
+            text = stringResource(titleResId),
+            style = MaterialTheme.typography.titleLarge,
+            color = colors.textPrimary
+        )
+    }
+}
+
 /** Muestra la barra superior de marca compartida por inicio de sesión y registro. */
 @Composable
 fun TopBar5(modifier: Modifier = Modifier) {
@@ -280,3 +323,10 @@ fun TopBar5Preview() { DevicersAppTheme { TopBar5() } }
 @Composable
 @Preview(showBackground = true)
 fun TopBar6Preview() { DevicersAppTheme { TopBar6() } }
+
+/** Muestra una vista previa de la barra superior con título. */
+@Composable
+@Preview(showBackground = true)
+fun TitleTopBarPreview() {
+    DevicersAppTheme { TitleTopBar(R.string.profile_search_results_title) }
+}

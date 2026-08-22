@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.search.components
+package com.example.devicersapp.ui.screens.search_product.components
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
@@ -29,6 +29,9 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.theme.SearchHeadingText
 import com.example.devicersapp.ui.utils.navigation.FilterChip
+import com.example.devicersapp.ui.utils.search.FilterLabel
+import com.example.devicersapp.ui.utils.search.formatLaunchDate
+import com.example.devicersapp.ui.utils.search.isValidLaunchDate
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 
 /**
@@ -51,7 +54,7 @@ import com.example.devicersapp.ui.utils.navigation.SearchBar
  * @param modifier Modificador aplicado al panel.
  */
 @Composable
-fun SearchFilterPanel(
+fun SearchProductFilterPanel(
     brand: String,
     onBrandChange: (String) -> Unit,
 
@@ -163,29 +166,25 @@ fun SearchFilterPanel(
             FilterChip(
                 R.string.all,
                 selected = selectedCategory == "all",
-                onClick = { onCategorySelected("all") },
-                modifier = Modifier.weight(1f)
+                onClick = { onCategorySelected("all") }
             )
 
             FilterChip(
                 R.string.cellphones,
                 selected = selectedCategory == "cellphones",
-                onClick = { onCategorySelected("cellphones") },
-                modifier = Modifier.weight(1f)
+                onClick = { onCategorySelected("cellphones") }
             )
 
             FilterChip(
                 R.string.audio,
                 selected = selectedCategory == "audio",
-                onClick = { onCategorySelected("audio") },
-                modifier = Modifier.weight(1f)
+                onClick = { onCategorySelected("audio") }
             )
 
             FilterChip(
                 R.string.computers,
                 selected = selectedCategory == "computers",
-                onClick = { onCategorySelected("computers") },
-                modifier = Modifier.weight(1f)
+                onClick = { onCategorySelected("computers") }
             )
         }
 
@@ -217,15 +216,13 @@ fun SearchFilterPanel(
             FilterChip(
                 R.string.most_recent,
                 selected = sortBy == "recent",
-                onClick = { onSortChange("recent") },
-                modifier = Modifier.weight(1f)
+                onClick = { onSortChange("recent") }
             )
 
             FilterChip(
                 R.string.best_rated,
                 selected = sortBy == "rated",
-                onClick = { onSortChange("rated") },
-                modifier = Modifier.weight(1f)
+                onClick = { onSortChange("rated") }
             )
         }
 
@@ -252,59 +249,12 @@ fun SearchFilterPanel(
     }
 }
 
-/**
- * Conserva únicamente los ocho dígitos de una fecha y muestra el formato DD / MM / AAAA.
- *
- * @param input Contenido recibido desde el campo de fecha.
- * @return Fecha parcial o completa sin caracteres no numéricos.
- */
-private fun formatLaunchDate(input: String): String {
-    val digits = input.filter(Char::isDigit).take(8)
-    return buildString {
-        digits.forEachIndexed { index, digit ->
-            if (index == 2 || index == 4) append(" / ")
-            append(digit)
-        }
-    }
-}
-
-/**
- * Comprueba que una fecha completa tenga un mes y día válidos, incluidos los años bisiestos.
- *
- * @param formattedDate Fecha con el formato DD / MM / AAAA.
- * @return `true` solo si la fecha contiene ocho dígitos y existe en el calendario gregoriano.
- */
-private fun isValidLaunchDate(formattedDate: String): Boolean {
-    val digits = formattedDate.filter(Char::isDigit)
-    if (digits.length != 8) return false
-
-    val day = digits.substring(0, 2).toInt()
-    val month = digits.substring(2, 4).toInt()
-    val year = digits.substring(4, 8).toInt()
-    val maximumDays = when (month) {
-        1, 3, 5, 7, 8, 10, 12 -> 31
-        4, 6, 9, 11 -> 30
-        2 -> if (isLeapYear(year)) 29 else 28
-        else -> return false
-    }
-
-    return day in 1..maximumDays
-}
-
-/**
- * Determina si un año es bisiesto según las reglas del calendario gregoriano.
- *
- * @param year Año de cuatro dígitos recibido desde el campo de fecha.
- * @return `true` cuando febrero tiene veintinueve días.
- */
-private fun isLeapYear(year: Int): Boolean = year % 400 == 0 || year % 4 == 0 && year % 100 != 0
-
 /** Muestra una vista previa del panel de filtros. */
 @Composable
 @Preview(showBackground = true, heightDp = 700)
-fun SearchFilterPanelPreview() {
+fun SearchProductFilterPanelPreview() {
     DevicersAppTheme {
-        SearchFilterPanel(
+        SearchProductFilterPanel(
             brand = "",
             onBrandChange = {},
 

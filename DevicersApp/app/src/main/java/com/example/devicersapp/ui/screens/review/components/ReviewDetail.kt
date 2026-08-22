@@ -65,7 +65,18 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        RatingStars(rating = review.rating, style = RatingStarsLargeText)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RatingStars(rating = review.rating, style = RatingStarsLargeText)
+            // El promedio del producto acompaña a la calificación entera que dio el autor.
+            review.productAverageResId?.let { averageResId ->
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(averageResId),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = colors.textPrimary
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(14.dp))
 
@@ -94,7 +105,8 @@ fun ReviewDetailPreview() {
                 textResId = R.string.review_detail_text,
                 likes = 128,
                 comments = 18,
-                timeAgoResId = R.string.review_time
+                timeAgoResId = R.string.review_time,
+                productAverageResId = R.string.review_product_average
             ),
             modifier = Modifier.padding(16.dp)
         )

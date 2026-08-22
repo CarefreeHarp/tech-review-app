@@ -185,8 +185,7 @@ fun RateProductScreenContent(
                 onPublishClick = onPublishClick
             )
 
-            // Deja aire para que la barra flotante no tape el botón de publicar.
-            Spacer(modifier = Modifier.height(120.dp))
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -198,11 +197,7 @@ fun RateProductScreenContent(
 @Preview(showBackground = true, heightDp = 1100)
 fun RateProductScreenPreview() {
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(
-            selectedItem = "create",
-            showBottomBar = true,
-            topBarNumber = 2
-        ) { innerPadding ->
+        DevicersScaffold(topBarNumber = 2) { innerPadding ->
             RateProductScreen(
                 modifier = Modifier
                     .fillMaxSize()
@@ -217,11 +212,7 @@ fun RateProductScreenPreview() {
 @Preview(showBackground = true, heightDp = 1100)
 fun RateProductScreenDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(
-            selectedItem = "create",
-            showBottomBar = true,
-            topBarNumber = 2
-        ) { innerPadding ->
+        DevicersScaffold(topBarNumber = 2) { innerPadding ->
             RateProductScreen(
                 modifier = Modifier
                     .fillMaxSize()

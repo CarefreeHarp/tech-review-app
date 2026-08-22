@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ import com.example.devicersapp.ui.theme.SearchHeadingText
  * @param onStartClick Acción que solicita mostrar la sección izquierda.
  * @param onEndClick Acción que solicita mostrar la sección derecha.
  * @param modifier Modificador aplicado a la fila de pestañas.
+ * @param selectedColor Color del texto de la sección activa, elegido por la pantalla.
  */
 @Composable
 fun SectionTabsRow(
@@ -43,7 +45,8 @@ fun SectionTabsRow(
     isStartSelected: Boolean,
     onStartClick: () -> Unit,
     onEndClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedColor: Color = LocalDevicersColors.current.textPrimary
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -53,12 +56,14 @@ fun SectionTabsRow(
         SectionTab(
             labelResId = startLabelResId,
             isSelected = isStartSelected,
-            onClick = onStartClick
+            onClick = onStartClick,
+            selectedColor = selectedColor
         )
         SectionTab(
             labelResId = endLabelResId,
             isSelected = !isStartSelected,
-            onClick = onEndClick
+            onClick = onEndClick,
+            selectedColor = selectedColor
         )
     }
 }
@@ -70,13 +75,16 @@ fun SectionTabsRow(
  * @param isSelected Indica si la sección está activa.
  * @param onClick Acción solicitada al elegir la sección.
  * @param modifier Modificador aplicado a la pestaña.
+ * @param selectedColor Color del texto cuando la sección está activa; la pantalla decide si la
+ * destaca con el acento, como ocurre cuando es la única sección disponible.
  */
 @Composable
 fun SectionTab(
     @StringRes labelResId: Int,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedColor: Color = LocalDevicersColors.current.textPrimary
 ) {
     val colors = LocalDevicersColors.current
     Column(
@@ -85,7 +93,7 @@ fun SectionTab(
     ) {
         Text(
             text = stringResource(labelResId),
-            color = if (isSelected) colors.textPrimary else colors.textSecondary,
+            color = if (isSelected) selectedColor else colors.textSecondary,
             style = SearchHeadingText
         )
         Spacer(modifier = Modifier.height(6.dp))

@@ -32,7 +32,7 @@ import com.example.devicersapp.ui.models.ActivityGroupContent
 import com.example.devicersapp.ui.screens.activity.components.ActivityScrollIndicator
 import com.example.devicersapp.ui.screens.activity.components.ActivitySection
 import com.example.devicersapp.ui.theme.DevicersAppTheme
-import com.example.devicersapp.ui.theme.SearchScreenTitleText
+import com.example.devicersapp.ui.theme.ScreenTitleText
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
 /** Configura la pantalla de actividad, donde se reúne todo lo que ocurre alrededor de las reseñas. */
@@ -77,7 +77,7 @@ fun ActivityScreenContent(
         Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = stringResource(R.string.activity_title),
-            style = SearchScreenTitleText,
+            style = ScreenTitleText,
             color = colors.textPrimary
         )
         Spacer(modifier = Modifier.height(4.dp))
