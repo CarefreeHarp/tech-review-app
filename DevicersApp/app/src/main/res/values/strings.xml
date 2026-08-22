@@ -65,6 +65,8 @@
     <string name="search_product_title">Buscar producto</string>
 
     <string name="search_product_placeholder">Buscar dispositivos</string>
+    <string name="search_entity_users">Users</string>
+    <string name="search_entity_products">Products</string>
     <string name="search_filters">Filtros</string>
     <string name="clear_filters">Limpiar</string>
 
@@ -120,7 +122,7 @@
 
     <string name="profile_search_results_title">Resultados de perfiles</string>
     <string name="profile_search_results_count">%1$d perfiles encontrados</string>
-    <string name="profile_search_results_query">audio</string>
+    <string name="profile_search_results_placeholder">Buscar Perfiles</string>
 
     <string name="profile_result_first_handle">@mariana.tech</string>
     <string name="profile_result_first_interests">Audio · Sony</string>
@@ -192,6 +194,7 @@
 
     <!-- ACCIONES DE RESEÑA -->
     <string name="review_action_like">Me gusta</string>
+    <string name="review_show_more">Ver más</string>
     <string name="review_action_comment">Comentar</string>
     <string name="review_action_send">Compartir</string>
     <string name="review_action_save">Guardar</string>

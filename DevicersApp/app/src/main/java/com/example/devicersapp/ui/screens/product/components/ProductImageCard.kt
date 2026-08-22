@@ -1,19 +1,13 @@
 package com.example.devicersapp.ui.screens.product.components
 
-import com.example.devicersapp.ui.theme.LocalDevicersColors
-
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,31 +18,21 @@ import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 
 /**
- * Muestra la imagen principal del producto dentro de una tarjeta de superficie.
+ * Muestra la imagen principal del producto sin contenedor visual adicional.
  *
  * @param modifier Modificador aplicado a la tarjeta.
  */
 @Composable
 fun ProductImageCard(product: ProductContent, modifier: Modifier = Modifier) {
-    Box(
+    Image(
+        painter = painterResource(product.imageResId),
+        contentDescription = stringResource(product.imageDescriptionResId),
         modifier = modifier
             .fillMaxWidth()
             .height(230.dp)
-            // La sombra suave despega la tarjeta del fondo, como en el diseño editorial.
-            .shadow(elevation = 8.dp, shape = RoundedCornerShape(20.dp))
-            .background(
-                color = LocalDevicersColors.current.surface,
-                shape = RoundedCornerShape(20.dp)
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(product.imageResId),
-            contentDescription = stringResource(product.imageDescriptionResId),
-            modifier = Modifier.size(width = 240.dp, height = 196.dp),
-            contentScale = ContentScale.Fit
-        )
-    }
+            .clip(RoundedCornerShape(20.dp)),
+        contentScale = ContentScale.Fit
+    )
 }
 
 /** Muestra una vista previa de la tarjeta de imagen del producto. */

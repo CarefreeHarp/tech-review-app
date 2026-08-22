@@ -3,8 +3,6 @@ package com.example.devicersapp.ui.screens.home.components
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,12 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,28 +37,28 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
  * Muestra una reseña del feed editorial: miniatura del producto, autor, calificación y acciones.
  *
  * @param review Contenido de la reseña publicada.
+ * @param onViewMoreClick Acción solicitada al mostrar el detalle completo de la reseña.
  * @param modifier Modificador aplicado al contenedor de la reseña.
  */
 @Composable
-fun FeedReviewItem(review: FeedReviewContent, modifier: Modifier = Modifier) {
+fun FeedReviewItem(
+    review: FeedReviewContent,
+    onViewMoreClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     val colors = LocalDevicersColors.current
 
     Column(modifier = modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-            // La miniatura grande ancla la reseña al producto reseñado.
-            Box(
+            // La miniatura se muestra directamente, sin marco ni superficie intermedia.
+            Image(
+                painter = painterResource(review.productImageResId),
+                contentDescription = stringResource(R.string.review_product_image),
                 modifier = Modifier
                     .size(width = 108.dp, height = 132.dp)
-                    .background(colors.surface, RoundedCornerShape(16.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(review.productImageResId),
-                    contentDescription = stringResource(R.string.review_product_image),
-                    modifier = Modifier.size(86.dp),
-                    contentScale = ContentScale.Fit
-                )
-            }
+                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
+                contentScale = ContentScale.Fit
+            )
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -127,6 +126,17 @@ fun FeedReviewItem(review: FeedReviewContent, modifier: Modifier = Modifier) {
             maxLines = 3,
             overflow = TextOverflow.Ellipsis
         )
+
+        TextButton(
+            onClick = onViewMoreClick,
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text(
+                text = stringResource(R.string.review_show_more),
+                color = colors.primary,
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
 
         Spacer(modifier = Modifier.height(14.dp))
 

@@ -27,6 +27,7 @@ data class DevicersColorPalette(
     val textPrimary: Color,
     val textSecondary: Color,
     val textOnPrimary: Color,
+    val textonPhoto: Color,
     val border: Color,
     val rating: Color,
     val ratingTrack: Color,
@@ -55,6 +56,7 @@ val LightDevicersColors = DevicersColorPalette(
     textPrimary = Color(0xFF211D1B),
     textSecondary = Color(0xFF6F6661),
     textOnPrimary = Color(0xFFF6EEE8),
+    textonPhoto = Color.Black,
     border = Color(0xFFD5CAC0),
     rating = Color(0xFFB88934),
     // En modo claro las estrellas sin seleccionar se apoyan en la superficie crema.
@@ -87,6 +89,7 @@ val DarkDevicersColors = DevicersColorPalette(
     textPrimary = Color(0xFFF6EEE8),
     textSecondary = Color(0xFFBCAFA9),
     textOnPrimary = Color(0xFFF6EEE8),
+    textonPhoto = Color.Black,
     border = Color(0xFF423B37),
     rating = Color(0xFFE1B55C),
     ratingTrack = Color(0xFF423B37),

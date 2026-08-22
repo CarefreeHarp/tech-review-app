@@ -2,7 +2,6 @@ package com.example.devicersapp.ui.screens.rate_product.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,22 +62,14 @@ fun RateableProductCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Box(
-            modifier = Modifier
-                .size(60.dp)
-                .background(
-                    color = colors.background,
-                    shape = RoundedCornerShape(14.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            if (product.showImage) {
-                Image(
-                    painter = painterResource(product.imageResId),
-                    contentDescription = stringResource(product.imageDescriptionResId),
-                    modifier = Modifier.size(48.dp)
-                )
-            }
+        if (product.showImage) {
+            Image(
+                painter = painterResource(product.imageResId),
+                contentDescription = stringResource(product.imageDescriptionResId),
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(RoundedCornerShape(14.dp))
+            )
         }
 
         Spacer(modifier = Modifier.width(16.dp))

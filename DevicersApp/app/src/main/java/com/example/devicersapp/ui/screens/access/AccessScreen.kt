@@ -33,7 +33,7 @@ import com.example.devicersapp.ui.utils.authentication.SocialButtons
 
 /** Renderiza la pantalla de acceso, la puerta de entrada a la comunidad de Devicers. */
 @Composable
-fun AccessScreen(modifier: Modifier = Modifier) {
+fun AccessScreen(modifier: Modifier = Modifier, onSignInClick: () -> Unit) {
     // La pantalla conserva el estado; los campos reutilizables solo lo muestran y emiten cambios.
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -46,6 +46,7 @@ fun AccessScreen(modifier: Modifier = Modifier) {
         onEmailChange = { email = it },
         onPasswordChange = { password = it },
         onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
+        onSignInClick = onSignInClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -71,6 +72,7 @@ fun AccessScreenContent(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onPasswordVisibilityChange: () -> Unit,
+    onSignInClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -102,7 +104,7 @@ fun AccessScreenContent(
         // El enlace de recuperación se alinea al borde derecho del formulario.
         ForgotPasswordLink(modifier = Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.height(18.dp))
-        PrimaryButton(R.string.sign_in, Modifier.fillMaxWidth().height(52.dp))
+        PrimaryButton(R.string.sign_in, Modifier.fillMaxWidth().height(52.dp), onClick = onSignInClick)
         Spacer(modifier = Modifier.height(26.dp))
         AuthenticationDividerText()
         Spacer(modifier = Modifier.height(18.dp))
@@ -119,7 +121,7 @@ fun AccessScreenContent(
 fun AccessScreenPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            AccessScreen(modifier = Modifier.padding(innerPadding))
+            AccessScreen(modifier = Modifier.padding(innerPadding), {})
         }
     }
 }
@@ -130,7 +132,7 @@ fun AccessScreenPreview() {
 fun AccessScreenDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            AccessScreen(modifier = Modifier.padding(innerPadding))
+            AccessScreen(modifier = Modifier.padding(innerPadding), {})
         }
     }
 }

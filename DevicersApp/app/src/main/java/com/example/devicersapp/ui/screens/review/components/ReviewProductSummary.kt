@@ -4,7 +4,6 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -50,22 +50,16 @@ fun ReviewProductSummary(product: ProductContent, modifier: Modifier = Modifier)
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // El bloque de imagen ocupa casi la mitad de la tarjeta para dar peso al producto.
-        Box(
-            modifier = Modifier
-                .width(136.dp)
-                .fillMaxHeight()
-                .background(colors.background, RoundedCornerShape(16.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            if (product.showImage) {
-                Image(
-                    painter = painterResource(product.imageResId),
-                    contentDescription = stringResource(product.imageDescriptionResId),
-                    modifier = Modifier.size(94.dp),
-                    contentScale = ContentScale.Fit
-                )
-            }
+        if (product.showImage) {
+            Image(
+                painter = painterResource(product.imageResId),
+                contentDescription = stringResource(product.imageDescriptionResId),
+                modifier = Modifier
+                    .width(136.dp)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(16.dp)),
+                contentScale = ContentScale.Fit
+            )
         }
 
         Spacer(Modifier.width(18.dp))

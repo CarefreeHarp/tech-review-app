@@ -1,18 +1,27 @@
 package com.example.devicersapp.ui.screens.profile_saved_reviews
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
@@ -22,21 +31,17 @@ import com.example.devicersapp.ui.models.SavedReviewContent
 import com.example.devicersapp.ui.screens.profile_saved_reviews.components.SavedReviewCard
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
-import com.example.devicersapp.ui.utils.profile.ProfileHeader
+import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
 
 /**
  * Configura la sección de reseñas guardadas dentro del perfil propio.
  *
- * @param onEditProfileClick Acción solicitada al editar el perfil.
- * @param onEditAvatarClick Acción solicitada al cambiar la foto de perfil.
  * @param modifier Modificador aplicado a la pantalla.
  */
 @Composable
 fun ProfileSavedReviewsScreen(
-    onEditProfileClick: () -> Unit = {},
-    onEditAvatarClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // La sección activa es estado de la pantalla; aquí se entra directamente en los guardados.
@@ -48,8 +53,6 @@ fun ProfileSavedReviewsScreen(
         isReviewsSelected = isReviewsSelected,
         onReviewsClick = { isReviewsSelected = true },
         onSavedClick = { isReviewsSelected = false },
-        onEditProfileClick = onEditProfileClick,
-        onEditAvatarClick = onEditAvatarClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -57,7 +60,7 @@ fun ProfileSavedReviewsScreen(
 }
 
 /**
- * Ensambla la cabecera del perfil, sus secciones y la lista de reseñas guardadas.
+ * Ensambla la cabecera del perfil, sus secciones y la cuadrícula de reseñas guardadas.
  *
  * El encabezado prescinde de las métricas porque esta sección se concentra en el contenido
  * que la persona guardó, no en su alcance dentro de la comunidad.
@@ -67,9 +70,7 @@ fun ProfileSavedReviewsScreen(
  * @param isReviewsSelected Indica si la sección activa es la de reseñas.
  * @param onReviewsClick Acción que solicita mostrar la sección de reseñas.
  * @param onSavedClick Acción que solicita mostrar la sección de guardados.
- * @param onEditProfileClick Acción solicitada al editar el perfil.
- * @param onEditAvatarClick Acción solicitada al cambiar la foto de perfil.
- * @param modifier Modificador aplicado a la lista raíz.
+ * @param modifier Modificador aplicado a la cuadrícula raíz.
  */
 @Composable
 fun ProfileSavedReviewsScreenContent(
@@ -78,38 +79,48 @@ fun ProfileSavedReviewsScreenContent(
     isReviewsSelected: Boolean,
     onReviewsClick: () -> Unit,
     onSavedClick: () -> Unit,
-    onEditProfileClick: () -> Unit,
-    onEditAvatarClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier.padding(horizontal = 20.dp)) {
-        item {
-            ProfileHeader(
-                profile = profile,
-                actionLabelResId = R.string.profile_edit,
-                showEditBadge = true,
-                showStats = false,
-                onActionClick = onEditProfileClick,
-                onEditAvatarClick = onEditAvatarClick
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            SectionTabsRow(
-                startLabelResId = R.string.profile_reviews,
-                endLabelResId = R.string.profile_saved,
-                isStartSelected = isReviewsSelected,
-                onStartClick = onReviewsClick,
-                onEndClick = onSavedClick,
-                selectedColor = LocalDevicersColors.current.primaryText
-            )
-            Spacer(modifier = Modifier.height(18.dp))
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = modifier.padding(horizontal = 20.dp),
+        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
+    ) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ProfileAvatar(
+                    avatarResId = profile.avatarResId,
+                    modifier = Modifier.size(84.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = stringResource(profile.handleResId),
+                    color = LocalDevicersColors.current.textPrimary,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                SectionTabsRow(
+                    startLabelResId = R.string.profile_reviews,
+                    endLabelResId = R.string.profile_saved,
+                    isStartSelected = isReviewsSelected,
+                    onStartClick = onReviewsClick,
+                    onEndClick = onSavedClick,
+                    selectedColor = LocalDevicersColors.current.primaryText
+                )
+
+                Spacer(modifier = Modifier.height(18.dp))
+            }
         }
 
         items(savedReviews) { savedReview ->
             SavedReviewCard(savedReview = savedReview)
-            Spacer(modifier = Modifier.height(14.dp))
         }
 
-        item {
+        item(span = { GridItemSpan(maxLineSpan) }) {
             // Deja aire para que la barra flotante no tape la última tarjeta.
             Spacer(modifier = Modifier.height(110.dp))
         }

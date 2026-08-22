@@ -36,12 +36,9 @@ fun ProfileSearchResultsScreen(modifier: Modifier = Modifier) {
     // Estado elevado que determina qué tarjetas ya muestran el perfil como seguido.
     var followedProfileIds by remember { mutableStateOf(emptySet<String>()) }
 
-    val queryHint = stringResource(R.string.profile_search_results_query)
-    val query = searchText.ifEmpty { queryHint }
-
     ProfileSearchResultsScreenContent(
         results = LocalProfileSearchResultsScreenProvider.results,
-        searchText = query,
+        searchText = searchText,
         onSearchTextChange = { searchText = it },
         followedProfileIds = followedProfileIds,
         onFollow = { profileId -> followedProfileIds = followedProfileIds + profileId },
@@ -76,7 +73,7 @@ fun ProfileSearchResultsScreenContent(
         item {
             Spacer(modifier = Modifier.height(8.dp))
             SearchBar(
-                placeholder = R.string.search_profile_placeholder,
+                placeholder = R.string.profile_search_results_placeholder,
                 backgroundColor = colors.surface,
                 showSearchIcon = true,
                 text = searchText,

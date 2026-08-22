@@ -3,14 +3,18 @@ package com.example.devicersapp.ui.utils.search
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -45,6 +49,52 @@ fun FilterLabel(
         color = color,
         style = SearchControlText
     )
+}
+
+/**
+ * Muestra el selector entre la búsqueda de usuarios y la búsqueda de productos.
+ *
+ * @param isUsersSelected Indica si la pantalla actual corresponde a la búsqueda de usuarios.
+ * @param onUsersClick Acción solicitada al seleccionar usuarios.
+ * @param onProductsClick Acción solicitada al seleccionar productos.
+ * @param modifier Modificador aplicado a la fila de botones.
+ */
+@Composable
+fun SearchEntityToggle(
+    isUsersSelected: Boolean,
+    onUsersClick: () -> Unit,
+    onProductsClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalDevicersColors.current
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Button(
+            onClick = onUsersClick,
+            modifier = Modifier.weight(1f).height(44.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isUsersSelected) colors.primary else colors.surface,
+                contentColor = if (isUsersSelected) colors.textOnPrimary else colors.textPrimary
+            )
+        ) {
+            Text(text = stringResource(R.string.search_entity_users), style = SearchControlText)
+        }
+        Button(
+            onClick = onProductsClick,
+            modifier = Modifier.weight(1f).height(44.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isUsersSelected) colors.surface else colors.primary,
+                contentColor = if (isUsersSelected) colors.textPrimary else colors.textOnPrimary
+            )
+        ) {
+            Text(text = stringResource(R.string.search_entity_products), style = SearchControlText)
+        }
+    }
 }
 
 /**
@@ -134,6 +184,20 @@ fun FilterSliderPreview() {
             valueRange = 0f..50f,
             steps = 9,
             trackColor = LocalDevicersColors.current.primary,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+/** Muestra una vista previa del selector de tipos de búsqueda. */
+@Composable
+@Preview(showBackground = true)
+fun SearchEntityTogglePreview() {
+    DevicersAppTheme {
+        SearchEntityToggle(
+            isUsersSelected = true,
+            onUsersClick = {},
+            onProductsClick = {},
             modifier = Modifier.padding(16.dp)
         )
     }
