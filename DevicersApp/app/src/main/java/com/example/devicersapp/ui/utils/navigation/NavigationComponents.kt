@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -133,6 +134,7 @@ fun CreateNavigationButton(
     onClick: () -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
+    val interactionSource = remember { MutableInteractionSource() }
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -143,7 +145,12 @@ fun CreateNavigationButton(
                 .shadow(elevation = 8.dp, shape = CircleShape)
                 // El botón conserva siempre el color de acción, esté seleccionado o no.
                 .background(colors.primary, CircleShape)
-                .clickable { onClick() },
+                // La navegación cambia de pantalla; no necesita el recuadro temporal de pulsación.
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = onClick
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -181,11 +188,16 @@ fun NavigationItem(
     onClick: () -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
+    val interactionSource = remember { MutableInteractionSource() }
     // El destino activo se distingue solo por color, sin cambiar su tamaño ni su posición.
     val destinationColor = if (isSelected) colors.primaryText else colors.textSecondary
 
     Column(
-        modifier = modifier.clickable { onClick() },
+        modifier = modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null,
+            onClick = onClick
+        ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(

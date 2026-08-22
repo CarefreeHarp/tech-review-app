@@ -54,7 +54,7 @@ import com.example.devicersapp.ui.theme.AuthenticationTitleText
 fun PrimaryButton(
     @StringRes textResId: Int,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit
 ) {
     Button(
         onClick = onClick,
@@ -348,7 +348,7 @@ fun AuthenticationFooter(
 @Composable
 @Preview(showBackground = true)
 fun PrimaryButtonPreview() {
-    PrimaryButton(R.string.sign_in, Modifier.fillMaxWidth().height(48.dp))
+    PrimaryButton(R.string.sign_in, Modifier.fillMaxWidth().height(48.dp), {})
 }
 
 /** Muestra una vista previa del encabezado de autenticación. */

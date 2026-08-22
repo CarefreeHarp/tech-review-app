@@ -28,6 +28,7 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.ScreenTitleText
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.ui.utils.search.SearchEntityToggle
 
 /**
  * Configura la búsqueda de perfiles y los filtros con los que se acota.
@@ -38,6 +39,8 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 @Composable
 fun SearchProfileScreen(
     onApplyFilters: () -> Unit = {},
+    onUsersClick: () -> Unit = {},
+    onProductsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // La pantalla es propietaria del estado y los componentes reciben valores y callbacks.
@@ -69,6 +72,8 @@ fun SearchProfileScreen(
             sortBy = "alphabetical"
         },
         onApplyFilters = onApplyFilters,
+        onUsersClick = onUsersClick,
+        onProductsClick = onProductsClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -92,6 +97,8 @@ fun SearchProfileScreen(
  * @param onSortChange Acción que solicita cambiar el orden.
  * @param onClearFilters Acción que solicita restablecer los filtros.
  * @param onApplyFilters Acción que solicita aplicar los filtros.
+ * @param onUsersClick Acción que solicita mostrar la búsqueda de usuarios.
+ * @param onProductsClick Acción que solicita mostrar la búsqueda de productos.
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
@@ -110,6 +117,8 @@ fun SearchProfileScreenContent(
     onSortChange: (String) -> Unit,
     onClearFilters: () -> Unit,
     onApplyFilters: () -> Unit,
+    onUsersClick: () -> Unit,
+    onProductsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -139,7 +148,14 @@ fun SearchProfileScreenContent(
             onTextChange = onSearchTextChange
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        SearchEntityToggle(
+            isUsersSelected = true,
+            onUsersClick = onUsersClick,
+            onProductsClick = onProductsClick
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         SearchProfileFilterPanel(
             username = username,

@@ -1,8 +1,6 @@
 package com.example.devicersapp.ui.screens.create_review.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -59,19 +58,14 @@ fun ProductReviewItem(
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        Image(
+            painter = painterResource(product.imageResId),
+            contentDescription = stringResource(product.imageDescriptionResId),
             modifier = Modifier
                 .size(58.dp)
-                .background(colors.surface, RoundedCornerShape(14.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(product.imageResId),
-                contentDescription = stringResource(product.imageDescriptionResId),
-                modifier = Modifier.size(40.dp),
-                contentScale = ContentScale.Fit
-            )
-        }
+                .clip(RoundedCornerShape(14.dp)),
+            contentScale = ContentScale.Fit
+        )
 
         Spacer(modifier = Modifier.width(14.dp))
 

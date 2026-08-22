@@ -27,6 +27,7 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.ScreenTitleText
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.ui.utils.search.SearchEntityToggle
 
 /**
  * Configura la pantalla de búsqueda y establece su fondo.
@@ -41,6 +42,8 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 @Composable
 fun SearchProductScreen(
     onApplyFilters: () -> Unit = {},
+    onUsersClick: () -> Unit = {},
+    onProductsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // La pantalla es propietaria del estado y los componentes reciben valores y callbacks.
@@ -76,6 +79,8 @@ fun SearchProductScreen(
             sortBy = "recent"
         },
         onApplyFilters = onApplyFilters,
+        onUsersClick = onUsersClick,
+        onProductsClick = onProductsClick,
         modifier = modifier.fillMaxSize().background(LocalDevicersColors.current.background)
     )
 }
@@ -102,6 +107,8 @@ fun SearchProductScreen(
  * @param onSortChange Acción que solicita cambiar el orden.
  * @param onClearFilters Acción que solicita restablecer los filtros.
  * @param onApplyFilters Acción que solicita aplicar los filtros.
+ * @param onUsersClick Acción que solicita mostrar la búsqueda de usuarios.
+ * @param onProductsClick Acción que solicita mostrar la búsqueda de productos.
  * @param modifier Permite modificar el diseño externo del contenido.
  */
 @Composable
@@ -122,6 +129,8 @@ fun SearchProductScreenContent(
     onSortChange: (String) -> Unit,
     onClearFilters: () -> Unit,
     onApplyFilters: () -> Unit,
+    onUsersClick: () -> Unit,
+    onProductsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     // El contenido no es una colección repetida, así que basta con un contenedor desplazable.
@@ -149,7 +158,14 @@ fun SearchProductScreenContent(
             onTextChange = onSearchTextChange
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        SearchEntityToggle(
+            isUsersSelected = false,
+            onUsersClick = onUsersClick,
+            onProductsClick = onProductsClick
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         SearchProductFilterPanel(
             brand = brand,

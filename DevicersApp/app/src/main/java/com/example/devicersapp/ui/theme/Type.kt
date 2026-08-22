@@ -24,89 +24,89 @@ val DevicersFontFamily = FontFamily(
 
 /** Define la escala tipográfica predeterminada y consistente de Devicers. */
 val Typography = Typography(
-    displaySmall = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Bold, fontSize = 43.2.sp, lineHeight = 50.4.sp),
-    headlineSmall = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Bold, fontSize = 28.8.sp, lineHeight = 36.sp),
-    titleLarge = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Bold, fontSize = 24.sp, lineHeight = 31.2.sp),
-    titleMedium = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.SemiBold, fontSize = 21.6.sp, lineHeight = 28.8.sp),
-    titleSmall = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.SemiBold, fontSize = 19.2.sp, lineHeight = 24.sp),
-    bodyLarge = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Normal, fontSize = 19.2.sp, lineHeight = 26.4.sp),
-    bodyMedium = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Normal, fontSize = 16.8.sp, lineHeight = 24.sp),
-    bodySmall = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Normal, fontSize = 14.4.sp, lineHeight = 19.2.sp),
-    labelLarge = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.SemiBold, fontSize = 16.8.sp, lineHeight = 24.sp),
-    labelMedium = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.SemiBold, fontSize = 14.4.sp, lineHeight = 19.2.sp),
-    labelSmall = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Medium, fontSize = 13.2.sp, lineHeight = 16.8.sp)
+    displaySmall = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Bold, fontSize = 38.88.sp, lineHeight = 45.36.sp),
+    headlineSmall = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Bold, fontSize = 25.92.sp, lineHeight = 32.4.sp),
+    titleLarge = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Bold, fontSize = 21.6.sp, lineHeight = 28.08.sp),
+    titleMedium = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.SemiBold, fontSize = 19.44.sp, lineHeight = 25.92.sp),
+    titleSmall = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.SemiBold, fontSize = 17.28.sp, lineHeight = 21.6.sp),
+    bodyLarge = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Normal, fontSize = 17.28.sp, lineHeight = 23.76.sp),
+    bodyMedium = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Normal, fontSize = 15.12.sp, lineHeight = 21.6.sp),
+    bodySmall = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Normal, fontSize = 12.96.sp, lineHeight = 17.28.sp),
+    labelLarge = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.SemiBold, fontSize = 15.12.sp, lineHeight = 21.6.sp),
+    labelMedium = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.SemiBold, fontSize = 12.96.sp, lineHeight = 17.28.sp),
+    labelSmall = TextStyle(fontFamily = DevicersFontFamily, fontWeight = FontWeight.Medium, fontSize = 11.88.sp, lineHeight = 15.12.sp)
 )
 
 /** Define el texto de contenido compartido por las tarjetas de reseña. */
 val ReviewContentText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Normal,
-    fontSize = 19.2.sp,
-    lineHeight = 26.4.sp
+    fontSize = 17.28.sp,
+    lineHeight = 23.76.sp
 )
 
 /** Define las etiquetas de los campos de autenticación. */
 val AuthenticationFieldLabelText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Medium,
-    fontSize = 15.6.sp,
-    lineHeight = 21.6.sp
+    fontSize = 14.04.sp,
+    lineHeight = 19.44.sp
 )
 
 /** Define los enlaces y textos auxiliares de autenticación. */
 val AuthenticationSupportText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Normal,
-    fontSize = 15.6.sp,
-    lineHeight = 21.6.sp
+    fontSize = 14.04.sp,
+    lineHeight = 19.44.sp
 )
 
 /** Define el título grande que encabeza una pantalla, como Search product o Activity. */
 val ScreenTitleText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Bold,
-    fontSize = 28.8.sp,
-    lineHeight = 36.sp
+    fontSize = 25.92.sp,
+    lineHeight = 32.4.sp
 )
 
 /** Define los títulos y controles del panel de búsqueda. */
 val SearchHeadingText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Bold,
-    fontSize = 19.2.sp,
-    lineHeight = 26.4.sp
+    fontSize = 17.28.sp,
+    lineHeight = 23.76.sp
 )
 
 /** Define etiquetas, campos y acciones secundarias del panel de búsqueda. */
 val SearchControlText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Medium,
-    fontSize = 14.4.sp,
-    lineHeight = 19.2.sp
+    fontSize = 12.96.sp,
+    lineHeight = 17.28.sp
 )
 
 /** Define el texto de acciones principales dentro de autenticación. */
 val AuthenticationButtonText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Bold,
-    fontSize = 16.8.sp,
-    lineHeight = 22.8.sp
+    fontSize = 15.12.sp,
+    lineHeight = 20.52.sp
 )
 
 /** Define el encabezado y descripción de las pantallas de autenticación. */
 val AuthenticationTitleText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Bold,
-    fontSize = 27.6.sp,
-    lineHeight = 33.6.sp
+    fontSize = 24.84.sp,
+    lineHeight = 30.24.sp
 )
 
 val AuthenticationDescriptionText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Normal,
-    fontSize = 18.sp,
+    fontSize = 16.2.sp,
     // El interlineado supera al tamaño para que la descripción de dos líneas no se encime.
-    lineHeight = 25.2.sp
+    lineHeight = 22.68.sp
 )
 
 /**
@@ -115,45 +115,45 @@ val AuthenticationDescriptionText = TextStyle(
  * Estos estilos no declaran familia a propósito: dibujan el carácter ★, que Plus Jakarta
  * Sans no incluye, así que deben resolverse con la tipografía del sistema.
  */
-val RatingStarsText = TextStyle(fontSize = 14.4.sp, lineHeight = 19.2.sp)
+val RatingStarsText = TextStyle(fontSize = 12.96.sp, lineHeight = 17.28.sp)
 
 /** Define las estrellas cuando encabezan un contenido principal, como el detalle de una reseña. */
-val RatingStarsLargeText = TextStyle(fontSize = 21.6.sp, lineHeight = 28.8.sp)
+val RatingStarsLargeText = TextStyle(fontSize = 19.44.sp, lineHeight = 25.92.sp)
 val ReactionCountText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.ExtraBold,
-    fontSize = 13.2.sp,
-    lineHeight = 16.8.sp
+    fontSize = 11.88.sp,
+    lineHeight = 15.12.sp
 )
 
 /** Define las etiquetas que acompañan a los íconos de la barra de navegación. */
 val NavigationLabelText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Medium,
-    fontSize = 11.4.sp,
-    lineHeight = 14.4.sp
+    fontSize = 10.26.sp,
+    lineHeight = 12.96.sp
 )
 
 /** Define la metadata discreta de marca, categoría y antigüedad de las tarjetas. */
 val CardMetadataText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Normal,
-    fontSize = 13.2.sp,
-    lineHeight = 16.8.sp
+    fontSize = 11.88.sp,
+    lineHeight = 15.12.sp
 )
 
 /** Define el nombre de usuario y los valores numéricos destacados de una tarjeta. */
 val CardHighlightText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Bold,
-    fontSize = 14.4.sp,
-    lineHeight = 19.2.sp
+    fontSize = 12.96.sp,
+    lineHeight = 17.28.sp
 )
 
 /** Define el texto de la acción visual de la barra superior. */
 val TopBarActionText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Bold,
-    fontSize = 26.4.sp,
-    lineHeight = 31.2.sp
+    fontSize = 23.76.sp,
+    lineHeight = 28.08.sp
 )

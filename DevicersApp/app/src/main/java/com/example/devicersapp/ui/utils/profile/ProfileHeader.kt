@@ -44,6 +44,8 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
  * @param modifier Modificador aplicado al contenedor del perfil.
  * @param showEditBadge Indica si la foto ofrece la insignia para cambiarla, en el perfil propio.
  * @param showStats Indica si se muestran las métricas de reseñas, seguidores y seguidos.
+ * @param showAction Indica si se muestra el botón de acción principal.
+ * @param showBiography Indica si se muestra la biografía del perfil.
  * @param onActionClick Acción solicitada al pulsar el botón principal.
  * @param onEditAvatarClick Acción solicitada al pulsar la insignia de edición de la foto.
  */
@@ -54,6 +56,8 @@ fun ProfileHeader(
     modifier: Modifier = Modifier,
     showEditBadge: Boolean = false,
     showStats: Boolean = true,
+    showAction: Boolean = true,
+    showBiography: Boolean = true,
     onActionClick: () -> Unit = {},
     onEditAvatarClick: () -> Unit = {}
 ) {
@@ -72,17 +76,17 @@ fun ProfileHeader(
             if (showEditBadge) {
                 Box(
                     modifier = Modifier
-                        .size(28.dp)
+                        .size(32.dp)
                         .align(Alignment.BottomEnd)
-                        .background(colors.textPrimary, CircleShape)
+                        .background(colors.primary, CircleShape)
                         .clickable { onEditAvatarClick() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.edit_icon),
                         contentDescription = stringResource(R.string.profile_edit_avatar),
-                        tint = colors.background,
-                        modifier = Modifier.size(13.dp)
+                        tint = colors.textOnPrimary,
+                        modifier = Modifier.size(16.dp)
                     )
                 }
             }
@@ -108,33 +112,36 @@ fun ProfileHeader(
             }
         }
 
-        Spacer(modifier = Modifier.height(22.dp))
+        if (showAction) {
+            Spacer(modifier = Modifier.height(22.dp))
 
-        Button(
-            onClick = onActionClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colors.primary,
-                contentColor = colors.textOnPrimary
-            )
-        ) {
-            Text(
-                text = stringResource(actionLabelResId),
-                style = MaterialTheme.typography.labelLarge
-            )
+            Button(
+                onClick = onActionClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.primary,
+                    contentColor = colors.textOnPrimary
+                )
+            ) {
+                Text(
+                    text = stringResource(actionLabelResId),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
-
-        Text(
-            text = stringResource(profile.biographyResId),
-            modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.bodyMedium,
-            color = colors.textSecondary
-        )
+        if (showBiography) {
+            Spacer(modifier = Modifier.height(if (showAction) 18.dp else 22.dp))
+            Text(
+                text = stringResource(profile.biographyResId),
+                modifier = Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = colors.textSecondary
+            )
+        }
     }
 }
 

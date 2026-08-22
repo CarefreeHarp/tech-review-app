@@ -3,7 +3,6 @@ package com.example.devicersapp.ui.screens.found_products.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
@@ -61,19 +61,14 @@ fun FoundProductCard(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        Image(
+            painter = painterResource(product.imageResId),
+            contentDescription = stringResource(product.imageDescriptionResId),
             modifier = Modifier
                 .size(62.dp)
-                .background(colors.background, RoundedCornerShape(14.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(product.imageResId),
-                contentDescription = stringResource(product.imageDescriptionResId),
-                modifier = Modifier.size(42.dp),
-                contentScale = ContentScale.Fit
-            )
-        }
+                .clip(RoundedCornerShape(14.dp)),
+            contentScale = ContentScale.Fit
+        )
 
         Spacer(modifier = Modifier.width(14.dp))
 

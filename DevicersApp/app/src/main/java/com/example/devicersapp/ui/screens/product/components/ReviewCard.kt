@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
@@ -37,10 +39,15 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
  * Muestra una tarjeta de reseña con avatar, autor, calificación y cantidad de me gusta.
  *
  * @param review Información de la reseña, incluido el recurso del avatar de su autor.
+ * @param onViewMoreClick Acción solicitada al mostrar el detalle completo de la reseña.
  * @param modifier Modificador aplicado a la tarjeta.
  */
 @Composable
-fun ReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
+fun ReviewCard(
+    review: ReviewContent,
+    onViewMoreClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -79,8 +86,21 @@ fun ReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
         Text(
             text = stringResource(review.textResId),
             style = ReviewContentText,
-            color = LocalDevicersColors.current.textSecondary
+            color = LocalDevicersColors.current.textSecondary,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
         )
+
+        TextButton(
+            onClick = onViewMoreClick,
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text(
+                text = stringResource(R.string.review_show_more),
+                color = LocalDevicersColors.current.primary,
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
 
         Spacer(modifier = Modifier.height(10.dp))
 
