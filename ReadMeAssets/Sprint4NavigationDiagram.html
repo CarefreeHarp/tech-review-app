@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sprint 4 Navigation Map</title>
+    <style>
+        :root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; }
+        body { margin: 0; min-width: 960px; background: #111827; color: #f9fafb; }
+        header { padding: 24px 32px 12px; }
+        h1 { margin: 0; font-size: 24px; }
+        p { margin: 8px 0 0; color: #d1d5db; }
+        #status { color: #93c5fd; font-weight: 600; }
+        #diagram { padding: 12px 24px 32px; overflow: auto; }
+        #diagram svg { display: block; min-width: 1500px; margin: 0 auto; background: #ffffff; border-radius: 12px; }
+        #diagram svg .node { cursor: pointer; transition: opacity 160ms ease, filter 160ms ease; }
+        #diagram svg .flowchart-link, #diagram svg .edgeLabel { transition: opacity 160ms ease, filter 160ms ease; }
+        #diagram svg .edgeLabel foreignObject { overflow: visible; }
+        #diagram svg .edgeLabel div { padding: 2px 4px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.28); }
+        #diagram svg .edgeLabel span { color: #0f172a !important; font-weight: 700; }
+        #diagram svg.is-focused .node:not(.is-related),
+        #diagram svg.is-focused .flowchart-link:not(.is-related) { opacity: 0.035; }
+        #diagram svg.is-focused .edgeLabel:not(.is-related) { opacity: 0.02; }
+        #diagram svg.is-focused .node.is-related,
+        #diagram svg.is-focused .flowchart-link.is-related,
+        #diagram svg.is-focused .edgeLabel.is-related { opacity: 1; filter: drop-shadow(0 0 4px rgba(17, 24, 39, 0.45)); }
+        #diagram svg.is-focused .edgeLabel.is-related div { padding: 3px 6px; background: #fde047; border: 2px solid #ca8a04; border-radius: 5px; box-shadow: 0 2px 5px rgba(15, 23, 42, 0.45); }
+        #diagram svg.is-focused .edgeLabel.is-related span { color: #111827 !important; font-size: 15px; font-weight: 800; opacity: 1 !important; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sprint 4 Navigation Map</h1>
+    </header>
+    <main id="diagram" aria-label="Interactive application navigation map">
+<svg id="my-svg" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width: 2406.49px; background-color: transparent;" viewBox="-8 -8 2406.48828125 997.8125" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}#my-svg .error-icon{fill:#552222;}#my-svg .error-text{fill:#552222;stroke:#552222;}#my-svg .edge-thickness-normal{stroke-width:2px;}#my-svg .edge-thickness-thick{stroke-width:3.5px;}#my-svg .edge-pattern-solid{stroke-dasharray:0;}#my-svg .edge-pattern-dashed{stroke-dasharray:3;}#my-svg .edge-pattern-dotted{stroke-dasharray:2;}#my-svg .marker{fill:#333333;stroke:#333333;}#my-svg .marker.cross{stroke:#333333;}#my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}#my-svg .cluster-label text{fill:#333;}#my-svg .cluster-label span,#my-svg p{color:#333;}#my-svg .label text,#my-svg span,#my-svg p{fill:#333;color:#333;}#my-svg .node rect,#my-svg .node circle,#my-svg .node ellipse,#my-svg .node polygon,#my-svg .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#my-svg .flowchart-label text{text-anchor:middle;}#my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#my-svg .node .label{text-align:center;}#my-svg .node.clickable{cursor:pointer;}#my-svg .arrowheadPath{fill:#333333;}#my-svg .edgePath .path{stroke:#333333;stroke-width:2.0px;}#my-svg .flowchart-link{stroke:#333333;fill:none;}#my-svg .edgeLabel{background-color:#e8e8e8;text-align:center;}#my-svg .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}#my-svg .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#my-svg .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#my-svg .cluster text{fill:#333;}#my-svg .cluster span,#my-svg p{color:#333;}#my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#my-svg .current&gt;*{fill:rgb(255, 117, 86)!important;stroke:rgb(168, 30, 0)!important;color:rgb(255, 255, 255)!important;}#my-svg .current span{fill:rgb(255, 117, 86)!important;stroke:rgb(168, 30, 0)!important;color:rgb(255, 255, 255)!important;}#my-svg .current tspan{fill:rgb(255, 255, 255)!important;}#my-svg .future&gt;*{fill:rgb(57, 168, 82)!important;stroke:rgb(23, 107, 48)!important;color:rgb(255, 255, 255)!important;}#my-svg .future span{fill:rgb(57, 168, 82)!important;stroke:rgb(23, 107, 48)!important;color:rgb(255, 255, 255)!important;}#my-svg .future tspan{fill:rgb(255, 255, 255)!important;}#my-svg .context&gt;*{fill:rgb(107, 114, 128)!important;stroke:rgb(55, 65, 81)!important;color:rgb(255, 255, 255)!important;}#my-svg .context span{fill:rgb(107, 114, 128)!important;stroke:rgb(55, 65, 81)!important;color:rgb(255, 255, 255)!important;}#my-svg .context tspan{fill:rgb(255, 255, 255)!important;}</style><g><marker id="my-svg_flowchart-pointEnd" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-pointStart" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-circleEnd" class="marker flowchart" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-circleStart" class="marker flowchart" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-crossEnd" class="marker cross flowchart" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-crossStart" class="marker cross flowchart" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><g class="root"><g class="clusters"/><g class="edgePaths"><path d="M1157.832,33L1163.097,38.667C1168.361,44.333,1178.889,55.667,1169.55,67.013C1160.21,78.359,1131.003,89.718,1116.399,95.398L1101.795,101.077" id="L-login-register-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-login LE-register" style="stroke:#1565C0;stroke-width:3px;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1169.582,27.785L1185.264,34.321C1200.947,40.857,1232.311,53.928,1247.993,68.881C1263.676,83.833,1263.676,100.667,1263.676,117.5C1263.676,134.333,1263.676,151.167,1247.041,164.978C1230.406,178.788,1197.136,189.577,1180.501,194.971L1163.866,200.365" id="L-login-feed-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-login LE-feed" style="stroke:#1565C0;stroke-width:3px;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1047.796,101L1043.754,95.333C1039.712,89.667,1031.627,78.333,1042.086,66.511C1052.544,54.689,1081.546,42.377,1096.046,36.222L1110.547,30.066" id="L-register-login-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-register LE-login" style="stroke:#1565C0;stroke-width:3px;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1059.566,134L1059.566,139.667C1059.566,145.333,1059.566,156.667,1064.384,167.362C1069.201,178.058,1078.835,188.115,1083.652,193.144L1088.469,198.173" id="L-register-feed-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-register LE-feed" style="stroke:#1565C0;stroke-width:3px;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1212.678,322.906L1200.053,313.922C1187.428,304.938,1162.179,286.969,1146.741,273.084C1131.304,259.199,1125.677,249.398,1122.864,244.497L1120.051,239.597" id="L-bottomNav-feed-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-bottomNav LE-feed" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1282.496,342.822L1434.934,353.987C1587.372,365.152,1892.249,387.482,2039.813,403.68C2187.377,419.877,2177.628,429.941,2172.754,434.973L2167.88,440.006" id="L-bottomNav-search-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-bottomNav LE-search" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1189.23,345.4L1105.702,356.135C1022.173,366.871,855.116,388.342,771.587,407.494C688.059,426.646,688.059,443.479,688.059,460.313C688.059,477.146,688.059,493.979,688.059,510.813C688.059,527.646,688.059,544.479,688.059,561.313C688.059,578.146,688.059,594.979,648.506,609.999C608.953,625.018,529.848,638.223,490.296,644.826L450.743,651.429" id="L-bottomNav-createReview-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-bottomNav LE-createReview" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1257.596,355.906L1269.43,364.891C1281.263,373.875,1304.93,391.844,1316.764,409.245C1328.598,426.646,1328.598,443.479,1328.598,460.313C1328.598,477.146,1328.598,493.979,1328.598,510.813C1328.598,527.646,1328.598,544.479,1328.598,561.313C1328.598,578.146,1328.598,594.979,1318.968,608.64C1309.338,622.301,1290.077,632.789,1280.447,638.034L1270.817,643.278" id="L-bottomNav-activity-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-bottomNav LE-activity" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1189.23,342.413L1015.027,353.646C840.823,364.88,492.415,387.346,308.314,403.832C124.213,420.318,104.418,430.823,94.521,436.075L84.624,441.328" id="L-bottomNav-ownProfile-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-bottomNav LE-ownProfile" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1161.684,223.12L1250.633,230.767C1339.583,238.413,1517.483,253.707,1538.492,271.763C1559.5,289.82,1423.618,310.639,1355.676,321.049L1287.735,331.459" id="L-feed-bottomNav-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-feed LE-bottomNav" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M2115.359,450.118L2093.713,443.4C2072.066,436.683,2028.773,423.248,1890.842,405.608C1752.911,387.969,1520.342,366.125,1404.057,355.204L1287.773,344.282" id="L-search-bottomNav-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-search LE-bottomNav" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1428.215,746.813L1426.379,741.146C1424.544,735.479,1420.874,724.146,1419.038,710.063C1417.203,695.979,1417.203,679.146,1417.203,662.313C1417.203,645.479,1417.203,628.646,1417.203,611.813C1417.203,594.979,1417.203,578.146,1417.203,561.313C1417.203,544.479,1417.203,527.646,1417.203,510.813C1417.203,493.979,1417.203,477.146,1417.203,460.313C1417.203,443.479,1417.203,426.646,1394.886,409.564C1372.569,392.483,1327.936,375.154,1305.619,366.489L1283.302,357.824" id="L-product-bottomNav-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-product LE-bottomNav" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1599.802,746.813L1595.112,741.146C1590.423,735.479,1581.043,724.146,1576.354,710.063C1571.664,695.979,1571.664,679.146,1571.664,662.313C1571.664,645.479,1571.664,628.646,1571.664,611.813C1571.664,594.979,1571.664,578.146,1571.664,561.313C1571.664,544.479,1571.664,527.646,1571.664,510.813C1571.664,493.979,1571.664,477.146,1571.664,460.313C1571.664,443.479,1571.664,426.646,1524.334,408.306C1477.004,389.965,1382.344,370.118,1335.013,360.195L1287.683,350.271" id="L-publicProfile-bottomNav-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-publicProfile LE-bottomNav" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1195.942,645.813L1182.232,640.146C1168.521,634.479,1141.1,623.146,1127.39,609.063C1113.68,594.979,1113.68,578.146,1113.68,561.313C1113.68,544.479,1113.68,527.646,1113.68,510.813C1113.68,493.979,1113.68,477.146,1113.68,460.313C1113.68,443.479,1113.68,426.646,1128.506,409.686C1143.332,392.726,1172.984,375.639,1187.811,367.096L1202.637,358.552" id="L-activity-bottomNav-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-activity LE-bottomNav" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M329.479,645.813L310.223,640.146C290.968,634.479,252.457,623.146,233.201,609.063C213.945,594.979,213.945,578.146,213.945,561.313C213.945,544.479,213.945,527.646,213.945,510.813C213.945,493.979,213.945,477.146,213.945,460.313C213.945,443.479,213.945,426.646,375.612,407.091C537.278,387.536,860.61,365.26,1022.277,354.122L1183.943,342.983" id="L-createReview-bottomNav-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-createReview LE-bottomNav" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M48.852,443.813L48.852,438.146C48.852,432.479,48.852,421.146,238.033,404.258C427.214,387.37,805.577,364.928,994.758,353.707L1183.94,342.486" id="L-ownProfile-bottomNav-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-ownProfile LE-bottomNav" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1161.684,222.129L1277.385,229.94C1393.087,237.752,1624.491,253.376,1740.193,272.922C1855.895,292.469,1855.895,315.938,1855.895,339.406C1855.895,362.875,1855.895,386.344,1855.895,406.495C1855.895,426.646,1855.895,443.479,1855.895,460.313C1855.895,477.146,1855.895,493.979,1855.895,510.813C1855.895,527.646,1855.895,544.479,1855.895,561.313C1855.895,578.146,1855.895,594.979,1855.895,611.813C1855.895,628.646,1855.895,645.479,1855.895,662.313C1855.895,679.146,1855.895,695.979,1855.895,712.813C1855.895,729.646,1855.895,746.479,1855.895,763.313C1855.895,780.146,1855.895,796.979,1765.303,813.249C1674.711,829.519,1493.527,845.225,1402.935,853.078L1312.343,860.931" id="L-feed-review-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-feed LE-review" style="stroke:#7B1FA2;stroke-width:4px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1079.627,235L1069.902,240.667C1060.178,246.333,1040.73,257.667,1031.005,268.117C1021.281,278.567,1021.281,288.133,1021.281,292.917L1021.281,297.7" id="L-feed-exitApp-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-feed LE-exitApp" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M2115.359,464.205L2049.809,471.973C1984.259,479.741,1853.159,495.277,1787.609,511.461C1722.059,527.646,1722.059,544.479,1722.059,561.313C1722.059,578.146,1722.059,594.979,1722.059,608.179C1722.059,621.379,1722.059,630.946,1722.059,635.729L1722.059,640.513" id="L-search-resultsProducts-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-search LE-resultsProducts" style="stroke:#198C36;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1658.082,677.074L1632.266,683.03C1606.451,688.987,1554.819,700.9,1521.905,712.004C1488.991,723.109,1474.795,733.405,1467.697,738.553L1460.599,743.701" id="L-resultsProducts-product-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-resultsProducts LE-product" style="stroke:#198C36;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M2178.563,476.813L2188.986,482.479C2199.41,488.146,2220.258,499.479,2221.034,510.391C2221.81,521.302,2202.515,531.792,2192.867,537.036L2183.219,542.281" id="L-search-searchProfile-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-search LE-searchProfile" style="stroke:#198C36;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M2102.96,544.813L2087.419,539.146C2071.878,533.479,2040.796,522.146,2042.033,510.362C2043.27,498.577,2076.825,486.342,2093.603,480.224L2110.38,474.107" id="L-searchProfile-search-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-searchProfile LE-search" style="stroke:#198C36;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M2118.739,577.813L2108.617,583.479C2098.495,589.146,2078.251,600.479,2068.13,610.929C2058.008,621.379,2058.008,630.946,2058.008,635.729L2058.008,640.513" id="L-searchProfile-resultsProfiles-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-searchProfile LE-resultsProfiles" style="stroke:#198C36;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1973.23,678.813L1944.114,684.479C1914.998,690.146,1856.767,701.479,1806.688,712.866C1756.609,724.252,1714.683,735.692,1693.721,741.412L1672.758,747.132" id="L-resultsProfiles-publicProfile-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-resultsProfiles LE-publicProfile" style="stroke:#198C36;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M2181.063,468.794L2208.187,475.797C2235.311,482.8,2289.56,496.806,2316.684,512.226C2343.809,527.646,2343.809,544.479,2343.809,561.313C2343.809,578.146,2343.809,594.979,2343.809,611.813C2343.809,628.646,2343.809,645.479,2343.809,662.313C2343.809,679.146,2343.809,695.979,2343.809,712.813C2343.809,729.646,2343.809,746.479,2343.809,763.313C2343.809,780.146,2343.809,796.979,2343.809,813.813C2343.809,830.646,2343.809,847.479,2343.809,864.313C2343.809,881.146,2343.809,897.979,2289.227,912.315C2234.646,926.651,2125.483,938.49,2070.901,944.409L2016.32,950.328" id="L-search-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-search LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M2184.448,577.813L2196.893,583.479C2209.337,589.146,2234.227,600.479,2246.672,614.563C2259.117,628.646,2259.117,645.479,2259.117,662.313C2259.117,679.146,2259.117,695.979,2259.117,712.813C2259.117,729.646,2259.117,746.479,2259.117,763.313C2259.117,780.146,2259.117,796.979,2259.117,813.813C2259.117,830.646,2259.117,847.479,2259.117,864.313C2259.117,881.146,2259.117,897.979,2217.244,911.946C2175.371,925.914,2091.626,937.015,2049.753,942.565L2007.88,948.116" id="L-searchProfile-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-searchProfile LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1786.035,669.181L1853.769,676.453C1921.503,683.725,2056.97,698.269,2124.704,713.957C2192.438,729.646,2192.438,746.479,2192.438,763.313C2192.438,780.146,2192.438,796.979,2192.438,813.813C2192.438,830.646,2192.438,847.479,2192.438,864.313C2192.438,881.146,2192.438,897.979,2158.043,911.922C2123.649,925.866,2054.861,936.919,2020.467,942.445L1986.072,947.972" id="L-resultsProducts-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-resultsProducts LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M2058.008,678.813L2058.008,684.479C2058.008,690.146,2058.008,701.479,2058.008,715.563C2058.008,729.646,2058.008,746.479,2058.008,763.313C2058.008,780.146,2058.008,796.979,2058.008,813.813C2058.008,830.646,2058.008,847.479,2058.008,864.313C2058.008,881.146,2058.008,897.979,2038.676,911.824C2019.345,925.668,1980.682,936.524,1961.351,941.952L1942.02,947.38" id="L-resultsProfiles-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-resultsProfiles LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1468.629,773.648L1491.343,780.342C1514.057,787.036,1559.486,800.424,1533.431,814.546C1507.377,828.667,1409.839,843.522,1361.071,850.949L1312.302,858.377" id="L-product-review-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-product LE-review" style="stroke:#1565C0;stroke-width:3px;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1468.629,766.488L1555.745,774.375C1642.862,782.263,1817.095,798.038,1904.212,814.342C1991.328,830.646,1991.328,847.479,1991.328,864.313C1991.328,881.146,1991.328,897.979,1979.435,911.703C1967.542,925.426,1943.756,936.039,1931.864,941.346L1919.971,946.653" id="L-product-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-product LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1563.935,779.813L1546.928,785.479C1529.92,791.146,1495.906,802.479,1453.947,814.828C1411.988,827.177,1362.085,840.542,1337.134,847.224L1312.182,853.907" id="L-publicProfile-review-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-publicProfile LE-review" style="stroke:#1565C0;stroke-width:3px;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1667.645,773.658L1702.699,780.35C1737.753,787.043,1807.861,800.428,1842.915,815.537C1877.969,830.646,1877.969,847.479,1877.969,864.313C1877.969,881.146,1877.969,897.979,1877.986,911.179C1878.004,924.379,1878.038,933.946,1878.056,938.729L1878.073,943.513" id="L-publicProfile-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-publicProfile LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1239.594,859.578L1185.245,851.95C1130.897,844.323,1022.201,829.068,1047.804,813.676C1073.407,798.285,1233.31,782.758,1313.262,774.994L1393.213,767.23" id="L-review-product-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-review LE-product" style="stroke:#7B1FA2;stroke-width:4px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1273.328,880.813L1273.328,886.479C1273.328,892.146,1273.328,903.479,1351.102,915.64C1428.876,927.8,1584.424,940.788,1662.198,947.281L1739.972,953.775" id="L-review-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-review LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1318.941,672.316L1374.993,679.066C1431.044,685.815,1543.147,699.314,1595.072,711.049C1646.997,722.785,1638.744,732.757,1634.618,737.743L1630.491,742.729" id="L-activity-publicProfile-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-activity LE-publicProfile" style="stroke:#1565C0;stroke-width:3px;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1235.863,678.813L1235.863,684.479C1235.863,690.146,1235.863,701.479,1235.863,715.563C1235.863,729.646,1235.863,746.479,1235.863,763.313C1235.863,780.146,1235.863,796.979,1239.541,810.353C1243.219,823.727,1250.574,833.641,1254.252,838.599L1257.929,843.556" id="L-activity-review-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-activity LE-review" style="stroke:#1565C0;stroke-width:3px;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1152.785,666.817L1011.401,674.483C870.017,682.149,587.249,697.481,445.865,713.563C304.48,729.646,304.48,746.479,304.48,763.313C304.48,780.146,304.48,796.979,304.48,813.813C304.48,830.646,304.48,847.479,304.48,864.313C304.48,881.146,304.48,897.979,543.726,914.073C782.973,930.168,1261.465,945.523,1500.711,953.2L1739.957,960.878" id="L-activity-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-activity LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M445.516,671.915L488.087,678.731C530.658,685.547,615.799,699.18,658.37,710.78C700.941,722.379,700.941,731.946,700.941,736.729L700.941,741.513" id="L-createReview-rateProduct-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-createReview LE-rateProduct" style="stroke:#1565C0;stroke-width:3px;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M433.384,678.813L449.813,684.479C466.242,690.146,499.099,701.479,502.278,712.482C505.457,723.486,478.957,734.159,465.707,739.496L452.457,744.832" id="L-createReview-requestProduct-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-createReview LE-requestProduct" style="stroke:#198C36;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M325.578,677.889L303.169,683.709C280.759,689.53,235.94,701.171,213.531,715.409C191.121,729.646,191.121,746.479,191.121,763.313C191.121,780.146,191.121,796.979,191.121,813.813C191.121,830.646,191.121,847.479,191.121,864.313C191.121,881.146,191.121,897.979,449.26,914.123C707.399,930.267,1223.678,945.721,1481.817,953.449L1739.956,961.176" id="L-createReview-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-createReview LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M406.574,746.813L406.574,741.146C406.574,735.479,406.574,724.146,404.554,713.628C402.534,703.11,398.494,693.408,396.474,688.557L394.454,683.705" id="L-requestProduct-createReview-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-requestProduct LE-createReview" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M755.137,769.909L815.251,777.226C875.366,784.544,995.595,799.178,1075.497,812.84C1155.398,826.501,1194.973,839.19,1214.76,845.534L1234.547,851.878" id="L-rateProduct-review-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-rateProduct LE-review" style="stroke:#1565C0;stroke-width:3px;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M646.746,768.06L559.695,775.685C472.645,783.311,298.543,798.562,211.492,814.604C124.441,830.646,124.441,847.479,124.441,864.313C124.441,881.146,124.441,897.979,393.694,914.149C662.946,930.319,1201.451,945.826,1470.704,953.58L1739.956,961.333" id="L-rateProduct-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-rateProduct LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M1239.594,860.626L1168.199,852.824C1096.803,845.021,954.013,829.417,882.618,813.198C811.223,796.979,811.223,780.146,811.223,763.313C811.223,746.479,811.223,729.646,811.223,712.813C811.223,695.979,811.223,679.146,811.223,662.313C811.223,645.479,811.223,628.646,811.223,611.813C811.223,594.979,811.223,578.146,811.223,561.313C811.223,544.479,811.223,527.646,811.223,510.813C811.223,493.979,811.223,477.146,811.223,460.313C811.223,443.479,811.223,426.646,811.223,406.495C811.223,386.344,811.223,362.875,811.223,339.406C811.223,315.938,811.223,292.469,850.848,273.99C890.473,255.512,969.724,242.024,1009.349,235.28L1048.974,228.536" id="L-review-feed-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-review LE-feed" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/><path d="M48.852,476.813L48.852,482.479C48.852,488.146,48.852,499.479,48.852,513.563C48.852,527.646,48.852,544.479,48.852,561.313C48.852,578.146,48.852,594.979,48.852,611.813C48.852,628.646,48.852,645.479,48.852,662.313C48.852,679.146,48.852,695.979,48.852,712.813C48.852,729.646,48.852,746.479,48.852,763.313C48.852,780.146,48.852,796.979,48.852,813.813C48.852,830.646,48.852,847.479,48.852,864.313C48.852,881.146,48.852,897.979,330.702,914.177C612.553,930.374,1176.254,945.936,1458.105,953.717L1739.956,961.497" id="L-ownProfile-previous-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-ownProfile LE-previous" style="stroke:#C62828;stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd)"/></g><g class="edgeLabels"><g class="edgeLabel" transform="translate(1189.41796875, 67)"><g class="label" transform="translate(-54.2578125, -9)"><foreignObject width="108.515625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Create account</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1263.67578125, 117.5)"><g class="label" transform="translate(-24.4609375, -9)"><foreignObject width="48.921875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Sign in</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1023.54296875, 67)"><g class="label" transform="translate(-91.6171875, -9)"><foreignObject width="183.234375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">I already have an account</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1059.56640625, 168)"><g class="label" transform="translate(-54.2578125, -9)"><foreignObject width="108.515625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Create account</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1136.9296875, 269)"><g class="label" transform="translate(-31.578125, -9)"><foreignObject width="63.15625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Feed tab</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(2197.125, 409.8125)"><g class="label" transform="translate(-38.6953125, -9)"><foreignObject width="77.390625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Search tab</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(688.05859375, 510.8125)"><g class="label" transform="translate(-37.359375, -9)"><foreignObject width="74.71875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Create tab</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1328.59765625, 510.8125)"><g class="label" transform="translate(-38.6796875, -9)"><foreignObject width="77.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Activity tab</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(144.0078125, 409.8125)"><g class="label" transform="translate(-36.0234375, -9)"><foreignObject width="72.046875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Profile tab</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1695.3828125, 269)"><g class="label" transform="translate(-39.1328125, -9)"><foreignObject width="78.265625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Bottom bar</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1985.48046875, 409.8125)"><g class="label" transform="translate(-39.1328125, -9)"><foreignObject width="78.265625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Bottom bar</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1417.203125, 561.3125)"><g class="label" transform="translate(-39.1328125, -9)"><foreignObject width="78.265625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Bottom bar</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1571.6640625, 561.3125)"><g class="label" transform="translate(-39.1328125, -9)"><foreignObject width="78.265625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Bottom bar</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1113.6796875, 510.8125)"><g class="label" transform="translate(-39.1328125, -9)"><foreignObject width="78.265625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Bottom bar</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(213.9453125, 510.8125)"><g class="label" transform="translate(-39.1328125, -9)"><foreignObject width="78.265625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Bottom bar</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(48.8515625, 409.8125)"><g class="label" transform="translate(-39.1328125, -9)"><foreignObject width="78.265625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Bottom bar</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1855.89453125, 561.3125)"><g class="label" transform="translate(-44.9140625, -9)"><foreignObject width="89.828125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Tap a review</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1021.28125, 269)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1722.05859375, 561.3125)"><g class="label" transform="translate(-58.2578125, -9)"><foreignObject width="116.515625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Search products</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1503.1875, 712.8125)"><g class="label" transform="translate(-48.4765625, -9)"><foreignObject width="96.953125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Tap a product</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(2241.10546875, 510.8125)"><g class="label" transform="translate(-82.703125, -9)"><foreignObject width="165.40625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Switch to profile search</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(2009.71484375, 510.8125)"><g class="label" transform="translate(-87.6015625, -9)"><foreignObject width="175.203125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Switch to product search</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(2058.0078125, 611.8125)"><g class="label" transform="translate(-53.359375, -9)"><foreignObject width="106.71875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Search profiles</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1798.53515625, 712.8125)"><g class="label" transform="translate(-37.359375, -9)"><foreignObject width="74.71875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Tap a user</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(2343.80859375, 712.8125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(2259.1171875, 763.3125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(2192.4375, 813.8125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(2058.0078125, 813.8125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1604.9140625, 813.8125)"><g class="label" transform="translate(-60.328125, -9)"><foreignObject width="120.65625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Tap Top Reviews</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1991.328125, 864.3125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1461.890625, 813.8125)"><g class="label" transform="translate(-62.6953125, -9)"><foreignObject width="125.390625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Tap a user review</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1877.96875, 864.3125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(913.50390625, 813.8125)"><g class="label" transform="translate(-82.28125, -9)"><foreignObject width="164.5625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Tap the product header</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1273.328125, 914.8125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1655.25, 712.8125)"><g class="label" transform="translate(-63.5859375, -9)"><foreignObject width="127.171875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Follow notification</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1235.86328125, 763.3125)"><g class="label" transform="translate(-99.6015625, -9)"><foreignObject width="199.203125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Like or comment notification</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(304.48046875, 813.8125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(700.94140625, 712.8125)"><g class="label" transform="translate(-90.28125, -9)"><foreignObject width="180.5625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Select suggested product</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(531.95703125, 712.8125)"><g class="label" transform="translate(-58.703125, -9)"><foreignObject width="117.40625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Request product</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(191.12109375, 813.8125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(406.57421875, 712.8125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1115.82421875, 813.8125)"><g class="label" transform="translate(-100.0390625, -9)"><foreignObject width="200.078125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">Publish review with reviewId</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(124.44140625, 864.3125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(811.22265625, 561.3125)"><g class="label" transform="translate(-103.1640625, -9)"><foreignObject width="206.328125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back after publishing</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(48.8515625, 712.8125)"><g class="label" transform="translate(-46.6796875, -9)"><foreignObject width="93.359375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">System Back</span></div></foreignObject></g></g></g><g class="nodes"><g class="node default current flowchart-label" id="flowchart-login-0" data-node="true" data-id="login" transform="translate(1142.50390625, 16.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-27.078125" y="-16.5" width="54.15625" height="33"/><g class="label" style="" transform="translate(-19.578125, -9)"><rect/><foreignObject width="39.15625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Login</span></div></foreignObject></g></g><g class="node default current flowchart-label" id="flowchart-register-1" data-node="true" data-id="register" transform="translate(1059.56640625, 117.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-37.2890625" y="-16.5" width="74.578125" height="33"/><g class="label" style="" transform="translate(-29.7890625, -9)"><rect/><foreignObject width="59.578125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Register</span></div></foreignObject></g></g><g class="node default current flowchart-label" id="flowchart-feed-2" data-node="true" data-id="feed" transform="translate(1107.94140625, 218.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-53.7421875" y="-16.5" width="107.484375" height="33"/><g class="label" style="" transform="translate(-46.2421875, -9)"><rect/><foreignObject width="92.484375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Home / Feed</span></div></foreignObject></g></g><g class="node default current flowchart-label" id="flowchart-search-3" data-node="true" data-id="search" transform="translate(2148.2109375, 460.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-32.8515625" y="-16.5" width="65.703125" height="33"/><g class="label" style="" transform="translate(-25.3515625, -9)"><rect/><foreignObject width="50.703125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Search</span></div></foreignObject></g></g><g class="node default current flowchart-label" id="flowchart-product-4" data-node="true" data-id="product" transform="translate(1433.55859375, 763.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-35.0703125" y="-16.5" width="70.140625" height="33"/><g class="label" style="" transform="translate(-27.5703125, -9)"><rect/><foreignObject width="55.140625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Product</span></div></foreignObject></g></g><g class="node default current flowchart-label" id="flowchart-publicProfile-5" data-node="true" data-id="publicProfile" transform="translate(1613.45703125, 763.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-54.1875" y="-16.5" width="108.375" height="33"/><g class="label" style="" transform="translate(-46.6875, -9)"><rect/><foreignObject width="93.375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Public Profile</span></div></foreignObject></g></g><g class="node default current flowchart-label" id="flowchart-review-6" data-node="true" data-id="review" transform="translate(1273.328125, 864.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-33.734375" y="-16.5" width="67.46875" height="33"/><g class="label" style="" transform="translate(-26.234375, -9)"><rect/><foreignObject width="52.46875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Review</span></div></foreignObject></g></g><g class="node default current flowchart-label" id="flowchart-activity-7" data-node="true" data-id="activity" transform="translate(1235.86328125, 662.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-83.078125" y="-16.5" width="166.15625" height="33"/><g class="label" style="" transform="translate(-75.578125, -9)"><rect/><foreignObject width="151.15625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Activity / Notifications</span></div></foreignObject></g></g><g class="node default current flowchart-label" id="flowchart-createReview-8" data-node="true" data-id="createReview" transform="translate(385.546875, 662.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-59.96875" y="-16.5" width="119.9375" height="33"/><g class="label" style="" transform="translate(-52.46875, -9)"><rect/><foreignObject width="104.9375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Create Review</span></div></foreignObject></g></g><g class="node default current flowchart-label" id="flowchart-rateProduct-9" data-node="true" data-id="rateProduct" transform="translate(700.94140625, 763.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-54.1953125" y="-16.5" width="108.390625" height="33"/><g class="label" style="" transform="translate(-46.6953125, -9)"><rect/><foreignObject width="93.390625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Rate Product</span></div></foreignObject></g></g><g class="node default future flowchart-label" id="flowchart-ownProfile-10" data-node="true" data-id="ownProfile" transform="translate(48.8515625, 460.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-48.8515625" y="-16.5" width="97.703125" height="33"/><g class="label" style="" transform="translate(-41.3515625, -9)"><rect/><foreignObject width="82.703125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Own Profile</span></div></foreignObject></g></g><g class="node default future flowchart-label" id="flowchart-resultsProducts-11" data-node="true" data-id="resultsProducts" transform="translate(1722.05859375, 662.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-63.9765625" y="-16.5" width="127.953125" height="33"/><g class="label" style="" transform="translate(-56.4765625, -9)"><rect/><foreignObject width="112.953125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Found Products</span></div></foreignObject></g></g><g class="node default future flowchart-label" id="flowchart-requestProduct-12" data-node="true" data-id="requestProduct" transform="translate(406.57421875, 763.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-67.09375" y="-16.5" width="134.1875" height="33"/><g class="label" style="" transform="translate(-59.59375, -9)"><rect/><foreignObject width="119.1875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Request Product</span></div></foreignObject></g></g><g class="node default future flowchart-label" id="flowchart-searchProfile-13" data-node="true" data-id="searchProfile" transform="translate(2148.2109375, 561.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-57.75" y="-16.5" width="115.5" height="33"/><g class="label" style="" transform="translate(-50.25, -9)"><rect/><foreignObject width="100.5" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Search Profile</span></div></foreignObject></g></g><g class="node default future flowchart-label" id="flowchart-resultsProfiles-14" data-node="true" data-id="resultsProfiles" transform="translate(2058.0078125, 662.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-86.6484375" y="-16.5" width="173.296875" height="33"/><g class="label" style="" transform="translate(-79.1484375, -9)"><rect/><foreignObject width="158.296875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Profile Search Results</span></div></foreignObject></g></g><g class="node default current flowchart-label" id="flowchart-bottomNav-15" data-node="true" data-id="bottomNav" transform="translate(1235.86328125, 339.40625)"><circle class="basic label-container bottom-bar-circle" r="58" style="fill:#C62828;stroke:#7F1D1D;stroke-width:3px;"/><g class="label" style="" transform="translate(-39.1328125, -9)"><rect/><foreignObject width="78.265625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Bottom bar</span></div></foreignObject></g></g><g class="node default context flowchart-label" id="flowchart-previous-16" data-node="true" data-id="previous" transform="translate(1878.15234375, 965.3125)"><rect class="basic label-container" style="" rx="0" ry="0" x="-132.8984375" y="-16.5" width="265.796875" height="33"/><g class="label" style="" transform="translate(-125.3984375, -9)"><rect/><foreignObject width="250.796875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Previous screen in navigation stack</span></div></foreignObject></g></g><g class="node default context flowchart-label" id="flowchart-exitApp-17" data-node="true" data-id="exitApp" transform="translate(1021.28125, 339.40625)"><circle style="" rx="0" ry="0" r="36.40625" width="72.8125" height="33"/><g class="label" style="" transform="translate(-28.90625, -9)"><rect/><foreignObject width="57.8125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Exit app</span></div></foreignObject></g></g></g></g></g></svg>
+    </main>
+    <script>
+        const diagram = document.querySelector("#diagram svg");
+        const nodes = Array.from(diagram.querySelectorAll(".nodes .node[data-id]"));
+        const links = Array.from(diagram.querySelectorAll(".edgePaths .flowchart-link"));
+        const labels = Array.from(diagram.querySelectorAll(".edgeLabels > .edgeLabel"));
+        const status = document.getElementById("status");
+        const svgNamespace = "http://www.w3.org/2000/svg";
+
+        // Pantalla futura para las reseñas guardadas del perfil propio.
+        const profileSavedReviews = document.createElementNS(svgNamespace, "g");
+        profileSavedReviews.setAttribute("class", "node default future flowchart-label");
+        profileSavedReviews.setAttribute("data-node", "true");
+        profileSavedReviews.setAttribute("data-id", "profileSavedReviews");
+        profileSavedReviews.setAttribute("transform", "translate(225,560)");
+        const savedReviewsBox = document.createElementNS(svgNamespace, "rect");
+        savedReviewsBox.setAttribute("class", "basic label-container");
+        savedReviewsBox.setAttribute("x", "-82");
+        savedReviewsBox.setAttribute("y", "-16.5");
+        savedReviewsBox.setAttribute("width", "164");
+        savedReviewsBox.setAttribute("height", "33");
+        const savedReviewsLabelGroup = document.createElementNS(svgNamespace, "g");
+        savedReviewsLabelGroup.setAttribute("class", "label");
+        savedReviewsLabelGroup.setAttribute("transform", "translate(-74, -9)");
+        const savedReviewsLabel = document.createElementNS(svgNamespace, "foreignObject");
+        savedReviewsLabel.setAttribute("width", "148");
+        savedReviewsLabel.setAttribute("height", "18");
+        const savedReviewsLabelContainer = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        savedReviewsLabelContainer.style.cssText = "display: inline-block; white-space: nowrap;";
+        const savedReviewsLabelText = document.createElementNS("http://www.w3.org/1999/xhtml", "span");
+        savedReviewsLabelText.setAttribute("class", "nodeLabel");
+        savedReviewsLabelText.textContent = "Profile Saved Reviews";
+        savedReviewsLabelContainer.append(savedReviewsLabelText);
+        savedReviewsLabel.append(savedReviewsLabelContainer);
+        savedReviewsLabelGroup.append(savedReviewsLabel);
+        profileSavedReviews.append(savedReviewsBox, savedReviewsLabelGroup);
+        diagram.querySelector(".nodes")?.append(profileSavedReviews);
+        nodes.push(profileSavedReviews);
+
+        // El nombre de la pantalla aclara que esta búsqueda se limita a productos.
+        const searchProductsNode = nodes.find((node) => node.dataset.id === "search");
+        if (searchProductsNode) {
+            searchProductsNode.querySelector(".nodeLabel").textContent = "Search Products";
+            searchProductsNode.querySelector(".label")?.setAttribute("transform", "translate(-65, -9)");
+            searchProductsNode.querySelector("foreignObject")?.setAttribute("width", "130");
+            searchProductsNode.querySelector("rect.basic")?.setAttribute("x", "-72");
+            searchProductsNode.querySelector("rect.basic")?.setAttribute("width", "144");
+        }
+
+        // Relación futura directa desde el feed hacia la búsqueda de perfiles.
+        const feedToSearchProfile = document.createElementNS(svgNamespace, "path");
+        feedToSearchProfile.setAttribute("id", "L-feed-searchProfile-0");
+        feedToSearchProfile.setAttribute("class", "edge-thickness-normal edge-pattern-solid flowchart-link LS-feed LE-searchProfile");
+        feedToSearchProfile.setAttribute("d", "M1161.684,222.129 C1450,250 1810,420 2090.461,544.813");
+        feedToSearchProfile.setAttribute("style", "stroke:#198C36;stroke-width:3px;fill:none;");
+        diagram.querySelector(".edgePaths")?.append(feedToSearchProfile);
+        links.push(feedToSearchProfile);
+
+        const feedToSearchProfileLabel = document.createElementNS(svgNamespace, "g");
+        feedToSearchProfileLabel.setAttribute("class", "edgeLabel");
+        feedToSearchProfileLabel.setAttribute("transform", "translate(1600,340)");
+        const labelContentGroup = document.createElementNS(svgNamespace, "g");
+        labelContentGroup.setAttribute("class", "label");
+        labelContentGroup.setAttribute("transform", "translate(-42, -9)");
+        const labelContent = document.createElementNS(svgNamespace, "foreignObject");
+        labelContent.setAttribute("width", "84");
+        labelContent.setAttribute("height", "18");
+        const labelContainer = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        labelContainer.style.cssText = "display: inline-block; white-space: nowrap;";
+        const labelText = document.createElementNS("http://www.w3.org/1999/xhtml", "span");
+        labelText.setAttribute("class", "edgeLabel");
+        labelText.textContent = "Send Review";
+        labelContainer.append(labelText);
+        labelContent.append(labelContainer);
+        labelContentGroup.append(labelContent);
+        feedToSearchProfileLabel.append(labelContentGroup);
+        diagram.querySelector(".edgeLabels")?.append(feedToSearchProfileLabel);
+        labels.push(feedToSearchProfileLabel);
+
+        // Acción del botón de calificar disponible desde el detalle del producto.
+        const productToRateProduct = document.createElementNS(svgNamespace, "path");
+        productToRateProduct.setAttribute("id", "L-product-rateProduct-0");
+        productToRateProduct.setAttribute("class", "edge-thickness-normal edge-pattern-solid flowchart-link LS-product LE-rateProduct");
+        productToRateProduct.setAttribute("d", "M1398.488,763.313 C1200,735 950,735 755.137,763.313");
+        productToRateProduct.setAttribute("style", "stroke:#1565C0;stroke-width:3px;fill:none;");
+        diagram.querySelector(".edgePaths")?.append(productToRateProduct);
+        links.push(productToRateProduct);
+
+        const productToRateProductLabel = document.createElementNS(svgNamespace, "g");
+        productToRateProductLabel.setAttribute("class", "edgeLabel");
+        productToRateProductLabel.setAttribute("transform", "translate(1075,728)");
+        const productLabelContentGroup = document.createElementNS(svgNamespace, "g");
+        productLabelContentGroup.setAttribute("class", "label");
+        productLabelContentGroup.setAttribute("transform", "translate(-66, -9)");
+        const productLabelContent = document.createElementNS(svgNamespace, "foreignObject");
+        productLabelContent.setAttribute("width", "132");
+        productLabelContent.setAttribute("height", "18");
+        const productLabelContainer = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        productLabelContainer.style.cssText = "display: inline-block; white-space: nowrap;";
+        const productLabelText = document.createElementNS("http://www.w3.org/1999/xhtml", "span");
+        productLabelText.setAttribute("class", "edgeLabel");
+        productLabelText.textContent = "Rate Product button";
+        productLabelContainer.append(productLabelText);
+        productLabelContent.append(productLabelContainer);
+        productLabelContentGroup.append(productLabelContent);
+        productToRateProductLabel.append(productLabelContentGroup);
+        diagram.querySelector(".edgeLabels")?.append(productToRateProductLabel);
+        labels.push(productToRateProductLabel);
+
+        // Acción para abrir una reseña desde el perfil propio.
+        const ownProfileToReview = document.createElementNS(svgNamespace, "path");
+        ownProfileToReview.setAttribute("id", "L-ownProfile-review-0");
+        ownProfileToReview.setAttribute("class", "edge-thickness-normal edge-pattern-solid flowchart-link LS-ownProfile LE-review");
+        ownProfileToReview.setAttribute("d", "M97.703,460.313 C400,500 900,800 1239.594,850.604");
+        ownProfileToReview.setAttribute("style", "stroke:#1565C0;stroke-width:3px;fill:none;");
+        diagram.querySelector(".edgePaths")?.append(ownProfileToReview);
+        links.push(ownProfileToReview);
+
+        const ownProfileToReviewLabel = document.createElementNS(svgNamespace, "g");
+        ownProfileToReviewLabel.setAttribute("class", "edgeLabel");
+        ownProfileToReviewLabel.setAttribute("transform", "translate(700,720)");
+        const ownProfileLabelContentGroup = document.createElementNS(svgNamespace, "g");
+        ownProfileLabelContentGroup.setAttribute("class", "label");
+        ownProfileLabelContentGroup.setAttribute("transform", "translate(-50, -9)");
+        const ownProfileLabelContent = document.createElementNS(svgNamespace, "foreignObject");
+        ownProfileLabelContent.setAttribute("width", "100");
+        ownProfileLabelContent.setAttribute("height", "18");
+        const ownProfileLabelContainer = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        ownProfileLabelContainer.style.cssText = "display: inline-block; white-space: nowrap;";
+        const ownProfileLabelText = document.createElementNS("http://www.w3.org/1999/xhtml", "span");
+        ownProfileLabelText.setAttribute("class", "edgeLabel");
+        ownProfileLabelText.textContent = "Tap on review";
+        ownProfileLabelContainer.append(ownProfileLabelText);
+        ownProfileLabelContent.append(ownProfileLabelContainer);
+        ownProfileLabelContentGroup.append(ownProfileLabelContent);
+        ownProfileToReviewLabel.append(ownProfileLabelContentGroup);
+        diagram.querySelector(".edgeLabels")?.append(ownProfileToReviewLabel);
+        labels.push(ownProfileToReviewLabel);
+
+        // Acceso futuro desde el perfil a sus reseñas guardadas.
+        const ownProfileToSavedReviews = document.createElementNS(svgNamespace, "path");
+        ownProfileToSavedReviews.setAttribute("id", "L-ownProfile-profileSavedReviews-0");
+        ownProfileToSavedReviews.setAttribute("class", "edge-thickness-normal edge-pattern-solid flowchart-link LS-ownProfile LE-profileSavedReviews");
+        ownProfileToSavedReviews.setAttribute("d", "M97.703,460.313 C125,480 150,520 143,543.5");
+        ownProfileToSavedReviews.setAttribute("style", "stroke:#198C36;stroke-width:3px;fill:none;");
+        diagram.querySelector(".edgePaths")?.append(ownProfileToSavedReviews);
+        links.push(ownProfileToSavedReviews);
+
+        const ownProfileToSavedReviewsLabel = document.createElementNS(svgNamespace, "g");
+        ownProfileToSavedReviewsLabel.setAttribute("class", "edgeLabel");
+        ownProfileToSavedReviewsLabel.setAttribute("transform", "translate(125,500)");
+        const savedReviewsActionGroup = document.createElementNS(svgNamespace, "g");
+        savedReviewsActionGroup.setAttribute("class", "label");
+        savedReviewsActionGroup.setAttribute("transform", "translate(-49, -9)");
+        const savedReviewsAction = document.createElementNS(svgNamespace, "foreignObject");
+        savedReviewsAction.setAttribute("width", "98");
+        savedReviewsAction.setAttribute("height", "18");
+        const savedReviewsActionContainer = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        savedReviewsActionContainer.style.cssText = "display: inline-block; white-space: nowrap;";
+        const savedReviewsActionText = document.createElementNS("http://www.w3.org/1999/xhtml", "span");
+        savedReviewsActionText.setAttribute("class", "edgeLabel");
+        savedReviewsActionText.textContent = "Saved reviews";
+        savedReviewsActionContainer.append(savedReviewsActionText);
+        savedReviewsAction.append(savedReviewsActionContainer);
+        savedReviewsActionGroup.append(savedReviewsAction);
+        ownProfileToSavedReviewsLabel.append(savedReviewsActionGroup);
+        diagram.querySelector(".edgeLabels")?.append(ownProfileToSavedReviewsLabel);
+        labels.push(ownProfileToSavedReviewsLabel);
+
+        // La pantalla de reseñas guardadas solo permite regresar al perfil.
+        const savedReviewsToOwnProfile = document.createElementNS(svgNamespace, "path");
+        savedReviewsToOwnProfile.setAttribute("id", "L-profileSavedReviews-ownProfile-0");
+        savedReviewsToOwnProfile.setAttribute("class", "edge-thickness-normal edge-pattern-solid flowchart-link LS-profileSavedReviews LE-ownProfile");
+        savedReviewsToOwnProfile.setAttribute("d", "M143,576.5 C120,550 105,500 97.703,476.813");
+        savedReviewsToOwnProfile.setAttribute("style", "stroke:#C62828;stroke-width:3px;fill:none;");
+        diagram.querySelector(".edgePaths")?.append(savedReviewsToOwnProfile);
+        links.push(savedReviewsToOwnProfile);
+
+        const savedReviewsToOwnProfileLabel = document.createElementNS(svgNamespace, "g");
+        savedReviewsToOwnProfileLabel.setAttribute("class", "edgeLabel");
+        savedReviewsToOwnProfileLabel.setAttribute("transform", "translate(95,535)");
+        const systemBackLabelGroup = document.createElementNS(svgNamespace, "g");
+        systemBackLabelGroup.setAttribute("class", "label");
+        systemBackLabelGroup.setAttribute("transform", "translate(-46, -9)");
+        const systemBackLabel = document.createElementNS(svgNamespace, "foreignObject");
+        systemBackLabel.setAttribute("width", "92");
+        systemBackLabel.setAttribute("height", "18");
+        const systemBackLabelContainer = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        systemBackLabelContainer.style.cssText = "display: inline-block; white-space: nowrap;";
+        const systemBackLabelText = document.createElementNS("http://www.w3.org/1999/xhtml", "span");
+        systemBackLabelText.setAttribute("class", "edgeLabel");
+        systemBackLabelText.textContent = "System Back";
+        systemBackLabelContainer.append(systemBackLabelText);
+        systemBackLabel.append(systemBackLabelContainer);
+        systemBackLabelGroup.append(systemBackLabel);
+        savedReviewsToOwnProfileLabel.append(systemBackLabelGroup);
+        diagram.querySelector(".edgeLabels")?.append(savedReviewsToOwnProfileLabel);
+        labels.push(savedReviewsToOwnProfileLabel);
+
+        // La barra inferior es un control de navegación, por eso se representa como un círculo.
+        const bottomBarNode = nodes.find((node) => node.dataset.id === "bottomNav");
+        if (bottomBarNode) {
+            bottomBarNode.classList.remove("current");
+            bottomBarNode.querySelector(".nodeLabel").textContent = "BOTOM BAR";
+
+            const label = bottomBarNode.querySelector(".label");
+            label?.setAttribute("transform", "translate(-50, -9)");
+            const labelContainer = label?.querySelector("foreignObject");
+            labelContainer?.setAttribute("width", "100");
+            labelContainer?.style.setProperty("overflow", "visible");
+
+            const rectangle = bottomBarNode.querySelector("rect.basic");
+            if (rectangle) {
+                const circle = document.createElementNS(svgNamespace, "circle");
+                circle.setAttribute("class", "bottom-bar-circle");
+                circle.setAttribute("r", "58");
+                circle.style.setProperty("fill", "#C62828", "important");
+                circle.style.setProperty("stroke", "#7F1D1D", "important");
+                circle.style.setProperty("stroke-width", "3px", "important");
+                rectangle.replaceWith(circle);
+            }
+        }
+
+        const arrowDefinitions = document.createElementNS(svgNamespace, "defs");
+        diagram.prepend(arrowDefinitions);
+
+        const markerIdFor = (color) => "arrow-" + color.replace(/[^a-z0-9]/gi, "");
+        const markerFor = (color) => {
+            const markerId = markerIdFor(color);
+            const existingMarker = document.getElementById(markerId);
+
+            if (existingMarker) return markerId;
+
+            const marker = document.createElementNS(svgNamespace, "marker");
+            marker.setAttribute("id", markerId);
+            marker.setAttribute("viewBox", "0 0 10 10");
+            marker.setAttribute("refX", "10");
+            marker.setAttribute("refY", "5");
+            marker.setAttribute("markerWidth", "8");
+            marker.setAttribute("markerHeight", "8");
+            marker.setAttribute("orient", "auto");
+
+            const tip = document.createElementNS(svgNamespace, "path");
+            tip.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+            tip.setAttribute("fill", color);
+            tip.setAttribute("stroke", color);
+            tip.style.setProperty("fill", color, "important");
+            tip.style.setProperty("stroke", color, "important");
+            marker.setAttribute("fill", color);
+            marker.setAttribute("stroke", color);
+            marker.style.setProperty("fill", color, "important");
+            marker.style.setProperty("stroke", color, "important");
+            marker.append(tip);
+            arrowDefinitions.append(marker);
+            return markerId;
+        };
+
+        links.forEach((link) => {
+            const color = getComputedStyle(link).stroke;
+            link.setAttribute("marker-end", "url(#" + markerFor(color) + ")");
+        });
+
+        // Mermaid emite las etiquetas en el mismo orden que las rutas de las flechas.
+        const labelToLink = new Map(labels.map((label, index) => [label, links[index]]));
+        labels
+            .filter((label) => label.textContent.trim() === "Bottom bar")
+            .forEach((label) => label.style.setProperty("display", "none", "important"));
+
+        const relatedNodeId = (link, prefix) => {
+            const className = Array.from(link.classList).find((name) => name.startsWith(prefix));
+            return className ? className.slice(prefix.length) : null;
+        };
+
+        const setLabelVisibility = (label, isRelated) => {
+            const container = label.querySelector("div");
+            const text = label.querySelector("span");
+            const opacity = isRelated ? "1" : "0.02";
+
+            label.style.setProperty("opacity", opacity, "important");
+            label.querySelector("foreignObject")?.style.setProperty("opacity", opacity, "important");
+
+            if (isRelated) {
+                container?.style.setProperty("background", "#fde047", "important");
+                container?.style.setProperty("border", "2px solid #ca8a04", "important");
+                container?.style.setProperty("border-radius", "5px", "important");
+                container?.style.setProperty("padding", "3px 6px", "important");
+                container?.style.setProperty("box-shadow", "0 2px 5px rgba(15, 23, 42, 0.45)", "important");
+                text?.style.setProperty("color", "#111827", "important");
+                text?.style.setProperty("fill", "#111827", "important");
+                text?.style.setProperty("font-weight", "800", "important");
+                text?.style.setProperty("opacity", "1", "important");
+            } else {
+                ["background", "border", "border-radius", "padding", "box-shadow"].forEach((property) => container?.style.removeProperty(property));
+                ["color", "fill", "font-weight", "opacity"].forEach((property) => text?.style.removeProperty(property));
+            }
+        };
+
+        const clearFocus = () => {
+            diagram.classList.remove("is-focused");
+            [...nodes, ...links].forEach((element) => element.classList.remove("is-related"));
+            labels.forEach((label) => {
+                label.classList.remove("is-related");
+                label.style.removeProperty("opacity");
+                label.querySelector("foreignObject")?.style.removeProperty("opacity");
+                const container = label.querySelector("div");
+                const text = label.querySelector("span");
+                ["background", "border", "border-radius", "padding", "box-shadow"].forEach((property) => container?.style.removeProperty(property));
+                ["color", "fill", "font-weight", "opacity"].forEach((property) => text?.style.removeProperty(property));
+            });
+            if (status) status.textContent = "";
+        };
+
+        const focusNode = (nodeId) => {
+            const relatedLinks = links.filter((link) =>
+                relatedNodeId(link, "LS-") === nodeId
+            );
+            const connectedNodeIds = new Set([nodeId]);
+
+            relatedLinks.forEach((link) => {
+                connectedNodeIds.add(relatedNodeId(link, "LE-"));
+            });
+
+            diagram.classList.add("is-focused");
+            nodes.forEach((node) => node.classList.toggle("is-related", connectedNodeIds.has(node.dataset.id)));
+            links.forEach((link) => link.classList.toggle("is-related", relatedLinks.includes(link)));
+            labels.forEach((label) => {
+                const isRelated = relatedLinks.includes(labelToLink.get(label));
+                label.classList.toggle("is-related", isRelated);
+                setLabelVisibility(label, isRelated);
+            });
+            if (status) status.textContent = relatedLinks.length + " outgoing navigation action(s) for " + nodeId + ".";
+        };
+
+        nodes.forEach((node) => {
+            node.addEventListener("mouseenter", () => focusNode(node.dataset.id));
+            node.addEventListener("focus", () => focusNode(node.dataset.id));
+            node.setAttribute("tabindex", "0");
+        });
+
+        diagram.addEventListener("mouseleave", clearFocus);
+
+        const initialNodeId = new URLSearchParams(window.location.search).get("focus");
+        if (nodes.some((node) => node.dataset.id === initialNodeId)) focusNode(initialNodeId);
+    </script>
+</body>
+</html>

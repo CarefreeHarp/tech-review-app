@@ -12,29 +12,43 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 | Sign-in screen | Registration screen |
 | --- | --- |
-| <img src="images/AppLoginScreen.png" alt="Devicers sign-in screen" width="280"> | <img src="images/AppRegisterScreen.png" alt="Devicers registration screen" width="280"> |
+| <img src="ReadMeAssets/AppLoginScreen.png" alt="Devicers sign-in screen" width="280"> | <img src="ReadMeAssets/AppRegisterScreen.png" alt="Devicers registration screen" width="280"> |
 
 | Review screen | Feed screen |
 | --- | --- |
-| <img src="images/AppReviewScreen.png" alt="Devicers review detail screen" width="280"> | <img src="images/AppFeedScreen.png" alt="Devicers feed screen" width="280"> |
+| <img src="ReadMeAssets/AppReviewScreen.png" alt="Devicers review detail screen" width="280"> | <img src="ReadMeAssets/AppFeedScreen.png" alt="Devicers feed screen" width="280"> |
 
 | Search screen | Rate product screen |
 | --- | --- |
-| <img src="images/AppSearchScreen.png" alt="Devicers search screen" width="280"> | <img src="images/AppRateProductScreen.png" alt="Devicers rate product screen" width="280"> |
+| <img src="ReadMeAssets/AppSearchScreen.png" alt="Devicers search screen" width="280"> | <img src="ReadMeAssets/AppRateProductScreen.png" alt="Devicers rate product screen" width="280"> |
 
 | Notifications screen | Profile screen |
 | --- | --- |
-| <img src="images/AppNotificationsScreen.png" alt="Devicers notifications screen" width="280"> | <img src="images/AppProfileScreen.png" alt="Devicers profile screen" width="280"> |
+| <img src="ReadMeAssets/AppNotificationsScreen.png" alt="Devicers notifications screen" width="280"> | <img src="ReadMeAssets/AppProfileScreen.png" alt="Devicers profile screen" width="280"> |
 
 | Product screen | Create review screen |
 | --- | --- |
-| <img src="images/AppProductScreen.png" alt="Devicers product detail screen" width="280"> | <img src="images/AppCreateReviewScreen.png" alt="Devicers create review screen" width="280"> |
+| <img src="ReadMeAssets/AppProductScreen.png" alt="Devicers product detail screen" width="280"> | <img src="ReadMeAssets/AppCreateReviewScreen.png" alt="Devicers create review screen" width="280"> |
 
 ### Logos
 
 <p align="center">
-  <img src="images/Logues.png" alt="Versiones clara y oscura del logo de Devicers" width="720">
+  <img src="ReadMeAssets/Logues.png" alt="Versiones clara y oscura del logo de Devicers" width="720">
 </p>
+
+## Sprint 4 — Navigation map
+
+[Open the interactive navigation map](ReadMeAssets/Sprint4NavigationDiagram.html)
+
+### Navigation conventions
+
+- **Red routes** represent System Back behavior and Bottom bar navigation.
+- **Blue routes** represent navigation triggered by a screen button or interactive element.
+- **Purple routes** are the two special detail relationships: **Feed → Review** when a review is selected, and **Review → Product** when the product header is selected.
+- **Green routes and screens** are pending design or implementation: Found Products, Request Product, Own Profile, Search Profile, and Profile Search Results.
+- The Bottom bar leads to Home / Feed, Search, Create Review, Activity / Notifications, and Own Profile. Rate Product does not display it.
+- System Back exits the application from Home / Feed. It returns to the prior entry in the navigation stack from the other screens. Search has no visual Back button, but still supports System Back.
+- Publishing from Rate Product opens the newly created Review using its `reviewId`. The Rate Product destination must be removed from the stack, so System Back from that Review returns to Home / Feed.
 
 ## Data model
 
@@ -42,28 +56,13 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 > The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
 
-![Devicers object-oriented class diagram](images/ClassDiagram.svg)
+![Devicers object-oriented class diagram](ReadMeAssets/ClassDiagram.svg)
 
 ### Entity-relationship diagram
 
 > The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
 
-![Devicers entity-relationship diagram](images/DBdiagram.svg)
-
-## Sprint 1
-
-- **Course:** Mobile Computing — Pontificia Universidad Javeriana.
-- **Professor:** Juan Sebastián Angarita Torres.
-- **Date:** August 2, 2026.
-- **Team:** Daniel Felipe Ramírez Vargas, Edwin Esteban Barreto Gaitán, and Guillermo Andrés Aponte Cárdenas.
-
-### Deliverables
-
-- Functional requirements document.
-- Database entity-relationship diagram.
-- Object-oriented class diagram.
-- Logo, color palette, and application name definition.
-- Four initial screens.
+![Devicers entity-relationship diagram](ReadMeAssets/DBdiagram.svg)
 
 ## Functional requirements
 
