@@ -36,13 +36,13 @@ import com.example.devicersapp.R
 private val DarkColorScheme = darkColorScheme(
 
     // Color principal de Devicers
-    primary = DarkDevicersColors.primaryYellow,
+    primary = DarkDevicersColors.primary,
 
-    // Texto o contenido sobre el amarillo
+    // Texto o contenido sobre el burgundy
     onPrimary = DarkDevicersColors.textOnPrimary,
 
-    // Amarillo secundario
-    secondary = DarkDevicersColors.softYellow,
+    // Acento rosa suave
+    secondary = DarkDevicersColors.primarySoft,
 
     onSecondary = DarkDevicersColors.textOnPrimary,
 
@@ -79,13 +79,13 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
 
     // Color principal de Devicers
-    primary = LightDevicersColors.primaryYellow,
+    primary = LightDevicersColors.primary,
 
-    // Texto o contenido sobre el amarillo
+    // Texto o contenido sobre el burgundy
     onPrimary = LightDevicersColors.textOnPrimary,
 
-    // Amarillo secundario
-    secondary = LightDevicersColors.softYellow,
+    // Acento rosa suave
+    secondary = LightDevicersColors.primarySoft,
 
     onSecondary = LightDevicersColors.textOnPrimary,
 
@@ -189,8 +189,11 @@ fun DevicersDarkThemePreview() {
 private fun ThemeColorPalettePreview(modifier: Modifier = Modifier) {
     val colors = LocalDevicersColors.current
     val colorItems = listOf(
-        ThemeColorPreviewItem(R.string.theme_color_primary_yellow, colors.primaryYellow),
-        ThemeColorPreviewItem(R.string.theme_color_soft_yellow, colors.softYellow),
+        ThemeColorPreviewItem(R.string.theme_color_primary, colors.primary),
+        ThemeColorPreviewItem(R.string.theme_color_primary_soft, colors.primarySoft),
+        ThemeColorPreviewItem(R.string.theme_color_primary_text, colors.primaryText),
+        ThemeColorPreviewItem(R.string.theme_color_selection, colors.selection),
+        ThemeColorPreviewItem(R.string.theme_color_text_on_selection, colors.textOnSelection),
         ThemeColorPreviewItem(R.string.theme_color_background, colors.background),
         ThemeColorPreviewItem(R.string.theme_color_surface, colors.surface),
         ThemeColorPreviewItem(R.string.theme_color_surface_secondary, colors.surfaceSecondary),
@@ -198,6 +201,12 @@ private fun ThemeColorPalettePreview(modifier: Modifier = Modifier) {
         ThemeColorPreviewItem(R.string.theme_color_text_secondary, colors.textSecondary),
         ThemeColorPreviewItem(R.string.theme_color_text_on_primary, colors.textOnPrimary),
         ThemeColorPreviewItem(R.string.theme_color_border, colors.border),
+        ThemeColorPreviewItem(R.string.theme_color_rating, colors.rating),
+        ThemeColorPreviewItem(R.string.theme_color_rating_track, colors.ratingTrack),
+        ThemeColorPreviewItem(R.string.theme_color_avatar, colors.avatar),
+        ThemeColorPreviewItem(R.string.theme_color_like_badge, colors.likeBadge),
+        ThemeColorPreviewItem(R.string.theme_color_comment_badge, colors.commentBadge),
+        ThemeColorPreviewItem(R.string.theme_color_follow_badge, colors.followBadge),
         ThemeColorPreviewItem(R.string.theme_color_error, colors.error)
     )
 

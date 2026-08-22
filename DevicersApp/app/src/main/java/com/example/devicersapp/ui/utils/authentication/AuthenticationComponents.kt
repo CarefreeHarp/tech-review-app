@@ -4,7 +4,9 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -22,14 +25,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
@@ -55,9 +59,9 @@ fun PrimaryButton(
     Button(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = LocalDevicersColors.current.primaryYellow,
+            containerColor = LocalDevicersColors.current.primary,
             contentColor = LocalDevicersColors.current.textOnPrimary
         ),
         contentPadding = PaddingValues(0.dp)
@@ -84,6 +88,8 @@ fun AuthenticationHeader(modifier: Modifier = Modifier) {
 
     Row(
         modifier = modifier.fillMaxWidth(),
+        // El Figma editorial centra la marca en el encabezado de todas las pantallas.
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -113,7 +119,7 @@ fun ScreenTitle(
             color = LocalDevicersColors.current.textPrimary,
             style = AuthenticationTitleText
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = stringResource(descriptionResId),
             color = LocalDevicersColors.current.textSecondary,
@@ -159,7 +165,7 @@ fun AuthenticationField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(12.dp),
             placeholder = {
                 Text(
                     text = placeholderResId?.let { stringResource(it) }.orEmpty(),
@@ -178,7 +184,8 @@ fun AuthenticationField(
                             contentDescription = stringResource(
                                 if (isPasswordVisible) R.string.hide_password else R.string.show_password
                             ),
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.dp),
+                            tint = LocalDevicersColors.current.textSecondary
                         )
                     }
                 }
@@ -194,11 +201,12 @@ fun AuthenticationField(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = LocalDevicersColors.current.textPrimary,
                 unfocusedTextColor = LocalDevicersColors.current.textPrimary,
-                focusedContainerColor = LocalDevicersColors.current.surfaceSecondary,
-                unfocusedContainerColor = LocalDevicersColors.current.surfaceSecondary,
-                focusedBorderColor = LocalDevicersColors.current.primaryYellow,
+                // Los campos se apoyan en la superficie principal, igual que las tarjetas del Figma.
+                focusedContainerColor = LocalDevicersColors.current.surface,
+                unfocusedContainerColor = LocalDevicersColors.current.surface,
+                focusedBorderColor = LocalDevicersColors.current.primary,
                 unfocusedBorderColor = LocalDevicersColors.current.border,
-                cursorColor = LocalDevicersColors.current.primaryYellow
+                cursorColor = LocalDevicersColors.current.primary
             )
         )
     }
@@ -214,38 +222,55 @@ fun AuthenticationDividerText(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(R.string.continue_with),
         modifier = modifier,
-        color = LocalDevicersColors.current.textSecondary,
+        // El acento acompaña a las alternativas sociales que introduce este texto.
+        color = LocalDevicersColors.current.primaryText,
         style = AuthenticationSupportText
     )
 }
 
 /**
- * Renderiza un botón social con el ícono y la descripción proporcionados.
+ * Renderiza un botón social con su ícono, su etiqueta y su descripción accesible.
  *
  * @param iconResId Recurso del ícono social.
+ * @param labelResId Recurso de la etiqueta corta mostrada junto al ícono.
  * @param contentDescriptionResId Recurso de texto usado como descripción accesible.
  * @param modifier Modificador aplicado al botón.
  */
 @Composable
 fun SocialButton(
     @DrawableRes iconResId: Int,
+    @StringRes labelResId: Int,
     @StringRes contentDescriptionResId: Int,
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalDevicersColors.current
     Button(
         onClick = {},
-        modifier = modifier.height(34.dp),
-        shape = RoundedCornerShape(10.dp),
+        modifier = modifier.height(44.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = LocalDevicersColors.current.surface,
-            contentColor = LocalDevicersColors.current.textPrimary
-        )
+            containerColor = colors.surface,
+            contentColor = colors.primaryText
+        ),
+        border = BorderStroke(1.dp, colors.border),
+        contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
         Icon(
             painter = painterResource(iconResId),
             contentDescription = stringResource(contentDescriptionResId),
-            tint = LocalDevicersColors.current.textPrimary,
-            modifier = Modifier.size(20.dp)
+            // El acento distingue las alternativas sociales del formulario principal.
+            tint = colors.primaryText,
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = stringResource(labelResId),
+            color = colors.primaryText,
+            style = AuthenticationSupportText,
+            fontWeight = FontWeight.Medium,
+            // Las etiquetas conviven en una sola fila, así que no deben partirse.
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -259,11 +284,26 @@ fun SocialButton(
 fun SocialButtons(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        SocialButton(R.drawable.google, R.string.google_sign_in, Modifier.weight(1f))
-        SocialButton(R.drawable.facebook_app_symbol, R.string.facebook_sign_in, Modifier.weight(1f))
-        SocialButton(R.drawable.phone_call, R.string.phone_sign_in, Modifier.weight(1f))
+        SocialButton(
+            iconResId = R.drawable.google,
+            labelResId = R.string.social_google,
+            contentDescriptionResId = R.string.google_sign_in,
+            modifier = Modifier.weight(1f)
+        )
+        SocialButton(
+            iconResId = R.drawable.facebook_app_symbol,
+            labelResId = R.string.social_facebook,
+            contentDescriptionResId = R.string.facebook_sign_in,
+            modifier = Modifier.weight(1f)
+        )
+        SocialButton(
+            iconResId = R.drawable.phone_call,
+            labelResId = R.string.social_phone,
+            contentDescriptionResId = R.string.phone_sign_in,
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
@@ -280,19 +320,27 @@ fun AuthenticationFooter(
     @StringRes actionResId: Int,
     modifier: Modifier = Modifier
 ) {
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    val colors = LocalDevicersColors.current
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        // El pie se centra bajo las alternativas sociales, como en el Figma editorial.
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
             text = stringResource(textResId),
-            color = LocalDevicersColors.current.textPrimary,
+            color = colors.primaryText,
             style = AuthenticationSupportText
         )
-        TextButton(onClick = {}) {
-            Text(
-                text = stringResource(actionResId),
-                color = LocalDevicersColors.current.textPrimary,
-                style = AuthenticationSupportText
-            )
-        }
+        Spacer(modifier = Modifier.width(5.dp))
+        Text(
+            text = stringResource(actionResId),
+            // El acento en negrita distingue la acción del mensaje que la acompaña.
+            modifier = Modifier.clickable { },
+            color = colors.primaryText,
+            style = AuthenticationSupportText,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -341,7 +389,11 @@ fun AuthenticationDividerTextPreview() {
 @Composable
 @Preview(showBackground = true)
 fun SocialButtonPreview() {
-    SocialButton(R.drawable.google, R.string.google_sign_in)
+    SocialButton(
+        iconResId = R.drawable.google,
+        labelResId = R.string.social_google,
+        contentDescriptionResId = R.string.google_sign_in
+    )
 }
 
 /** Muestra una vista previa de las acciones sociales. */

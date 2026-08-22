@@ -1,7 +1,6 @@
 package com.example.devicersapp.ui.screens.review
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,7 +24,7 @@ import com.example.devicersapp.ui.models.ReplyContent
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.review.components.ReplyComposer
 import com.example.devicersapp.ui.screens.review.components.ReplyList
-import com.example.devicersapp.ui.screens.review.components.ReviewDetailCard
+import com.example.devicersapp.ui.screens.review.components.ReviewDetail
 import com.example.devicersapp.ui.screens.review.components.ReviewProductSummary
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
@@ -82,18 +82,22 @@ fun ReviewScreenContent(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 18.dp)
+                .padding(horizontal = 20.dp)
         ) {
             ReviewProductSummary(product = product)
-            ReviewDetailCard(review = review, modifier = Modifier.padding(top = 12.dp))
-            Spacer(modifier = Modifier.height(28.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(LocalDevicersColors.current.border)
+
+            Spacer(modifier = Modifier.height(22.dp))
+            ReviewDetail(review = review)
+
+            Spacer(modifier = Modifier.height(24.dp))
+            // El divisor separa la reseña de la conversación que generó.
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = LocalDevicersColors.current.border
             )
-            ReplyList(replies = replies, modifier = Modifier.padding(vertical = 20.dp))
+
+            ReplyList(replies = replies, modifier = Modifier.padding(top = 24.dp, bottom = 20.dp))
         }
         ReplyComposer(
             value = replyText,
@@ -104,11 +108,22 @@ fun ReviewScreenContent(
     }
 }
 
-/** Muestra una vista previa de la pantalla completa de detalle de reseña. */
+/** Muestra una vista previa del detalle de una reseña en el tema claro. */
 @Composable
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 1000)
 fun ReviewScreenPreview() {
-    DevicersAppTheme {
+    DevicersAppTheme(darkTheme = false) {
+        DevicersScaffold(topBarNumber = 4) { innerPadding ->
+            ReviewScreen(modifier = Modifier.padding(innerPadding))
+        }
+    }
+}
+
+/** Muestra una vista previa del detalle de una reseña en el tema oscuro. */
+@Composable
+@Preview(showBackground = true, heightDp = 1000)
+fun ReviewScreenDarkPreview() {
+    DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 4) { innerPadding ->
             ReviewScreen(modifier = Modifier.padding(innerPadding))
         }

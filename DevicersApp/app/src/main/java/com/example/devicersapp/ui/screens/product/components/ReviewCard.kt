@@ -20,17 +20,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ReviewContent
+import com.example.devicersapp.ui.theme.CardHighlightText
+import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.ReviewContentText
-import com.example.devicersapp.ui.theme.RatingStarsText
-import com.example.devicersapp.ui.theme.ReactionCountText
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
-import com.example.devicersapp.ui.utils.rating.ratingStars
+import com.example.devicersapp.ui.utils.rating.RatingStars
 
 /**
  * Muestra una tarjeta de reseña con avatar, autor, calificación y cantidad de me gusta.
@@ -43,11 +44,13 @@ fun ReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
+            // La sombra suave despega la tarjeta del fondo, como en el diseño editorial.
+            .shadow(elevation = 6.dp, shape = RoundedCornerShape(16.dp))
             .background(
                 color = LocalDevicersColors.current.surface,
-                shape = RoundedCornerShape(14.dp)
+                shape = RoundedCornerShape(16.dp)
             )
-            .padding(14.dp)
+            .padding(16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -63,14 +66,11 @@ fun ReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = stringResource(review.authorResId),
-                    style = MaterialTheme.typography.labelLarge,
+                    style = CardHighlightText,
                     color = LocalDevicersColors.current.textPrimary
                 )
-                Text(
-                    text = ratingStars(review.rating),
-                    style = RatingStarsText,
-                    color = LocalDevicersColors.current.primaryYellow
-                )
+                Spacer(modifier = Modifier.height(3.dp))
+                RatingStars(rating = review.rating)
             }
         }
 
@@ -91,15 +91,15 @@ fun ReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.like_icon),
-                contentDescription = null,
-                tint = LocalDevicersColors.current.textPrimary,
-                modifier = Modifier.size(18.dp)
+                contentDescription = stringResource(R.string.review_action_like),
+                tint = LocalDevicersColors.current.textSecondary,
+                modifier = Modifier.size(17.dp)
             )
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = review.likes.toString(),
-                style = ReactionCountText,
-                color = LocalDevicersColors.current.textSecondary,
+                style = CardHighlightText,
+                color = LocalDevicersColors.current.textPrimary
             )
         }
     }
@@ -109,13 +109,16 @@ fun ReviewCard(review: ReviewContent, modifier: Modifier = Modifier) {
 @Composable
 @Preview(showBackground = true)
 fun ReviewCardPreview() {
-    ReviewCard(
-        ReviewContent(
-            avatarResId = R.drawable.profile_avatar_01,
-            authorResId = R.string.review_card_username,
-            rating = 5,
-            textResId = R.string.review_card_text,
-            likes = 23
+    DevicersAppTheme {
+        ReviewCard(
+            ReviewContent(
+                avatarResId = R.drawable.profile_avatar_01,
+                authorResId = R.string.review_card_username,
+                rating = 5,
+                textResId = R.string.review_card_text,
+                likes = 23
+            ),
+            modifier = Modifier.padding(16.dp)
         )
-    )
+    }
 }
