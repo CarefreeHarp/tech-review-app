@@ -318,12 +318,13 @@ fun SocialButtons(modifier: Modifier = Modifier) {
 fun AuthenticationFooter(
     @StringRes textResId: Int,
     @StringRes actionResId: Int,
+    onActionClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
+
     Row(
         modifier = modifier.fillMaxWidth(),
-        // El pie se centra bajo las alternativas sociales, como en el Figma editorial.
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -332,11 +333,12 @@ fun AuthenticationFooter(
             color = colors.primaryText,
             style = AuthenticationSupportText
         )
+
         Spacer(modifier = Modifier.width(5.dp))
+
         Text(
             text = stringResource(actionResId),
-            // El acento en negrita distingue la acción del mensaje que la acompaña.
-            modifier = Modifier.clickable { },
+            modifier = Modifier.clickable(onClick = onActionClick),
             color = colors.primaryText,
             style = AuthenticationSupportText,
             fontWeight = FontWeight.Bold

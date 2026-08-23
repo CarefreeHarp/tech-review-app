@@ -22,6 +22,7 @@ import com.example.devicersapp.ui.screens.review.ReviewScreen
 import com.example.devicersapp.ui.screens.search_product.SearchProductScreen
 import com.example.devicersapp.ui.screens.search_profile.SearchProfileScreen
 
+
 /** Representa de forma segura las rutas que componen la navegación principal de la aplicación. */
 sealed class AppDestination(val route: String) {
     data object Login : AppDestination("login")
@@ -63,15 +64,33 @@ fun AppNavigation(
         composable(route = AppDestination.Login.route) {
             AccessScreen(
                 onSignInClick = {
-                    navController.navigate(AppDestination.Home.route)
+                    navController.navigate(AppDestination.Home.route) {
+                        popUpTo(AppDestination.Login.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onCreateAccountClick = {
+                    navController.navigate(AppDestination.Register.route)
                 }
             )
         }
         composable(route = AppDestination.Home.route) {
-            HomeScreen()
+            HomeScreen(
+                onReviewClick = {
+                    navController.navigate(AppDestination.Review.route)
+                }
+            )
         }
         composable(route = AppDestination.SearchProduct.route) {
-            SearchProductScreen()
+            SearchProductScreen(
+                onApplyFilters = {
+                    navController.navigate(AppDestination.FoundProducts.route)
+                },
+                onUsersClick = {
+                    navController.navigate(AppDestination.SearchProfile.route)
+                }
+            )
         }
         composable(route = AppDestination.CreateReview.route) {
             CreateReviewScreen()
@@ -83,19 +102,45 @@ fun AppNavigation(
             OwnProfileScreen()
         }
         composable(route = AppDestination.Register.route) {
-            RegisterScreen()
+            RegisterScreen(
+                onCreateAccountClick = {
+                    navController.navigate(AppDestination.Home.route) {
+                        popUpTo(AppDestination.Login.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onSignInClick = {
+                    navController.popBackStack()
+                }
+            )
         }
         composable(route = AppDestination.SearchProfile.route) {
-            SearchProfileScreen()
+            SearchProfileScreen(
+                onApplyFilters = {
+                    navController.navigate(AppDestination.ProfileSearchResults.route)
+                },
+                onProductsClick = {
+                    navController.navigate(AppDestination.SearchProduct.route)
+                }
+            )
         }
         composable(route = AppDestination.FoundProducts.route) {
-            FoundProductsScreen()
+            FoundProductsScreen(
+                onProductClick = {
+                    navController.navigate(AppDestination.Product.route)
+                }
+            )
         }
         composable(route = AppDestination.ProfileSearchResults.route) {
             ProfileSearchResultsScreen()
         }
         composable(route = AppDestination.Product.route) {
-            ProductScreen()
+            ProductScreen(
+                onRateClick = {
+                    navController.navigate(AppDestination.RateProduct.route)
+                }
+            )
         }
         composable(route = AppDestination.RateProduct.route) {
             RateProductScreen()

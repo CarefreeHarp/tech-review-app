@@ -39,7 +39,11 @@ private val PasswordRegex = Regex("^(?=(?:.*\\d){3,}).{6,}$")
 
 /** Renderiza la pantalla de registro, donde se crea el perfil de la comunidad. */
 @Composable
-fun RegisterScreen(modifier: Modifier = Modifier) {
+fun RegisterScreen(
+    modifier: Modifier = Modifier,
+    onCreateAccountClick: () -> Unit = {},
+    onSignInClick: () -> Unit = {}
+) {
     // Estado elevado del formulario para que los campos compartidos no conserven datos de negocio.
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -51,7 +55,8 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
     // Las validaciones se recalculan desde el estado actual sin convertirse en estado duplicado.
     val isEmailValid = email.matches(EmailRegex)
     val isPasswordValid = password.matches(PasswordRegex)
-    val isConfirmationPasswordValid = confirmationPassword.isNotEmpty() && password == confirmationPassword
+    val isConfirmationPasswordValid =
+        confirmationPassword.isNotEmpty() && password == confirmationPassword
 
     RegisterScreenContent(
         username = username,
@@ -68,7 +73,18 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
         onPasswordChange = { password = it },
         onConfirmationPasswordChange = { confirmationPassword = it },
         onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
-        onCreateAccount = { showValidationWarning = true },
+        onCreateAccount = {
+            showValidationWarning = true
+
+            if (
+                isEmailValid &&
+                isPasswordValid &&
+                isConfirmationPasswordValid
+            ) {
+                onCreateAccountClick()
+            }
+        },
+        onSignInClick = onSignInClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -93,6 +109,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
  * @param onConfirmationPasswordChange Acción que solicita actualizar la confirmación.
  * @param onPasswordVisibilityChange Acción que solicita alternar la visibilidad de la contraseña.
  * @param onCreateAccount Acción que solicita validar el formulario de registro.
+ * @param onSignInClick Acción solicitada para volver a la pantalla de inicio de sesión.
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
@@ -112,6 +129,7 @@ fun RegisterScreenContent(
     onConfirmationPasswordChange: (String) -> Unit,
     onPasswordVisibilityChange: () -> Unit,
     onCreateAccount: () -> Unit,
+    onSignInClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -122,22 +140,32 @@ fun RegisterScreenContent(
     ) {
         // La marca se muestra desde TopBar5, gestionada por el Scaffold compartido.
         Spacer(modifier = Modifier.height(36.dp))
-        ScreenTitle(R.string.create_account_title, R.string.create_account_description)
+
+        ScreenTitle(
+            R.string.create_account_title,
+            R.string.create_account_description
+        )
+
         Spacer(modifier = Modifier.height(32.dp))
+
         AuthenticationField(
             labelResId = R.string.username,
             placeholderResId = R.string.username_placeholder,
             value = username,
             onValueChange = onUsernameChange
         )
+
         Spacer(modifier = Modifier.height(18.dp))
+
         AuthenticationField(
             labelResId = R.string.email,
             placeholderResId = R.string.email_placeholder,
             value = email,
             onValueChange = onEmailChange
         )
+
         Spacer(modifier = Modifier.height(18.dp))
+
         AuthenticationField(
             labelResId = R.string.password,
             placeholderResId = R.string.password_placeholder,
@@ -147,7 +175,9 @@ fun RegisterScreenContent(
             isPasswordVisible = isPasswordVisible,
             onPasswordVisibilityChange = onPasswordVisibilityChange
         )
+
         Spacer(modifier = Modifier.height(18.dp))
+
         AuthenticationField(
             labelResId = R.string.confirm_password,
             placeholderResId = R.string.password_placeholder,
@@ -157,30 +187,51 @@ fun RegisterScreenContent(
             isPasswordVisible = isPasswordVisible,
             onPasswordVisibilityChange = onPasswordVisibilityChange
         )
+
         Spacer(modifier = Modifier.height(24.dp))
+
         // La advertencia se muestra únicamente después de que el usuario intenta crear la cuenta.
-        if (showValidationWarning && (
-                !isEmailValid || !isPasswordValid || !isConfirmationPasswordValid
-            )
+        if (
+            showValidationWarning &&
+            (
+                    !isEmailValid ||
+                            !isPasswordValid ||
+                            !isConfirmationPasswordValid
+                    )
         ) {
             RegisterValidationWarning(
                 isEmailValid = isEmailValid,
                 isPasswordValid = isPasswordValid,
                 isConfirmationPasswordValid = isConfirmationPasswordValid
             )
+
             Spacer(modifier = Modifier.height(12.dp))
         }
+
         PrimaryButton(
             textResId = R.string.create_account,
-            modifier = Modifier.fillMaxWidth().height(52.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
             onClick = onCreateAccount
         )
+
         Spacer(modifier = Modifier.height(26.dp))
+
         AuthenticationDividerText()
+
         Spacer(modifier = Modifier.height(18.dp))
+
         SocialButtons()
+
         Spacer(modifier = Modifier.height(28.dp))
-        AuthenticationFooter(R.string.already_have_account, R.string.sign_in)
+
+        AuthenticationFooter(
+            textResId = R.string.already_have_account,
+            actionResId = R.string.sign_in,
+            onActionClick = onSignInClick
+        )
+
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
@@ -191,7 +242,9 @@ fun RegisterScreenContent(
 fun RegisterScreenPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            RegisterScreen(modifier = Modifier.padding(innerPadding))
+            RegisterScreen(
+                modifier = Modifier.padding(innerPadding)
+            )
         }
     }
 }
@@ -202,7 +255,9 @@ fun RegisterScreenPreview() {
 fun RegisterScreenDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            RegisterScreen(modifier = Modifier.padding(innerPadding))
+            RegisterScreen(
+                modifier = Modifier.padding(innerPadding)
+            )
         }
     }
 }
