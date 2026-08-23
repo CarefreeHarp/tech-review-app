@@ -52,12 +52,12 @@ object NavigationLogic {
             showBottomBar = true,
             topBarNumber = 7
         )
-        AppDestination.Product.route -> NavigationUiConfiguration(
+        "${AppDestination.Product.route}/{productNameResId}" -> NavigationUiConfiguration(
             selectedItem = AppDestination.SearchProduct.route,
             showBottomBar = true,
             topBarNumber = 6
         )
-        AppDestination.RateProduct.route -> NavigationUiConfiguration(topBarNumber = 2)
+        "${AppDestination.RateProduct.route}/{productId}" -> NavigationUiConfiguration(topBarNumber = 2)
         AppDestination.Review.route -> NavigationUiConfiguration(topBarNumber = 4)
         AppDestination.RequestProduct.route -> NavigationUiConfiguration(
             selectedItem = AppDestination.CreateReview.route,
@@ -69,17 +69,17 @@ object NavigationLogic {
             showBottomBar = true,
             topBarNumber = 1
         )
-        AppDestination.ProfileSavedReviews.route -> NavigationUiConfiguration(
+        "${AppDestination.Profile.route}/{profileId}" -> NavigationUiConfiguration(
             selectedItem = AppDestination.OwnProfile.route,
             showBottomBar = true,
             topBarNumber = 1
         )
+        "${AppDestination.Review.route}/{reviewId}",
+        "${AppDestination.Review.route}/saved/{reviewId}" ->
+            NavigationUiConfiguration(topBarNumber = 4)
         else -> NavigationUiConfiguration(topBarNumber = 5)
     }
 }
-
-
-
 
 /**
  * Navega entre destinos principales y conserva el historial, excepto al volver al inicio.

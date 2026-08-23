@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,19 +41,29 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
 fun OwnProfileScreen(
     onEditProfileClick: () -> Unit = {},
     onEditAvatarClick: () -> Unit = {},
+    onReviewClick: (Int) -> Unit = {},
+    onSavedReviewsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    // La sección activa es estado de la pantalla, no de la fila de pestañas.
     var isReviewsSelected by remember { mutableStateOf(true) }
 
     OwnProfileScreenContent(
         profile = LocalProfileProvider.profile,
         ratedProducts = LocalProfileProvider.ratedProducts,
         isReviewsSelected = isReviewsSelected,
-        onReviewsClick = { isReviewsSelected = true },
-        onSavedClick = { isReviewsSelected = false },
+
+        onReviewsClick = {
+            isReviewsSelected = true
+        },
+
+        onSavedClick = {
+            onSavedReviewsClick()
+        },
+
+        onReviewClick = onReviewClick,
         onEditProfileClick = onEditProfileClick,
         onEditAvatarClick = onEditAvatarClick,
+
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -78,6 +89,7 @@ fun OwnProfileScreenContent(
     isReviewsSelected: Boolean,
     onReviewsClick: () -> Unit,
     onSavedClick: () -> Unit,
+    onReviewClick: (Int) -> Unit,
     onEditProfileClick: () -> Unit,
     onEditAvatarClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -110,8 +122,13 @@ fun OwnProfileScreenContent(
             )
         }
 
-        items(ratedProducts) { product ->
-            ProfileProductCard(product)
+        itemsIndexed(ratedProducts) { index, product ->
+            ProfileProductCard(
+                product = product,
+                onClick = {
+                    onReviewClick(index)
+                }
+            )
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {

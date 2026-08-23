@@ -41,6 +41,7 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 @Composable
 fun CreateReviewScreen(
     onProductClick: (ProductSearchContent) -> Unit = {},
+    onRequestProductClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // Este estado se eleva desde los componentes para conservarlos presentacionales.
@@ -55,6 +56,7 @@ fun CreateReviewScreen(
         selectedCategoryId = selectedCategoryId,
         onCategoryChange = { selectedCategoryId = it },
         onProductClick = onProductClick,
+        onRequestProductClick = onRequestProductClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -82,6 +84,7 @@ fun CreateReviewScreenContent(
     selectedCategoryId: String,
     onCategoryChange: (String) -> Unit,
     onProductClick: (ProductSearchContent) -> Unit,
+    onRequestProductClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -146,7 +149,9 @@ fun CreateReviewScreenContent(
 
         item {
             Spacer(modifier = Modifier.height(22.dp))
-            ProductMissingCard()
+            ProductMissingCard(
+                onRequestClick = onRequestProductClick
+            )
             // Deja aire para que la barra flotante no tape la última tarjeta.
             Spacer(modifier = Modifier.height(120.dp))
         }

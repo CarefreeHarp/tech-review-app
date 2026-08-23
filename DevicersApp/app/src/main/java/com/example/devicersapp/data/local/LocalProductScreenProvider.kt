@@ -78,4 +78,32 @@ object LocalProductScreenProvider {
             timeAgoResId = R.string.feed_time_two_days
         )
     )
+    fun getProductByNameResId(productNameResId: Int): ProductContent {
+        val ratedProduct = LocalProfileProvider.ratedProducts.find {
+            it.nameResId == productNameResId
+        }
+
+        if (ratedProduct != null) {
+            return ProductContent(
+                nameResId = ratedProduct.nameResId,
+                brandResId = R.string.review_product_brand,
+                imageResId = ratedProduct.imageResId,
+                imageDescriptionResId = ratedProduct.imageDescriptionResId
+            )
+        }
+
+        val savedReview = LocalProfileProvider.savedReviews.find {
+            it.productNameResId == productNameResId
+        }
+
+        if (savedReview != null) {
+            return ProductContent(
+                nameResId = savedReview.productNameResId,
+                brandResId = R.string.review_product_brand,
+                imageResId = savedReview.productImageResId,
+                imageDescriptionResId = savedReview.imageDescriptionResId
+            )
+        }
+        return product
+    }
 }

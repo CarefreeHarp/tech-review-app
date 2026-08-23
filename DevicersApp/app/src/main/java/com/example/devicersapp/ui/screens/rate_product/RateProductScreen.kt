@@ -32,6 +32,8 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
  */
 @Composable
 fun RateProductScreen(
+    productNameResId: Int? = null,
+    onPublishClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // El formulario conserva sus valores ante recomposiciones y cambios de configuración.
@@ -56,7 +58,9 @@ fun RateProductScreen(
     }
 
     RateProductScreenContent(
-        product = LocalRateProductScreenProvider.product,
+        product = productNameResId?.let {
+            LocalRateProductScreenProvider.getProductByNameResId(it)
+        } ?: LocalRateProductScreenProvider.product,
 
         rating = rating,
         onRatingChange = {
@@ -86,9 +90,7 @@ fun RateProductScreen(
         onChangeProduct = {
             // TODO: Implementar la selección de otro producto.
         },
-        onPublishClick = {
-            // TODO: Implementar la publicación de la calificación.
-        },
+        onPublishClick = onPublishClick,
 
         modifier = modifier
             .fillMaxSize()

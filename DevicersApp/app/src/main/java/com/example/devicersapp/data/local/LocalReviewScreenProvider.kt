@@ -104,4 +104,59 @@ object LocalReviewScreenProvider {
             replyingToResId = R.string.review_reply_author_nine
         )
     )
+    fun getProductByReviewId(reviewId: Int): ProductContent {
+        val ratedProduct = LocalProfileProvider.ratedProducts.getOrNull(reviewId)
+            ?: LocalProfileProvider.ratedProducts.first()
+
+        return ProductContent(
+            nameResId = ratedProduct.nameResId,
+            brandResId = R.string.review_product_brand,
+            imageResId = ratedProduct.imageResId,
+            imageDescriptionResId = ratedProduct.imageDescriptionResId
+        )
+    }
+
+    fun getReviewById(reviewId: Int): ReviewContent {
+        val ratedProduct = LocalProfileProvider.ratedProducts.getOrNull(reviewId)
+            ?: LocalProfileProvider.ratedProducts.first()
+
+        return ReviewContent(
+            avatarResId = review.avatarResId,
+            authorResId = review.authorResId,
+            rating = ratedProduct.rating,
+            textResId = review.textResId,
+            likes = review.likes,
+            comments = review.comments,
+            timeAgoResId = review.timeAgoResId,
+            productAverageResId = review.productAverageResId
+        )
+    }
+
+    fun getSavedProductByReviewId(reviewId: Int): ProductContent {
+        val savedReview = LocalProfileProvider.savedReviews.getOrNull(reviewId)
+            ?: LocalProfileProvider.savedReviews.first()
+
+        return ProductContent(
+            nameResId = savedReview.productNameResId,
+            brandResId = R.string.review_product_brand,
+            imageResId = savedReview.productImageResId,
+            imageDescriptionResId = savedReview.imageDescriptionResId
+        )
+    }
+
+    fun getSavedReviewById(reviewId: Int): ReviewContent {
+        val savedReview = LocalProfileProvider.savedReviews.getOrNull(reviewId)
+            ?: LocalProfileProvider.savedReviews.first()
+
+        return ReviewContent(
+            avatarResId = review.avatarResId,
+            authorResId = savedReview.authorResId,
+            rating = savedReview.rating,
+            textResId = savedReview.textResId,
+            likes = review.likes,
+            comments = review.comments,
+            timeAgoResId = review.timeAgoResId,
+            productAverageResId = savedReview.averageResId
+        )
+    }
 }

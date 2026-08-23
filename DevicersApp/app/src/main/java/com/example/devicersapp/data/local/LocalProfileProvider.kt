@@ -88,4 +88,16 @@ object LocalProfileProvider {
             textResId = R.string.profile_saved_third_text
         )
     )
+    fun getPublicProfileById(profileId: String): ProfileContent? {
+        val searchResult = LocalProfileSearchResultsScreenProvider.results.find {
+            it.id == profileId
+        } ?: return null
+
+        return ProfileContent(
+            avatarResId = searchResult.avatarResId,
+            handleResId = searchResult.handleResId,
+            biographyResId = profile.biographyResId,
+            stats = profile.stats
+        )
+    }
 }

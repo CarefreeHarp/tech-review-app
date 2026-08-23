@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,13 +29,20 @@ import com.example.devicersapp.ui.utils.tabs.SectionTab
 /** Configura el perfil con las entidades locales que la pantalla necesita mostrar. */
 @Composable
 fun ProfileScreen(
+    profileId: String? = null,
     onFollowClick: () -> Unit = {},
+    onReviewClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val selectedProfile = profileId?.let {
+        LocalProfileProvider.getPublicProfileById(it)
+    } ?: LocalProfileProvider.profile
+
     ProfileScreenContent(
-        profile = LocalProfileProvider.profile,
+        profile = selectedProfile,
         ratedProducts = LocalProfileProvider.ratedProducts,
         onFollowClick = onFollowClick,
+        onReviewClick = onReviewClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -54,6 +62,7 @@ fun ProfileScreenContent(
     profile: ProfileContent,
     ratedProducts: List<RatedProductContent>,
     onFollowClick: () -> Unit,
+    onReviewClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -81,8 +90,13 @@ fun ProfileScreenContent(
             )
         }
 
-        items(ratedProducts) { product ->
-            ProfileProductCard(product)
+        itemsIndexed(ratedProducts) { index, product ->
+            ProfileProductCard(
+                product = product,
+                onClick = {
+                    onReviewClick(index)
+                }
+            )
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {

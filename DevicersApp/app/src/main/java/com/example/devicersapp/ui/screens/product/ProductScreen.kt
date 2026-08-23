@@ -35,11 +35,14 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 /** Configura el detalle del producto usando los datos locales de ejemplo. */
 @Composable
 fun ProductScreen(
-    onRateClick: () -> Unit = {},
+    productNameResId: Int? = null,
+    onRateClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     ProductScreenContent(
-        product = LocalProductScreenProvider.product,
+        product = productNameResId?.let {
+            LocalProductScreenProvider.getProductByNameResId(it)
+        } ?: LocalProductScreenProvider.product,
         ratingSummary = LocalProductScreenProvider.ratingSummary,
         reviews = LocalProductScreenProvider.reviews,
         onRateClick = onRateClick,
@@ -63,7 +66,7 @@ fun ProductScreenContent(
     product: ProductContent,
     ratingSummary: RatingSummaryContent,
     reviews: List<ReviewContent>,
-    onRateClick: () -> Unit,
+    onRateClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -90,7 +93,7 @@ fun ProductScreenContent(
 
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = onRateClick,
+                onClick = { onRateClick(product.nameResId) },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(

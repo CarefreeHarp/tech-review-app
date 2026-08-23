@@ -30,7 +30,10 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
 /** Configura los resultados que devuelve una búsqueda de perfiles. */
 @Composable
-fun ProfileSearchResultsScreen(modifier: Modifier = Modifier) {
+fun ProfileSearchResultsScreen(
+    onProfileClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     // La búsqueda llega desde la pantalla anterior y se puede seguir afinando aquí.
     var searchText by remember { mutableStateOf("") }
     // Estado elevado que determina qué tarjetas ya muestran el perfil como seguido.
@@ -41,7 +44,10 @@ fun ProfileSearchResultsScreen(modifier: Modifier = Modifier) {
         searchText = searchText,
         onSearchTextChange = { searchText = it },
         followedProfileIds = followedProfileIds,
-        onFollow = { profileId -> followedProfileIds = followedProfileIds + profileId },
+        onFollow = { profileId ->
+            followedProfileIds = followedProfileIds + profileId
+        },
+        onProfileClick = onProfileClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -65,8 +71,9 @@ fun ProfileSearchResultsScreenContent(
     onSearchTextChange: (String) -> Unit,
     followedProfileIds: Set<String>,
     onFollow: (String) -> Unit,
+    onProfileClick: (String) -> Unit,
     modifier: Modifier = Modifier
-) {
+){
     val colors = LocalDevicersColors.current
 
     LazyColumn(modifier = modifier.padding(horizontal = 20.dp)) {
@@ -92,7 +99,10 @@ fun ProfileSearchResultsScreenContent(
             ProfileResultCard(
                 result = result,
                 isFollowed = result.id in followedProfileIds,
-                onFollow = { onFollow(result.id) }
+                onFollow = { onFollow(result.id) },
+                onProfileClick = {
+                    onProfileClick(result.id)
+                }
             )
             Spacer(modifier = Modifier.height(14.dp))
         }
@@ -115,7 +125,10 @@ fun ProfileSearchResultsScreenPreview() {
             topBarNumber = 7
         ) { innerPadding ->
             ProfileSearchResultsScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+                onProfileClick = {},
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding()
+                )
             )
         }
     }
@@ -132,7 +145,10 @@ fun ProfileSearchResultsScreenDarkPreview() {
             topBarNumber = 7
         ) { innerPadding ->
             ProfileSearchResultsScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+                onProfileClick = {},
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding()
+                )
             )
         }
     }

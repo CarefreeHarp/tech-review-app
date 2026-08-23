@@ -33,17 +33,30 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 /** Configura el estado de respuesta y los datos locales del detalle de una reseña. */
 @Composable
 fun ReviewScreen(
+    reviewId: Int = 0,
+    isSavedReview: Boolean = false,
+    onProductClick: (Int) -> Unit = {},
     onSendReply: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var replyText by rememberSaveable { mutableStateOf("") }
 
     ReviewScreenContent(
-        product = LocalReviewScreenProvider.product,
-        review = LocalReviewScreenProvider.review,
+        product = if (isSavedReview) {
+            LocalReviewScreenProvider.getSavedProductByReviewId(reviewId)
+        } else {
+            LocalReviewScreenProvider.getProductByReviewId(reviewId)
+        },
+
+        review = if (isSavedReview) {
+            LocalReviewScreenProvider.getSavedReviewById(reviewId)
+        } else {
+            LocalReviewScreenProvider.getReviewById(reviewId)
+        },
         replies = LocalReviewScreenProvider.replies,
         replyText = replyText,
         onReplyTextChange = { replyText = it },
+        onProductClick = onProductClick,
         onSendReply = {
             if (replyText.isNotBlank()) {
                 onSendReply(replyText)
@@ -74,6 +87,7 @@ fun ReviewScreenContent(
     replies: List<ReplyContent>,
     replyText: String,
     onReplyTextChange: (String) -> Unit,
+    onProductClick: (Int) -> Unit,
     onSendReply: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -84,7 +98,12 @@ fun ReviewScreenContent(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
         ) {
-            ReviewProductSummary(product = product)
+            ReviewProductSummary(
+                product = product,
+                onClick = {
+                    onProductClick(product.nameResId)
+                }
+            )
 
             Spacer(modifier = Modifier.height(22.dp))
             ReviewDetail(review = review)

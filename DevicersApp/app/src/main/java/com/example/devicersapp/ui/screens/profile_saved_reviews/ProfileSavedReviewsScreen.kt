@@ -34,6 +34,7 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 
 /**
  * Configura la sección de reseñas guardadas dentro del perfil propio.
@@ -42,17 +43,17 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
  */
 @Composable
 fun ProfileSavedReviewsScreen(
+    onReviewClick: (Int) -> Unit = {},
+    onReviewsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    // La sección activa es estado de la pantalla; aquí se entra directamente en los guardados.
-    var isReviewsSelected by remember { mutableStateOf(false) }
-
     ProfileSavedReviewsScreenContent(
         profile = LocalProfileProvider.profile,
         savedReviews = LocalProfileProvider.savedReviews,
-        isReviewsSelected = isReviewsSelected,
-        onReviewsClick = { isReviewsSelected = true },
-        onSavedClick = { isReviewsSelected = false },
+        isReviewsSelected = false,
+        onReviewsClick = onReviewsClick,
+        onSavedClick = {},
+        onReviewClick = onReviewClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -79,6 +80,7 @@ fun ProfileSavedReviewsScreenContent(
     isReviewsSelected: Boolean,
     onReviewsClick: () -> Unit,
     onSavedClick: () -> Unit,
+    onReviewClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -116,8 +118,13 @@ fun ProfileSavedReviewsScreenContent(
             }
         }
 
-        items(savedReviews) { savedReview ->
-            SavedReviewCard(savedReview = savedReview)
+        itemsIndexed(savedReviews) { index, savedReview ->
+            SavedReviewCard(
+                savedReview = savedReview,
+                onClick = {
+                    onReviewClick(index)
+                }
+            )
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {
