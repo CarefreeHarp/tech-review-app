@@ -161,6 +161,7 @@ fun ProfileHeaderPreview() {
 
 /** Contiene datos de ejemplo para las vistas previas del perfil. */
 private val SampleProfileContent = ProfileContent(
+    id = "preview_profile",
     avatarResId = R.drawable.profile_avatar_00,
     handleResId = R.string.profile_handle,
     biographyResId = R.string.profile_biography,

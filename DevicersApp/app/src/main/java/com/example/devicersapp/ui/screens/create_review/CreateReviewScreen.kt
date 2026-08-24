@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalCreateReviewScreenProvider
+import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.models.ProductCategoryContent
 import com.example.devicersapp.ui.models.ProductSearchContent
 import com.example.devicersapp.ui.screens.create_review.components.CategoryChipRow
@@ -41,6 +41,7 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 @Composable
 fun CreateReviewScreen(
     onProductClick: (ProductSearchContent) -> Unit = {},
+    onRequestProductClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // Este estado se eleva desde los componentes para conservarlos presentacionales.
@@ -48,13 +49,14 @@ fun CreateReviewScreen(
     var selectedCategoryId by remember { mutableStateOf("all") }
 
     CreateReviewScreenContent(
-        categories = LocalCreateReviewScreenProvider.categories,
-        products = LocalCreateReviewScreenProvider.products,
+        categories = LocalProductProvider.categories,
+        products = LocalProductProvider.products,
         searchText = searchText,
         onSearchTextChange = { searchText = it },
         selectedCategoryId = selectedCategoryId,
         onCategoryChange = { selectedCategoryId = it },
         onProductClick = onProductClick,
+        onRequestProductClick = onRequestProductClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -82,6 +84,7 @@ fun CreateReviewScreenContent(
     selectedCategoryId: String,
     onCategoryChange: (String) -> Unit,
     onProductClick: (ProductSearchContent) -> Unit,
+    onRequestProductClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -146,7 +149,9 @@ fun CreateReviewScreenContent(
 
         item {
             Spacer(modifier = Modifier.height(22.dp))
-            ProductMissingCard()
+            ProductMissingCard(
+                onRequestClick = onRequestProductClick
+            )
             // Deja aire para que la barra flotante no tape la última tarjeta.
             Spacer(modifier = Modifier.height(120.dp))
         }

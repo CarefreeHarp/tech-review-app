@@ -33,7 +33,11 @@ import com.example.devicersapp.ui.utils.authentication.SocialButtons
 
 /** Renderiza la pantalla de acceso, la puerta de entrada a la comunidad de Devicers. */
 @Composable
-fun AccessScreen(modifier: Modifier = Modifier, onSignInClick: () -> Unit) {
+fun AccessScreen(
+    modifier: Modifier = Modifier,
+    onSignInClick: () -> Unit,
+    onCreateAccountClick: () -> Unit = {}
+) {
     // La pantalla conserva el estado; los campos reutilizables solo lo muestran y emiten cambios.
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -47,6 +51,7 @@ fun AccessScreen(modifier: Modifier = Modifier, onSignInClick: () -> Unit) {
         onPasswordChange = { password = it },
         onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
         onSignInClick = onSignInClick,
+        onCreateAccountClick = onCreateAccountClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -62,6 +67,8 @@ fun AccessScreen(modifier: Modifier = Modifier, onSignInClick: () -> Unit) {
  * @param onEmailChange Acción que solicita actualizar el correo.
  * @param onPasswordChange Acción que solicita actualizar la contraseña.
  * @param onPasswordVisibilityChange Acción que solicita alternar la visibilidad de la contraseña.
+ * @param onSignInClick Acción solicitada al iniciar sesión.
+ * @param onCreateAccountClick Acción solicitada al abrir la pantalla de registro.
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
@@ -73,6 +80,7 @@ fun AccessScreenContent(
     onPasswordChange: (String) -> Unit,
     onPasswordVisibilityChange: () -> Unit,
     onSignInClick: () -> Unit,
+    onCreateAccountClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -83,15 +91,23 @@ fun AccessScreenContent(
     ) {
         // La marca se muestra desde TopBar5, gestionada por el Scaffold compartido.
         Spacer(modifier = Modifier.height(36.dp))
-        ScreenTitle(R.string.sign_in_title, R.string.sign_in_description)
+
+        ScreenTitle(
+            R.string.sign_in_title,
+            R.string.sign_in_description
+        )
+
         Spacer(modifier = Modifier.height(32.dp))
+
         AuthenticationField(
             labelResId = R.string.email,
             placeholderResId = R.string.email_placeholder,
             value = email,
             onValueChange = onEmailChange
         )
+
         Spacer(modifier = Modifier.height(18.dp))
+
         AuthenticationField(
             labelResId = R.string.password,
             placeholderResId = R.string.password_placeholder,
@@ -101,16 +117,38 @@ fun AccessScreenContent(
             isPasswordVisible = isPasswordVisible,
             onPasswordVisibilityChange = onPasswordVisibilityChange
         )
+
         // El enlace de recuperación se alinea al borde derecho del formulario.
-        ForgotPasswordLink(modifier = Modifier.align(Alignment.End))
+        ForgotPasswordLink(
+            modifier = Modifier.align(Alignment.End)
+        )
+
         Spacer(modifier = Modifier.height(18.dp))
-        PrimaryButton(R.string.sign_in, Modifier.fillMaxWidth().height(52.dp), onClick = onSignInClick)
+
+        PrimaryButton(
+            textResId = R.string.sign_in,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            onClick = onSignInClick
+        )
+
         Spacer(modifier = Modifier.height(26.dp))
+
         AuthenticationDividerText()
+
         Spacer(modifier = Modifier.height(18.dp))
+
         SocialButtons()
+
         Spacer(modifier = Modifier.height(28.dp))
-        AuthenticationFooter(R.string.no_account, R.string.create_account)
+
+        AuthenticationFooter(
+            textResId = R.string.no_account,
+            actionResId = R.string.create_account,
+            onActionClick = onCreateAccountClick
+        )
+
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
@@ -121,7 +159,11 @@ fun AccessScreenContent(
 fun AccessScreenPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            AccessScreen(modifier = Modifier.padding(innerPadding), {})
+            AccessScreen(
+                modifier = Modifier.padding(innerPadding),
+                onSignInClick = {},
+                onCreateAccountClick = {}
+            )
         }
     }
 }
@@ -132,7 +174,11 @@ fun AccessScreenPreview() {
 fun AccessScreenDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            AccessScreen(modifier = Modifier.padding(innerPadding), {})
+            AccessScreen(
+                modifier = Modifier.padding(innerPadding),
+                onSignInClick = {},
+                onCreateAccountClick = {}
+            )
         }
     }
 }

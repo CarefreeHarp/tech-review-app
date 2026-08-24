@@ -94,7 +94,7 @@
     <string name="most_recent">Más recientes</string>
     <string name="best_rated">Mejor valorados</string>
 
-    <string name="apply_filters">Aplicar filtros</string>
+    <string name="apply_filters">Buscar</string>
 
     <!-- ========================= -->
     <!-- SEARCH PROFILE -->
@@ -135,6 +135,18 @@
     <string name="profile_result_third_handle">@audio.fan</string>
     <string name="profile_result_third_interests">Audio · Reseñas</string>
     <string name="profile_result_third_reviews">46 reseñas</string>
+
+    <string name="profile_result_fourth_handle">@nora.mobile</string>
+    <string name="profile_result_fourth_interests">Celulares · Fotografía</string>
+    <string name="profile_result_fourth_reviews">27 reseñas</string>
+
+    <string name="profile_result_fifth_handle">@diego.gadgets</string>
+    <string name="profile_result_fifth_interests">Computadores · Gaming</string>
+    <string name="profile_result_fifth_reviews">41 reseñas</string>
+
+    <string name="profile_result_sixth_handle">@luna.digital</string>
+    <string name="profile_result_sixth_interests">Tablets · Productividad</string>
+    <string name="profile_result_sixth_reviews">15 reseñas</string>
 
     <!-- ========================= -->
     <!-- FOUND PRODUCTS -->
@@ -474,7 +486,8 @@
     <string name="review_reply_placeholder">Responder a @usuario</string>
     <string name="review_replies">Respuestas (%1$d)</string>
     <string name="review_reply_action">Responder</string>
-    <string name="review_reply_replying_to">Respondiendo a %1$s</string>
+    <string name="review_reply_view_answers_count">respuestas (%1$d)</string>
+    <string name="review_reply_hide_answers">Ocultar respuestas</string>
 
     <!-- Reply Authors -->
 
@@ -488,6 +501,7 @@
     <string name="review_reply_author_eight">@juan_gadgets</string>
     <string name="review_reply_author_nine">@valen.tech</string>
     <string name="review_reply_author_ten">@dani_audio</string>
+    <string name="review_reply_author_eleven">@lina.sound</string>
 
     <!-- Reply Times -->
 
@@ -541,6 +555,10 @@
 
     <string name="review_reply_text_ten">
         La carga rápida también merece una mención. Con unos minutos conectados obtengo varias horas de reproducción.
+    </string>
+
+    <string name="review_reply_text_eleven">
+        También me parecieron cómodos para trabajar varias horas seguidas.
     </string>
 
 
@@ -637,6 +655,8 @@
     <string name="rate_product_character_count">%1$d/%2$d</string>
 
     <!-- ========================= -->
+    <string name="review_not_found">No encontramos esta reseña.</string>
+
     <!-- CREATE REVIEW -->
     <!-- ========================= -->
 

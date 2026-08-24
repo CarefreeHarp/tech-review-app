@@ -29,6 +29,7 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
  * @param activities Eventos que se mostrarán debajo del encabezado.
  * @param followedActivityIds Identificadores de los perfiles ya seguidos.
  * @param onFollow Solicita seguir al autor de un evento.
+ * @param onActivityClick Solicita abrir el destino relacionado con un evento.
  * @param modifier Modificador aplicado al grupo.
  * @param isHighlighted Indica si los eventos del grupo se muestran como tarjetas elevadas.
  */
@@ -38,6 +39,7 @@ fun ActivitySection(
     activities: List<ActivityContent>,
     followedActivityIds: Set<String>,
     onFollow: (String) -> Unit,
+    onActivityClick: (ActivityContent) -> Unit,
     modifier: Modifier = Modifier,
     isHighlighted: Boolean = false
 ) {
@@ -57,6 +59,7 @@ fun ActivitySection(
                     activity = activity,
                     isFollowed = activity.id in followedActivityIds,
                     onFollow = { onFollow(activity.id) },
+                    onClick = { onActivityClick(activity) },
                     isHighlighted = isHighlighted
                 )
             }
@@ -75,15 +78,15 @@ fun ActivitySectionPreview() {
                 ActivityContent(
                     id = "preview",
                     type = ActivityType.LIKE,
-                    avatarResId = R.drawable.profile_avatar_00,
-                    authorResId = R.string.activity_author_camila,
+                    actorProfileId = "camila",
                     actionResId = R.string.activity_action_liked_review,
-                    detailResId = R.string.activity_detail_headphones,
+                    targetReviewId = R.string.feed_product_audio,
                     time = System.currentTimeMillis() - 5 * 60_000L
                 )
             ),
             followedActivityIds = emptySet(),
             onFollow = {},
+            onActivityClick = {},
             modifier = Modifier.padding(16.dp),
             isHighlighted = true
         )

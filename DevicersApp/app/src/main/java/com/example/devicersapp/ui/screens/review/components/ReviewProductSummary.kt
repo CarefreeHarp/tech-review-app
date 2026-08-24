@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
+import androidx.compose.foundation.clickable
 
 /**
  * Muestra el producto reseñado con un bloque de imagen amplio junto a su nombre y su marca.
@@ -37,7 +38,10 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
  * @param modifier Modificador aplicado a la tarjeta.
  */
 @Composable
-fun ReviewProductSummary(product: ProductContent, modifier: Modifier = Modifier) {
+fun ReviewProductSummary(
+    product: ProductContent,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier) {
     val colors = LocalDevicersColors.current
 
     Row(
@@ -47,6 +51,7 @@ fun ReviewProductSummary(product: ProductContent, modifier: Modifier = Modifier)
             // La sombra suave despega la tarjeta del fondo, como en el diseño editorial.
             .shadow(elevation = 6.dp, shape = RoundedCornerShape(20.dp))
             .background(colors.surface, RoundedCornerShape(20.dp))
+            .clickable { onClick() }
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

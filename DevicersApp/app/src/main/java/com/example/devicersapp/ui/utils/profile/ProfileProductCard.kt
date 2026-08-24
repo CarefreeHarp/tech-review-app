@@ -24,7 +24,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.ui.models.RatedProductContent
+import com.example.devicersapp.data.local.LocalReviewProvider
+import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.rating.RatingStars
@@ -32,13 +33,13 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
 /**
  * Muestra un producto ya calificado dentro de la cuadrícula del perfil.
  *
- * @param product Producto calificado que se representa en la tarjeta.
+ * @param review Reseña creada por el perfil y representada en la tarjeta.
  * @param modifier Modificador aplicado a la tarjeta.
  * @param onClick Acción solicitada al abrir el producto.
  */
 @Composable
 fun ProfileProductCard(
-    product: RatedProductContent,
+    review: ReviewContent,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
@@ -54,8 +55,8 @@ fun ProfileProductCard(
             .padding(16.dp)
     ) {
         Image(
-            painter = painterResource(product.imageResId),
-            contentDescription = stringResource(product.imageDescriptionResId),
+            painter = painterResource(review.productImageResId),
+            contentDescription = stringResource(R.string.review_product_image),
             modifier = Modifier
                 .size(58.dp)
                 .clip(RoundedCornerShape(12.dp)),
@@ -65,7 +66,7 @@ fun ProfileProductCard(
         Spacer(modifier = Modifier.height(14.dp))
 
         Text(
-            text = stringResource(product.nameResId),
+            text = stringResource(review.productNameResId),
             color = colors.textPrimary,
             style = MaterialTheme.typography.titleSmall,
             maxLines = 1,
@@ -74,7 +75,7 @@ fun ProfileProductCard(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        RatingStars(rating = product.rating)
+        RatingStars(rating = review.rating)
     }
 }
 
@@ -84,12 +85,7 @@ fun ProfileProductCard(
 fun ProfileProductCardPreview() {
     DevicersAppTheme {
         ProfileProductCard(
-            RatedProductContent(
-                nameResId = R.string.profile_product_second,
-                imageResId = R.drawable.device_03,
-                imageDescriptionResId = R.string.profile_product_image,
-                rating = 5
-            ),
+            review = LocalReviewProvider.reviews.first(),
             modifier = Modifier.padding(16.dp)
         )
     }

@@ -5,6 +5,7 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ActivityContent
 import com.example.devicersapp.ui.models.ActivityType
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -43,6 +46,7 @@ private const val DAY_IN_MILLIS = 24 * HOUR_IN_MILLIS
  * @param activity Información visible del evento.
  * @param isFollowed Indica si el autor del evento ya ha sido seguido.
  * @param onFollow Solicita cambiar el estado de seguimiento del autor.
+ * @param onClick Acción solicitada al abrir el contenido relacionado con la notificación.
  * @param modifier Modificador aplicado a la tarjeta.
  * @param isHighlighted Indica si el evento se dibuja como tarjeta elevada en vez de sobre el fondo.
  */
@@ -51,10 +55,13 @@ fun ActivityCard(
     activity: ActivityContent,
     isFollowed: Boolean,
     onFollow: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isHighlighted: Boolean = false
 ) {
     val colors = LocalDevicersColors.current
+    val actor = requireNotNull(LocalProfileProvider.getProfileById(activity.actorProfileId))
+    val review = activity.targetReviewId?.let(LocalReviewProvider::findById)
     // El tiempo se deriva al renderizar para evitar guardar textos como "Hace 5 m" en los datos.
     val elapsedTime = formatElapsedTime(LocalContext.current.resources, activity.time)
 
@@ -71,11 +78,12 @@ fun ActivityCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .then(containerModifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
         ActivityAvatar(
-            avatarResId = activity.avatarResId,
+            avatarResId = actor.avatarResId,
             type = activity.type,
             ringColor = if (isHighlighted) colors.surface else colors.background
         )
@@ -84,7 +92,7 @@ fun ActivityCard(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(activity.authorResId),
+                text = stringResource(actor.handleResId),
                 style = MaterialTheme.typography.titleSmall,
                 color = colors.textPrimary
             )
@@ -97,8 +105,8 @@ fun ActivityCard(
             Spacer(modifier = Modifier.height(5.dp))
             // El detalle y la antigüedad comparten una sola línea de metadata.
             Text(
-                text = activity.detailResId
-                    ?.let { stringResource(R.string.activity_detail_format, stringResource(it).trim(), elapsedTime) }
+                text = review
+                    ?.let { stringResource(R.string.activity_detail_format, stringResource(it.productNameResId).trim(), elapsedTime) }
                     ?: stringResource(R.string.activity_time_ago, elapsedTime),
                 style = MaterialTheme.typography.bodySmall,
                 color = colors.textSecondary
@@ -166,15 +174,15 @@ fun ActivityCardPreview() {
             activity = ActivityContent(
                 id = "preview",
                 type = ActivityType.FOLLOW,
-                avatarResId = R.drawable.profile_avatar_00,
-                authorResId = R.string.activity_author_lina,
+                actorProfileId = "camila",
                 actionResId = R.string.activity_action_followed,
-                detailResId = R.string.activity_detail_profile,
+                targetProfileId = "camila",
                 time = System.currentTimeMillis() - DAY_IN_MILLIS,
                 showFollowAction = true
             ),
             isFollowed = false,
             onFollow = {},
+            onClick = {},
             modifier = Modifier.padding(16.dp),
             isHighlighted = true
         )

@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalCreateReviewScreenProvider
+import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.models.ProductSearchContent
 import com.example.devicersapp.ui.theme.CardMetadataText
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -115,7 +115,7 @@ fun ProductReviewItem(
 fun ProductReviewItemPreview() {
     DevicersAppTheme {
         ProductReviewItem(
-            product = LocalCreateReviewScreenProvider.products.first(),
+            product = LocalProductProvider.products.first(),
             onRateClick = {},
             modifier = Modifier.padding(horizontal = 20.dp)
         )

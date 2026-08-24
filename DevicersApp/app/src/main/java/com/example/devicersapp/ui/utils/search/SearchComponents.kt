@@ -73,26 +73,59 @@ fun SearchEntityToggle(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Button(
-            onClick = onUsersClick,
-            modifier = Modifier.weight(1f).height(44.dp),
+            onClick = {
+                println("BOTON USERS PRESIONADO")
+                onUsersClick()
+            },
+            modifier = Modifier
+                .weight(1f)
+                .height(44.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isUsersSelected) colors.primary else colors.surface,
-                contentColor = if (isUsersSelected) colors.textOnPrimary else colors.textPrimary
+                containerColor = if (isUsersSelected) {
+                    colors.primary
+                } else {
+                    colors.surface
+                },
+                contentColor = if (isUsersSelected) {
+                    colors.textOnPrimary
+                } else {
+                    colors.textPrimary
+                }
             )
         ) {
-            Text(text = stringResource(R.string.search_entity_users), style = SearchControlText)
+            Text(
+                text = stringResource(R.string.search_entity_users),
+                style = SearchControlText
+            )
         }
+
         Button(
-            onClick = onProductsClick,
-            modifier = Modifier.weight(1f).height(44.dp),
+            onClick = {
+                println("BOTON PRODUCTS PRESIONADO")
+                onProductsClick()
+            },
+            modifier = Modifier
+                .weight(1f)
+                .height(44.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isUsersSelected) colors.surface else colors.primary,
-                contentColor = if (isUsersSelected) colors.textPrimary else colors.textOnPrimary
+                containerColor = if (isUsersSelected) {
+                    colors.surface
+                } else {
+                    colors.primary
+                },
+                contentColor = if (isUsersSelected) {
+                    colors.textPrimary
+                } else {
+                    colors.textOnPrimary
+                }
             )
         ) {
-            Text(text = stringResource(R.string.search_entity_products), style = SearchControlText)
+            Text(
+                text = stringResource(R.string.search_entity_products),
+                style = SearchControlText
+            )
         }
     }
 }

@@ -93,25 +93,6 @@ fun RateableProductCard(
         }
 
         Spacer(modifier = Modifier.width(12.dp))
-
-        // Cambiar de producto es una acción destacada, no un texto suelto.
-        Button(
-            onClick = onChangeProduct,
-            modifier = Modifier.height(38.dp),
-            shape = RoundedCornerShape(percent = 50),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colors.primary,
-                contentColor = colors.textOnPrimary
-            ),
-            contentPadding = PaddingValues(horizontal = 18.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.rate_product_change),
-                style = SearchControlText,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1
-            )
-        }
     }
 }
 

@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -19,7 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProductScreenProvider
+import com.example.devicersapp.data.local.LocalProductProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.models.RatingSummaryContent
 import com.example.devicersapp.ui.models.ReviewContent
@@ -32,17 +33,30 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchHeadingText
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
-/** Configura el detalle del producto usando los datos locales de ejemplo. */
+/**
+ * Configura el detalle del producto usando los datos locales de ejemplo.
+ *
+ * @param onRateClick Acción solicitada al iniciar la calificación del producto.
+ * @param onViewMoreClick Acción solicitada al abrir una reseña del producto.
+ * @param modifier Modificador aplicado al contenedor de la pantalla.
+ */
 @Composable
 fun ProductScreen(
-    onRateClick: () -> Unit = {},
+    onViewMoreClick: (Int) -> Unit = {},
+    productNameResId: Int? = null,
+    onRateClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val product = productNameResId?.let {
+        LocalProductProvider.getProductByNameResId(it)
+    } ?: LocalProductProvider.product
+
     ProductScreenContent(
-        product = LocalProductScreenProvider.product,
-        ratingSummary = LocalProductScreenProvider.ratingSummary,
-        reviews = LocalProductScreenProvider.reviews,
+        product = product,
+        ratingSummary = LocalProductProvider.ratingSummary,
+        reviews = LocalReviewProvider.reviewsForProduct(product.nameResId),
         onRateClick = onRateClick,
+        onViewMoreClick = onViewMoreClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -56,6 +70,7 @@ fun ProductScreen(
  * @param ratingSummary Resumen de calificaciones del producto.
  * @param reviews Reseñas locales que se muestran debajo del resumen.
  * @param onRateClick Acción solicitada al seleccionar calificar producto.
+ * @param onViewMoreClick Acción solicitada al abrir el detalle de una reseña.
  * @param modifier Modificador aplicado a la lista raíz.
  */
 @Composable
@@ -63,7 +78,8 @@ fun ProductScreenContent(
     product: ProductContent,
     ratingSummary: RatingSummaryContent,
     reviews: List<ReviewContent>,
-    onRateClick: () -> Unit,
+    onRateClick: (Int) -> Unit,
+    onViewMoreClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -90,7 +106,7 @@ fun ProductScreenContent(
 
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = onRateClick,
+                onClick = { onRateClick(product.nameResId) },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -113,8 +129,11 @@ fun ProductScreenContent(
             Spacer(modifier = Modifier.height(14.dp))
         }
 
-        items(reviews) { review ->
-            ReviewCard(review)
+        itemsIndexed(reviews) { _, review ->
+            ReviewCard(
+                review = review,
+                onViewMoreClick = { onViewMoreClick(review.id) }
+            )
             Spacer(modifier = Modifier.height(14.dp))
         }
 

@@ -12,13 +12,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.devicersapp.data.local.LocalReviewScreenProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.models.ReplyContent
 import com.example.devicersapp.ui.models.ReviewContent
@@ -33,22 +35,32 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 /** Configura el estado de respuesta y los datos locales del detalle de una reseña. */
 @Composable
 fun ReviewScreen(
+    reviewId: Int? = null,
+    onProductClick: (Int) -> Unit = {},
     onSendReply: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var replyText by rememberSaveable { mutableStateOf("") }
+    val expandedReplies = remember { mutableStateMapOf<Int, Boolean>() }
+    val selectedReviewId = reviewId ?: LocalReviewProvider.productReviews.first().id
+    val review = requireNotNull(LocalReviewProvider.findById(selectedReviewId))
 
     ReviewScreenContent(
-        product = LocalReviewScreenProvider.product,
-        review = LocalReviewScreenProvider.review,
-        replies = LocalReviewScreenProvider.replies,
+        product = requireNotNull(LocalReviewProvider.findProductByReviewId(selectedReviewId)),
+        review = review,
+        replies = review.comments,
         replyText = replyText,
         onReplyTextChange = { replyText = it },
+        onProductClick = onProductClick,
         onSendReply = {
             if (replyText.isNotBlank()) {
                 onSendReply(replyText)
                 replyText = ""
             }
+        },
+        expandedReplies = expandedReplies,
+        onViewAnswers = { replyIndex ->
+            expandedReplies[replyIndex] = expandedReplies[replyIndex] != true
         },
         modifier = modifier
             .fillMaxSize()
@@ -65,6 +77,8 @@ fun ReviewScreen(
  * @param replyText Texto actual del campo de respuesta.
  * @param onReplyTextChange Acción que solicita actualizar la respuesta.
  * @param onSendReply Acción solicitada al enviar la respuesta.
+ * @param expandedReplies Estado que indica qué respuestas muestran sus contestaciones.
+ * @param onViewAnswers Acción que solicita revelar las contestaciones de una respuesta.
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
@@ -74,7 +88,10 @@ fun ReviewScreenContent(
     replies: List<ReplyContent>,
     replyText: String,
     onReplyTextChange: (String) -> Unit,
+    onProductClick: (Int) -> Unit,
     onSendReply: () -> Unit,
+    expandedReplies: Map<Int, Boolean> = emptyMap(),
+    onViewAnswers: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -84,7 +101,12 @@ fun ReviewScreenContent(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
         ) {
-            ReviewProductSummary(product = product)
+            ReviewProductSummary(
+                product = product,
+                onClick = {
+                    onProductClick(product.nameResId)
+                }
+            )
 
             Spacer(modifier = Modifier.height(22.dp))
             ReviewDetail(review = review)
@@ -97,7 +119,12 @@ fun ReviewScreenContent(
                 color = LocalDevicersColors.current.border
             )
 
-            ReplyList(replies = replies, modifier = Modifier.padding(top = 24.dp, bottom = 20.dp))
+            ReplyList(
+                replies = replies,
+                expandedReplies = expandedReplies,
+                onViewAnswers = onViewAnswers,
+                modifier = Modifier.padding(top = 24.dp, bottom = 24.dp)
+            )
         }
         ReplyComposer(
             value = replyText,

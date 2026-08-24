@@ -20,24 +20,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalHomeScreenProvider
-import com.example.devicersapp.ui.models.FeedReviewContent
+import com.example.devicersapp.data.local.LocalReviewProvider
+import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.home.components.FeedReviewItem
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
 
-/** Configura la pantalla principal, donde se leen las últimas reseñas de la comunidad. */
+/**
+ * Configura la pantalla principal, donde se leen las últimas reseñas de la comunidad.
+ *
+ * @param onReviewClick Acción solicitada al abrir el detalle de una reseña.
+ * @param onCommentClick Acción solicitada al abrir los comentarios de una reseña.
+ * @param onSendClick Acción solicitada al compartir una reseña.
+ * @param modifier Modificador aplicado al contenedor de la pantalla.
+ */
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    onReviewClick: (Int) -> Unit = {},
+    onCommentClick: (Int) -> Unit = {},
+    onSendClick: (ReviewContent) -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     // La vertiente activa del feed es estado de la pantalla, no de la fila de pestañas.
     var isForYouSelected by remember { mutableStateOf(true) }
 
     HomeScreenContent(
-        reviews = LocalHomeScreenProvider.reviews,
+        reviews = LocalReviewProvider.reviews,
         isForYouSelected = isForYouSelected,
         onForYouClick = { isForYouSelected = true },
         onFollowingClick = { isForYouSelected = false },
+        onReviewClick = onReviewClick,
+        onCommentClick = onCommentClick,
+        onSendClick = onSendClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -51,21 +66,30 @@ fun HomeScreen(modifier: Modifier = Modifier) {
  * @param isForYouSelected Indica si la vertiente activa es la de reseñas sugeridas.
  * @param onForYouClick Acción que solicita mostrar las reseñas sugeridas.
  * @param onFollowingClick Acción que solicita mostrar las reseñas de las cuentas seguidas.
+ * @param onReviewClick Acción solicitada al abrir una reseña del feed.
+ * @param onCommentClick Acción solicitada al abrir los comentarios de una reseña del feed.
+ * @param onSendClick Acción solicitada al compartir una reseña del feed.
  * @param modifier Modificador aplicado a la lista.
  */
 @Composable
 fun HomeScreenContent(
-    reviews: List<FeedReviewContent>,
+    reviews: List<ReviewContent>,
     isForYouSelected: Boolean,
     onForYouClick: () -> Unit,
     onFollowingClick: () -> Unit,
+    onReviewClick: (Int) -> Unit,
+    onCommentClick: (Int) -> Unit,
+    onSendClick: (ReviewContent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
 
-    LazyColumn(modifier = modifier.padding(horizontal = 20.dp)) {
+    LazyColumn(
+        modifier = modifier.padding(horizontal = 20.dp)
+    ) {
         item {
             Spacer(modifier = Modifier.height(8.dp))
+
             SectionTabsRow(
                 startLabelResId = R.string.home_tab_for_you,
                 endLabelResId = R.string.home_tab_following,
@@ -73,20 +97,31 @@ fun HomeScreenContent(
                 onStartClick = onForYouClick,
                 onEndClick = onFollowingClick
             )
+
             Spacer(modifier = Modifier.height(24.dp))
         }
 
         itemsIndexed(reviews) { index, review ->
-            FeedReviewItem(review = review)
+
+            FeedReviewItem(
+                review = review,
+                onViewMoreClick = {
+                    onReviewClick(review.id)
+                },
+                onCommentClick = { onCommentClick(review.id) },
+                onSendClick = { onSendClick(review) }
+            )
 
             // Un divisor separa cada reseña de la siguiente sin encerrarlas en tarjetas.
             if (index < reviews.lastIndex) {
                 Spacer(modifier = Modifier.height(20.dp))
+
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),
                     thickness = 1.dp,
                     color = colors.border
                 )
+
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
@@ -108,7 +143,11 @@ fun HomeScreenPreview() {
             showBottomBar = true,
             topBarNumber = 5
         ) { innerPadding ->
-            HomeScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+            HomeScreen(
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding()
+                )
+            )
         }
     }
 }
@@ -123,7 +162,11 @@ fun HomeScreenDarkPreview() {
             showBottomBar = true,
             topBarNumber = 5
         ) { innerPadding ->
-            HomeScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+            HomeScreen(
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding()
+                )
+            )
         }
     }
 }
