@@ -28,6 +28,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.CardHighlightText
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -48,6 +50,8 @@ fun ReviewCard(
     onViewMoreClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val author = requireNotNull(LocalProfileProvider.getProfileById(review.authorId))
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -64,7 +68,7 @@ fun ReviewCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             ProfileAvatar(
-                avatarResId = review.avatarResId,
+                avatarResId = author.avatarResId,
                 modifier = Modifier.size(34.dp)
             )
 
@@ -72,7 +76,7 @@ fun ReviewCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(review.authorResId),
+                    text = stringResource(author.handleResId),
                     style = CardHighlightText,
                     color = LocalDevicersColors.current.textPrimary
                 )
@@ -131,13 +135,7 @@ fun ReviewCard(
 fun ReviewCardPreview() {
     DevicersAppTheme {
         ReviewCard(
-            ReviewContent(
-                avatarResId = R.drawable.profile_avatar_01,
-                authorResId = R.string.review_card_username,
-                rating = 5,
-                textResId = R.string.review_card_text,
-                likes = 23
-            ),
+            review = LocalReviewProvider.productReviews.first(),
             modifier = Modifier.padding(16.dp)
         )
     }

@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.ui.models.ReplyContent
 import com.example.devicersapp.ui.theme.CardHighlightText
 import com.example.devicersapp.ui.theme.CardMetadataText
@@ -57,6 +58,7 @@ fun ReplyItem(
     bottomSpacing: Dp = 0.dp
 ) {
     val colors = LocalDevicersColors.current
+    val author = requireNotNull(LocalProfileProvider.getProfileById(reply.authorId))
 
     Box(
         // La altura intrínseca deja que el conector abarque exactamente lo que ocupa la respuesta.
@@ -81,7 +83,7 @@ fun ReplyItem(
             Spacer(Modifier.width(ReplyThreadIndent * reply.depth))
 
             ProfileAvatar(
-                avatarResId = reply.avatarResId,
+                avatarResId = author.avatarResId,
                 modifier = Modifier.size(ReplyAvatarSize)
             )
 
@@ -89,7 +91,7 @@ fun ReplyItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(reply.authorResId),
+                    text = stringResource(author.handleResId),
                     style = CardHighlightText,
                     color = colors.textPrimary
                 )
@@ -140,12 +142,10 @@ fun ReplyItemPreview() {
     DevicersAppTheme {
         ReplyItem(
             ReplyContent(
-                avatarResId = R.drawable.profile_avatar_03,
-                authorResId = R.string.review_reply_author_two,
+                authorId = "reply_two",
                 timeAgoResId = R.string.review_reply_time,
                 textResId = R.string.review_reply_text_two,
-                depth = 1,
-                replyingToResId = R.string.review_reply_author_one
+                depth = 1
             ),
             modifier = Modifier.padding(16.dp),
             passThroughLevels = setOf(0),

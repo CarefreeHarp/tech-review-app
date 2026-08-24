@@ -19,6 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.RatingStarsLargeText
@@ -39,17 +41,18 @@ import com.example.devicersapp.ui.utils.review.ReviewActionsRow
 @Composable
 fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier) {
     val colors = LocalDevicersColors.current
+    val author = requireNotNull(LocalProfileProvider.getProfileById(review.authorId))
 
     Column(modifier = modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             ProfileAvatar(
-                avatarResId = review.avatarResId,
+                avatarResId = author.avatarResId,
                 modifier = Modifier.size(48.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = stringResource(review.authorResId),
+                    text = stringResource(author.handleResId),
                     style = MaterialTheme.typography.titleSmall,
                     color = colors.textPrimary
                 )
@@ -88,7 +91,7 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        ReviewActionsRow(likes = review.likes, comments = review.comments)
+        ReviewActionsRow(likes = review.likes, comments = review.comments.size)
     }
 }
 
@@ -98,16 +101,7 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier) {
 fun ReviewDetailPreview() {
     DevicersAppTheme {
         ReviewDetail(
-            ReviewContent(
-                avatarResId = R.drawable.profile_avatar_02,
-                authorResId = R.string.review_author,
-                rating = 5,
-                textResId = R.string.review_detail_text,
-                likes = 128,
-                comments = 18,
-                timeAgoResId = R.string.review_time,
-                productAverageResId = R.string.review_product_average
-            ),
+            review = LocalReviewProvider.reviews.first(),
             modifier = Modifier.padding(16.dp)
         )
     }

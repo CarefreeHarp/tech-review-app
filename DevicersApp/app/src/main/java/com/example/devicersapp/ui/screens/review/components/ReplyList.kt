@@ -81,7 +81,8 @@ fun ReplyList(
                         areAnswersVisible = false,
                         onClick = { onViewAnswers(index) }
                     )
-                    Spacer(Modifier.height(6.dp))
+                    // El control ya ocupa su propio alto y dibuja la línea de los ancestros.
+                    // No se agrega un espacio externo para que ese trazo llegue al siguiente hilo.
                 }
             }
 
@@ -162,34 +163,27 @@ fun ReplyListPreview() {
         ReplyList(
             listOf(
                 ReplyContent(
-                    avatarResId = R.drawable.profile_avatar_03,
-                    authorResId = R.string.review_reply_author_one,
+                    authorId = "reply_one",
                     timeAgoResId = R.string.review_reply_time,
                     textResId = R.string.review_reply_text_one
                 ),
                 ReplyContent(
-                    avatarResId = R.drawable.profile_avatar_04,
-                    authorResId = R.string.review_reply_author_two,
+                    authorId = "reply_two",
                     timeAgoResId = R.string.review_reply_time,
                     textResId = R.string.review_reply_text_two,
-                    depth = 1,
-                    replyingToResId = R.string.review_reply_author_one
+                    depth = 1
                 ),
                 ReplyContent(
-                    avatarResId = R.drawable.profile_avatar_01,
-                    authorResId = R.string.review_reply_author_three,
+                    authorId = "reply_three",
                     timeAgoResId = R.string.review_reply_time_three,
                     textResId = R.string.review_reply_text_three,
-                    depth = 2,
-                    replyingToResId = R.string.review_reply_author_two
+                    depth = 2
                 ),
                 ReplyContent(
-                    avatarResId = R.drawable.profile_avatar_05,
-                    authorResId = R.string.review_reply_author_four,
+                    authorId = "reply_four",
                     timeAgoResId = R.string.review_reply_time_four,
                     textResId = R.string.review_reply_text_four,
-                    depth = 1,
-                    replyingToResId = R.string.review_reply_author_one
+                    depth = 1
                 )
             ),
             modifier = Modifier.padding(16.dp)

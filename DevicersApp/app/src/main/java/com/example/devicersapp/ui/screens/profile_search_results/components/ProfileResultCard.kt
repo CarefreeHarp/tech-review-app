@@ -32,7 +32,7 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
-
+import androidx.compose.foundation.clickable
 /**
  * Muestra un perfil encontrado con su avatar, sus intereses, sus reseñas y la acción de seguirlo.
  *
@@ -46,6 +46,7 @@ fun ProfileResultCard(
     result: ProfileSearchResultContent,
     isFollowed: Boolean,
     onFollow: () -> Unit,
+    onProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -56,6 +57,9 @@ fun ProfileResultCard(
             // La sombra suave despega la tarjeta del fondo, como en el diseño editorial.
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(18.dp))
             .background(colors.surface, RoundedCornerShape(18.dp))
+            .clickable {
+                onProfileClick()
+            }
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -131,6 +135,7 @@ fun ProfileResultCardPreview() {
             ),
             isFollowed = false,
             onFollow = {},
+            onProfileClick = {},
             modifier = Modifier.padding(16.dp)
         )
     }

@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalFoundProductsScreenProvider
+import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.models.ProductSearchContent
 import com.example.devicersapp.ui.screens.found_products.components.FoundProductCard
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -46,7 +46,7 @@ fun FoundProductsScreen(
     val query = searchText.ifEmpty { queryHint }
 
     FoundProductsScreenContent(
-        results = LocalFoundProductsScreenProvider.results,
+        results = LocalProductProvider.products,
         searchText = query,
         onSearchTextChange = { searchText = it },
         onProductClick = onProductClick,

@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalHomeScreenProvider
-import com.example.devicersapp.ui.models.FeedReviewContent
+import com.example.devicersapp.data.local.LocalReviewProvider
+import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.home.components.FeedReviewItem
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
@@ -37,16 +37,16 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
  */
 @Composable
 fun HomeScreen(
-    onReviewClick: (FeedReviewContent) -> Unit = {},
-    onCommentClick: (FeedReviewContent) -> Unit = {},
-    onSendClick: (FeedReviewContent) -> Unit = {},
+    onReviewClick: (Int) -> Unit = {},
+    onCommentClick: (Int) -> Unit = {},
+    onSendClick: (ReviewContent) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // La vertiente activa del feed es estado de la pantalla, no de la fila de pestañas.
     var isForYouSelected by remember { mutableStateOf(true) }
 
     HomeScreenContent(
-        reviews = LocalHomeScreenProvider.reviews,
+        reviews = LocalReviewProvider.reviews,
         isForYouSelected = isForYouSelected,
         onForYouClick = { isForYouSelected = true },
         onFollowingClick = { isForYouSelected = false },
@@ -73,13 +73,13 @@ fun HomeScreen(
  */
 @Composable
 fun HomeScreenContent(
-    reviews: List<FeedReviewContent>,
+    reviews: List<ReviewContent>,
     isForYouSelected: Boolean,
     onForYouClick: () -> Unit,
     onFollowingClick: () -> Unit,
-    onReviewClick: (FeedReviewContent) -> Unit,
-    onCommentClick: (FeedReviewContent) -> Unit,
-    onSendClick: (FeedReviewContent) -> Unit,
+    onReviewClick: (Int) -> Unit,
+    onCommentClick: (Int) -> Unit,
+    onSendClick: (ReviewContent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -106,9 +106,9 @@ fun HomeScreenContent(
             FeedReviewItem(
                 review = review,
                 onViewMoreClick = {
-                    onReviewClick(review)
+                    onReviewClick(review.id)
                 },
-                onCommentClick = { onCommentClick(review) },
+                onCommentClick = { onCommentClick(review.id) },
                 onSendClick = { onSendClick(review) }
             )
 

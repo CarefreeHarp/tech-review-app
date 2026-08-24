@@ -21,6 +21,9 @@ import com.example.devicersapp.ui.screens.request_product.RequestProductScreen
 import com.example.devicersapp.ui.screens.review.ReviewScreen
 import com.example.devicersapp.ui.screens.search_product.SearchProductScreen
 import com.example.devicersapp.ui.screens.search_profile.SearchProfileScreen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
 
 
 /** Representa de forma segura las rutas que componen la navegación principal de la aplicación. */
@@ -35,11 +38,23 @@ sealed class AppDestination(val route: String) {
     data object SearchProfile : AppDestination("search-profile")
     data object FoundProducts : AppDestination("found-products")
     data object ProfileSearchResults : AppDestination("profile-search-results")
-    data object Product : AppDestination("product")
-    data object RateProduct : AppDestination("rate-product")
-    data object Review : AppDestination("review")
+    data object Product : AppDestination("product") {
+        fun createRoute(productNameResId: Int) = "product/$productNameResId"
+    }
+//    data object RateProduct : AppDestination("rate-product") {
+//        fun createRoute(productId: String) = "rate-product/$productId"
+//    }
+    data object RateProduct : AppDestination("rate-product") {
+        fun createRoute(productNameResId: Int) = "rate-product/$productNameResId"
+    }
+    data object Review : AppDestination("review") {
+        fun createRoute(reviewId: Int) = "review/$reviewId"
+
+    }
     data object RequestProduct : AppDestination("request-product")
-    data object Profile : AppDestination("user-profile")
+    data object Profile : AppDestination("user-profile") {
+        fun createRoute(profileId: String) = "user-profile/$profileId"
+    }
     data object ProfileSavedReviews : AppDestination("profile-saved-reviews")
 }
 
@@ -77,11 +92,15 @@ fun AppNavigation(
         }
         composable(route = AppDestination.Home.route) {
             HomeScreen(
-                onReviewClick = {
-                    navController.navigate(AppDestination.Review.route)
+                onReviewClick = { reviewId ->
+                    navController.navigate(
+                        AppDestination.Review.createRoute(reviewId)
+                    )
                 },
-                onCommentClick = {
-                    navController.navigate(AppDestination.Review.route)
+                onCommentClick = { reviewId ->
+                    navController.navigate(
+                        AppDestination.Review.createRoute(reviewId)
+                    )
                 },
                 onSendClick = {
                     navController.navigate(AppDestination.SearchProfile.route)
@@ -99,13 +118,42 @@ fun AppNavigation(
             )
         }
         composable(route = AppDestination.CreateReview.route) {
-            CreateReviewScreen()
+            CreateReviewScreen(
+                onProductClick = { product ->
+                    navController.navigate(
+                        AppDestination.RateProduct.createRoute(product.nameResId)
+                    )
+                },
+                onRequestProductClick = {
+                    navController.navigate(
+                        AppDestination.RequestProduct.route
+                    )
+                }
+            )
         }
         composable(route = AppDestination.Activity.route) {
-            ActivityScreen()
+            ActivityScreen(
+                onReviewClick = { reviewId ->
+                    navController.navigate(AppDestination.Review.createRoute(reviewId))
+                },
+                onProfileClick = { profileId ->
+                    navController.navigate(AppDestination.Profile.createRoute(profileId))
+                }
+            )
         }
         composable(route = AppDestination.OwnProfile.route) {
-            OwnProfileScreen()
+            OwnProfileScreen(
+                onReviewClick = { reviewId ->
+                    navController.navigate(
+                        AppDestination.Review.createRoute(reviewId)
+                    )
+                },
+                onSavedReviewsClick = {
+                    navController.navigate(
+                        AppDestination.ProfileSavedReviews.route
+                    )
+                }
+            )
         }
         composable(route = AppDestination.Register.route) {
             RegisterScreen(
@@ -123,52 +171,132 @@ fun AppNavigation(
         }
         composable(route = AppDestination.SearchProfile.route) {
             SearchProfileScreen(
-                onApplyFilters = {
-                    navController.navigate(AppDestination.ProfileSearchResults.route)
-                },
                 onProductsClick = {
                     navController.navigate(AppDestination.SearchProduct.route)
+                },
+                onApplyFilters = {
+                    navController.navigate(AppDestination.ProfileSearchResults.route)
                 }
             )
         }
         composable(route = AppDestination.FoundProducts.route) {
             FoundProductsScreen(
-                onProductClick = {
-                    navController.navigate(AppDestination.Product.route)
+                onProductClick = { product ->
+                    navController.navigate(
+                        AppDestination.Product.createRoute(product.nameResId)
+                    )
                 }
             )
         }
         composable(route = AppDestination.ProfileSearchResults.route) {
-            ProfileSearchResultsScreen()
+            ProfileSearchResultsScreen(
+                onProfileClick = { profileId ->
+                    navController.navigate(
+                        AppDestination.Profile.createRoute(profileId)
+                    )
+                }
+            )
         }
-        composable(route = AppDestination.Product.route) {
+        composable(
+            route = "${AppDestination.Product.route}/{productNameResId}",
+            arguments = listOf(
+                navArgument("productNameResId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+
+            val productNameResId =
+                it.arguments?.getInt("productNameResId")
+
             ProductScreen(
-                onRateClick = {
-                    navController.navigate(AppDestination.RateProduct.route)
+                productNameResId = productNameResId,
+                onRateClick = { nameResId ->
+                    navController.navigate(
+                        AppDestination.RateProduct.createRoute(nameResId)
+                    )
                 },
-                onViewMoreClick = {
-                    navController.navigate(AppDestination.Review.route)
+                onViewMoreClick = { reviewId ->
+                    navController.navigate(
+                        AppDestination.Review.createRoute(reviewId)
+                    )
                 }
             )
         }
-        composable(route = AppDestination.RateProduct.route) {
+
+        composable(
+            route = "${AppDestination.RateProduct.route}/{productNameResId}",
+            arguments = listOf(
+                navArgument("productNameResId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+
+            val productNameResId =
+                it.arguments?.getInt("productNameResId")
+
             RateProductScreen(
+                productNameResId = productNameResId,
                 onPublishClick = {
-                    navController.navigate(AppDestination.Review.route)
+                    navController.navigateToDestination(
+                        AppDestination.Home.route
+                    )
                 }
             )
         }
-        composable(route = AppDestination.Review.route) {
-            ReviewScreen()
+        composable(
+            route = "${AppDestination.Review.route}/{reviewId}",
+            arguments = listOf(
+                navArgument("reviewId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+
+            ReviewScreen(
+                reviewId = it.arguments?.getInt("reviewId"),
+                onProductClick = { productNameResId ->
+                    navController.navigate(
+                        AppDestination.Product.createRoute(productNameResId)
+                    )
+                }
+            )
         }
         composable(route = AppDestination.RequestProduct.route) {
             RequestProductScreen()
         }
-        composable(route = AppDestination.Profile.route) {
-            ProfileScreen()
+        composable(
+            route = "${AppDestination.Profile.route}/{profileId}",
+            arguments = listOf(
+                navArgument("profileId") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+
+            val profileId = it.arguments?.getString("profileId")
+
+            ProfileScreen(
+                profileId = profileId,
+                onReviewClick = { reviewId ->
+                    navController.navigate(
+                        AppDestination.Review.createRoute(reviewId)
+                    )
+                }
+            )
         }
         composable(route = AppDestination.ProfileSavedReviews.route) {
-            ProfileSavedReviewsScreen()
+            ProfileSavedReviewsScreen(
+                onReviewClick = { reviewId ->
+                    navController.navigate(
+                        AppDestination.Review.createRoute(reviewId)
+                    )
+                },
+                onReviewsClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

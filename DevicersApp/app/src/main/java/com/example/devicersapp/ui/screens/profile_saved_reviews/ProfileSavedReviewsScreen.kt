@@ -26,14 +26,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProfileContent
-import com.example.devicersapp.ui.models.SavedReviewContent
+import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.profile_saved_reviews.components.SavedReviewCard
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 
 /**
  * Configura la sección de reseñas guardadas dentro del perfil propio.
@@ -42,17 +44,19 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
  */
 @Composable
 fun ProfileSavedReviewsScreen(
+    onReviewClick: (Int) -> Unit = {},
+    onReviewsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    // La sección activa es estado de la pantalla; aquí se entra directamente en los guardados.
-    var isReviewsSelected by remember { mutableStateOf(false) }
-
     ProfileSavedReviewsScreenContent(
         profile = LocalProfileProvider.profile,
-        savedReviews = LocalProfileProvider.savedReviews,
-        isReviewsSelected = isReviewsSelected,
-        onReviewsClick = { isReviewsSelected = true },
-        onSavedClick = { isReviewsSelected = false },
+        savedReviews = LocalProfileProvider.savedReviews.mapNotNull { savedReview ->
+            LocalReviewProvider.findById(savedReview.reviewId)
+        },
+        isReviewsSelected = false,
+        onReviewsClick = onReviewsClick,
+        onSavedClick = {},
+        onReviewClick = onReviewClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -75,10 +79,11 @@ fun ProfileSavedReviewsScreen(
 @Composable
 fun ProfileSavedReviewsScreenContent(
     profile: ProfileContent,
-    savedReviews: List<SavedReviewContent>,
+    savedReviews: List<ReviewContent>,
     isReviewsSelected: Boolean,
     onReviewsClick: () -> Unit,
     onSavedClick: () -> Unit,
+    onReviewClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -116,8 +121,13 @@ fun ProfileSavedReviewsScreenContent(
             }
         }
 
-        items(savedReviews) { savedReview ->
-            SavedReviewCard(savedReview = savedReview)
+        itemsIndexed(savedReviews) { _, savedReview ->
+            SavedReviewCard(
+                review = savedReview,
+                onClick = {
+                    onReviewClick(savedReview.id)
+                }
+            )
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {

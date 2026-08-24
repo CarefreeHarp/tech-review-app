@@ -28,7 +28,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.ui.models.SavedReviewContent
+import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
+import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.rating.RatingStars
@@ -36,18 +38,19 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
 /**
  * Muestra una reseña guardada en la cuadrícula, con el producto destacado sobre su imagen.
  *
- * @param savedReview Contenido de la reseña guardada.
+ * @param review Reseña existente que el perfil guardó.
  * @param modifier Modificador aplicado a la tarjeta.
  * @param onClick Acción solicitada al abrir la reseña guardada.
  */
 @Composable
 fun SavedReviewCard(
-    savedReview: SavedReviewContent,
+    review: ReviewContent,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
     val imageShape = RoundedCornerShape(12.dp)
+    val author = requireNotNull(LocalProfileProvider.getProfileById(review.authorId))
 
     Column(
         modifier = modifier
@@ -66,8 +69,8 @@ fun SavedReviewCard(
             contentAlignment = Alignment.BottomStart
         ) {
             Image(
-                painter = painterResource(savedReview.productImageResId),
-                contentDescription = stringResource(savedReview.imageDescriptionResId),
+                painter = painterResource(review.productImageResId),
+                contentDescription = stringResource(R.string.review_product_image),
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop
             )
@@ -78,7 +81,7 @@ fun SavedReviewCard(
                     .background(colors.textonPhoto.copy(alpha = 0.50f))
             )
             Text(
-                text = stringResource(savedReview.productNameResId),
+                text = stringResource(review.productNameResId),
                 modifier = Modifier.padding(12.dp),
                 color = colors.textOnPrimary,
                 maxLines = 2,
@@ -94,7 +97,7 @@ fun SavedReviewCard(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = stringResource(savedReview.authorResId),
+            text = stringResource(author.handleResId),
             color = colors.textPrimary,
             style = MaterialTheme.typography.bodySmall,
             maxLines = 1,
@@ -103,7 +106,7 @@ fun SavedReviewCard(
 
         Spacer(modifier = Modifier.height(3.dp))
 
-        RatingStars(rating = savedReview.rating)
+        RatingStars(rating = review.rating)
     }
 }
 
@@ -113,15 +116,7 @@ fun SavedReviewCard(
 fun SavedReviewCardPreview() {
     DevicersAppTheme {
         SavedReviewCard(
-            SavedReviewContent(
-                productNameResId = R.string.profile_saved_first_product,
-                productImageResId = R.drawable.device_01,
-                imageDescriptionResId = R.string.profile_saved_image,
-                authorResId = R.string.profile_saved_first_author,
-                rating = 5,
-                averageResId = R.string.profile_saved_first_average,
-                textResId = R.string.profile_saved_first_text
-            ),
+            review = LocalReviewProvider.reviews.first(),
             modifier = Modifier.padding(16.dp)
         )
     }

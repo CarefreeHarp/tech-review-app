@@ -20,7 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.devicersapp.data.local.LocalReviewScreenProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.models.ReplyContent
 import com.example.devicersapp.ui.models.ReviewContent
@@ -35,18 +35,23 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 /** Configura el estado de respuesta y los datos locales del detalle de una reseña. */
 @Composable
 fun ReviewScreen(
+    reviewId: Int? = null,
+    onProductClick: (Int) -> Unit = {},
     onSendReply: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var replyText by rememberSaveable { mutableStateOf("") }
     val expandedReplies = remember { mutableStateMapOf<Int, Boolean>() }
+    val selectedReviewId = reviewId ?: LocalReviewProvider.productReviews.first().id
+    val review = requireNotNull(LocalReviewProvider.findById(selectedReviewId))
 
     ReviewScreenContent(
-        product = LocalReviewScreenProvider.product,
-        review = LocalReviewScreenProvider.review,
-        replies = LocalReviewScreenProvider.replies,
+        product = requireNotNull(LocalReviewProvider.findProductByReviewId(selectedReviewId)),
+        review = review,
+        replies = review.comments,
         replyText = replyText,
         onReplyTextChange = { replyText = it },
+        onProductClick = onProductClick,
         onSendReply = {
             if (replyText.isNotBlank()) {
                 onSendReply(replyText)
@@ -83,6 +88,7 @@ fun ReviewScreenContent(
     replies: List<ReplyContent>,
     replyText: String,
     onReplyTextChange: (String) -> Unit,
+    onProductClick: (Int) -> Unit,
     onSendReply: () -> Unit,
     expandedReplies: Map<Int, Boolean> = emptyMap(),
     onViewAnswers: (Int) -> Unit = {},
@@ -95,7 +101,12 @@ fun ReviewScreenContent(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
         ) {
-            ReviewProductSummary(product = product)
+            ReviewProductSummary(
+                product = product,
+                onClick = {
+                    onProductClick(product.nameResId)
+                }
+            )
 
             Spacer(modifier = Modifier.height(22.dp))
             ReviewDetail(review = review)

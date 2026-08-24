@@ -26,6 +26,9 @@
         #diagram svg.is-focused .edgeLabel.is-related { opacity: 1; filter: drop-shadow(0 0 4px rgba(17, 24, 39, 0.45)); }
         #diagram svg.is-focused .edgeLabel.is-related div { padding: 3px 6px; background: #fde047; border: 2px solid #ca8a04; border-radius: 5px; box-shadow: 0 2px 5px rgba(15, 23, 42, 0.45); }
         #diagram svg.is-focused .edgeLabel.is-related span { color: #111827 !important; font-size: 15px; font-weight: 800; opacity: 1 !important; }
+        #diagram svg .future > * { fill: rgb(255, 117, 86) !important; stroke: rgb(168, 30, 0) !important; }
+        #diagram svg .future span { fill: rgb(255, 117, 86) !important; stroke: rgb(168, 30, 0) !important; }
+        #diagram svg .flowchart-link { stroke: #C62828 !important; }
     </style>
 </head>
 <body>
@@ -233,6 +236,36 @@
         diagram.querySelector(".edgeLabels")?.append(savedReviewsToOwnProfileLabel);
         labels.push(savedReviewsToOwnProfileLabel);
 
+        // Acción para abrir el detalle de una reseña desde las reseñas guardadas.
+        const savedReviewsToReview = document.createElementNS(svgNamespace, "path");
+        savedReviewsToReview.setAttribute("id", "L-profileSavedReviews-review-0");
+        savedReviewsToReview.setAttribute("class", "edge-thickness-normal edge-pattern-solid flowchart-link LS-profileSavedReviews LE-review");
+        savedReviewsToReview.setAttribute("d", "M307,560 C600,605 950,810 1239.594,850.604");
+        savedReviewsToReview.setAttribute("style", "stroke:#1565C0;stroke-width:3px;fill:none;");
+        diagram.querySelector(".edgePaths")?.append(savedReviewsToReview);
+        links.push(savedReviewsToReview);
+
+        const savedReviewsToReviewLabel = document.createElementNS(svgNamespace, "g");
+        savedReviewsToReviewLabel.setAttribute("class", "edgeLabel");
+        savedReviewsToReviewLabel.setAttribute("transform", "translate(760,725)");
+        const savedReviewLabelGroup = document.createElementNS(svgNamespace, "g");
+        savedReviewLabelGroup.setAttribute("class", "label");
+        savedReviewLabelGroup.setAttribute("transform", "translate(-50, -9)");
+        const savedReviewLabel = document.createElementNS(svgNamespace, "foreignObject");
+        savedReviewLabel.setAttribute("width", "100");
+        savedReviewLabel.setAttribute("height", "18");
+        const savedReviewLabelContainer = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        savedReviewLabelContainer.style.cssText = "display: inline-block; white-space: nowrap;";
+        const savedReviewLabelText = document.createElementNS("http://www.w3.org/1999/xhtml", "span");
+        savedReviewLabelText.setAttribute("class", "edgeLabel");
+        savedReviewLabelText.textContent = "Tap on review";
+        savedReviewLabelContainer.append(savedReviewLabelText);
+        savedReviewLabel.append(savedReviewLabelContainer);
+        savedReviewLabelGroup.append(savedReviewLabel);
+        savedReviewsToReviewLabel.append(savedReviewLabelGroup);
+        diagram.querySelector(".edgeLabels")?.append(savedReviewsToReviewLabel);
+        labels.push(savedReviewsToReviewLabel);
+
         // La barra inferior es un control de navegación, por eso se representa como un círculo.
         const bottomBarNode = nodes.find((node) => node.dataset.id === "bottomNav");
         if (bottomBarNode) {
@@ -250,8 +283,8 @@
                 const circle = document.createElementNS(svgNamespace, "circle");
                 circle.setAttribute("class", "bottom-bar-circle");
                 circle.setAttribute("r", "58");
-                circle.style.setProperty("fill", "#C62828", "important");
-                circle.style.setProperty("stroke", "#7F1D1D", "important");
+                circle.style.setProperty("fill", "rgb(255, 117, 86)", "important");
+                circle.style.setProperty("stroke", "rgb(168, 30, 0)", "important");
                 circle.style.setProperty("stroke-width", "3px", "important");
                 rectangle.replaceWith(circle);
             }

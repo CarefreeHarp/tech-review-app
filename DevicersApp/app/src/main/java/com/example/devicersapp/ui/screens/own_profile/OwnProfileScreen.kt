@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,8 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProfileContent
-import com.example.devicersapp.ui.models.RatedProductContent
+import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileHeader
@@ -40,19 +42,29 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
 fun OwnProfileScreen(
     onEditProfileClick: () -> Unit = {},
     onEditAvatarClick: () -> Unit = {},
+    onReviewClick: (Int) -> Unit = {},
+    onSavedReviewsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    // La sección activa es estado de la pantalla, no de la fila de pestañas.
     var isReviewsSelected by remember { mutableStateOf(true) }
 
     OwnProfileScreenContent(
         profile = LocalProfileProvider.profile,
-        ratedProducts = LocalProfileProvider.ratedProducts,
+        reviews = LocalReviewProvider.reviewsForProfile(LocalProfileProvider.profile.id),
         isReviewsSelected = isReviewsSelected,
-        onReviewsClick = { isReviewsSelected = true },
-        onSavedClick = { isReviewsSelected = false },
+
+        onReviewsClick = {
+            isReviewsSelected = true
+        },
+
+        onSavedClick = {
+            onSavedReviewsClick()
+        },
+
+        onReviewClick = onReviewClick,
         onEditProfileClick = onEditProfileClick,
         onEditAvatarClick = onEditAvatarClick,
+
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -63,7 +75,7 @@ fun OwnProfileScreen(
  * Ensambla la cabecera del perfil propio, sus secciones y la cuadrícula de productos calificados.
  *
  * @param profile Información visible del perfil.
- * @param ratedProducts Productos que el perfil ya calificó.
+ * @param reviews Reseñas creadas por el perfil.
  * @param isReviewsSelected Indica si la sección activa es la de reseñas.
  * @param onReviewsClick Acción que solicita mostrar la sección de reseñas.
  * @param onSavedClick Acción que solicita mostrar la sección de guardados.
@@ -74,10 +86,11 @@ fun OwnProfileScreen(
 @Composable
 fun OwnProfileScreenContent(
     profile: ProfileContent,
-    ratedProducts: List<RatedProductContent>,
+    reviews: List<ReviewContent>,
     isReviewsSelected: Boolean,
     onReviewsClick: () -> Unit,
     onSavedClick: () -> Unit,
+    onReviewClick: (Int) -> Unit,
     onEditProfileClick: () -> Unit,
     onEditAvatarClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -110,8 +123,13 @@ fun OwnProfileScreenContent(
             )
         }
 
-        items(ratedProducts) { product ->
-            ProfileProductCard(product)
+        itemsIndexed(reviews) { _, review ->
+            ProfileProductCard(
+                review = review,
+                onClick = {
+                    onReviewClick(review.id)
+                }
+            )
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {

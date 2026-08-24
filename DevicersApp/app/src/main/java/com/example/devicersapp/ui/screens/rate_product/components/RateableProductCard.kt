@@ -43,6 +43,7 @@ import com.example.devicersapp.ui.theme.SearchControlText
 @Composable
 fun RateableProductCard(
     product: ProductContent,
+    onChangeProduct: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -106,6 +107,7 @@ fun RateableProductCardPreview() {
                 imageResId = R.drawable.device_00,
                 imageDescriptionResId = R.string.rate_product_image_description
             ),
+            onChangeProduct = {},
             modifier = Modifier.padding(16.dp)
         )
     }

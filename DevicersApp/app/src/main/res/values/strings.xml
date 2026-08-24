@@ -136,6 +136,18 @@
     <string name="profile_result_third_interests">Audio · Reseñas</string>
     <string name="profile_result_third_reviews">46 reseñas</string>
 
+    <string name="profile_result_fourth_handle">@nora.mobile</string>
+    <string name="profile_result_fourth_interests">Celulares · Fotografía</string>
+    <string name="profile_result_fourth_reviews">27 reseñas</string>
+
+    <string name="profile_result_fifth_handle">@diego.gadgets</string>
+    <string name="profile_result_fifth_interests">Computadores · Gaming</string>
+    <string name="profile_result_fifth_reviews">41 reseñas</string>
+
+    <string name="profile_result_sixth_handle">@luna.digital</string>
+    <string name="profile_result_sixth_interests">Tablets · Productividad</string>
+    <string name="profile_result_sixth_reviews">15 reseñas</string>
+
     <!-- ========================= -->
     <!-- FOUND PRODUCTS -->
     <!-- ========================= -->
@@ -643,6 +655,8 @@
     <string name="rate_product_character_count">%1$d/%2$d</string>
 
     <!-- ========================= -->
+    <string name="review_not_found">No encontramos esta reseña.</string>
+
     <!-- CREATE REVIEW -->
     <!-- ========================= -->
 

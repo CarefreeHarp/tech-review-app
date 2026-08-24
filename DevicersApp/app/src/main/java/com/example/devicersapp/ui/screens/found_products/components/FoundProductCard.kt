@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalFoundProductsScreenProvider
+import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.models.ProductSearchContent
 import com.example.devicersapp.ui.theme.CardHighlightText
 import com.example.devicersapp.ui.theme.CardMetadataText
@@ -122,7 +122,7 @@ fun FoundProductCard(
 fun FoundProductCardPreview() {
     DevicersAppTheme {
         FoundProductCard(
-            product = LocalFoundProductsScreenProvider.results.first(),
+            product = LocalProductProvider.products.first(),
             modifier = Modifier.padding(16.dp)
         )
     }

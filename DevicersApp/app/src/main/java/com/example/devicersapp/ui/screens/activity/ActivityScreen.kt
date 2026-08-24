@@ -27,8 +27,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalActivityScreenProvider
+import com.example.devicersapp.data.local.LocalActivityProvider
+import com.example.devicersapp.ui.models.ActivityContent
 import com.example.devicersapp.ui.models.ActivityGroupContent
+import com.example.devicersapp.ui.models.ActivityType
 import com.example.devicersapp.ui.screens.activity.components.ActivityScrollIndicator
 import com.example.devicersapp.ui.screens.activity.components.ActivitySection
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -37,18 +39,28 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
 /** Configura la pantalla de actividad, donde se reúne todo lo que ocurre alrededor de las reseñas. */
 @Composable
-fun ActivityScreen(modifier: Modifier = Modifier) {
+fun ActivityScreen(
+    onReviewClick: (Int) -> Unit = {},
+    onProfileClick: (String) -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     // Estado elevado que determina qué tarjetas deben mostrar la acción "Siguiendo".
     var followedActivityIds by remember { mutableStateOf(emptySet<String>()) }
     // La referencia temporal se conserva para que los textos relativos no cambien en cada recomposición.
     val activityGroups = remember {
-        LocalActivityScreenProvider.activityGroups(currentTimeMillis = System.currentTimeMillis())
+        LocalActivityProvider.activityGroups(currentTimeMillis = System.currentTimeMillis())
     }
 
     ActivityScreenContent(
         activityGroups = activityGroups,
         followedActivityIds = followedActivityIds,
         onFollow = { activityId -> followedActivityIds = followedActivityIds + activityId },
+        onActivityClick = { activity ->
+            when (activity.type) {
+                ActivityType.LIKE, ActivityType.COMMENT -> onReviewClick(requireNotNull(activity.targetReviewId))
+                ActivityType.FOLLOW -> onProfileClick(requireNotNull(activity.targetProfileId))
+            }
+        },
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -61,6 +73,7 @@ fun ActivityScreen(modifier: Modifier = Modifier) {
  * @param activityGroups Grupos locales de eventos que se mostrarán.
  * @param followedActivityIds Identificadores de eventos cuyos autores ya se siguen.
  * @param onFollow Acción solicitada al seleccionar seguir.
+ * @param onActivityClick Acción solicitada al abrir el destino de una notificación.
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
@@ -68,6 +81,7 @@ fun ActivityScreenContent(
     activityGroups: List<ActivityGroupContent>,
     followedActivityIds: Set<String>,
     onFollow: (String) -> Unit,
+    onActivityClick: (ActivityContent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -102,6 +116,7 @@ fun ActivityScreenContent(
                         activities = group.activities,
                         followedActivityIds = followedActivityIds,
                         onFollow = onFollow,
+                        onActivityClick = onActivityClick,
                         // Solo el periodo más reciente se presenta como tarjetas elevadas.
                         isHighlighted = index == 0
                     )

@@ -25,7 +25,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.ui.models.FeedReviewContent
+import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
+import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.FeedReviewActionCountText
 import com.example.devicersapp.ui.theme.RatingStarsLargeText
@@ -45,13 +47,14 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
  */
 @Composable
 fun FeedReviewItem(
-    review: FeedReviewContent,
+    review: ReviewContent,
     onViewMoreClick: () -> Unit = {},
     onCommentClick: () -> Unit = {},
     onSendClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
+    val author = requireNotNull(LocalProfileProvider.getProfileById(review.authorId))
 
     Column(modifier = modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
@@ -70,12 +73,12 @@ fun FeedReviewItem(
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     ProfileAvatar(
-                        avatarResId = review.avatarResId,
+                        avatarResId = author.avatarResId,
                         modifier = Modifier.size(34.dp)
                     )
                     Spacer(modifier = Modifier.width(9.dp))
                     Text(
-                        text = stringResource(review.author),
+                        text = stringResource(author.handleResId),
                         modifier = Modifier.weight(1f),
                         color = colors.textPrimary,
                         style = MaterialTheme.typography.titleSmall,
@@ -83,7 +86,7 @@ fun FeedReviewItem(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = stringResource(review.timeAgo),
+                        text = stringResource(requireNotNull(review.timeAgoResId)),
                         color = colors.textSecondary,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -92,7 +95,7 @@ fun FeedReviewItem(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = stringResource(review.productMetadata),
+                    text = stringResource(review.productMetadataResId),
                     color = colors.textSecondary,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -100,7 +103,7 @@ fun FeedReviewItem(
                 Spacer(modifier = Modifier.height(3.dp))
 
                 Text(
-                    text = stringResource(review.productName),
+                    text = stringResource(review.productNameResId),
                     color = colors.textPrimary,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
@@ -113,7 +116,7 @@ fun FeedReviewItem(
                     RatingStars(rating = review.rating, style = RatingStarsLargeText)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = stringResource(review.productAverage),
+                        text = stringResource(requireNotNull(review.productAverageResId)),
                         color = colors.textPrimary,
                         style = MaterialTheme.typography.titleSmall
                     )
@@ -124,7 +127,7 @@ fun FeedReviewItem(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = stringResource(review.reviewText),
+            text = stringResource(review.textResId),
             color = colors.textSecondary,
             style = ReviewContentText,
             // El feed muestra un adelanto de la reseña; el detalle completo vive en su pantalla.
@@ -147,7 +150,7 @@ fun FeedReviewItem(
 
         ReviewActionsRow(
             likes = review.likes,
-            comments = review.comments,
+            comments = review.comments.size,
             // El feed prioriza estas acciones con una escala 30 % superior a la del detalle.
             iconSize = 24.7.dp,
             countTextStyle = FeedReviewActionCountText,
@@ -163,19 +166,7 @@ fun FeedReviewItem(
 fun FeedReviewItemPreview() {
     DevicersAppTheme {
         FeedReviewItem(
-            FeedReviewContent(
-                productName = R.string.feed_product_audio,
-                productImageResId = R.drawable.device_01,
-                productMetadata = R.string.feed_metadata_audio,
-                author = R.string.feed_user_audio,
-                avatarResId = R.drawable.profile_avatar_02,
-                reviewText = R.string.feed_review_audio,
-                likes = 128,
-                comments = 18,
-                timeAgo = R.string.feed_time_five_hours,
-                rating = 5,
-                productAverage = R.string.feed_average_audio
-            ),
+            review = LocalReviewProvider.reviews.first(),
             modifier = Modifier.padding(16.dp)
         )
     }

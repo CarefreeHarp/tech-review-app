@@ -16,7 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.devicersapp.data.local.LocalRateProductScreenProvider
+import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.screens.rate_product.components.RateableProductCard
 import com.example.devicersapp.ui.screens.rate_product.components.RatingSelector
@@ -28,12 +28,15 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 /**
  * Configura el estado de la reseña y delega la interfaz de calificación al contenido.
  *
+ * @param productNameResId Identificador del nombre del producto que se calificará.
+ * @param onPublishClick Acción solicitada al publicar la calificación.
  * @param modifier Modificador aplicado al contenedor raíz.
  */
 @Composable
 fun RateProductScreen(
-    modifier: Modifier = Modifier,
-    onPublishClick: () -> Unit = {}
+    productNameResId: Int? = null,
+    onPublishClick: () -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     // El formulario conserva sus valores ante recomposiciones y cambios de configuración.
     var rating by rememberSaveable {
@@ -57,7 +60,9 @@ fun RateProductScreen(
     }
 
     RateProductScreenContent(
-        product = LocalRateProductScreenProvider.product,
+        product = productNameResId?.let {
+            LocalProductProvider.getProductByNameResId(it)
+        } ?: LocalProductProvider.product,
 
         rating = rating,
         onRatingChange = {
@@ -84,6 +89,9 @@ fun RateProductScreen(
             disadvantage = it
         },
 
+        onChangeProduct = {
+            // TODO: Implementar la selección de otro producto.
+        },
         onPublishClick = onPublishClick,
 
         modifier = modifier
@@ -107,6 +115,7 @@ fun RateProductScreen(
  * @param onAdvantageChange Acción al cambiar la ventaja.
  * @param disadvantage Desventaja escrita para el producto.
  * @param onDisadvantageChange Acción al cambiar la desventaja.
+ * @param onChangeProduct Acción para cambiar de producto.
  * @param onPublishClick Acción para publicar la calificación.
  * @param modifier Modificador aplicado a la lista raíz.
  */
@@ -129,6 +138,7 @@ fun RateProductScreenContent(
     disadvantage: String,
     onDisadvantageChange: (String) -> Unit,
 
+    onChangeProduct: () -> Unit,
     onPublishClick: () -> Unit,
 
     modifier: Modifier = Modifier
@@ -147,6 +157,7 @@ fun RateProductScreenContent(
         item {
             RateableProductCard(
                 product = product,
+                onChangeProduct = onChangeProduct
             )
 
             Spacer(modifier = Modifier.height(24.dp))

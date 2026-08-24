@@ -2,10 +2,13 @@ package com.example.devicersapp.data.local
 
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProductCategoryContent
+import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.models.ProductSearchContent
+import com.example.devicersapp.ui.models.RatingDistribution
+import com.example.devicersapp.ui.models.RatingSummaryContent
 
-/** Provee las categorías y productos locales disponibles para iniciar una reseña. */
-object LocalCreateReviewScreenProvider {
+/** Centraliza los productos locales y los datos derivados que muestran sus pantallas. */
+object LocalProductProvider {
 
     val categories = listOf(
         ProductCategoryContent(id = "all", labelResId = R.string.all),
@@ -126,4 +129,48 @@ object LocalCreateReviewScreenProvider {
             rating = 5
         )
     )
+
+    /** Producto de referencia usado únicamente cuando una vista previa no recibe una selección. */
+    val product = ProductContent(
+        nameResId = R.string.product_title,
+        brandResId = R.string.product_brand_label,
+        imageResId = R.drawable.device_00,
+        imageDescriptionResId = R.string.rate_product_image_description
+    )
+
+    val ratingSummary = RatingSummaryContent(
+        averageResId = R.string.product_average_value,
+        rating = 5,
+        reviewCountResId = R.string.product_review_count,
+        distribution = listOf(
+            RatingDistribution(5, 0.68f, R.string.product_rating_five_percentage),
+            RatingDistribution(4, 0.22f, R.string.product_rating_four_percentage),
+            RatingDistribution(3, 0.07f, R.string.product_rating_three_percentage),
+            RatingDistribution(2, 0.02f, R.string.product_rating_two_percentage),
+            RatingDistribution(1, 0.01f, R.string.product_rating_one_percentage)
+        )
+    )
+
+    /** Obtiene el contenido de detalle a partir del identificador recibido en la navegación. */
+    fun getProductByNameResId(productNameResId: Int): ProductContent {
+        products.find { it.nameResId == productNameResId }?.let { selectedProduct ->
+            return ProductContent(
+                nameResId = selectedProduct.nameResId,
+                brandResId = selectedProduct.brandResId,
+                imageResId = selectedProduct.imageResId,
+                imageDescriptionResId = selectedProduct.imageDescriptionResId
+            )
+        }
+
+        LocalReviewProvider.reviews.find { it.productNameResId == productNameResId }?.let { review ->
+            return ProductContent(
+                nameResId = review.productNameResId,
+                brandResId = review.productMetadataResId,
+                imageResId = review.productImageResId,
+                imageDescriptionResId = R.string.review_product_image
+            )
+        }
+
+        return product
+    }
 }
