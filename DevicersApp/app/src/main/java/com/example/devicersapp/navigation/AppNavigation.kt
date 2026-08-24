@@ -79,6 +79,12 @@ fun AppNavigation(
             HomeScreen(
                 onReviewClick = {
                     navController.navigate(AppDestination.Review.route)
+                },
+                onCommentClick = {
+                    navController.navigate(AppDestination.Review.route)
+                },
+                onSendClick = {
+                    navController.navigate(AppDestination.SearchProfile.route)
                 }
             )
         }
@@ -139,11 +145,18 @@ fun AppNavigation(
             ProductScreen(
                 onRateClick = {
                     navController.navigate(AppDestination.RateProduct.route)
+                },
+                onViewMoreClick = {
+                    navController.navigate(AppDestination.Review.route)
                 }
             )
         }
         composable(route = AppDestination.RateProduct.route) {
-            RateProductScreen()
+            RateProductScreen(
+                onPublishClick = {
+                    navController.navigate(AppDestination.Review.route)
+                }
+            )
         }
         composable(route = AppDestination.Review.route) {
             ReviewScreen()

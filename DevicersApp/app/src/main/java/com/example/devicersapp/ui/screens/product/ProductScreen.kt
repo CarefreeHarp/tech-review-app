@@ -32,10 +32,17 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchHeadingText
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
-/** Configura el detalle del producto usando los datos locales de ejemplo. */
+/**
+ * Configura el detalle del producto usando los datos locales de ejemplo.
+ *
+ * @param onRateClick Acción solicitada al iniciar la calificación del producto.
+ * @param onViewMoreClick Acción solicitada al abrir una reseña del producto.
+ * @param modifier Modificador aplicado al contenedor de la pantalla.
+ */
 @Composable
 fun ProductScreen(
     onRateClick: () -> Unit = {},
+    onViewMoreClick: (ReviewContent) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     ProductScreenContent(
@@ -43,6 +50,7 @@ fun ProductScreen(
         ratingSummary = LocalProductScreenProvider.ratingSummary,
         reviews = LocalProductScreenProvider.reviews,
         onRateClick = onRateClick,
+        onViewMoreClick = onViewMoreClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -56,6 +64,7 @@ fun ProductScreen(
  * @param ratingSummary Resumen de calificaciones del producto.
  * @param reviews Reseñas locales que se muestran debajo del resumen.
  * @param onRateClick Acción solicitada al seleccionar calificar producto.
+ * @param onViewMoreClick Acción solicitada al abrir el detalle de una reseña.
  * @param modifier Modificador aplicado a la lista raíz.
  */
 @Composable
@@ -64,6 +73,7 @@ fun ProductScreenContent(
     ratingSummary: RatingSummaryContent,
     reviews: List<ReviewContent>,
     onRateClick: () -> Unit,
+    onViewMoreClick: (ReviewContent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -114,7 +124,10 @@ fun ProductScreenContent(
         }
 
         items(reviews) { review ->
-            ReviewCard(review)
+            ReviewCard(
+                review = review,
+                onViewMoreClick = { onViewMoreClick(review) }
+            )
             Spacer(modifier = Modifier.height(14.dp))
         }
 

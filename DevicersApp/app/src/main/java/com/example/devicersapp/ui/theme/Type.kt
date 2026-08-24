@@ -41,7 +41,7 @@ val Typography = Typography(
 val ReviewContentText = TextStyle(
     fontFamily = DevicersFontFamily,
     fontWeight = FontWeight.Normal,
-    fontSize = 17.28.sp,
+    fontSize = 16.28.sp,
     lineHeight = 23.76.sp
 )
 
@@ -148,6 +148,14 @@ val CardHighlightText = TextStyle(
     fontWeight = FontWeight.Bold,
     fontSize = 12.96.sp,
     lineHeight = 17.28.sp
+)
+
+/** Define los conteos de interacción ampliados para las reseñas del feed. */
+val FeedReviewActionCountText = TextStyle(
+    fontFamily = DevicersFontFamily,
+    fontWeight = FontWeight.Bold,
+    fontSize = 16.848.sp,
+    lineHeight = 22.464.sp
 )
 
 /** Define el texto de la acción visual de la barra superior. */

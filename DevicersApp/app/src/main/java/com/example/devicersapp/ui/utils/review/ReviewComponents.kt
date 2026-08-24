@@ -16,7 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.CardHighlightText
@@ -32,6 +34,8 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
  * @param likes Cantidad de reacciones recibidas.
  * @param comments Cantidad de comentarios recibidos.
  * @param modifier Modificador aplicado a la fila.
+ * @param iconSize Tamaño visual de los íconos de interacción.
+ * @param countTextStyle Estilo de los conteos de reacciones y comentarios.
  * @param onLikeClick Acción solicitada al reaccionar a la reseña.
  * @param onCommentClick Acción solicitada al comentar la reseña.
  * @param onSendClick Acción solicitada al compartir la reseña.
@@ -42,6 +46,8 @@ fun ReviewActionsRow(
     likes: Int,
     comments: Int,
     modifier: Modifier = Modifier,
+    iconSize: Dp = 19.dp,
+    countTextStyle: TextStyle = CardHighlightText,
     onLikeClick: () -> Unit = {},
     onCommentClick: () -> Unit = {},
     onSendClick: () -> Unit = {},
@@ -55,6 +61,8 @@ fun ReviewActionsRow(
             iconResId = R.drawable.like_icon,
             contentDescriptionResId = R.string.review_action_like,
             count = likes,
+            iconSize = iconSize,
+            countTextStyle = countTextStyle,
             onClick = onLikeClick
         )
         Spacer(modifier = Modifier.width(22.dp))
@@ -62,18 +70,22 @@ fun ReviewActionsRow(
             iconResId = R.drawable.comment_icon,
             contentDescriptionResId = R.string.review_action_comment,
             count = comments,
+            iconSize = iconSize,
+            countTextStyle = countTextStyle,
             onClick = onCommentClick
         )
         Spacer(modifier = Modifier.width(22.dp))
         ReviewAction(
             iconResId = R.drawable.send_icon,
             contentDescriptionResId = R.string.review_action_send,
+            iconSize = iconSize,
             onClick = onSendClick
         )
         Spacer(modifier = Modifier.weight(1f))
         ReviewAction(
             iconResId = R.drawable.bookmark_icon,
             contentDescriptionResId = R.string.review_action_save,
+            iconSize = iconSize,
             onClick = onSaveClick
         )
     }
@@ -86,6 +98,8 @@ fun ReviewActionsRow(
  * @param contentDescriptionResId Recurso de texto usado como descripción accesible.
  * @param modifier Modificador aplicado a la acción.
  * @param count Cantidad acumulada de la acción, o `null` cuando la acción no acumula.
+ * @param iconSize Tamaño visual del ícono de la acción.
+ * @param countTextStyle Estilo del conteo cuando la acción lo muestra.
  * @param onClick Acción solicitada al pulsar el ícono.
  */
 @Composable
@@ -94,6 +108,8 @@ fun ReviewAction(
     @StringRes contentDescriptionResId: Int,
     modifier: Modifier = Modifier,
     count: Int? = null,
+    iconSize: Dp = 19.dp,
+    countTextStyle: TextStyle = CardHighlightText,
     onClick: () -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
@@ -105,7 +121,7 @@ fun ReviewAction(
         Icon(
             painter = painterResource(iconResId),
             contentDescription = stringResource(contentDescriptionResId),
-            modifier = Modifier.size(19.dp),
+            modifier = Modifier.size(iconSize),
             tint = colors.textSecondary
         )
         if (count != null) {
@@ -113,7 +129,7 @@ fun ReviewAction(
             Text(
                 text = count.toString(),
                 color = colors.textPrimary,
-                style = CardHighlightText
+                style = countTextStyle
             )
         }
     }

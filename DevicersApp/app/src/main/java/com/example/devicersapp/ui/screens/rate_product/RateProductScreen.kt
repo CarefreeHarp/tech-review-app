@@ -32,7 +32,8 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
  */
 @Composable
 fun RateProductScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPublishClick: () -> Unit = {}
 ) {
     // El formulario conserva sus valores ante recomposiciones y cambios de configuración.
     var rating by rememberSaveable {
@@ -83,12 +84,7 @@ fun RateProductScreen(
             disadvantage = it
         },
 
-        onChangeProduct = {
-            // TODO: Implementar la selección de otro producto.
-        },
-        onPublishClick = {
-            // TODO: Implementar la publicación de la calificación.
-        },
+        onPublishClick = onPublishClick,
 
         modifier = modifier
             .fillMaxSize()
@@ -111,7 +107,6 @@ fun RateProductScreen(
  * @param onAdvantageChange Acción al cambiar la ventaja.
  * @param disadvantage Desventaja escrita para el producto.
  * @param onDisadvantageChange Acción al cambiar la desventaja.
- * @param onChangeProduct Acción para cambiar de producto.
  * @param onPublishClick Acción para publicar la calificación.
  * @param modifier Modificador aplicado a la lista raíz.
  */
@@ -134,7 +129,6 @@ fun RateProductScreenContent(
     disadvantage: String,
     onDisadvantageChange: (String) -> Unit,
 
-    onChangeProduct: () -> Unit,
     onPublishClick: () -> Unit,
 
     modifier: Modifier = Modifier
@@ -153,7 +147,6 @@ fun RateProductScreenContent(
         item {
             RateableProductCard(
                 product = product,
-                onChangeProduct = onChangeProduct
             )
 
             Spacer(modifier = Modifier.height(24.dp))

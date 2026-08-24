@@ -24,10 +24,17 @@ import com.example.devicersapp.ui.theme.SearchHeadingText
  * debe dibujar cada una y se le entregan ya resueltas.
  *
  * @param replies Respuestas del hilo, en el orden en que se leen.
+ * @param expandedReplies Estado que indica qué respuestas muestran sus contestaciones.
+ * @param onViewAnswers Acción que solicita revelar las contestaciones de una respuesta.
  * @param modifier Modificador aplicado al hilo.
  */
 @Composable
-fun ReplyList(replies: List<ReplyContent>, modifier: Modifier = Modifier) {
+fun ReplyList(
+    replies: List<ReplyContent>,
+    expandedReplies: Map<Int, Boolean> = emptyMap(),
+    onViewAnswers: (Int) -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = stringResource(R.string.review_replies, replies.size),
@@ -36,25 +43,91 @@ fun ReplyList(replies: List<ReplyContent>, modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.height(18.dp))
 
-        replies.forEachIndexed { index, reply ->
-            val nextReplyDepth = replies.getOrNull(index + 1)?.depth
+        val ancestorIndexes = mutableListOf<Int>()
 
-            ReplyItem(
-                reply = reply,
-                // Un nivel superior solo sigue bajando si aún le queda otra respuesta por alcanzar.
-                passThroughLevels = (0 until reply.depth)
-                    .filter { level -> hasPendingReplyAtLevel(replies, index, level) }
-                    .toSet(),
-                hasNestedReply = hasPendingReplyAtLevel(replies, index, reply.depth),
-                // Una respuesta y la que cuelga de ella van juntas; los hilos distintos se separan.
-                bottomSpacing = when {
-                    nextReplyDepth == null -> 0.dp
-                    nextReplyDepth > reply.depth -> 12.dp
-                    else -> 26.dp
+        replies.forEachIndexed { index, reply ->
+            while (ancestorIndexes.size > reply.depth) ancestorIndexes.removeLast()
+            val areAncestorsExpanded = ancestorIndexes.all { expandedReplies[it] == true }
+            val nextReplyDepth = replies.getOrNull(index + 1)?.depth
+            val hasNestedReplies = hasPendingReplyAtLevel(replies, index, reply.depth)
+            val areAnswersVisible = expandedReplies[index] == true
+            val passThroughLevels = (0 until reply.depth)
+                .filter { level ->
+                    val ancestorIndex = ancestorIndexes.getOrNull(level)
+                    hasPendingReplyAtLevel(replies, index, level) ||
+                        (ancestorIndex != null && expandedReplies[ancestorIndex] == true)
                 }
-            )
+                .toSet()
+
+            if (areAncestorsExpanded) {
+                ReplyItem(
+                    reply = reply,
+                    // Un ancestro expandido mantiene su línea hasta que alcance su control de ocultar.
+                    passThroughLevels = passThroughLevels,
+                    // La rama se conecta al control tanto cerrada como desplegada.
+                    hasNestedReply = hasNestedReplies,
+                    // Una respuesta y la que cuelga de ella van juntas; los hilos distintos se separan.
+                    bottomSpacing = when {
+                        nextReplyDepth == null -> 0.dp
+                        nextReplyDepth > reply.depth -> 12.dp
+                        else -> 26.dp
+                    }
+                )
+                if (hasNestedReplies && !areAnswersVisible) {
+                    ReplyAnswersToggle(
+                        depth = reply.depth,
+                        passThroughLevels = passThroughLevels,
+                        answersCount = directNestedReplyCount(replies, index, reply.depth),
+                        areAnswersVisible = false,
+                        onClick = { onViewAnswers(index) }
+                    )
+                    Spacer(Modifier.height(6.dp))
+                }
+            }
+
+            ancestorIndexes.add(index)
+
+            if (areAncestorsExpanded) {
+                replies.indices
+                    .filter { parentIndex ->
+                        parentIndex < index &&
+                            expandedReplies[parentIndex] == true &&
+                            hasPendingReplyAtLevel(replies, parentIndex, replies[parentIndex].depth) &&
+                            lastNestedReplyIndex(replies, parentIndex) == index
+                    }
+                    .sortedDescending()
+                    .forEach { parentIndex ->
+                        ReplyAnswersToggle(
+                            depth = replies[parentIndex].depth,
+                            passThroughLevels = (0 until replies[parentIndex].depth)
+                                .filter { level ->
+                                    val ancestorIndex = ancestorIndexes.getOrNull(level)
+                                    ancestorIndex != null && expandedReplies[ancestorIndex] == true
+                                }
+                                .toSet(),
+                            answersCount = directNestedReplyCount(
+                                replies,
+                                parentIndex,
+                                replies[parentIndex].depth
+                            ),
+                            areAnswersVisible = true,
+                            onClick = { onViewAnswers(parentIndex) }
+                        )
+                    }
+            }
         }
     }
+}
+
+/** Cuenta las contestaciones directas de una respuesta dentro de su misma rama. */
+private fun directNestedReplyCount(replies: List<ReplyContent>, index: Int, level: Int): Int =
+    replies.drop(index + 1).takeWhile { it.depth > level }.count { it.depth == level + 1 }
+
+/** Devuelve el último índice que pertenece a la rama anidada de una respuesta. */
+private fun lastNestedReplyIndex(replies: List<ReplyContent>, index: Int): Int {
+    val level = replies[index].depth
+    return (index + 1 until replies.size).firstOrNull { replies[it].depth <= level }?.minus(1)
+        ?: replies.lastIndex
 }
 
 /**

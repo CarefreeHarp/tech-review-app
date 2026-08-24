@@ -2,6 +2,7 @@ package com.example.devicersapp.ui.screens.review.components
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -12,10 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -33,8 +37,7 @@ val ReplyAvatarSize: Dp = 34.dp
 /**
  * Muestra una respuesta del hilo con su avatar, su autor, su contenido y su acción.
  *
- * Cuando la respuesta contesta a otra, aparece sangrada, conectada por las líneas del hilo y
- * encabezada por el nombre de la persona a la que responde.
+ * Cuando la respuesta contesta a otra, aparece sangrada y conectada por las líneas del hilo.
  *
  * La separación con la siguiente respuesta se aplica dentro de la propia respuesta, en vez de
  * como un espacio externo, porque las líneas del hilo deben atravesarla sin interrumpirse.
@@ -96,19 +99,6 @@ fun ReplyItem(
                     color = colors.textSecondary
                 )
 
-                reply.replyingToResId?.let { replyingToResId ->
-                    Spacer(Modifier.height(6.dp))
-                    // El acento identifica a quién contesta esta respuesta dentro del hilo.
-                    Text(
-                        text = stringResource(
-                            R.string.review_reply_replying_to,
-                            stringResource(replyingToResId)
-                        ),
-                        style = CardMetadataText,
-                        color = colors.primaryText
-                    )
-                }
-
                 Spacer(Modifier.height(8.dp))
                 Text(
                     text = stringResource(reply.textResId),
@@ -116,12 +106,28 @@ fun ReplyItem(
                     color = colors.textSecondary
                 )
                 Spacer(Modifier.height(8.dp))
-                // La acción de responder se lee como enlace de acento.
-                Text(
-                    text = stringResource(R.string.review_reply_action),
-                    style = CardMetadataText,
-                    color = colors.primaryText
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.like_icon),
+                        contentDescription = stringResource(R.string.review_action_like),
+                        modifier = Modifier.size(17.dp),
+                        tint = colors.textSecondary
+                    )
+                    Text(
+                        text = reply.likes.toString(),
+                        style = CardMetadataText,
+                        color = colors.textSecondary
+                    )
+                    // La reacción y su contador se alimentarán desde los datos remotos de la respuesta.
+                    Text(
+                        text = stringResource(R.string.review_reply_action),
+                        style = CardMetadataText,
+                        color = colors.primaryText
+                    )
+                }
             }
         }
     }

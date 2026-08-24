@@ -31,6 +31,7 @@ object LocalReviewScreenProvider {
             authorResId = R.string.review_reply_author_one,
             timeAgoResId = R.string.review_reply_time,
             textResId = R.string.review_reply_text_one,
+            likes = 24,
             depth = 0
         ),
         ReplyContent(
@@ -59,9 +60,19 @@ object LocalReviewScreenProvider {
         ),
         ReplyContent(
             avatarResId = R.drawable.profile_avatar_04,
+            authorResId = R.string.review_reply_author_eleven,
+            timeAgoResId = R.string.review_reply_time,
+            textResId = R.string.review_reply_text_eleven,
+            likes = 6,
+            depth = 1,
+            replyingToResId = R.string.review_reply_author_one
+        ),
+        ReplyContent(
+            avatarResId = R.drawable.profile_avatar_04,
             authorResId = R.string.review_reply_author_five,
             timeAgoResId = R.string.review_reply_time_five,
             textResId = R.string.review_reply_text_five,
+            likes = 8,
             depth = 0
         ),
         ReplyContent(
@@ -85,6 +96,7 @@ object LocalReviewScreenProvider {
             authorResId = R.string.review_reply_author_eight,
             timeAgoResId = R.string.review_reply_time_eight,
             textResId = R.string.review_reply_text_eight,
+            likes = 3,
             depth = 0
         ),
         ReplyContent(

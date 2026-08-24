@@ -27,10 +27,19 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
 
-/** Configura la pantalla principal, donde se leen las últimas reseñas de la comunidad. */
+/**
+ * Configura la pantalla principal, donde se leen las últimas reseñas de la comunidad.
+ *
+ * @param onReviewClick Acción solicitada al abrir el detalle de una reseña.
+ * @param onCommentClick Acción solicitada al abrir los comentarios de una reseña.
+ * @param onSendClick Acción solicitada al compartir una reseña.
+ * @param modifier Modificador aplicado al contenedor de la pantalla.
+ */
 @Composable
 fun HomeScreen(
     onReviewClick: (FeedReviewContent) -> Unit = {},
+    onCommentClick: (FeedReviewContent) -> Unit = {},
+    onSendClick: (FeedReviewContent) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // La vertiente activa del feed es estado de la pantalla, no de la fila de pestañas.
@@ -42,6 +51,8 @@ fun HomeScreen(
         onForYouClick = { isForYouSelected = true },
         onFollowingClick = { isForYouSelected = false },
         onReviewClick = onReviewClick,
+        onCommentClick = onCommentClick,
+        onSendClick = onSendClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -56,6 +67,8 @@ fun HomeScreen(
  * @param onForYouClick Acción que solicita mostrar las reseñas sugeridas.
  * @param onFollowingClick Acción que solicita mostrar las reseñas de las cuentas seguidas.
  * @param onReviewClick Acción solicitada al abrir una reseña del feed.
+ * @param onCommentClick Acción solicitada al abrir los comentarios de una reseña del feed.
+ * @param onSendClick Acción solicitada al compartir una reseña del feed.
  * @param modifier Modificador aplicado a la lista.
  */
 @Composable
@@ -65,6 +78,8 @@ fun HomeScreenContent(
     onForYouClick: () -> Unit,
     onFollowingClick: () -> Unit,
     onReviewClick: (FeedReviewContent) -> Unit,
+    onCommentClick: (FeedReviewContent) -> Unit,
+    onSendClick: (FeedReviewContent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -92,7 +107,9 @@ fun HomeScreenContent(
                 review = review,
                 onViewMoreClick = {
                     onReviewClick(review)
-                }
+                },
+                onCommentClick = { onCommentClick(review) },
+                onSendClick = { onSendClick(review) }
             )
 
             // Un divisor separa cada reseña de la siguiente sin encerrarlas en tarjetas.

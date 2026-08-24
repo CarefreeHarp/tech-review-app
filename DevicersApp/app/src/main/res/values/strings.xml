@@ -94,7 +94,7 @@
     <string name="most_recent">Más recientes</string>
     <string name="best_rated">Mejor valorados</string>
 
-    <string name="apply_filters">Aplicar filtros</string>
+    <string name="apply_filters">Buscar</string>
 
     <!-- ========================= -->
     <!-- SEARCH PROFILE -->
@@ -474,7 +474,8 @@
     <string name="review_reply_placeholder">Responder a @usuario</string>
     <string name="review_replies">Respuestas (%1$d)</string>
     <string name="review_reply_action">Responder</string>
-    <string name="review_reply_replying_to">Respondiendo a %1$s</string>
+    <string name="review_reply_view_answers_count">respuestas (%1$d)</string>
+    <string name="review_reply_hide_answers">Ocultar respuestas</string>
 
     <!-- Reply Authors -->
 
@@ -488,6 +489,7 @@
     <string name="review_reply_author_eight">@juan_gadgets</string>
     <string name="review_reply_author_nine">@valen.tech</string>
     <string name="review_reply_author_ten">@dani_audio</string>
+    <string name="review_reply_author_eleven">@lina.sound</string>
 
     <!-- Reply Times -->
 
@@ -541,6 +543,10 @@
 
     <string name="review_reply_text_ten">
         La carga rápida también merece una mención. Con unos minutos conectados obtengo varias horas de reproducción.
+    </string>
+
+    <string name="review_reply_text_eleven">
+        También me parecieron cómodos para trabajar varias horas seguidas.
     </string>
 
 

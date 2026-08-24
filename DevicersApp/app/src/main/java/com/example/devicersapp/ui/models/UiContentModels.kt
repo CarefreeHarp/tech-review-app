@@ -154,6 +154,7 @@ data class SavedReviewContent(
  * @param authorResId Nombre de usuario que publicó la respuesta.
  * @param timeAgoResId Antigüedad de la respuesta.
  * @param textResId Cuerpo de la respuesta.
+ * @param likes Cantidad de reacciones recibidas; se llena desde la fuente de datos de respuestas.
  * @param depth Nivel de anidación dentro del hilo; cero para una respuesta a la reseña.
  * @param replyingToResId Autor al que contesta esta respuesta, o `null` si contesta a la reseña.
  */
@@ -162,10 +163,14 @@ data class ReplyContent(
     @param:StringRes val authorResId: Int,
     @param:StringRes val timeAgoResId: Int,
     @param:StringRes val textResId: Int,
+    val likes: Int = 0,
     val depth: Int = 0,
     @param:StringRes val replyingToResId: Int? = null
 ) {
-    init { require(depth >= 0) { "El nivel de anidación no puede ser negativo." } }
+    init {
+        require(likes >= 0) { "La cantidad de reacciones no puede ser negativa." }
+        require(depth >= 0) { "El nivel de anidación no puede ser negativo." }
+    }
 }
 
 /**

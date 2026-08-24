@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.theme.FeedReviewActionCountText
 import com.example.devicersapp.ui.theme.RatingStarsLargeText
 import com.example.devicersapp.ui.theme.ReviewContentText
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
@@ -38,12 +39,16 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
  *
  * @param review Contenido de la reseña publicada.
  * @param onViewMoreClick Acción solicitada al mostrar el detalle completo de la reseña.
+ * @param onCommentClick Acción solicitada al abrir los comentarios de la reseña.
+ * @param onSendClick Acción solicitada al compartir la reseña.
  * @param modifier Modificador aplicado al contenedor de la reseña.
  */
 @Composable
 fun FeedReviewItem(
     review: FeedReviewContent,
     onViewMoreClick: () -> Unit = {},
+    onCommentClick: () -> Unit = {},
+    onSendClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -140,7 +145,15 @@ fun FeedReviewItem(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        ReviewActionsRow(likes = review.likes, comments = review.comments)
+        ReviewActionsRow(
+            likes = review.likes,
+            comments = review.comments,
+            // El feed prioriza estas acciones con una escala 30 % superior a la del detalle.
+            iconSize = 24.7.dp,
+            countTextStyle = FeedReviewActionCountText,
+            onCommentClick = onCommentClick,
+            onSendClick = onSendClick
+        )
     }
 }
 
