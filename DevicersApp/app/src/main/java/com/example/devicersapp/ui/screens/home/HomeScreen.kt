@@ -3,6 +3,7 @@ package com.example.devicersapp.ui.screens.home
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -84,11 +85,9 @@ fun HomeScreenContent(
 ) {
     val colors = LocalDevicersColors.current
 
-    LazyColumn(
+    Column(
         modifier = modifier.padding(horizontal = 20.dp)
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
+        ){
 
             SectionTabsRow(
                 startLabelResId = R.string.home_tab_for_you,
@@ -98,37 +97,46 @@ fun HomeScreenContent(
                 onEndClick = onFollowingClick
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
-        itemsIndexed(reviews) { index, review ->
-
-            FeedReviewItem(
-                review = review,
-                onViewMoreClick = {
-                    onReviewClick(review.id)
-                },
-                onCommentClick = { onCommentClick(review.id) },
-                onSendClick = { onSendClick(review) }
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(
+              modifier = Modifier.fillMaxWidth(),
+              thickness = 3.dp,
+                color = colors.border
             )
-
-            // Un divisor separa cada reseña de la siguiente sin encerrarlas en tarjetas.
-            if (index < reviews.lastIndex) {
-                Spacer(modifier = Modifier.height(20.dp))
-
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = colors.border
-                )
-
+        LazyColumn(
+        ) {
+            item{
                 Spacer(modifier = Modifier.height(20.dp))
             }
-        }
+            itemsIndexed(reviews) { index, review ->
 
-        item {
-            // Deja aire para que la barra flotante no tape la última reseña.
-            Spacer(modifier = Modifier.height(110.dp))
+                FeedReviewItem(
+                    review = review,
+                    onViewMoreClick = {
+                        onReviewClick(review.id)
+                    },
+                    onCommentClick = { onCommentClick(review.id) },
+                    onSendClick = { onSendClick(review) }
+                )
+
+                // Un divisor separa cada reseña de la siguiente sin encerrarlas en tarjetas.
+                if (index < reviews.lastIndex) {
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = colors.border
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+
+            item {
+                // Deja aire para que la barra flotante no tape la última reseña.
+                Spacer(modifier = Modifier.height(110.dp))
+            }
         }
     }
 }

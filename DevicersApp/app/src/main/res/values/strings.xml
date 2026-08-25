@@ -568,7 +568,7 @@
     <!-- ========================= -->
 
     <string name="activity_title">Actividad</string>
-    <string name="activity_subtitle">Todo lo que pasó alrededor de tus reseñas.</string>
+    <string name="activity_subtitle">Todo lo que ha pasado</string>
 
     <string name="activity_badge_like">Reacción</string>
     <string name="activity_badge_comment">Comentario</string>
@@ -656,6 +656,8 @@
 
     <!-- ========================= -->
     <string name="review_not_found">No encontramos esta reseña.</string>
+    <string name="product_not_found">No encontramos este producto.</string>
+    <string name="profile_not_found">No encontramos este perfil.</string>
 
     <!-- CREATE REVIEW -->
     <!-- ========================= -->

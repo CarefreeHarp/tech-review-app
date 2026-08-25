@@ -2,6 +2,7 @@ package com.example.devicersapp.ui.screens.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -74,11 +75,14 @@ fun ProfileScreenContent(
     ) {
         // El encabezado y las pestañas ocupan el ancho completo sobre la cuadrícula.
         item(span = { GridItemSpan(maxLineSpan) }) {
-            ProfileHeader(
-                profile = profile,
-                actionLabelResId = R.string.profile_follow,
-                onActionClick = onFollowClick
-            )
+            Column() {
+                Spacer(modifier = Modifier.height(15.dp))
+                ProfileHeader(
+                    profile = profile,
+                    actionLabelResId = R.string.profile_follow,
+                    onActionClick = onFollowClick
+                )
+            }
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -115,7 +119,8 @@ fun ProfileScreenPreview() {
         DevicersScaffold(
             selectedItem = "profile",
             showBottomBar = true,
-            topBarNumber = 1
+            topBarNumber = 1,
+            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
             ProfileScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }
@@ -130,7 +135,8 @@ fun ProfileScreenDarkPreview() {
         DevicersScaffold(
             selectedItem = "profile",
             showBottomBar = true,
-            topBarNumber = 1
+            topBarNumber = 1,
+            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
             ProfileScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }

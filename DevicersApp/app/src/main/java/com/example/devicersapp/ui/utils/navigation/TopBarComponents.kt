@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,50 +29,67 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
 import androidx.compose.ui.text.font.FontWeight
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
+import com.example.devicersapp.ui.theme.ScreenTitleText
 import com.example.devicersapp.ui.utils.authentication.AuthenticationHeader
 
-/** Muestra la barra superior común de producto y perfil. */
+/** Muestra la barra superior del perfil actualmente consultado. */
 @Composable
 fun TopBar1(
+    @StringRes userHandleResId: Int? = null,
     onBackClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
-            .statusBarsPadding()
-            .height(48.dp)
-            .padding(horizontal = 12.dp)
-    ) {
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier.align(Alignment.CenterStart)
+    Column() {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
+                .statusBarsPadding()
+                .height(58.dp)
+                .padding(horizontal = 12.dp)
         ) {
-            Icon(
-                painter = painterResource(R.drawable.back_icon),
-                contentDescription = stringResource(R.string.review_back),
-                tint = colors.textPrimary,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-        Row(
-            modifier = Modifier
-                .align(Alignment.CenterEnd),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            repeat(3) { index ->
-                Box(
-                    modifier = Modifier
-                        .size(4.dp)
-                        .background(colors.textPrimary, CircleShape)
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.back_icon),
+                    contentDescription = stringResource(R.string.review_back),
+                    tint = colors.textPrimary,
+                    modifier = Modifier.size(20.dp)
                 )
-                if (index < 2) {
-                    Spacer(modifier = Modifier.size(3.dp))
+            }
+            if (userHandleResId != null) {
+                Text(
+                    text = stringResource(userHandleResId),
+                    modifier = Modifier.align(Alignment.Center),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = colors.textPrimary
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(3) { index ->
+                    Box(
+                        modifier = Modifier
+                            .size(4.dp)
+                            .background(colors.textPrimary, CircleShape)
+                    )
+                    if (index < 2) {
+                        Spacer(modifier = Modifier.size(3.dp))
+                    }
                 }
             }
         }
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+            thickness = 3.dp,
+            color = colors.border
+        )
     }
 }
 
@@ -105,13 +123,19 @@ fun TopBar2(
                 color = colors.textPrimary
             )
         }
-        // El paso del flujo se acentúa para que el usuario sepa cuánto falta.
+        Spacer(modifier = Modifier.height(3.dp))
         Text(
             text = stringResource(R.string.rate_product_step),
             modifier = Modifier.padding(start = 12.dp),
             style = SearchControlText,
             fontWeight = FontWeight.Bold,
             color = colors.primaryText
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            thickness = 3.dp,
+            color = colors.border
         )
     }
 }
@@ -146,13 +170,19 @@ fun TopBar3(
                 color = colors.textPrimary
             )
         }
-        // El paso del flujo se acentúa para que el usuario sepa cuánto falta.
+        Spacer(modifier = Modifier.height(3.dp))
         Text(
             text = stringResource(R.string.create_review_step),
             modifier = Modifier.padding(start = 12.dp),
             style = SearchControlText,
             fontWeight = FontWeight.Bold,
             color = colors.primaryText
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            thickness = 3.dp,
+            color = colors.border
         )
     }
 }
@@ -165,37 +195,45 @@ fun TopBar4(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
-            .statusBarsPadding()
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = onBackClick) {
-            Icon(
-                painter = painterResource(R.drawable.back_icon),
-                contentDescription = stringResource(R.string.top_bar_back),
-                tint = colors.textPrimary,
-                modifier = Modifier.size(20.dp)
+    Column() {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
+                .statusBarsPadding()
+                .height(58.dp)
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    painter = painterResource(R.drawable.back_icon),
+                    contentDescription = stringResource(R.string.top_bar_back),
+                    tint = colors.textPrimary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            Spacer(Modifier.size(6.dp))
+            Text(
+                text = stringResource(R.string.review_title),
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleLarge,
+                color = colors.textPrimary
             )
+            IconButton(onClick = onSaveClick) {
+                Icon(
+                    painter = painterResource(R.drawable.bookmark_icon),
+                    contentDescription = stringResource(R.string.review_save),
+                    tint = colors.textPrimary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
-        Spacer(Modifier.size(6.dp))
-        Text(
-            text = stringResource(R.string.review_title),
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.titleLarge,
-            color = colors.textPrimary
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+            thickness = 3.dp,
+            color = colors.border
         )
-        IconButton(onClick = onSaveClick) {
-            Icon(
-                painter = painterResource(R.drawable.bookmark_icon),
-                contentDescription = stringResource(R.string.review_save),
-                tint = colors.textPrimary,
-                modifier = Modifier.size(20.dp)
-            )
-        }
     }
 }
 
@@ -294,10 +332,44 @@ fun TopBar5(modifier: Modifier = Modifier) {
     )
 }
 
+/** Muestra la barra superior de la actividad reciente del usuario. */
+@Composable
+fun TopBar10(modifier: Modifier = Modifier) {
+    val colors = LocalDevicersColors.current
+    Column(modifier = modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                // Mantiene el título por debajo de la barra de estado en dispositivos con notch.
+                .statusBarsPadding()
+                .padding(horizontal = 20.dp)
+                .padding(top = 12.dp, bottom = 20.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.activity_title),
+                style = ScreenTitleText,
+                color = colors.textPrimary
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.activity_subtitle),
+                style = MaterialTheme.typography.bodyMedium,
+                color = colors.textSecondary
+            )
+        }
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+            thickness = 3.dp,
+            color = colors.border
+        )
+    }
+}
+
 /** Muestra una vista previa de la barra superior común. */
 @Composable
 @Preview(showBackground = true)
-fun TopBar1Preview() { DevicersAppTheme { TopBar1() } }
+fun TopBar1Preview() { DevicersAppTheme { TopBar1(userHandleResId = R.string.profile_handle) } }
 
 /** Muestra una vista previa de la barra superior de calificación. */
 @Composable
@@ -318,6 +390,11 @@ fun TopBar4Preview() { DevicersAppTheme { TopBar4() } }
 @Composable
 @Preview(showBackground = true)
 fun TopBar5Preview() { DevicersAppTheme { TopBar5() } }
+
+/** Muestra una vista previa de la barra superior de actividad. */
+@Composable
+@Preview(showBackground = true)
+fun TopBar10Preview() { DevicersAppTheme { TopBar10() } }
 
 /** Muestra una vista previa de la barra superior del detalle de producto. */
 @Composable

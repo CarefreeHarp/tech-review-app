@@ -2,6 +2,7 @@ package com.example.devicersapp.ui.screens.own_profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -103,13 +104,16 @@ fun OwnProfileScreenContent(
     ) {
         // El encabezado y las secciones ocupan el ancho completo sobre la cuadrícula.
         item(span = { GridItemSpan(maxLineSpan) }) {
-            ProfileHeader(
-                profile = profile,
-                actionLabelResId = R.string.profile_edit,
-                showEditBadge = true,
-                onActionClick = onEditProfileClick,
-                onEditAvatarClick = onEditAvatarClick
-            )
+            Column()  {
+                Spacer(modifier = Modifier.height(15.dp))
+                ProfileHeader(
+                    profile = profile,
+                    actionLabelResId = R.string.profile_edit,
+                    showEditBadge = true,
+                    onActionClick = onEditProfileClick,
+                    onEditAvatarClick = onEditAvatarClick
+                )
+            }
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -147,7 +151,8 @@ fun OwnProfileScreenPreview() {
         DevicersScaffold(
             selectedItem = "profile",
             showBottomBar = true,
-            topBarNumber = 1
+            topBarNumber = 1,
+            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
             OwnProfileScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }
@@ -162,7 +167,8 @@ fun OwnProfileScreenDarkPreview() {
         DevicersScaffold(
             selectedItem = "profile",
             showBottomBar = true,
-            topBarNumber = 1
+            topBarNumber = 1,
+            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
             OwnProfileScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }

@@ -97,6 +97,7 @@ fun ProfileSavedReviewsScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.height(16.dp))
                 ProfileAvatar(
                     avatarResId = profile.avatarResId,
                     modifier = Modifier.size(84.dp)
@@ -145,7 +146,8 @@ fun ProfileSavedReviewsScreenPreview() {
         DevicersScaffold(
             selectedItem = "profile",
             showBottomBar = true,
-            topBarNumber = 1
+            topBarNumber = 1,
+            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
             ProfileSavedReviewsScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
@@ -162,7 +164,8 @@ fun ProfileSavedReviewsScreenDarkPreview() {
         DevicersScaffold(
             selectedItem = "profile",
             showBottomBar = true,
-            topBarNumber = 1
+            topBarNumber = 1,
+            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
             ProfileSavedReviewsScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding())

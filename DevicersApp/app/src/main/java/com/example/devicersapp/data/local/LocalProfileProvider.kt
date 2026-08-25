@@ -24,7 +24,12 @@ object LocalProfileProvider {
     val savedReviews = listOf(
         SavedReviewContent(reviewId = R.string.feed_product_audio),
         SavedReviewContent(reviewId = R.string.feed_product_five),
-        SavedReviewContent(reviewId = R.string.feed_product_nine)
+        SavedReviewContent(reviewId = R.string.feed_product_nine),
+        SavedReviewContent(reviewId = R.string.feed_product_phone),
+        SavedReviewContent(reviewId = R.string.feed_product_computer),
+        SavedReviewContent(reviewId = R.string.feed_product_four),
+        SavedReviewContent(reviewId = R.string.feed_product_six),
+        SavedReviewContent(reviewId = R.string.feed_product_seven)
     )
 
     /** Lista de todos los perfiles públicos disponibles para la búsqueda local. */

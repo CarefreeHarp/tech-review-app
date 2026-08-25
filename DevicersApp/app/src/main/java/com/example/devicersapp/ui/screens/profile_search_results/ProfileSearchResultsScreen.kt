@@ -3,6 +3,7 @@ package com.example.devicersapp.ui.screens.profile_search_results
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -75,41 +76,42 @@ fun ProfileSearchResultsScreenContent(
     modifier: Modifier = Modifier
 ){
     val colors = LocalDevicersColors.current
+    Column(modifier = modifier.padding(horizontal = 20.dp)) {
+        Spacer(modifier = Modifier.height(28.dp))
+        SearchBar(
+            placeholder = R.string.profile_search_results_placeholder,
+            backgroundColor = colors.surface,
+            showSearchIcon = true,
+            text = searchText,
+            onTextChange = onSearchTextChange
+        )
+        Spacer(modifier = Modifier.height(18.dp))
+        LazyColumn(modifier = Modifier.weight(1f)) {
+            item {
+                Text(
+                    text = stringResource(R.string.profile_search_results_count, results.size),
+                    color = colors.textSecondary,
+                    style = SearchControlText
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
 
-    LazyColumn(modifier = modifier.padding(horizontal = 20.dp)) {
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
-            SearchBar(
-                placeholder = R.string.profile_search_results_placeholder,
-                backgroundColor = colors.surface,
-                showSearchIcon = true,
-                text = searchText,
-                onTextChange = onSearchTextChange
-            )
-            Spacer(modifier = Modifier.height(18.dp))
-            Text(
-                text = stringResource(R.string.profile_search_results_count, results.size),
-                color = colors.textSecondary,
-                style = SearchControlText
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-        }
+            items(results, key = { it.id }) { result ->
+                ProfileResultCard(
+                    result = result,
+                    isFollowed = result.id in followedProfileIds,
+                    onFollow = { onFollow(result.id) },
+                    onProfileClick = {
+                        onProfileClick(result.id)
+                    }
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+            }
 
-        items(results, key = { it.id }) { result ->
-            ProfileResultCard(
-                result = result,
-                isFollowed = result.id in followedProfileIds,
-                onFollow = { onFollow(result.id) },
-                onProfileClick = {
-                    onProfileClick(result.id)
-                }
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-        }
-
-        item {
-            // Deja aire para que la barra flotante no tape el último perfil.
-            Spacer(modifier = Modifier.height(110.dp))
+            item {
+                // Deja aire para que la barra flotante no tape el último perfil.
+                Spacer(modifier = Modifier.height(110.dp))
+            }
         }
     }
 }

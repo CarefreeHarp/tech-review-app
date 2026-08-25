@@ -1,6 +1,7 @@
 package com.example.devicersapp.ui.screens.product
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,62 +86,69 @@ fun ProductScreenContent(
 ) {
     val colors = LocalDevicersColors.current
 
-    LazyColumn(modifier = modifier.padding(horizontal = 20.dp)) {
-        item {
-            Text(
-                text = stringResource(product.nameResId),
-                color = colors.textPrimary,
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = stringResource(product.brandResId),
-                color = colors.textSecondary,
-                style = CardMetadataText
-            )
+    Column(modifier = modifier.padding(horizontal = 20.dp)) {
+        Text(
+            text = stringResource(product.nameResId),
+            color = colors.textPrimary,
+            style = MaterialTheme.typography.headlineSmall,
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = stringResource(product.brandResId),
+            color = colors.textSecondary,
+            style = CardMetadataText,
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            thickness = 3.dp,
+            color = colors.border
+        )
+        LazyColumn() {
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+                ProductImageCard(product)
 
-            Spacer(modifier = Modifier.height(18.dp))
-            ProductImageCard(product)
+                Spacer(modifier = Modifier.height(24.dp))
+                RatingSummary(ratingSummary)
 
-            Spacer(modifier = Modifier.height(24.dp))
-            RatingSummary(ratingSummary)
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = { onRateClick(product.nameResId) },
+                    modifier = Modifier.fillMaxWidth().height(52.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.primary,
+                        contentColor = colors.textOnPrimary
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.product_rate),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(24.dp))
-            Button(
-                onClick = { onRateClick(product.nameResId) },
-                modifier = Modifier.fillMaxWidth().height(52.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.primary,
-                    contentColor = colors.textOnPrimary
-                )
-            ) {
+                Spacer(modifier = Modifier.height(28.dp))
                 Text(
-                    text = stringResource(R.string.product_rate),
-                    style = MaterialTheme.typography.labelLarge
+                    text = stringResource(R.string.product_top_reviews),
+                    color = colors.textPrimary,
+                    style = SearchHeadingText
                 )
+                Spacer(modifier = Modifier.height(14.dp))
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
-            Text(
-                text = stringResource(R.string.product_top_reviews),
-                color = colors.textPrimary,
-                style = SearchHeadingText
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-        }
+            itemsIndexed(reviews) { _, review ->
+                ReviewCard(
+                    review = review,
+                    onViewMoreClick = { onViewMoreClick(review.id) }
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+            }
 
-        itemsIndexed(reviews) { _, review ->
-            ReviewCard(
-                review = review,
-                onViewMoreClick = { onViewMoreClick(review.id) }
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-        }
-
-        item {
-            // Deja aire para que la barra flotante no tape la última reseña.
-            Spacer(modifier = Modifier.height(110.dp))
+            item {
+                // Deja aire para que la barra flotante no tape la última reseña.
+                Spacer(modifier = Modifier.height(110.dp))
+            }
         }
     }
 }

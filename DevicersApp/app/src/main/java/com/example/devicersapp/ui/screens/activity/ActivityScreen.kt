@@ -4,26 +4,17 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
@@ -31,10 +22,9 @@ import com.example.devicersapp.data.local.LocalActivityProvider
 import com.example.devicersapp.ui.models.ActivityContent
 import com.example.devicersapp.ui.models.ActivityGroupContent
 import com.example.devicersapp.ui.models.ActivityType
-import com.example.devicersapp.ui.screens.activity.components.ActivityScrollIndicator
+import com.example.devicersapp.ui.screens.activity.components.ActivityCard
 import com.example.devicersapp.ui.screens.activity.components.ActivitySection
 import com.example.devicersapp.ui.theme.DevicersAppTheme
-import com.example.devicersapp.ui.theme.ScreenTitleText
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
 /** Configura la pantalla de actividad, donde se reúne todo lo que ocurre alrededor de las reseñas. */
@@ -68,7 +58,7 @@ fun ActivityScreen(
 }
 
 /**
- * Ensambla el encabezado y la lista agrupada de eventos de actividad.
+ * Ensambla la lista agrupada de eventos de actividad.
  *
  * @param activityGroups Grupos locales de eventos que se mostrarán.
  * @param followedActivityIds Identificadores de eventos cuyos autores ya se siguen.
@@ -85,50 +75,28 @@ fun ActivityScreenContent(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-    val listState = rememberLazyListState()
-
-    Column(modifier = modifier.padding(horizontal = 20.dp)) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = stringResource(R.string.activity_title),
-            style = ScreenTitleText,
-            color = colors.textPrimary
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = stringResource(R.string.activity_subtitle),
-            style = MaterialTheme.typography.bodyMedium,
-            color = colors.textSecondary
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // El indicador acompaña a la lista, por eso ambos comparten la misma altura.
-        Box(modifier = Modifier.weight(1f)) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.padding(end = 12.dp),
-                contentPadding = PaddingValues(bottom = 110.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                itemsIndexed(activityGroups, key = { _, group -> group.id }) { index, group ->
-                    ActivitySection(
-                        titleResId = group.titleResId,
-                        activities = group.activities,
-                        followedActivityIds = followedActivityIds,
-                        onFollow = onFollow,
-                        onActivityClick = onActivityClick,
-                        // Solo el periodo más reciente se presenta como tarjetas elevadas.
-                        isHighlighted = index == 0
-                    )
-                }
+    LazyColumn(
+        modifier = modifier.padding(horizontal = 20.dp),
+        contentPadding = PaddingValues(bottom = 110.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        activityGroups.forEachIndexed { groupIndex, group ->
+            item(key = "${group.id}_header") {
+                ActivitySection(titleResId = group.titleResId)
             }
-
-            ActivityScrollIndicator(
-                listState = listState,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(vertical = 4.dp)
-            )
+            items(
+                items = group.activities,
+                key = { activity -> activity.id }
+            ) { activity ->
+                // Cada actividad es un ítem independiente para que LazyColumn la componga bajo demanda.
+                ActivityCard(
+                    activity = activity,
+                    isFollowed = activity.id in followedActivityIds,
+                    onFollow = { onFollow(activity.id) },
+                    onClick = { onActivityClick(activity) },
+                    isHighlighted = groupIndex == 0
+                )
+            }
         }
     }
 }
@@ -138,7 +106,7 @@ fun ActivityScreenContent(
 @Preview(showBackground = true, heightDp = 900)
 fun ActivityScreenPreview() {
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(selectedItem = "activity", showBottomBar = true) { innerPadding ->
+        DevicersScaffold(selectedItem = "activity", showBottomBar = true, topBarNumber = 10) { innerPadding ->
             ActivityScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }
     }
@@ -149,7 +117,7 @@ fun ActivityScreenPreview() {
 @Preview(showBackground = true, heightDp = 900)
 fun ActivityScreenDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(selectedItem = "activity", showBottomBar = true) { innerPadding ->
+        DevicersScaffold(selectedItem = "activity", showBottomBar = true, topBarNumber = 10) { innerPadding ->
             ActivityScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
         }
     }

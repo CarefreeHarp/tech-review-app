@@ -52,8 +52,20 @@ object LocalReviewProvider {
         productReview("luna_digital", R.string.product_review_author_six, 5, R.string.product_review_text_six, 11, R.string.feed_time_two_days, defaultComments.take(3))
     )
 
+    /** Reseñas adicionales que completan los historiales de los perfiles mostrados en la aplicación. */
+    private val profileReviews = listOf(
+        feedReview("mariana", R.string.feed_product_four, R.drawable.device_03, R.string.feed_metadata_four, R.string.feed_review_four, 79, R.string.feed_time_five_hours, 5, R.string.feed_average_four, defaultComments.take(4), id = 1001),
+        feedReview("mariana", R.string.feed_product_five, R.drawable.device_04, R.string.feed_metadata_five, R.string.feed_review_five, 96, R.string.feed_time_one_day, 4, R.string.feed_average_five, defaultComments.take(3), id = 1002),
+        feedReview("mariana", R.string.feed_product_six, R.drawable.device_05, R.string.feed_metadata_six, R.string.feed_review_six, 64, R.string.feed_time_two_days, 5, R.string.feed_average_six, defaultComments.take(5), id = 1003),
+        feedReview("mariana", R.string.feed_product_eight, R.drawable.device_07, R.string.feed_metadata_eight, R.string.feed_review_eight, 88, R.string.feed_time_one_day, 4, R.string.feed_average_eight, defaultComments.take(2), id = 1004),
+        feedReview("own_profile", R.string.feed_product_seven, R.drawable.device_06, R.string.feed_metadata_seven, R.string.feed_review_seven, 104, R.string.feed_time_five_hours, 5, R.string.feed_average_seven, defaultComments.take(4), id = 2001),
+        feedReview("own_profile", R.string.feed_product_nine, R.drawable.device_08, R.string.feed_metadata_nine, R.string.feed_review_nine, 57, R.string.feed_time_one_day, 4, R.string.feed_average_nine, defaultComments.take(3), id = 2002),
+        feedReview("own_profile", R.string.feed_product_ten, R.drawable.device_09, R.string.feed_metadata_ten, R.string.feed_review_ten, 73, R.string.feed_time_two_days, 5, R.string.feed_average_ten, defaultComments.take(5), id = 2003),
+        feedReview("own_profile", R.string.feed_product_twelve, R.drawable.device_01, R.string.feed_metadata_twelve, R.string.feed_review_twelve, 91, R.string.feed_time_one_day, 5, R.string.feed_average_twelve, defaultComments.take(2), id = 2004)
+    )
+
     /** Fuente única de todas las reseñas existentes; el feed las presenta completas. */
-    val reviews = feedReviews + referenceProductReviews
+    val reviews = feedReviews + profileReviews + referenceProductReviews
 
     /** Reseñas del producto de referencia, derivadas de la fuente única de reseñas. */
     val productReviews = reviews.filter { review ->

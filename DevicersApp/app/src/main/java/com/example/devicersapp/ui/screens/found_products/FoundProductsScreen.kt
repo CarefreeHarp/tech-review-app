@@ -3,6 +3,7 @@ package com.example.devicersapp.ui.screens.found_products
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -74,9 +75,7 @@ fun FoundProductsScreenContent(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-
-    LazyColumn(modifier = modifier.padding(horizontal = 20.dp)) {
-        item {
+    Column(modifier = modifier.padding(horizontal = 20.dp)) {
             Spacer(modifier = Modifier.height(8.dp))
             SearchBar(
                 placeholder = R.string.search_product_placeholder,
@@ -92,19 +91,19 @@ fun FoundProductsScreenContent(
                 style = SearchControlText
             )
             Spacer(modifier = Modifier.height(12.dp))
-        }
+        LazyColumn(modifier = Modifier.weight(1f)) {
+            items(results, key = { it.id }) { product ->
+                FoundProductCard(
+                    product = product,
+                    onClick = { onProductClick(product) }
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+            }
 
-        items(results, key = { it.id }) { product ->
-            FoundProductCard(
-                product = product,
-                onClick = { onProductClick(product) }
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-        }
-
-        item {
-            // Deja aire para que la barra flotante no tape el último producto.
-            Spacer(modifier = Modifier.height(110.dp))
+            item {
+                // Deja aire para que la barra flotante no tape el último producto.
+                Spacer(modifier = Modifier.height(110.dp))
+            }
         }
     }
 }

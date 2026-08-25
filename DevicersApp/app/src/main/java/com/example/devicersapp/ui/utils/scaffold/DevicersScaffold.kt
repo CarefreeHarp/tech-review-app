@@ -2,6 +2,7 @@ package com.example.devicersapp.ui.utils.scaffold
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.annotation.StringRes
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import com.example.devicersapp.ui.utils.navigation.TopBar5
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.utils.navigation.TitleTopBar
 import com.example.devicersapp.ui.utils.navigation.TopBar6
+import com.example.devicersapp.ui.utils.navigation.TopBar10
 
 /**
  * Define la estructura general de las pantallas de Devicers.
@@ -24,6 +26,7 @@ import com.example.devicersapp.ui.utils.navigation.TopBar6
  * @param selectedItem Identificador del elemento seleccionado en la barra inferior.
  * @param showBottomBar Indica si el Scaffold debe mostrar la barra de navegación inferior.
  * @param topBarNumber Número de la barra superior que debe mostrar la pantalla, o `null` si no tiene.
+ * @param topBarUserHandleResId Recurso del nombre de usuario que muestra la barra superior de perfil.
  * @param modifier Modificador aplicado al Scaffold.
  * @param onNavigationItemClick Acción solicitada al seleccionar un elemento de navegación.
  * @param onTopBarBackClick Acción solicitada por una barra superior con regreso interactivo.
@@ -34,6 +37,7 @@ fun DevicersScaffold(
     selectedItem: String = "",
     showBottomBar: Boolean = false,
     topBarNumber: Int? = null,
+    @StringRes topBarUserHandleResId: Int? = null,
     modifier: Modifier = Modifier,
     onNavigationItemClick: (String) -> Unit = {},
     onTopBarBackClick: () -> Unit = {},
@@ -46,7 +50,10 @@ fun DevicersScaffold(
         topBar = {
             // Centraliza las variantes de encabezado para que las pantallas solo soliciten su número.
             when (topBarNumber) {
-                1 -> TopBar1(onBackClick = onTopBarBackClick)
+                1 -> TopBar1(
+                    userHandleResId = topBarUserHandleResId,
+                    onBackClick = onTopBarBackClick
+                )
                 2 -> TopBar2(onBackClick = onTopBarBackClick)
                 3 -> TopBar3(onBackClick = onTopBarBackClick)
                 4 -> TopBar4(onBackClick = onTopBarBackClick)
@@ -56,6 +63,7 @@ fun DevicersScaffold(
                 7 -> TitleTopBar(R.string.profile_search_results_title, onTopBarBackClick)
                 8 -> TitleTopBar(R.string.found_products_title, onTopBarBackClick)
                 9 -> TitleTopBar(R.string.request_product_title, onTopBarBackClick)
+                10 -> TopBar10()
             }
         },
         bottomBar = {

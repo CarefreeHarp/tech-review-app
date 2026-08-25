@@ -3,9 +3,8 @@ package com.example.devicersapp.ui.screens.activity.components
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,33 +16,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.ui.models.ActivityContent
-import com.example.devicersapp.ui.models.ActivityType
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 
 /**
- * Agrupa los eventos de actividad que comparten el mismo periodo de tiempo.
+ * Muestra el encabezado temporal que separa grupos de eventos de actividad.
  *
  * @param titleResId Recurso del encabezado del grupo.
- * @param activities Eventos que se mostrarán debajo del encabezado.
- * @param followedActivityIds Identificadores de los perfiles ya seguidos.
- * @param onFollow Solicita seguir al autor de un evento.
- * @param onActivityClick Solicita abrir el destino relacionado con un evento.
  * @param modifier Modificador aplicado al grupo.
- * @param isHighlighted Indica si los eventos del grupo se muestran como tarjetas elevadas.
  */
 @Composable
 fun ActivitySection(
     @StringRes titleResId: Int,
-    activities: List<ActivityContent>,
-    followedActivityIds: Set<String>,
-    onFollow: (String) -> Unit,
-    onActivityClick: (ActivityContent) -> Unit,
-    modifier: Modifier = Modifier,
-    isHighlighted: Boolean = false
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = stringResource(titleResId),
             modifier = Modifier.padding(start = 4.dp),
@@ -52,18 +40,6 @@ fun ActivitySection(
             color = LocalDevicersColors.current.textSecondary
         )
         Spacer(modifier = Modifier.height(12.dp))
-        // Los grupos sin tarjeta necesitan menos separación porque ya respiran sobre el fondo.
-        Column(verticalArrangement = Arrangement.spacedBy(if (isHighlighted) 12.dp else 4.dp)) {
-            activities.forEach { activity ->
-                ActivityCard(
-                    activity = activity,
-                    isFollowed = activity.id in followedActivityIds,
-                    onFollow = { onFollow(activity.id) },
-                    onClick = { onActivityClick(activity) },
-                    isHighlighted = isHighlighted
-                )
-            }
-        }
     }
 }
 
@@ -74,21 +50,7 @@ fun ActivitySectionPreview() {
     DevicersAppTheme {
         ActivitySection(
             titleResId = R.string.activity_group_today,
-            activities = listOf(
-                ActivityContent(
-                    id = "preview",
-                    type = ActivityType.LIKE,
-                    actorProfileId = "camila",
-                    actionResId = R.string.activity_action_liked_review,
-                    targetReviewId = R.string.feed_product_audio,
-                    time = System.currentTimeMillis() - 5 * 60_000L
-                )
-            ),
-            followedActivityIds = emptySet(),
-            onFollow = {},
-            onActivityClick = {},
-            modifier = Modifier.padding(16.dp),
-            isHighlighted = true
+            modifier = Modifier.padding(16.dp)
         )
     }
 }

@@ -1,7 +1,9 @@
 package com.example.devicersapp.navigation
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,6 +25,7 @@ import com.example.devicersapp.ui.screens.search_product.SearchProductScreen
 import com.example.devicersapp.ui.screens.search_profile.SearchProfileScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.example.devicersapp.R
 
 
 
@@ -76,6 +79,7 @@ fun AppNavigation(
         startDestination = startDestination,
         modifier = modifier
     ) {
+        // ==================== RUTAS SIN PARÁMETROS ====================
         composable(route = AppDestination.Login.route) {
             AccessScreen(
                 onSignInClick = {
@@ -197,6 +201,25 @@ fun AppNavigation(
                 }
             )
         }
+
+        composable(route = AppDestination.ProfileSavedReviews.route) {
+            ProfileSavedReviewsScreen(
+                onReviewClick = { reviewId ->
+                    navController.navigate(
+                        AppDestination.Review.createRoute(reviewId)
+                    )
+                },
+                onReviewsClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = AppDestination.RequestProduct.route) {
+            RequestProductScreen()
+        }
+
+        // ==================== RUTAS CON PARÁMETROS ====================
         composable(
             route = "${AppDestination.Product.route}/{productNameResId}",
             arguments = listOf(
@@ -209,19 +232,23 @@ fun AppNavigation(
             val productNameResId =
                 it.arguments?.getInt("productNameResId")
 
-            ProductScreen(
-                productNameResId = productNameResId,
-                onRateClick = { nameResId ->
-                    navController.navigate(
-                        AppDestination.RateProduct.createRoute(nameResId)
-                    )
-                },
-                onViewMoreClick = { reviewId ->
-                    navController.navigate(
-                        AppDestination.Review.createRoute(reviewId)
-                    )
-                }
-            )
+            if (productNameResId != null) {
+                ProductScreen(
+                    productNameResId = productNameResId,
+                    onRateClick = { nameResId ->
+                        navController.navigate(
+                            AppDestination.RateProduct.createRoute(nameResId)
+                        )
+                    },
+                    onViewMoreClick = { reviewId ->
+                        navController.navigate(
+                            AppDestination.Review.createRoute(reviewId)
+                        )
+                    }
+                )
+            } else {
+                Text(text = stringResource(R.string.product_not_found))
+            }
         }
 
         composable(
@@ -236,14 +263,18 @@ fun AppNavigation(
             val productNameResId =
                 it.arguments?.getInt("productNameResId")
 
-            RateProductScreen(
-                productNameResId = productNameResId,
-                onPublishClick = {
-                    navController.navigateToDestination(
-                        AppDestination.Home.route
-                    )
-                }
-            )
+            if (productNameResId != null) {
+                RateProductScreen(
+                    productNameResId = productNameResId,
+                    onPublishClick = {
+                        navController.navigateToDestination(
+                            AppDestination.Home.route
+                        )
+                    }
+                )
+            } else {
+                Text(text = stringResource(R.string.product_not_found))
+            }
         }
         composable(
             route = "${AppDestination.Review.route}/{reviewId}",
@@ -253,18 +284,20 @@ fun AppNavigation(
                 }
             )
         ) {
+            val reviewId = it.arguments?.getInt("reviewId")
 
-            ReviewScreen(
-                reviewId = it.arguments?.getInt("reviewId"),
-                onProductClick = { productNameResId ->
-                    navController.navigate(
-                        AppDestination.Product.createRoute(productNameResId)
-                    )
-                }
-            )
-        }
-        composable(route = AppDestination.RequestProduct.route) {
-            RequestProductScreen()
+            if (reviewId != null) {
+                ReviewScreen(
+                    reviewId = reviewId,
+                    onProductClick = { productNameResId ->
+                        navController.navigate(
+                            AppDestination.Product.createRoute(productNameResId)
+                        )
+                    }
+                )
+            } else {
+                Text(text = stringResource(R.string.review_not_found))
+            }
         }
         composable(
             route = "${AppDestination.Profile.route}/{profileId}",
@@ -277,26 +310,18 @@ fun AppNavigation(
 
             val profileId = it.arguments?.getString("profileId")
 
-            ProfileScreen(
-                profileId = profileId,
-                onReviewClick = { reviewId ->
-                    navController.navigate(
-                        AppDestination.Review.createRoute(reviewId)
-                    )
-                }
-            )
-        }
-        composable(route = AppDestination.ProfileSavedReviews.route) {
-            ProfileSavedReviewsScreen(
-                onReviewClick = { reviewId ->
-                    navController.navigate(
-                        AppDestination.Review.createRoute(reviewId)
-                    )
-                },
-                onReviewsClick = {
-                    navController.popBackStack()
-                }
-            )
+            if (profileId != null) {
+                ProfileScreen(
+                    profileId = profileId,
+                    onReviewClick = { reviewId ->
+                        navController.navigate(
+                            AppDestination.Review.createRoute(reviewId)
+                        )
+                    }
+                )
+            } else {
+                Text(text = stringResource(R.string.profile_not_found))
+            }
         }
     }
 }

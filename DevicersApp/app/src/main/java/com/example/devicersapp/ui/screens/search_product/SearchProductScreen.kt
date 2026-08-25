@@ -136,7 +136,6 @@ fun SearchProductScreenContent(
     // El contenido no es una colección repetida, así que basta con un contenedor desplazable.
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp)
     ) {
         Spacer(modifier = Modifier.height(24.dp))

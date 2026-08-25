@@ -46,7 +46,6 @@ fun ReplyComposer(
 
     Row(
         modifier = modifier
-            .background(colors.background)
             .navigationBarsPadding()
             .padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically

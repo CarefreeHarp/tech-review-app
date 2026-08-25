@@ -1,6 +1,7 @@
 package com.example.devicersapp.ui.screens.create_review
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -98,62 +99,71 @@ fun CreateReviewScreenContent(
         matchesCategory && matchesSearch
     }
 
-    LazyColumn(modifier = modifier.padding(horizontal = 20.dp)) {
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-            SearchBar(
-                placeholder = R.string.create_review_search_placeholder,
-                backgroundColor = colors.surface,
-                showSearchIcon = true,
-                text = searchText,
-                onTextChange = onSearchTextChange
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            CategoryChipRow(
-                categories = categories,
-                selectedCategoryId = selectedCategoryId,
-                onCategoryChange = onCategoryChange
-            )
-            Spacer(modifier = Modifier.height(22.dp))
-            Text(
-                text = stringResource(R.string.create_review_suggested),
-                color = colors.textPrimary,
-                style = SearchHeadingText
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-        }
+    Column(modifier = modifier.padding(horizontal = 20.dp)) {
+        Spacer(modifier = Modifier.height(16.dp))
+        SearchBar(
+            placeholder = R.string.create_review_search_placeholder,
+            backgroundColor = colors.surface,
+            showSearchIcon = true,
+            text = searchText,
+            onTextChange = onSearchTextChange
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        CategoryChipRow(
+            categories = categories,
+            selectedCategoryId = selectedCategoryId,
+            onCategoryChange = onCategoryChange
+        )
+        Spacer(modifier = Modifier.height(11.dp))
+        Text(
+            text = stringResource(R.string.create_review_suggested),
+            color = colors.textPrimary,
+            style = SearchHeadingText
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            thickness = 3.dp,
+            color = colors.border
+        )
 
-        if (filteredProducts.isEmpty()) {
+        LazyColumn(modifier = Modifier.weight(1f)) {
             item {
-                Text(
-                    text = stringResource(R.string.create_review_empty_results).trim(),
-                    modifier = Modifier.padding(vertical = 16.dp),
-                    color = colors.textSecondary,
-                    style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
-                )
+                Spacer(modifier = Modifier.height(12.dp))
             }
-        } else {
-            itemsIndexed(filteredProducts, key = { _, product -> product.id }) { index, product ->
-                ProductReviewItem(product = product, onRateClick = { onProductClick(product) })
 
-                // Un divisor separa cada producto del siguiente sin encerrarlos en tarjetas.
-                if (index < filteredProducts.lastIndex) {
-                    HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth(),
-                        thickness = 1.dp,
-                        color = colors.border
+            if (filteredProducts.isEmpty()) {
+                item {
+                    Text(
+                        text = stringResource(R.string.create_review_empty_results).trim(),
+                        modifier = Modifier.padding(vertical = 16.dp),
+                        color = colors.textSecondary,
+                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
                     )
                 }
-            }
-        }
+            } else {
+                itemsIndexed(filteredProducts, key = { _, product -> product.id }) { index, product ->
+                    ProductReviewItem(product = product, onRateClick = { onProductClick(product) })
 
-        item {
-            Spacer(modifier = Modifier.height(22.dp))
-            ProductMissingCard(
-                onRequestClick = onRequestProductClick
-            )
-            // Deja aire para que la barra flotante no tape la última tarjeta.
-            Spacer(modifier = Modifier.height(120.dp))
+                    // Un divisor separa cada producto del siguiente sin encerrarlos en tarjetas.
+                    if (index < filteredProducts.lastIndex) {
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            thickness = 1.dp,
+                            color = colors.border
+                        )
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(22.dp))
+                ProductMissingCard(
+                    onRequestClick = onRequestProductClick
+                )
+                // Deja aire para que la barra flotante no tape la última tarjeta.
+                Spacer(modifier = Modifier.height(120.dp))
+            }
         }
     }
 }

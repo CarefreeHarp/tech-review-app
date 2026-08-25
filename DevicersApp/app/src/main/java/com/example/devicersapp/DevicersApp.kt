@@ -22,12 +22,16 @@ fun DevicersApp(modifier: Modifier = Modifier) {
     DevicersAppTheme {
         val navController = rememberNavController()
         val backStackEntry by navController.currentBackStackEntryAsState()
-        val configuration = NavigationLogic.configurationFor(backStackEntry?.destination?.route)
+        val configuration = NavigationLogic.configurationFor(
+            route = backStackEntry?.destination?.route,
+            profileId = backStackEntry?.arguments?.getString("profileId")
+        )
 
         DevicersScaffold(
             selectedItem = configuration.selectedItem,
             showBottomBar = configuration.showBottomBar,
             topBarNumber = configuration.topBarNumber,
+            topBarUserHandleResId = configuration.topBarUserHandleResId,
             modifier = modifier,
             onNavigationItemClick = { route ->
                 navController.navigateToDestination(route)
@@ -36,7 +40,8 @@ fun DevicersApp(modifier: Modifier = Modifier) {
         ) { innerPadding ->
             AppNavigation(
                 navController = navController,
-                modifier = Modifier.padding(innerPadding)
+                // Solo el encabezado reserva espacio; la barra inferior se superpone al contenido.
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
             )
         }
     }

@@ -1,14 +1,12 @@
 package com.example.devicersapp.ui.screens.review
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -94,43 +93,48 @@ fun ReviewScreenContent(
     onViewAnswers: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp)
-        ) {
-            ReviewProductSummary(
-                product = product,
-                onClick = {
-                    onProductClick(product.nameResId)
+    Box(modifier = modifier) {
+        ReplyList(
+            replies = replies,
+            header = {
+                item {
+                    Spacer(modifier = Modifier.height(22.dp))
+                    // El margen interno evita que el borde de la lista recorte la sombra superior.
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    ReviewProductSummary(
+                        product = product,
+                        onClick = {
+                            onProductClick(product.nameResId)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(22.dp))
+                    ReviewDetail(review = review)
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                    // El divisor separa la reseña de la conversación que generó.
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = LocalDevicersColors.current.border
+                    )
                 }
-            )
-
-            Spacer(modifier = Modifier.height(22.dp))
-            ReviewDetail(review = review)
-
-            Spacer(modifier = Modifier.height(24.dp))
-            // El divisor separa la reseña de la conversación que generó.
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                thickness = 1.dp,
-                color = LocalDevicersColors.current.border
-            )
-
-            ReplyList(
-                replies = replies,
-                expandedReplies = expandedReplies,
-                onViewAnswers = onViewAnswers,
-                modifier = Modifier.padding(top = 24.dp, bottom = 24.dp)
-            )
-        }
+            },
+            expandedReplies = expandedReplies,
+            onViewAnswers = onViewAnswers,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp)
+        )
         ReplyComposer(
             value = replyText,
             onValueChange = onReplyTextChange,
             onSendClick = onSendReply,
-            modifier = Modifier.fillMaxWidth()
+            // El compositor flota sobre las respuestas para conservar la continuidad visual del hilo.
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
         )
     }
 }

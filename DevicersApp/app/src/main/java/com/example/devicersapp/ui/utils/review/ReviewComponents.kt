@@ -81,13 +81,6 @@ fun ReviewActionsRow(
             iconSize = iconSize,
             onClick = onSendClick
         )
-        Spacer(modifier = Modifier.weight(1f))
-        ReviewAction(
-            iconResId = R.drawable.bookmark_icon,
-            contentDescriptionResId = R.string.review_action_save,
-            iconSize = iconSize,
-            onClick = onSaveClick
-        )
     }
 }
 

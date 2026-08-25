@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +21,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -30,7 +28,6 @@ import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.theme.SearchHeadingText
 import com.example.devicersapp.ui.utils.navigation.FilterChip
 import com.example.devicersapp.ui.utils.search.FilterLabel
-import com.example.devicersapp.ui.utils.search.formatLaunchDate
 import com.example.devicersapp.ui.utils.search.isValidLaunchDate
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 
@@ -137,15 +134,10 @@ fun SearchProductFilterPanel(
         Spacer(modifier = Modifier.height(16.dp))
         FilterLabel(R.string.launch_date)
         Spacer(modifier = Modifier.height(7.dp))
-        SearchBar(
+        LaunchDateField(
+            launchDate = launchDate,
             placeholder = R.string.launch_date_placeholder,
-            backgroundColor = LocalDevicersColors.current.surface,
-            showSearchIcon = false,
-            height = 42.dp,
-            text = launchDate,
-            // El filtrado evita letras, incluso cuando el contenido llega por pegado de texto.
-            onTextChange = { onLaunchDateChange(formatLaunchDate(it)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            onLaunchDateChange = onLaunchDateChange
         )
         if (showLaunchDateError) {
             Text(
