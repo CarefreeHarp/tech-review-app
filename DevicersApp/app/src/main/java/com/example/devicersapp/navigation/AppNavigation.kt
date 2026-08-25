@@ -1,5 +1,7 @@
 package com.example.devicersapp.navigation
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -77,7 +79,22 @@ fun AppNavigation(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier
+        modifier = modifier,
+        enterTransition = {
+            slideInHorizontally { it }
+        },
+
+        exitTransition = {
+            slideOutHorizontally { -it }
+        },
+
+        popEnterTransition = {
+            slideInHorizontally { -it }
+        },
+
+        popExitTransition = {
+            slideOutHorizontally { it }
+        }
     ) {
         // ==================== RUTAS SIN PARÁMETROS ====================
         composable(route = AppDestination.Login.route) {
