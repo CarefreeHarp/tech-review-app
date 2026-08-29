@@ -1,6 +1,7 @@
 package com.example.devicersapp.ui.screens.profile_saved_reviews
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,22 +12,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
-import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.profile_saved_reviews.components.SavedReviewCard
@@ -35,27 +33,26 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 
-/**
- * Configura la sección de reseñas guardadas dentro del perfil propio.
- *
- * @param modifier Modificador aplicado a la pantalla.
- */
+/** Renderiza las reseñas guardadas a partir del estado administrado por el ViewModel. */
 @Composable
-fun ProfileSavedReviewsScreen(
+fun ProfileSavedReviewsView(
     onReviewClick: (Int) -> Unit = {},
     onReviewsClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ProfileSavedReviewsViewModel
 ) {
-    ProfileSavedReviewsScreenContent(
-        profile = LocalProfileProvider.profile,
-        savedReviews = LocalProfileProvider.savedReviews.mapNotNull { savedReview ->
-            LocalReviewProvider.findById(savedReview.reviewId)
+    val uiState by viewModel.uiState.collectAsState()
+
+    ProfileSavedReviewsViewContent(
+        profile = uiState.profile,
+        savedReviews = uiState.savedReviews,
+        isReviewsSelected = uiState.isReviewsSelected,
+        onReviewsClick = {
+            viewModel.onReviewsSelected()
+            onReviewsClick()
         },
-        isReviewsSelected = false,
-        onReviewsClick = onReviewsClick,
-        onSavedClick = {},
+        onSavedClick = viewModel::onSavedSelected,
         onReviewClick = onReviewClick,
         modifier = modifier
             .fillMaxSize()
@@ -63,21 +60,9 @@ fun ProfileSavedReviewsScreen(
     )
 }
 
-/**
- * Ensambla la cabecera del perfil, sus secciones y la cuadrícula de reseñas guardadas.
- *
- * El encabezado prescinde de las métricas porque esta sección se concentra en el contenido
- * que la persona guardó, no en su alcance dentro de la comunidad.
- *
- * @param profile Información visible del perfil.
- * @param savedReviews Reseñas que el perfil guardó para leer más adelante.
- * @param isReviewsSelected Indica si la sección activa es la de reseñas.
- * @param onReviewsClick Acción que solicita mostrar la sección de reseñas.
- * @param onSavedClick Acción que solicita mostrar la sección de guardados.
- * @param modifier Modificador aplicado a la cuadrícula raíz.
- */
+/** Ensambla el encabezado y la cuadrícula de reseñas guardadas del perfil propio. */
 @Composable
-fun ProfileSavedReviewsScreenContent(
+fun ProfileSavedReviewsViewContent(
     profile: ProfileContent,
     savedReviews: List<ReviewContent>,
     isReviewsSelected: Boolean,
@@ -89,8 +74,8 @@ fun ProfileSavedReviewsScreenContent(
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier.padding(horizontal = 20.dp),
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
-        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Column(
@@ -98,10 +83,7 @@ fun ProfileSavedReviewsScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
-                ProfileAvatar(
-                    avatarResId = profile.avatarResId,
-                    modifier = Modifier.size(84.dp)
-                )
+                ProfileAvatar(avatarResId = profile.avatarResId, modifier = Modifier.size(84.dp))
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(profile.handleResId),
@@ -117,31 +99,22 @@ fun ProfileSavedReviewsScreenContent(
                     onEndClick = onSavedClick,
                     selectedColor = LocalDevicersColors.current.primaryText
                 )
-
                 Spacer(modifier = Modifier.height(18.dp))
             }
         }
-
         itemsIndexed(savedReviews) { _, savedReview ->
-            SavedReviewCard(
-                review = savedReview,
-                onClick = {
-                    onReviewClick(savedReview.id)
-                }
-            )
+            SavedReviewCard(review = savedReview, onClick = { onReviewClick(savedReview.id) })
         }
-
         item(span = { GridItemSpan(maxLineSpan) }) {
-            // Deja aire para que la barra flotante no tape la última tarjeta.
             Spacer(modifier = Modifier.height(110.dp))
         }
     }
 }
 
-/** Muestra una vista previa de las reseñas guardadas en el tema claro. */
+/** Muestra las reseñas guardadas en tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1000)
-fun ProfileSavedReviewsScreenPreview() {
+fun ProfileSavedReviewsViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(
             selectedItem = "profile",
@@ -149,17 +122,18 @@ fun ProfileSavedReviewsScreenPreview() {
             topBarNumber = 1,
             topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
-            ProfileSavedReviewsScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+            ProfileSavedReviewsView(
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+                viewModel = ProfileSavedReviewsViewModel()
             )
         }
     }
 }
 
-/** Muestra una vista previa de las reseñas guardadas en el tema oscuro. */
+/** Muestra las reseñas guardadas en tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1000)
-fun ProfileSavedReviewsScreenDarkPreview() {
+fun ProfileSavedReviewsViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(
             selectedItem = "profile",
@@ -167,8 +141,9 @@ fun ProfileSavedReviewsScreenDarkPreview() {
             topBarNumber = 1,
             topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
-            ProfileSavedReviewsScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+            ProfileSavedReviewsView(
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+                viewModel = ProfileSavedReviewsViewModel()
             )
         }
     }

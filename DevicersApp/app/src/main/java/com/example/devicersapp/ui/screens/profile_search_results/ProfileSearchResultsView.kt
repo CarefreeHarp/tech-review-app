@@ -1,7 +1,5 @@
 package com.example.devicersapp.ui.screens.profile_search_results
 
-import com.example.devicersapp.ui.theme.LocalDevicersColors
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,10 +10,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,29 +21,26 @@ import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.ui.models.ProfileSearchResultContent
 import com.example.devicersapp.ui.screens.profile_search_results.components.ProfileResultCard
 import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
-/** Configura los resultados que devuelve una búsqueda de perfiles. */
+/** Renderiza los resultados de perfiles y delega sus eventos al ViewModel. */
 @Composable
-fun ProfileSearchResultsScreen(
+fun ProfileSearchResultsView(
     onProfileClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ProfileSearchResultsViewModel
 ) {
-    // La búsqueda llega desde la pantalla anterior y se puede seguir afinando aquí.
-    var searchText by remember { mutableStateOf("") }
-    // Estado elevado que determina qué tarjetas ya muestran el perfil como seguido.
-    var followedProfileIds by remember { mutableStateOf(emptySet<String>()) }
+    val uiState by viewModel.uiState.collectAsState()
 
-    ProfileSearchResultsScreenContent(
-        results = LocalProfileProvider.profiles,
-        searchText = searchText,
-        onSearchTextChange = { searchText = it },
-        followedProfileIds = followedProfileIds,
-        onFollow = { profileId ->
-            followedProfileIds = followedProfileIds + profileId
-        },
+    ProfileSearchResultsViewContent(
+        results = uiState.results,
+        searchText = uiState.searchText,
+        followedProfileIds = uiState.followedProfileIds,
+        onSearchTextChange = viewModel::onSearchTextChange,
+        onFollow = viewModel::onFollow,
         onProfileClick = onProfileClick,
         modifier = modifier
             .fillMaxSize()
@@ -55,27 +48,19 @@ fun ProfileSearchResultsScreen(
     )
 }
 
-/**
- * Ensambla la búsqueda, el conteo de coincidencias y la lista de perfiles encontrados.
- *
- * @param results Perfiles devueltos por la búsqueda.
- * @param searchText Texto actual de la búsqueda.
- * @param onSearchTextChange Acción que solicita actualizar la búsqueda.
- * @param followedProfileIds Identificadores de los perfiles que ya se siguen.
- * @param onFollow Acción solicitada al seguir un perfil.
- * @param modifier Modificador aplicado a la lista raíz.
- */
+/** Ensambla la búsqueda, el conteo de coincidencias y la lista de perfiles encontrados. */
 @Composable
-fun ProfileSearchResultsScreenContent(
+fun ProfileSearchResultsViewContent(
     results: List<ProfileSearchResultContent>,
     searchText: String,
-    onSearchTextChange: (String) -> Unit,
     followedProfileIds: Set<String>,
+    onSearchTextChange: (String) -> Unit,
     onFollow: (String) -> Unit,
     onProfileClick: (String) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     val colors = LocalDevicersColors.current
+
     Column(modifier = modifier.padding(horizontal = 20.dp)) {
         Spacer(modifier = Modifier.height(28.dp))
         SearchBar(
@@ -95,62 +80,49 @@ fun ProfileSearchResultsScreenContent(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
-
             items(results, key = { it.id }) { result ->
                 ProfileResultCard(
                     result = result,
                     isFollowed = result.id in followedProfileIds,
                     onFollow = { onFollow(result.id) },
-                    onProfileClick = {
-                        onProfileClick(result.id)
-                    }
+                    onProfileClick = { onProfileClick(result.id) }
                 )
                 Spacer(modifier = Modifier.height(14.dp))
             }
-
             item {
-                // Deja aire para que la barra flotante no tape el último perfil.
                 Spacer(modifier = Modifier.height(110.dp))
             }
         }
     }
 }
 
-/** Muestra una vista previa de los resultados de perfiles en el tema claro. */
+/** Muestra los resultados de perfiles en tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 900)
-fun ProfileSearchResultsScreenPreview() {
+fun ProfileSearchResultsViewPreview() {
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(
-            selectedItem = "search",
-            showBottomBar = true,
-            topBarNumber = 7
-        ) { innerPadding ->
-            ProfileSearchResultsScreen(
+        DevicersScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 7) {
+                innerPadding ->
+            ProfileSearchResultsView(
                 onProfileClick = {},
-                modifier = Modifier.padding(
-                    top = innerPadding.calculateTopPadding()
-                )
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+                viewModel = ProfileSearchResultsViewModel()
             )
         }
     }
 }
 
-/** Muestra una vista previa de los resultados de perfiles en el tema oscuro. */
+/** Muestra los resultados de perfiles en tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 900)
-fun ProfileSearchResultsScreenDarkPreview() {
+fun ProfileSearchResultsViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(
-            selectedItem = "search",
-            showBottomBar = true,
-            topBarNumber = 7
-        ) { innerPadding ->
-            ProfileSearchResultsScreen(
+        DevicersScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 7) {
+                innerPadding ->
+            ProfileSearchResultsView(
                 onProfileClick = {},
-                modifier = Modifier.padding(
-                    top = innerPadding.calculateTopPadding()
-                )
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+                viewModel = ProfileSearchResultsViewModel()
             )
         }
     }
