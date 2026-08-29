@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.devicersapp.ui.screens.access.AccessScreen
 import com.example.devicersapp.ui.screens.activity.ActivityScreen
 import com.example.devicersapp.ui.screens.create_review.CreateReviewScreen
@@ -16,11 +17,15 @@ import com.example.devicersapp.ui.screens.found_products.FoundProductsScreen
 import com.example.devicersapp.ui.screens.home.HomeScreen
 import com.example.devicersapp.ui.screens.own_profile.OwnProfileScreen
 import com.example.devicersapp.ui.screens.product.ProductScreen
-import com.example.devicersapp.ui.screens.profile.ProfileScreen
-import com.example.devicersapp.ui.screens.profile_saved_reviews.ProfileSavedReviewsScreen
-import com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsScreen
+import com.example.devicersapp.ui.screens.profile.ProfileView
+import com.example.devicersapp.ui.screens.profile.ProfileViewModel
+import com.example.devicersapp.ui.screens.profile_saved_reviews.ProfileSavedReviewsView
+import com.example.devicersapp.ui.screens.profile_saved_reviews.ProfileSavedReviewsViewModel
+import com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsView
+import com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsViewModel
 import com.example.devicersapp.ui.screens.rate_product.RateProductScreen
-import com.example.devicersapp.ui.screens.register.RegisterScreen
+import com.example.devicersapp.ui.screens.register.RegisterView
+import com.example.devicersapp.ui.screens.register.RegisterViewModel
 import com.example.devicersapp.ui.screens.request_product.RequestProductScreen
 import com.example.devicersapp.ui.screens.review.ReviewScreen
 import com.example.devicersapp.ui.screens.search_product.SearchProductScreen
@@ -177,7 +182,10 @@ fun AppNavigation(
             )
         }
         composable(route = AppDestination.Register.route) {
-            RegisterScreen(
+            val registerViewModel: RegisterViewModel = viewModel()
+
+            RegisterView(
+                viewModel = registerViewModel,
                 onCreateAccountClick = {
                     navController.navigate(AppDestination.Home.route) {
                         popUpTo(AppDestination.Login.route) {
@@ -210,7 +218,10 @@ fun AppNavigation(
             )
         }
         composable(route = AppDestination.ProfileSearchResults.route) {
-            ProfileSearchResultsScreen(
+            val profileSearchResultsViewModel: ProfileSearchResultsViewModel = viewModel()
+
+            ProfileSearchResultsView(
+                viewModel = profileSearchResultsViewModel,
                 onProfileClick = { profileId ->
                     navController.navigate(
                         AppDestination.Profile.createRoute(profileId)
@@ -220,7 +231,10 @@ fun AppNavigation(
         }
 
         composable(route = AppDestination.ProfileSavedReviews.route) {
-            ProfileSavedReviewsScreen(
+            val profileSavedReviewsViewModel: ProfileSavedReviewsViewModel = viewModel()
+
+            ProfileSavedReviewsView(
+                viewModel = profileSavedReviewsViewModel,
                 onReviewClick = { reviewId ->
                     navController.navigate(
                         AppDestination.Review.createRoute(reviewId)
@@ -328,7 +342,10 @@ fun AppNavigation(
             val profileId = it.arguments?.getString("profileId")
 
             if (profileId != null) {
-                ProfileScreen(
+                val profileViewModel: ProfileViewModel = viewModel()
+
+                ProfileView(
+                    viewModel = profileViewModel,
                     profileId = profileId,
                     onReviewClick = { reviewId ->
                         navController.navigate(
