@@ -1,7 +1,5 @@
 package com.example.devicersapp.ui.screens.search_profile
 
-import com.example.devicersapp.ui.theme.LocalDevicersColors
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,11 +11,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,52 +20,32 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.screens.search_profile.components.SearchProfileFilterPanel
 import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.ScreenTitleText
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.search.SearchEntityToggle
 
-/**
- * Configura la búsqueda de perfiles y los filtros con los que se acota.
- *
- * @param onApplyFilters Acción solicitada al aplicar los filtros visibles.
- * @param modifier Modificador aplicado a la pantalla.
- */
+/** Renderiza la búsqueda de perfiles y conecta sus eventos con el estado del ViewModel. */
 @Composable
-fun SearchProfileScreen(
+fun SearchProfileView(
     onApplyFilters: () -> Unit = {},
     onUsersClick: () -> Unit = {},
     onProductsClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: SearchProfileViewModel
 ) {
-    // La pantalla es propietaria del estado y los componentes reciben valores y callbacks.
-    var searchText by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var interests by remember { mutableStateOf("") }
-    var minimumReviews by remember { mutableFloatStateOf(20f) }
-    var relationship by remember { mutableStateOf("all") }
-    var sortBy by remember { mutableStateOf("alphabetical") }
+    val uiState by viewModel.uiState.collectAsState()
 
-    SearchProfileScreenContent(
-        searchText = searchText,
-        onSearchTextChange = { searchText = it },
-        username = username,
-        onUsernameChange = { username = it },
-        interests = interests,
-        onInterestsChange = { interests = it },
-        minimumReviews = minimumReviews,
-        onMinimumReviewsChange = { minimumReviews = it },
-        relationship = relationship,
-        onRelationshipChange = { relationship = it },
-        sortBy = sortBy,
-        onSortChange = { sortBy = it },
-        onClearFilters = {
-            username = ""
-            interests = ""
-            minimumReviews = 20f
-            relationship = "all"
-            sortBy = "alphabetical"
-        },
+    SearchProfileViewContent(
+        uiState = uiState,
+        onSearchTextChange = viewModel::onSearchTextChange,
+        onUsernameChange = viewModel::onUsernameChange,
+        onInterestsChange = viewModel::onInterestsChange,
+        onMinimumReviewsChange = viewModel::onMinimumReviewsChange,
+        onRelationshipChange = viewModel::onRelationshipChange,
+        onSortChange = viewModel::onSortChange,
+        onClearFilters = viewModel::onClearFilters,
         onApplyFilters = onApplyFilters,
         onUsersClick = onUsersClick,
         onProductsClick = onProductsClick,
@@ -83,17 +58,12 @@ fun SearchProfileScreen(
 /**
  * Reúne el título, la búsqueda general y la tarjeta de filtros de perfiles.
  *
- * @param searchText Texto actual de la búsqueda general.
+ * @param uiState Estado inmutable que describe la consulta y los filtros activos.
  * @param onSearchTextChange Acción que solicita actualizar la búsqueda general.
- * @param username Nombre de usuario escrito para filtrar.
  * @param onUsernameChange Acción que solicita actualizar el nombre de usuario.
- * @param interests Intereses escritos para filtrar.
  * @param onInterestsChange Acción que solicita actualizar los intereses.
- * @param minimumReviews Cantidad mínima de reseñas publicadas.
  * @param onMinimumReviewsChange Acción que solicita cambiar la cantidad mínima de reseñas.
- * @param relationship Identificador de la relación activa con los perfiles buscados.
  * @param onRelationshipChange Acción que solicita cambiar la relación.
- * @param sortBy Identificador del orden activo.
  * @param onSortChange Acción que solicita cambiar el orden.
  * @param onClearFilters Acción que solicita restablecer los filtros.
  * @param onApplyFilters Acción que solicita aplicar los filtros.
@@ -102,18 +72,13 @@ fun SearchProfileScreen(
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
-fun SearchProfileScreenContent(
-    searchText: String,
+fun SearchProfileViewContent(
+    uiState: SearchProfileState,
     onSearchTextChange: (String) -> Unit,
-    username: String,
     onUsernameChange: (String) -> Unit,
-    interests: String,
     onInterestsChange: (String) -> Unit,
-    minimumReviews: Float,
     onMinimumReviewsChange: (Float) -> Unit,
-    relationship: String,
     onRelationshipChange: (String) -> Unit,
-    sortBy: String,
     onSortChange: (String) -> Unit,
     onClearFilters: () -> Unit,
     onApplyFilters: () -> Unit,
@@ -144,7 +109,7 @@ fun SearchProfileScreenContent(
             placeholder = R.string.search_profile_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = true,
-            text = searchText,
+            text = uiState.searchText,
             onTextChange = onSearchTextChange
         )
 
@@ -158,19 +123,19 @@ fun SearchProfileScreenContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         SearchProfileFilterPanel(
-            username = username,
+            username = uiState.username,
             onUsernameChange = onUsernameChange,
 
-            interests = interests,
+            interests = uiState.interests,
             onInterestsChange = onInterestsChange,
 
-            minimumReviews = minimumReviews,
+            minimumReviews = uiState.minimumReviews,
             onMinimumReviewsChange = onMinimumReviewsChange,
 
-            relationship = relationship,
+            relationship = uiState.relationship,
             onRelationshipChange = onRelationshipChange,
 
-            sortBy = sortBy,
+            sortBy = uiState.sortBy,
             onSortChange = onSortChange,
             onClearFilters = onClearFilters,
             onApplyFilters = onApplyFilters
@@ -181,27 +146,55 @@ fun SearchProfileScreenContent(
     }
 }
 
-/** Muestra una vista previa de la búsqueda de perfiles en el tema claro. */
+/** Muestra la búsqueda de perfiles en tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1000)
-fun SearchProfileScreenPreview() {
+fun SearchProfileViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(selectedItem = "search", showBottomBar = true) { innerPadding ->
-            SearchProfileScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+            SearchProfileViewContent(
+                uiState = SearchProfileState(),
+                onSearchTextChange = {},
+                onUsernameChange = {},
+                onInterestsChange = {},
+                onMinimumReviewsChange = {},
+                onRelationshipChange = {},
+                onSortChange = {},
+                onClearFilters = {},
+                onApplyFilters = {},
+                onUsersClick = {},
+                onProductsClick = {},
+                modifier = Modifier
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .fillMaxSize()
+                    .background(LocalDevicersColors.current.background)
             )
         }
     }
 }
 
-/** Muestra una vista previa de la búsqueda de perfiles en el tema oscuro. */
+/** Muestra la búsqueda de perfiles en tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1000)
-fun SearchProfileScreenDarkPreview() {
+fun SearchProfileViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(selectedItem = "search", showBottomBar = true) { innerPadding ->
-            SearchProfileScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+            SearchProfileViewContent(
+                uiState = SearchProfileState(),
+                onSearchTextChange = {},
+                onUsernameChange = {},
+                onInterestsChange = {},
+                onMinimumReviewsChange = {},
+                onRelationshipChange = {},
+                onSortChange = {},
+                onClearFilters = {},
+                onApplyFilters = {},
+                onUsersClick = {},
+                onProductsClick = {},
+                modifier = Modifier
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .fillMaxSize()
+                    .background(LocalDevicersColors.current.background)
             )
         }
     }

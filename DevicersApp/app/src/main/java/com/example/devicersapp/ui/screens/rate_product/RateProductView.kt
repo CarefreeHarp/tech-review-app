@@ -8,16 +8,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.data.local.LocalProductProvider
-import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.screens.rate_product.components.RateableProductCard
 import com.example.devicersapp.ui.screens.rate_product.components.RatingSelector
 import com.example.devicersapp.ui.screens.rate_product.components.ReviewForm
@@ -25,75 +22,29 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
-/**
- * Configura el estado de la reseña y delega la interfaz de calificación al contenido.
- *
- * @param productNameResId Identificador del nombre del producto que se calificará.
- * @param onPublishClick Acción solicitada al publicar la calificación.
- * @param modifier Modificador aplicado al contenedor raíz.
- */
+/** Renderiza la calificación y solicita la carga del producto que llega por argumento. */
 @Composable
-fun RateProductScreen(
+fun RateProductView(
     productNameResId: Int? = null,
     onPublishClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: RateProductViewModel
 ) {
-    // El formulario conserva sus valores ante recomposiciones y cambios de configuración.
-    var rating by rememberSaveable {
-        mutableIntStateOf(0)
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(productNameResId) {
+        viewModel.loadProduct(productNameResId)
     }
 
-    var title by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var experience by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var advantage by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var disadvantage by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    RateProductScreenContent(
-        product = productNameResId?.let {
-            LocalProductProvider.getProductByNameResId(it)
-        } ?: LocalProductProvider.product,
-
-        rating = rating,
-        onRatingChange = {
-            rating = it
-        },
-
-        title = title,
-        onTitleChange = {
-            title = it
-        },
-
-        experience = experience,
-        onExperienceChange = {
-            experience = it
-        },
-
-        advantage = advantage,
-        onAdvantageChange = {
-            advantage = it
-        },
-
-        disadvantage = disadvantage,
-        onDisadvantageChange = {
-            disadvantage = it
-        },
-
-        onChangeProduct = {
-            // TODO: Implementar la selección de otro producto.
-        },
+    RateProductViewContent(
+        uiState = uiState,
+        onRatingChange = viewModel::onRatingChange,
+        onTitleChange = viewModel::onTitleChange,
+        onExperienceChange = viewModel::onExperienceChange,
+        onAdvantageChange = viewModel::onAdvantageChange,
+        onDisadvantageChange = viewModel::onDisadvantageChange,
+        onChangeProduct = viewModel::onChangeProduct,
         onPublishClick = onPublishClick,
-
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -102,47 +53,31 @@ fun RateProductScreen(
 
 /**
  * Ensambla los componentes presentacionales de la pantalla de calificación.
- * El estado y las acciones se reciben desde el composable raíz para conservar el state hoisting.
  *
- * @param product Producto que se calificará.
- * @param rating Calificación seleccionada.
+ * @param uiState Estado inmutable que describe el producto y el formulario de la reseña.
  * @param onRatingChange Acción al seleccionar una calificación.
- * @param title Título escrito para la reseña.
  * @param onTitleChange Acción al cambiar el título.
- * @param experience Experiencia escrita por la persona usuaria.
  * @param onExperienceChange Acción al cambiar la experiencia.
- * @param advantage Ventaja escrita para el producto.
  * @param onAdvantageChange Acción al cambiar la ventaja.
- * @param disadvantage Desventaja escrita para el producto.
  * @param onDisadvantageChange Acción al cambiar la desventaja.
  * @param onChangeProduct Acción para cambiar de producto.
  * @param onPublishClick Acción para publicar la calificación.
  * @param modifier Modificador aplicado a la lista raíz.
  */
 @Composable
-fun RateProductScreenContent(
-    product: ProductContent,
-
-    rating: Int,
+fun RateProductViewContent(
+    uiState: RateProductState,
     onRatingChange: (Int) -> Unit,
-
-    title: String,
     onTitleChange: (String) -> Unit,
-
-    experience: String,
     onExperienceChange: (String) -> Unit,
-
-    advantage: String,
     onAdvantageChange: (String) -> Unit,
-
-    disadvantage: String,
     onDisadvantageChange: (String) -> Unit,
-
     onChangeProduct: () -> Unit,
     onPublishClick: () -> Unit,
-
     modifier: Modifier = Modifier
 ) {
+    // La calificación solo se puede mostrar cuando el ViewModel ya resolvió el producto.
+    val product = uiState.product ?: return
 
     LazyColumn(
         modifier = modifier
@@ -165,7 +100,7 @@ fun RateProductScreenContent(
 
         item {
             RatingSelector(
-                rating = rating,
+                rating = uiState.rating,
                 onRatingChange = onRatingChange
             )
 
@@ -174,16 +109,16 @@ fun RateProductScreenContent(
 
         item {
             ReviewForm(
-                title = title,
+                title = uiState.title,
                 onTitleChange = onTitleChange,
 
-                experience = experience,
+                experience = uiState.experience,
                 onExperienceChange = onExperienceChange,
 
-                advantage = advantage,
+                advantage = uiState.advantage,
                 onAdvantageChange = onAdvantageChange,
 
-                disadvantage = disadvantage,
+                disadvantage = uiState.disadvantage,
                 onDisadvantageChange = onDisadvantageChange,
 
                 onPublishClick = onPublishClick
@@ -194,33 +129,49 @@ fun RateProductScreenContent(
     }
 }
 
-
-
-/** Muestra una vista previa de la calificación de producto en el tema claro. */
+/** Muestra la calificación de producto en tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
-fun RateProductScreenPreview() {
+fun RateProductViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(topBarNumber = 2) { innerPadding ->
-            RateProductScreen(
+            RateProductViewContent(
+                uiState = RateProductState(product = LocalProductProvider.product),
+                onRatingChange = {},
+                onTitleChange = {},
+                onExperienceChange = {},
+                onAdvantageChange = {},
+                onDisadvantageChange = {},
+                onChangeProduct = {},
+                onPublishClick = {},
                 modifier = Modifier
-                    .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
+                    .fillMaxSize()
+                    .background(LocalDevicersColors.current.background)
             )
         }
     }
 }
 
-/** Muestra una vista previa de la calificación de producto en el tema oscuro. */
+/** Muestra la calificación de producto en tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
-fun RateProductScreenDarkPreview() {
+fun RateProductViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 2) { innerPadding ->
-            RateProductScreen(
+            RateProductViewContent(
+                uiState = RateProductState(product = LocalProductProvider.product),
+                onRatingChange = {},
+                onTitleChange = {},
+                onExperienceChange = {},
+                onAdvantageChange = {},
+                onDisadvantageChange = {},
+                onChangeProduct = {},
+                onPublishClick = {},
                 modifier = Modifier
-                    .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
+                    .fillMaxSize()
+                    .background(LocalDevicersColors.current.background)
             )
         }
     }

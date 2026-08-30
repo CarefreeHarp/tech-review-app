@@ -28,7 +28,6 @@ import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.theme.SearchHeadingText
 import com.example.devicersapp.ui.utils.navigation.FilterChip
 import com.example.devicersapp.ui.utils.search.FilterLabel
-import com.example.devicersapp.ui.utils.search.isValidLaunchDate
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 
 /**
@@ -40,6 +39,8 @@ import com.example.devicersapp.ui.utils.navigation.SearchBar
  * @param onProductNameChange Acción que solicita actualizar el nombre de producto.
  * @param launchDate Fecha de lanzamiento escrita para filtrar.
  * @param onLaunchDateChange Acción que solicita actualizar la fecha de lanzamiento.
+ * @param isLaunchDateValid Indica si la fecha escrita permite aplicar los filtros.
+ * @param showLaunchDateError Indica si debe mostrarse el aviso de fecha inexistente.
  * @param selectedCategory Identificador de categoría activa.
  * @param onCategorySelected Acción que solicita cambiar la categoría.
  * @param minimumRating Calificación mínima activa.
@@ -61,6 +62,9 @@ fun SearchProductFilterPanel(
     launchDate: String,
     onLaunchDateChange: (String) -> Unit,
 
+    isLaunchDateValid: Boolean,
+    showLaunchDateError: Boolean,
+
     selectedCategory: String,
     onCategorySelected: (String) -> Unit,
 
@@ -73,9 +77,6 @@ fun SearchProductFilterPanel(
     onApplyFilters: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isLaunchDateValid = launchDate.isBlank() || isValidLaunchDate(launchDate)
-    val showLaunchDateError = launchDate.isNotBlank() && launchDate.filter(Char::isDigit).length == 8 && !isLaunchDateValid
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -255,6 +256,9 @@ fun SearchProductFilterPanelPreview() {
 
             launchDate = "",
             onLaunchDateChange = {},
+
+            isLaunchDateValid = true,
+            showLaunchDateError = false,
 
             selectedCategory = "all",
             onCategorySelected = {},

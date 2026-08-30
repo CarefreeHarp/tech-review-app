@@ -23,13 +23,17 @@ import com.example.devicersapp.ui.screens.profile_saved_reviews.ProfileSavedRevi
 import com.example.devicersapp.ui.screens.profile_saved_reviews.ProfileSavedReviewsViewModel
 import com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsView
 import com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsViewModel
-import com.example.devicersapp.ui.screens.rate_product.RateProductScreen
+import com.example.devicersapp.ui.screens.rate_product.RateProductView
+import com.example.devicersapp.ui.screens.rate_product.RateProductViewModel
 import com.example.devicersapp.ui.screens.register.RegisterView
 import com.example.devicersapp.ui.screens.register.RegisterViewModel
-import com.example.devicersapp.ui.screens.request_product.RequestProductScreen
+import com.example.devicersapp.ui.screens.request_product.RequestProductView
+import com.example.devicersapp.ui.screens.request_product.RequestProductViewModel
 import com.example.devicersapp.ui.screens.review.ReviewScreen
-import com.example.devicersapp.ui.screens.search_product.SearchProductScreen
-import com.example.devicersapp.ui.screens.search_profile.SearchProfileScreen
+import com.example.devicersapp.ui.screens.search_product.SearchProductView
+import com.example.devicersapp.ui.screens.search_product.SearchProductViewModel
+import com.example.devicersapp.ui.screens.search_profile.SearchProfileView
+import com.example.devicersapp.ui.screens.search_profile.SearchProfileViewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.devicersapp.R
@@ -134,7 +138,10 @@ fun AppNavigation(
             )
         }
         composable(route = AppDestination.SearchProduct.route) {
-            SearchProductScreen(
+            val searchProductViewModel: SearchProductViewModel = viewModel()
+
+            SearchProductView(
+                viewModel = searchProductViewModel,
                 onApplyFilters = {
                     navController.navigate(AppDestination.FoundProducts.route)
                 },
@@ -199,7 +206,10 @@ fun AppNavigation(
             )
         }
         composable(route = AppDestination.SearchProfile.route) {
-            SearchProfileScreen(
+            val searchProfileViewModel: SearchProfileViewModel = viewModel()
+
+            SearchProfileView(
+                viewModel = searchProfileViewModel,
                 onProductsClick = {
                     navController.navigate(AppDestination.SearchProduct.route)
                 },
@@ -247,7 +257,9 @@ fun AppNavigation(
         }
 
         composable(route = AppDestination.RequestProduct.route) {
-            RequestProductScreen()
+            val requestProductViewModel: RequestProductViewModel = viewModel()
+
+            RequestProductView(viewModel = requestProductViewModel)
         }
 
         // ==================== RUTAS CON PARÁMETROS ====================
@@ -295,7 +307,10 @@ fun AppNavigation(
                 it.arguments?.getInt("productNameResId")
 
             if (productNameResId != null) {
-                RateProductScreen(
+                val rateProductViewModel: RateProductViewModel = viewModel()
+
+                RateProductView(
+                    viewModel = rateProductViewModel,
                     productNameResId = productNameResId,
                     onPublishClick = {
                         navController.navigateToDestination(

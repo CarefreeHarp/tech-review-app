@@ -1,8 +1,7 @@
 package com.example.devicersapp.ui.screens.request_product
 
-import com.example.devicersapp.ui.theme.LocalDevicersColors
-
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,16 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,41 +28,28 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.screens.request_product.components.ProductPhotoUploader
 import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.search.FilterLabel
-import com.example.devicersapp.ui.utils.search.formatLaunchDate
-import com.example.devicersapp.ui.utils.search.isValidLaunchDate
 
-/**
- * Configura el formulario con el que se pide agregar un producto al catálogo.
- *
- * @param onSendRequest Acción solicitada al enviar la solicitud.
- * @param onUploadPhoto Acción solicitada al adjuntar una fotografía.
- * @param modifier Modificador aplicado a la pantalla.
- */
+/** Renderiza la solicitud de producto y conecta sus eventos con el estado del ViewModel. */
 @Composable
-fun RequestProductScreen(
+fun RequestProductView(
     onSendRequest: () -> Unit = {},
     onUploadPhoto: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: RequestProductViewModel
 ) {
-    // El formulario conserva sus valores ante recomposiciones y cambios de configuración.
-    var productName by rememberSaveable { mutableStateOf("") }
-    var category by rememberSaveable { mutableStateOf("") }
-    var brand by rememberSaveable { mutableStateOf("") }
-    var releaseDate by rememberSaveable { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsState()
 
-    RequestProductScreenContent(
-        productName = productName,
-        onProductNameChange = { productName = it },
-        category = category,
-        onCategoryChange = { category = it },
-        brand = brand,
-        onBrandChange = { brand = it },
-        releaseDate = releaseDate,
-        onReleaseDateChange = { releaseDate = it },
+    RequestProductViewContent(
+        uiState = uiState,
+        onProductNameChange = viewModel::onProductNameChange,
+        onCategoryChange = viewModel::onCategoryChange,
+        onBrandChange = viewModel::onBrandChange,
+        onReleaseDateChange = viewModel::onReleaseDateChange,
         onUploadPhoto = onUploadPhoto,
         onSendRequest = onSendRequest,
         modifier = modifier
@@ -78,40 +61,27 @@ fun RequestProductScreen(
 /**
  * Ensambla los campos, el área de fotografía y la acción de envío de la solicitud.
  *
- * @param productName Nombre escrito para el producto solicitado.
+ * @param uiState Estado inmutable que describe el formulario y sus validaciones.
  * @param onProductNameChange Acción que solicita actualizar el nombre.
- * @param category Categoría escrita para el producto.
  * @param onCategoryChange Acción que solicita actualizar la categoría.
- * @param brand Marca escrita para el producto.
  * @param onBrandChange Acción que solicita actualizar la marca.
- * @param releaseDate Fecha de lanzamiento escrita para el producto.
  * @param onReleaseDateChange Acción que solicita actualizar la fecha de lanzamiento.
  * @param onUploadPhoto Acción solicitada al adjuntar una fotografía.
  * @param onSendRequest Acción solicitada al enviar la solicitud.
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
-fun RequestProductScreenContent(
-    productName: String,
+fun RequestProductViewContent(
+    uiState: RequestProductState,
     onProductNameChange: (String) -> Unit,
-    category: String,
     onCategoryChange: (String) -> Unit,
-    brand: String,
     onBrandChange: (String) -> Unit,
-    releaseDate: String,
     onReleaseDateChange: (String) -> Unit,
     onUploadPhoto: () -> Unit,
     onSendRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-
-    // La solicitud necesita al menos el nombre, y la fecha solo se acepta si existe en el calendario.
-    val isReleaseDateValid = releaseDate.isBlank() || isValidLaunchDate(releaseDate)
-    val showReleaseDateError = releaseDate.isNotBlank() &&
-        releaseDate.filter(Char::isDigit).length == 8 &&
-        !isReleaseDateValid
-    val canSendRequest = productName.isNotBlank() && isReleaseDateValid
 
     // El contenido no es una colección repetida, así que basta con un contenedor desplazable.
     Column(
@@ -133,7 +103,7 @@ fun RequestProductScreenContent(
             placeholder = R.string.request_product_name_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = false,
-            text = productName,
+            text = uiState.productName,
             onTextChange = onProductNameChange
         )
 
@@ -144,7 +114,7 @@ fun RequestProductScreenContent(
             placeholder = R.string.request_product_category_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = false,
-            text = category,
+            text = uiState.category,
             onTextChange = onCategoryChange
         )
 
@@ -155,7 +125,7 @@ fun RequestProductScreenContent(
             placeholder = R.string.request_product_brand_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = false,
-            text = brand,
+            text = uiState.brand,
             onTextChange = onBrandChange
         )
 
@@ -166,12 +136,12 @@ fun RequestProductScreenContent(
             placeholder = R.string.launch_date_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = false,
-            text = releaseDate,
-            // El filtrado evita letras, incluso cuando el contenido llega por pegado de texto.
-            onTextChange = { onReleaseDateChange(formatLaunchDate(it)) },
+            text = uiState.releaseDate,
+            // El ViewModel filtra las letras, incluso cuando el contenido llega por pegado de texto.
+            onTextChange = onReleaseDateChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        if (showReleaseDateError) {
+        if (uiState.showReleaseDateError) {
             Text(
                 text = stringResource(R.string.launch_date_invalid),
                 modifier = Modifier.padding(top = 4.dp),
@@ -190,17 +160,17 @@ fun RequestProductScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 // Una solicitud sin nombre o con una fecha imposible no se puede enviar.
-                .clickable(enabled = canSendRequest, onClick = onSendRequest)
+                .clickable(enabled = uiState.canSendRequest, onClick = onSendRequest)
                 .height(52.dp)
                 .background(
-                    color = if (canSendRequest) colors.primary else colors.border,
+                    color = if (uiState.canSendRequest) colors.primary else colors.border,
                     shape = RoundedCornerShape(12.dp)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = stringResource(R.string.request_product_send),
-                color = if (canSendRequest) colors.textOnPrimary else colors.textSecondary,
+                color = if (uiState.canSendRequest) colors.textOnPrimary else colors.textSecondary,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -211,35 +181,55 @@ fun RequestProductScreenContent(
     }
 }
 
-/** Muestra una vista previa de la solicitud de producto en el tema claro. */
+/** Muestra la solicitud de producto en tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
-fun RequestProductScreenPreview() {
+fun RequestProductViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(
             selectedItem = "create",
             showBottomBar = true,
             topBarNumber = 9
         ) { innerPadding ->
-            RequestProductScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+            RequestProductViewContent(
+                uiState = RequestProductState(),
+                onProductNameChange = {},
+                onCategoryChange = {},
+                onBrandChange = {},
+                onReleaseDateChange = {},
+                onUploadPhoto = {},
+                onSendRequest = {},
+                modifier = Modifier
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .fillMaxSize()
+                    .background(LocalDevicersColors.current.background)
             )
         }
     }
 }
 
-/** Muestra una vista previa de la solicitud de producto en el tema oscuro. */
+/** Muestra la solicitud de producto en tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
-fun RequestProductScreenDarkPreview() {
+fun RequestProductViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(
             selectedItem = "create",
             showBottomBar = true,
             topBarNumber = 9
         ) { innerPadding ->
-            RequestProductScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+            RequestProductViewContent(
+                uiState = RequestProductState(),
+                onProductNameChange = {},
+                onCategoryChange = {},
+                onBrandChange = {},
+                onReleaseDateChange = {},
+                onUploadPhoto = {},
+                onSendRequest = {},
+                modifier = Modifier
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .fillMaxSize()
+                    .background(LocalDevicersColors.current.background)
             )
         }
     }
