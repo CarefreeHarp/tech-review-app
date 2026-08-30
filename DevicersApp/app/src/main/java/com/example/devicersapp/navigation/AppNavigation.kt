@@ -10,9 +10,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.devicersapp.ui.screens.access.AccessScreen
-import com.example.devicersapp.ui.screens.activity.ActivityScreen
-import com.example.devicersapp.ui.screens.create_review.CreateReviewScreen
+import com.example.devicersapp.ui.screens.access.AccessView
+import com.example.devicersapp.ui.screens.access.AccessViewModel
+import com.example.devicersapp.ui.screens.activity.ActivityView
+import com.example.devicersapp.ui.screens.activity.ActivityViewModel
+import com.example.devicersapp.ui.screens.create_review.CreateReviewView
+import com.example.devicersapp.ui.screens.create_review.CreateReviewViewModel
 import com.example.devicersapp.ui.screens.found_products.FoundProductsScreen
 import com.example.devicersapp.ui.screens.home.HomeScreen
 import com.example.devicersapp.ui.screens.own_profile.OwnProfileScreen
@@ -27,7 +30,8 @@ import com.example.devicersapp.ui.screens.rate_product.RateProductScreen
 import com.example.devicersapp.ui.screens.register.RegisterView
 import com.example.devicersapp.ui.screens.register.RegisterViewModel
 import com.example.devicersapp.ui.screens.request_product.RequestProductScreen
-import com.example.devicersapp.ui.screens.review.ReviewScreen
+import com.example.devicersapp.ui.screens.review.ReviewView
+import com.example.devicersapp.ui.screens.review.ReviewViewModel
 import com.example.devicersapp.ui.screens.search_product.SearchProductScreen
 import com.example.devicersapp.ui.screens.search_profile.SearchProfileScreen
 import androidx.navigation.NavType
@@ -103,17 +107,16 @@ fun AppNavigation(
     ) {
         // ==================== RUTAS SIN PARÁMETROS ====================
         composable(route = AppDestination.Login.route) {
-            AccessScreen(
+            AccessView(
                 onSignInClick = {
                     navController.navigate(AppDestination.Home.route) {
-                        popUpTo(AppDestination.Login.route) {
-                            inclusive = true
-                        }
+                        popUpTo(AppDestination.Login.route) { inclusive = true }
                     }
                 },
                 onCreateAccountClick = {
                     navController.navigate(AppDestination.Register.route)
-                }
+                },
+                viewModel = viewModel<AccessViewModel>()
             )
         }
         composable(route = AppDestination.Home.route) {
@@ -144,27 +147,31 @@ fun AppNavigation(
             )
         }
         composable(route = AppDestination.CreateReview.route) {
-            CreateReviewScreen(
+            CreateReviewView(
                 onProductClick = { product ->
                     navController.navigate(
-                        AppDestination.RateProduct.createRoute(product.nameResId)
+                        AppDestination.RateProduct.createRoute(
+                            product.nameResId
+                        )
                     )
                 },
                 onRequestProductClick = {
                     navController.navigate(
                         AppDestination.RequestProduct.route
                     )
-                }
+                },
+                viewModel = viewModel<CreateReviewViewModel>()
             )
         }
         composable(route = AppDestination.Activity.route) {
-            ActivityScreen(
+            ActivityView(
                 onReviewClick = { reviewId ->
                     navController.navigate(AppDestination.Review.createRoute(reviewId))
                 },
                 onProfileClick = { profileId ->
                     navController.navigate(AppDestination.Profile.createRoute(profileId))
-                }
+                },
+                viewModel = viewModel<ActivityViewModel>()
             )
         }
         composable(route = AppDestination.OwnProfile.route) {
@@ -318,16 +325,23 @@ fun AppNavigation(
             val reviewId = it.arguments?.getInt("reviewId")
 
             if (reviewId != null) {
-                ReviewScreen(
+                ReviewView(
                     reviewId = reviewId,
                     onProductClick = { productNameResId ->
                         navController.navigate(
-                            AppDestination.Product.createRoute(productNameResId)
+                            AppDestination.Product.createRoute(
+                                productNameResId
+                            )
                         )
-                    }
+                    },
+                    viewModel = viewModel<ReviewViewModel>()
                 )
             } else {
-                Text(text = stringResource(R.string.review_not_found))
+                Text(
+                    text = stringResource(
+                        R.string.review_not_found
+                    )
+                )
             }
         }
         composable(

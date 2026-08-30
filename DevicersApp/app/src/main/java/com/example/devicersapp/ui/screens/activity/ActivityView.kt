@@ -11,14 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalActivityProvider
 import com.example.devicersapp.ui.models.ActivityContent
 import com.example.devicersapp.ui.models.ActivityGroupContent
 import com.example.devicersapp.ui.models.ActivityType
@@ -26,29 +22,30 @@ import com.example.devicersapp.ui.screens.activity.components.ActivityCard
 import com.example.devicersapp.ui.screens.activity.components.ActivitySection
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.data.local.LocalActivityProvider
 
-/** Configura la pantalla de actividad, donde se reúne todo lo que ocurre alrededor de las reseñas. */
+/** Configura la pantalla de actividad y observa su estado desde el ViewModel. */
 @Composable
-fun ActivityScreen(
+fun ActivityView(
     onReviewClick: (Int) -> Unit = {},
     onProfileClick: (String) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ActivityViewModel
 ) {
-    // Estado elevado que determina qué tarjetas deben mostrar la acción "Siguiendo".
-    var followedActivityIds by remember { mutableStateOf(emptySet<String>()) }
-    // La referencia temporal se conserva para que los textos relativos no cambien en cada recomposición.
-    val activityGroups = remember {
-        LocalActivityProvider.activityGroups(currentTimeMillis = System.currentTimeMillis())
-    }
+    val uiState by viewModel.uiState.collectAsState()
 
     ActivityScreenContent(
-        activityGroups = activityGroups,
-        followedActivityIds = followedActivityIds,
-        onFollow = { activityId -> followedActivityIds = followedActivityIds + activityId },
+        activityGroups = uiState.activityGroups,
+        followedActivityIds = uiState.followedActivityIds,
+        onFollow = viewModel::followActivity,
         onActivityClick = { activity ->
             when (activity.type) {
-                ActivityType.LIKE, ActivityType.COMMENT -> onReviewClick(requireNotNull(activity.targetReviewId))
-                ActivityType.FOLLOW -> onProfileClick(requireNotNull(activity.targetProfileId))
+                ActivityType.LIKE,
+                ActivityType.COMMENT ->
+                    onReviewClick(requireNotNull(activity.targetReviewId))
+
+                ActivityType.FOLLOW ->
+                    onProfileClick(requireNotNull(activity.targetProfileId))
             }
         },
         modifier = modifier
@@ -106,8 +103,25 @@ fun ActivityScreenContent(
 @Preview(showBackground = true, heightDp = 900)
 fun ActivityScreenPreview() {
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(selectedItem = "activity", showBottomBar = true, topBarNumber = 10) { innerPadding ->
-            ActivityScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+        DevicersScaffold(
+            selectedItem = "activity",
+            showBottomBar = true,
+            topBarNumber = 10
+        ) { innerPadding ->
+            ActivityScreenContent(
+                activityGroups = LocalActivityProvider.activityGroups(
+                    currentTimeMillis = System.currentTimeMillis()
+                ),
+                followedActivityIds = emptySet(),
+                onFollow = {},
+                onActivityClick = {},
+                modifier = Modifier
+                    .padding(
+                        top = innerPadding.calculateTopPadding()
+                    )
+                    .fillMaxSize()
+                    .background(LocalDevicersColors.current.background)
+            )
         }
     }
 }
@@ -117,8 +131,25 @@ fun ActivityScreenPreview() {
 @Preview(showBackground = true, heightDp = 900)
 fun ActivityScreenDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(selectedItem = "activity", showBottomBar = true, topBarNumber = 10) { innerPadding ->
-            ActivityScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+        DevicersScaffold(
+            selectedItem = "activity",
+            showBottomBar = true,
+            topBarNumber = 10
+        ) { innerPadding ->
+            ActivityScreenContent(
+                activityGroups = LocalActivityProvider.activityGroups(
+                    currentTimeMillis = System.currentTimeMillis()
+                ),
+                followedActivityIds = emptySet(),
+                onFollow = {},
+                onActivityClick = {},
+                modifier = Modifier
+                    .padding(
+                        top = innerPadding.calculateTopPadding()
+                    )
+                    .fillMaxSize()
+                    .background(LocalDevicersColors.current.background)
+            )
         }
     }
 }
