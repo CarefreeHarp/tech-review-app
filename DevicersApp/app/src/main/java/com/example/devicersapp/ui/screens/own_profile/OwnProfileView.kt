@@ -42,9 +42,8 @@ fun OwnProfileView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    uiState.profile?.let { profile ->
         OwnProfileViewContent(
-            profile = profile,
+            profile = uiState.profile!!,
             reviews = uiState.reviews,
             onSavedClick = onSavedReviewsClick,
             onReviewClick = onReviewClick,
@@ -54,7 +53,6 @@ fun OwnProfileView(
                 .fillMaxSize()
                 .background(LocalDevicersColors.current.background)
         )
-    }
 }
 
 /**
