@@ -154,7 +154,7 @@
 
     <string name="found_products_title">Productos encontrados</string>
     <string name="found_products_count">%1$d productos encontrados</string>
-    <string name="found_products_query">auriculares</string>
+    <string name="found_products_query">Buscar dispositivos</string>
     <string name="found_products_open">Ver producto</string>
 
     <string name="found_product_first_name">Auriculares</string>

@@ -12,16 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.models.ProductSearchContent
 import com.example.devicersapp.ui.screens.found_products.components.FoundProductCard
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -30,26 +27,29 @@ import com.example.devicersapp.ui.utils.navigation.SearchBar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
 /**
- * Configura los resultados que devuelve una búsqueda del catálogo de productos.
+ * Configura los resultados de productos y observa su estado desde el ViewModel.
  *
  * @param onProductClick Acción solicitada al abrir el detalle de un producto.
  * @param modifier Modificador aplicado a la pantalla.
+ * @param viewModel ViewModel que conserva el estado de la pantalla.
  */
 @Composable
-fun FoundProductsScreen(
+fun FoundProductsView(
     onProductClick: (ProductSearchContent) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: FoundProductsViewModel
 ) {
-    // La búsqueda llega desde la pantalla anterior y se puede seguir afinando aquí.
-    var searchText by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsState()
 
+    // Conserva el comportamiento existente: si no se ha escrito nada,
+    // se muestra la consulta inicial definida en los recursos.
     val queryHint = stringResource(R.string.found_products_query)
-    val query = searchText.ifEmpty { queryHint }
+    val query = uiState.searchText.ifEmpty { queryHint }
 
-    FoundProductsScreenContent(
-        results = LocalProductProvider.products,
+    FoundProductsViewContent(
+        results = uiState.results,
         searchText = query,
-        onSearchTextChange = { searchText = it },
+        onSearchTextChange = viewModel::onSearchTextChange,
         onProductClick = onProductClick,
         modifier = modifier
             .fillMaxSize()
@@ -59,15 +59,9 @@ fun FoundProductsScreen(
 
 /**
  * Ensambla la búsqueda, el conteo de coincidencias y la lista de productos encontrados.
- *
- * @param results Productos devueltos por la búsqueda.
- * @param searchText Texto actual de la búsqueda.
- * @param onSearchTextChange Acción que solicita actualizar la búsqueda.
- * @param onProductClick Acción solicitada al abrir el detalle de un producto.
- * @param modifier Modificador aplicado a la lista raíz.
  */
 @Composable
-fun FoundProductsScreenContent(
+fun FoundProductsViewContent(
     results: List<ProductSearchContent>,
     searchText: String,
     onSearchTextChange: (String) -> Unit,
@@ -75,28 +69,47 @@ fun FoundProductsScreenContent(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-    Column(modifier = modifier.padding(horizontal = 20.dp)) {
-            Spacer(modifier = Modifier.height(8.dp))
-            SearchBar(
-                placeholder = R.string.search_product_placeholder,
-                backgroundColor = colors.surface,
-                showSearchIcon = true,
-                text = searchText,
-                onTextChange = onSearchTextChange
-            )
-            Spacer(modifier = Modifier.height(18.dp))
-            Text(
-                text = stringResource(R.string.found_products_count, results.size),
-                color = colors.textSecondary,
-                style = SearchControlText
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(results, key = { it.id }) { product ->
+
+    Column(
+        modifier = modifier.padding(horizontal = 20.dp)
+    ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        SearchBar(
+            placeholder = R.string.search_product_placeholder,
+            backgroundColor = colors.surface,
+            showSearchIcon = true,
+            text = searchText,
+            onTextChange = onSearchTextChange
+        )
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        Text(
+            text = stringResource(
+                R.string.found_products_count,
+                results.size
+            ),
+            color = colors.textSecondary,
+            style = SearchControlText
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
+            items(
+                items = results,
+                key = { it.id }
+            ) { product ->
                 FoundProductCard(
                     product = product,
-                    onClick = { onProductClick(product) }
+                    onClick = {
+                        onProductClick(product)
+                    }
                 )
+
                 Spacer(modifier = Modifier.height(14.dp))
             }
 
@@ -111,15 +124,18 @@ fun FoundProductsScreenContent(
 /** Muestra una vista previa de los productos encontrados en el tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 900)
-fun FoundProductsScreenPreview() {
+fun FoundProductsViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(
             selectedItem = "search",
             showBottomBar = true,
             topBarNumber = 8
         ) { innerPadding ->
-            FoundProductsScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+            FoundProductsView(
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding()
+                ),
+                viewModel = FoundProductsViewModel()
             )
         }
     }
@@ -128,15 +144,18 @@ fun FoundProductsScreenPreview() {
 /** Muestra una vista previa de los productos encontrados en el tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 900)
-fun FoundProductsScreenDarkPreview() {
+fun FoundProductsViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(
             selectedItem = "search",
             showBottomBar = true,
             topBarNumber = 8
         ) { innerPadding ->
-            FoundProductsScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+            FoundProductsView(
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding()
+                ),
+                viewModel = FoundProductsViewModel()
             )
         }
     }

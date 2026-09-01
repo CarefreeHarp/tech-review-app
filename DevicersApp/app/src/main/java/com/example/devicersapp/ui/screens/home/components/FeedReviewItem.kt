@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.data.local.LocalReviewProvider
+import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.FeedReviewActionCountText
@@ -48,13 +49,14 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
 @Composable
 fun FeedReviewItem(
     review: ReviewContent,
+    author: ProfileContent,
     onViewMoreClick: () -> Unit = {},
     onCommentClick: () -> Unit = {},
     onSendClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-    val author = requireNotNull(LocalProfileProvider.getProfileById(review.authorId))
+
 
     Column(modifier = modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
@@ -164,9 +166,14 @@ fun FeedReviewItem(
 @Composable
 @Preview(showBackground = true)
 fun FeedReviewItemPreview() {
+    val review = LocalReviewProvider.reviews.first()
+
     DevicersAppTheme {
         FeedReviewItem(
-            review = LocalReviewProvider.reviews.first(),
+            review = review,
+            author = requireNotNull(
+                LocalProfileProvider.getProfileById(review.authorId)
+            ),
             modifier = Modifier.padding(16.dp)
         )
     }
