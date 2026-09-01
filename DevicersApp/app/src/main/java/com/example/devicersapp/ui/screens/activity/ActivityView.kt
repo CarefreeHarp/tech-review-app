@@ -82,7 +82,7 @@ fun ActivityScreenContent(
                 ActivitySection(titleResId = group.titleResId)
             }
             items(
-                items = group.activities,
+                items = group.notifications,
                 key = { activity -> activity.id }
             ) { activity ->
                 // Cada actividad es un ítem independiente para que LazyColumn la componga bajo demanda.

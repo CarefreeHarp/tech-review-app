@@ -39,5 +39,5 @@ enum class ActivityType { LIKE, COMMENT, FOLLOW }
 data class ActivityGroupContent(
     val id: String,
     @param:StringRes val titleResId: Int,
-    val activities: List<ActivityContent>
+    val notifications: List<ActivityContent>
 )

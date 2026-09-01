@@ -17,7 +17,7 @@ object LocalActivityProvider {
         ActivityGroupContent(
             id = "today",
             titleResId = R.string.activity_group_today,
-            activities = listOf(
+            notifications = listOf(
                 reviewActivity("today-camila", ActivityType.LIKE, "camila", R.string.activity_action_liked_review, R.string.feed_product_audio, currentTimeMillis - 5 * MINUTE_IN_MILLIS),
                 reviewActivity("today-david", ActivityType.COMMENT, "mariana", R.string.activity_action_replied_comment, R.string.feed_product_phone, currentTimeMillis - HOUR_IN_MILLIS),
                 reviewActivity("today-mateo", ActivityType.LIKE, "audio_fan", R.string.activity_action_liked_review, R.string.feed_product_nine, currentTimeMillis - 2 * HOUR_IN_MILLIS),
@@ -29,7 +29,7 @@ object LocalActivityProvider {
         ActivityGroupContent(
             id = "yesterday",
             titleResId = R.string.activity_group_yesterday,
-            activities = listOf(
+            notifications = listOf(
                 followActivity("yesterday-lina", "camila", currentTimeMillis - DAY_IN_MILLIS),
                 reviewActivity("yesterday-david", ActivityType.LIKE, "mariana", R.string.activity_action_liked_review, R.string.feed_product_seven, currentTimeMillis - DAY_IN_MILLIS - HOUR_IN_MILLIS),
                 reviewActivity("yesterday-mateo", ActivityType.COMMENT, "audio_fan", R.string.activity_action_replied_comment, R.string.feed_product_computer, currentTimeMillis - DAY_IN_MILLIS - 2 * HOUR_IN_MILLIS)
@@ -38,7 +38,7 @@ object LocalActivityProvider {
         ActivityGroupContent(
             id = "earlier",
             titleResId = R.string.activity_group_earlier,
-            activities = listOf(
+            notifications = listOf(
                 reviewActivity("earlier-camila", ActivityType.LIKE, "diego_gadgets", R.string.activity_action_liked_review, R.string.feed_product_eleven, currentTimeMillis - 2 * DAY_IN_MILLIS),
                 reviewActivity("earlier-lina-keyboard", ActivityType.COMMENT, "nora_mobile", R.string.activity_action_replied_comment, R.string.feed_product_ten, currentTimeMillis - 4 * DAY_IN_MILLIS),
                 followActivity("earlier-mateo-follow", "luna_digital", currentTimeMillis - 6 * DAY_IN_MILLIS)
@@ -47,7 +47,7 @@ object LocalActivityProvider {
         )
 
         // La actividad local no admite destinos huérfanos: toda interacción debe poder abrirse.
-        groups.flatMap(ActivityGroupContent::activities).forEach { activity ->
+        groups.flatMap(ActivityGroupContent::notifications).forEach { activity ->
             when (activity.type) {
                 ActivityType.LIKE, ActivityType.COMMENT -> {
                     require(LocalReviewProvider.findById(requireNotNull(activity.targetReviewId)) != null)

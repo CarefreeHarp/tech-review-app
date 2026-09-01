@@ -13,11 +13,11 @@ class ActivityViewModel : ViewModel() {
     val uiState: StateFlow<ActivityState> = _uiState
 
     init {
-        loadActivities()
+        loadActivity()
     }
 
     /** Carga los grupos de actividad que se mostrarán en pantalla. */
-    private fun loadActivities() {
+    private fun loadActivity() {
         _uiState.update { currentState ->
             currentState.copy(
                 activityGroups = LocalActivityProvider.activityGroups(
