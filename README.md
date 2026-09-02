@@ -26,9 +26,17 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 | --- | --- | --- | --- |
 | <img src="ReadMeAssets/AppProductScreen.png" alt="Devicers product detail screen" width="220"> | <img src="ReadMeAssets/AppRateProductScreen.png" alt="Devicers rate product screen" width="220"> | <img src="ReadMeAssets/AppReviewScreen.png" alt="Devicers review detail screen" width="220"> | <img src="ReadMeAssets/AppPublicProfileScreen.png" alt="Devicers public profile screen" width="220"> |
 
+### Logos
+
+| Light logo | Dark logo |
+| --- | --- |
+| <img src="ReadMeAssets/DevicersLogoLight.png" alt="Devicers logo for light backgrounds" width="360"> | <img src="ReadMeAssets/DevicersLogoDark.png" alt="Devicers logo for dark backgrounds" width="360"> |
+
 ## Navigation map
 
 [Open the interactive navigation map](ReadMeAssets/Sprint4NavigationDiagram.html)
+
+![Navigation map preview](ReadMeAssets/NavigationMapPreview.png)
 
 ### Navigation conventions
 
