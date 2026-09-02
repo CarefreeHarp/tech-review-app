@@ -36,19 +36,16 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
   <img src="ReadMeAssets/Logues.png" alt="Versiones clara y oscura del logo de Devicers" width="720">
 </p>
 
-## Sprint 4 — Navigation map
+## Navigation map
 
 [Open the interactive navigation map](ReadMeAssets/Sprint4NavigationDiagram.html)
 
 ### Navigation conventions
 
-- **Red routes** represent System Back behavior and Bottom bar navigation.
-- **Blue routes** represent navigation triggered by a screen button or interactive element.
-- **Purple routes** are the two special detail relationships: **Feed → Review** when a review is selected, and **Review → Product** when the product header is selected.
-- **Green routes and screens** are pending design or implementation: Found Products, Request Product, Own Profile, Search Profile, and Profile Search Results.
-- The Bottom bar leads to Home / Feed, Search, Create Review, Activity / Notifications, and Own Profile. Rate Product does not display it.
-- System Back exits the application from Home / Feed. It returns to the prior entry in the navigation stack from the other screens. Search has no visual Back button, but still supports System Back.
-- Publishing from Rate Product opens the newly created Review using its `reviewId`. The Rate Product destination must be removed from the stack, so System Back from that Review returns to Home / Feed.
+- **Red routes** represent the navigation actions between the current screens; the adjacent label names the action that triggers each transition.
+- **Orange nodes** represent the application screens and **gray nodes** represent navigation-system outcomes, such as exiting the application or returning to the prior screen.
+- The Bottom bar leads to Home / Feed, Search Products, Create Review, Activity / Notifications, and Own Profile. Rate Product does not display it.
+- System Back exits the application from Home / Feed. From every other destination it returns to the previous entry in the navigation stack.
 
 ## Data model
 
