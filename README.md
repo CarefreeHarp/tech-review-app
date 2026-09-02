@@ -10,31 +10,21 @@ The application is envisioned as a small social network where people can discove
 
 The Devicers interface prototype is available on <a href="https://www.figma.com/design/l7mETjAKWkyAFwtx1VWmIX/Untitled?node-id=1-484&amp;t=p0lttPj7kJNiSUG2-1" target="_blank" rel="noopener noreferrer">Figma</a>.
 
-| Sign-in screen | Registration screen |
-| --- | --- |
-| <img src="ReadMeAssets/AppLoginScreen.png" alt="Devicers sign-in screen" width="280"> | <img src="ReadMeAssets/AppRegisterScreen.png" alt="Devicers registration screen" width="280"> |
+| Access | Register | Home | Search products |
+| --- | --- | --- | --- |
+| <img src="ReadMeAssets/AppAccessScreen.png" alt="Devicers access screen" width="220"> | <img src="ReadMeAssets/AppRegisterScreen.png" alt="Devicers registration screen" width="220"> | <img src="ReadMeAssets/AppHomeScreen.png" alt="Devicers home screen" width="220"> | <img src="ReadMeAssets/AppSearchProductsScreen.png" alt="Devicers product search screen" width="220"> |
 
-| Review screen | Feed screen |
-| --- | --- |
-| <img src="ReadMeAssets/AppReviewScreen.png" alt="Devicers review detail screen" width="280"> | <img src="ReadMeAssets/AppFeedScreen.png" alt="Devicers feed screen" width="280"> |
+| Create review | Activity | Own profile | Search profiles |
+| --- | --- | --- | --- |
+| <img src="ReadMeAssets/AppCreateReviewScreen.png" alt="Devicers create review screen" width="220"> | <img src="ReadMeAssets/AppActivityScreen.png" alt="Devicers activity screen" width="220"> | <img src="ReadMeAssets/AppOwnProfileScreen.png" alt="Devicers own profile screen" width="220"> | <img src="ReadMeAssets/AppSearchProfileScreen.png" alt="Devicers profile search screen" width="220"> |
 
-| Search screen | Rate product screen |
-| --- | --- |
-| <img src="ReadMeAssets/AppSearchScreen.png" alt="Devicers search screen" width="280"> | <img src="ReadMeAssets/AppRateProductScreen.png" alt="Devicers rate product screen" width="280"> |
+| Found products | Profile results | Saved reviews | Request product |
+| --- | --- | --- | --- |
+| <img src="ReadMeAssets/AppFoundProductsScreen.png" alt="Devicers found products screen" width="220"> | <img src="ReadMeAssets/AppProfileSearchResultsScreen.png" alt="Devicers profile search results screen" width="220"> | <img src="ReadMeAssets/AppProfileSavedReviewsScreen.png" alt="Devicers saved reviews screen" width="220"> | <img src="ReadMeAssets/AppRequestProductScreen.png" alt="Devicers request product screen" width="220"> |
 
-| Notifications screen | Profile screen |
-| --- | --- |
-| <img src="ReadMeAssets/AppNotificationsScreen.png" alt="Devicers notifications screen" width="280"> | <img src="ReadMeAssets/AppProfileScreen.png" alt="Devicers profile screen" width="280"> |
-
-| Product screen | Create review screen |
-| --- | --- |
-| <img src="ReadMeAssets/AppProductScreen.png" alt="Devicers product detail screen" width="280"> | <img src="ReadMeAssets/AppCreateReviewScreen.png" alt="Devicers create review screen" width="280"> |
-
-### Logos
-
-<p align="center">
-  <img src="ReadMeAssets/Logues.png" alt="Versiones clara y oscura del logo de Devicers" width="720">
-</p>
+| Product | Rate product | Review | Public profile |
+| --- | --- | --- | --- |
+| <img src="ReadMeAssets/AppProductScreen.png" alt="Devicers product detail screen" width="220"> | <img src="ReadMeAssets/AppRateProductScreen.png" alt="Devicers rate product screen" width="220"> | <img src="ReadMeAssets/AppReviewScreen.png" alt="Devicers review detail screen" width="220"> | <img src="ReadMeAssets/AppPublicProfileScreen.png" alt="Devicers public profile screen" width="220"> |
 
 ## Navigation map
 
