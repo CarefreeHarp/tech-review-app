@@ -9,12 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,57 +28,52 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
-/** Configura el estado de respuesta y los datos locales del detalle de una reseña. */
+/** Configura el detalle de una reseña y observa su estado desde el ViewModel. */
 @Composable
-fun ReviewScreen(
-    reviewId: Int? = null,
+fun ReviewView(
+    reviewId: Int,
     onProductClick: (Int) -> Unit = {},
     onSendReply: (String) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ReviewViewModel
 ) {
-    var replyText by rememberSaveable { mutableStateOf("") }
-    val expandedReplies = remember { mutableStateMapOf<Int, Boolean>() }
-    val selectedReviewId = reviewId ?: LocalReviewProvider.productReviews.first().id
-    val review = requireNotNull(LocalReviewProvider.findById(selectedReviewId))
+    val uiState by viewModel.uiState.collectAsState()
 
-    ReviewScreenContent(
-        product = requireNotNull(LocalReviewProvider.findProductByReviewId(selectedReviewId)),
-        review = review,
-        replies = review.comments,
-        replyText = replyText,
-        onReplyTextChange = { replyText = it },
-        onProductClick = onProductClick,
-        onSendReply = {
-            if (replyText.isNotBlank()) {
-                onSendReply(replyText)
-                replyText = ""
-            }
-        },
-        expandedReplies = expandedReplies,
-        onViewAnswers = { replyIndex ->
-            expandedReplies[replyIndex] = expandedReplies[replyIndex] != true
-        },
-        modifier = modifier
-            .fillMaxSize()
-            .background(LocalDevicersColors.current.background)
-    )
+    LaunchedEffect(reviewId) {
+        viewModel.loadReview(reviewId)
+    }
+
+    val product = uiState.product
+    val review = uiState.review
+
+    if (product != null && review != null) {
+        ReviewViewContent(
+            product = product,
+            review = review,
+            replies = uiState.replies,
+            replyText = uiState.replyText,
+            onReplyTextChange = viewModel::onReplyTextChange,
+            onProductClick = onProductClick,
+            onSendReply = {
+                val replyText = uiState.replyText
+
+                if (replyText.isNotBlank()) {
+                    onSendReply(replyText)
+                    viewModel.clearReplyText()
+                }
+            },
+            expandedReplies = uiState.expandedReplies,
+            onViewAnswers = viewModel::onViewAnswers,
+            modifier = modifier
+                .fillMaxSize()
+                .background(LocalDevicersColors.current.background)
+        )
+    }
 }
 
-/**
- * Ensambla el producto, la reseña, las respuestas y el compositor controlado por la pantalla.
- *
- * @param product Producto asociado a la reseña.
- * @param review Reseña mostrada en el detalle.
- * @param replies Respuestas locales asociadas a la reseña.
- * @param replyText Texto actual del campo de respuesta.
- * @param onReplyTextChange Acción que solicita actualizar la respuesta.
- * @param onSendReply Acción solicitada al enviar la respuesta.
- * @param expandedReplies Estado que indica qué respuestas muestran sus contestaciones.
- * @param onViewAnswers Acción que solicita revelar las contestaciones de una respuesta.
- * @param modifier Modificador aplicado al contenido.
- */
+/** Ensambla el producto, la reseña, las respuestas y el compositor. */
 @Composable
-fun ReviewScreenContent(
+fun ReviewViewContent(
     product: ProductContent,
     review: ReviewContent,
     replies: List<ReplyContent>,
@@ -99,7 +91,6 @@ fun ReviewScreenContent(
             header = {
                 item {
                     Spacer(modifier = Modifier.height(22.dp))
-                    // El margen interno evita que el borde de la lista recorte la sombra superior.
                     Spacer(modifier = Modifier.height(8.dp))
 
                     ReviewProductSummary(
@@ -110,10 +101,13 @@ fun ReviewScreenContent(
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
-                    ReviewDetail(review = review)
+
+                    ReviewDetail(
+                        review = review
+                    )
 
                     Spacer(modifier = Modifier.height(24.dp))
-                    // El divisor separa la reseña de la conversación que generó.
+
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
                         thickness = 1.dp,
@@ -127,11 +121,11 @@ fun ReviewScreenContent(
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
         )
+
         ReplyComposer(
             value = replyText,
             onValueChange = onReplyTextChange,
             onSendClick = onSendReply,
-            // El compositor flota sobre las respuestas para conservar la continuidad visual del hilo.
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
@@ -142,10 +136,29 @@ fun ReviewScreenContent(
 /** Muestra una vista previa del detalle de una reseña en el tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1000)
-fun ReviewScreenPreview() {
-    DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(topBarNumber = 4) { innerPadding ->
-            ReviewScreen(modifier = Modifier.padding(innerPadding))
+fun ReviewViewPreview() {
+    val review = LocalReviewProvider.productReviews.first()
+    val product = LocalReviewProvider.findProductByReviewId(review.id)
+
+    if (product != null) {
+        DevicersAppTheme(darkTheme = false) {
+            DevicersScaffold(topBarNumber = 4) { innerPadding ->
+                ReviewViewContent(
+                    product = product,
+                    review = review,
+                    replies = review.comments,
+                    replyText = "",
+                    onReplyTextChange = {},
+                    onProductClick = {},
+                    onSendReply = {},
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                        .background(
+                            LocalDevicersColors.current.background
+                        )
+                )
+            }
         }
     }
 }
@@ -153,10 +166,29 @@ fun ReviewScreenPreview() {
 /** Muestra una vista previa del detalle de una reseña en el tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1000)
-fun ReviewScreenDarkPreview() {
-    DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(topBarNumber = 4) { innerPadding ->
-            ReviewScreen(modifier = Modifier.padding(innerPadding))
+fun ReviewViewDarkPreview() {
+    val review = LocalReviewProvider.productReviews.first()
+    val product = LocalReviewProvider.findProductByReviewId(review.id)
+
+    if (product != null) {
+        DevicersAppTheme(darkTheme = true) {
+            DevicersScaffold(topBarNumber = 4) { innerPadding ->
+                ReviewViewContent(
+                    product = product,
+                    review = review,
+                    replies = review.comments,
+                    replyText = "",
+                    onReplyTextChange = {},
+                    onProductClick = {},
+                    onSendReply = {},
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                        .background(
+                            LocalDevicersColors.current.background
+                        )
+                )
+            }
         }
     }
 }

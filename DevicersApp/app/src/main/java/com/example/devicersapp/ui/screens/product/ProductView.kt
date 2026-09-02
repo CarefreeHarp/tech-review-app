@@ -16,13 +16,15 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProductProvider
-import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.models.RatingSummaryContent
 import com.example.devicersapp.ui.models.ReviewContent
@@ -36,47 +38,41 @@ import com.example.devicersapp.ui.theme.SearchHeadingText
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
 /**
- * Configura el detalle del producto usando los datos locales de ejemplo.
- *
- * @param onRateClick Acción solicitada al iniciar la calificación del producto.
- * @param onViewMoreClick Acción solicitada al abrir una reseña del producto.
- * @param modifier Modificador aplicado al contenedor de la pantalla.
+ * Configura el detalle del producto y observa su estado desde el ViewModel.
  */
 @Composable
-fun ProductScreen(
+fun ProductView(
+    productNameResId: Int,
     onViewMoreClick: (Int) -> Unit = {},
-    productNameResId: Int? = null,
     onRateClick: (Int) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ProductViewModel
 ) {
-    val product = productNameResId?.let {
-        LocalProductProvider.getProductByNameResId(it)
-    } ?: LocalProductProvider.product
+    val uiState by viewModel.uiState.collectAsState()
 
-    ProductScreenContent(
-        product = product,
-        ratingSummary = LocalProductProvider.ratingSummary,
-        reviews = LocalReviewProvider.reviewsForProduct(product.nameResId),
-        onRateClick = onRateClick,
-        onViewMoreClick = onViewMoreClick,
-        modifier = modifier
-            .fillMaxSize()
-            .background(LocalDevicersColors.current.background)
-    )
+    LaunchedEffect(productNameResId) {
+        viewModel.loadProduct(productNameResId)
+    }
+
+    val product = uiState.product
+    val ratingSummary = uiState.ratingSummary
+
+    if (product != null && ratingSummary != null) {
+        ProductViewContent(
+            product = product,
+            ratingSummary = ratingSummary,
+            reviews = uiState.reviews,
+            onRateClick = onRateClick,
+            onViewMoreClick = onViewMoreClick,
+            modifier = modifier
+                .fillMaxSize()
+                .background(LocalDevicersColors.current.background)
+        )
+    }
 }
 
-/**
- * Ensambla la información, el resumen de calificaciones y las reseñas del producto.
- *
- * @param product Producto visible en el detalle.
- * @param ratingSummary Resumen de calificaciones del producto.
- * @param reviews Reseñas locales que se muestran debajo del resumen.
- * @param onRateClick Acción solicitada al seleccionar calificar producto.
- * @param onViewMoreClick Acción solicitada al abrir el detalle de una reseña.
- * @param modifier Modificador aplicado a la lista raíz.
- */
 @Composable
-fun ProductScreenContent(
+fun ProductViewContent(
     product: ProductContent,
     ratingSummary: RatingSummaryContent,
     reviews: List<ReviewContent>,
@@ -86,36 +82,50 @@ fun ProductScreenContent(
 ) {
     val colors = LocalDevicersColors.current
 
-    Column(modifier = modifier.padding(horizontal = 20.dp)) {
+    Column(
+        modifier = modifier.padding(horizontal = 20.dp)
+    ) {
         Text(
             text = stringResource(product.nameResId),
             color = colors.textPrimary,
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.headlineSmall
         )
+
         Spacer(modifier = Modifier.height(2.dp))
+
         Text(
             text = stringResource(product.brandResId),
             color = colors.textSecondary,
-            style = CardMetadataText,
+            style = CardMetadataText
         )
+
         Spacer(modifier = Modifier.height(4.dp))
+
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 3.dp,
             color = colors.border
         )
-        LazyColumn() {
+
+        LazyColumn {
             item {
                 Spacer(modifier = Modifier.height(18.dp))
+
                 ProductImageCard(product)
 
                 Spacer(modifier = Modifier.height(24.dp))
+
                 RatingSummary(ratingSummary)
 
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Button(
-                    onClick = { onRateClick(product.nameResId) },
-                    modifier = Modifier.fillMaxWidth().height(52.dp),
+                    onClick = {
+                        onRateClick(product.nameResId)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.primary,
@@ -129,56 +139,70 @@ fun ProductScreenContent(
                 }
 
                 Spacer(modifier = Modifier.height(28.dp))
+
                 Text(
                     text = stringResource(R.string.product_top_reviews),
                     color = colors.textPrimary,
                     style = SearchHeadingText
                 )
+
                 Spacer(modifier = Modifier.height(14.dp))
             }
 
             itemsIndexed(reviews) { _, review ->
                 ReviewCard(
                     review = review,
-                    onViewMoreClick = { onViewMoreClick(review.id) }
+                    onViewMoreClick = {
+                        onViewMoreClick(review.id)
+                    }
                 )
+
                 Spacer(modifier = Modifier.height(14.dp))
             }
 
             item {
-                // Deja aire para que la barra flotante no tape la última reseña.
                 Spacer(modifier = Modifier.height(110.dp))
             }
         }
     }
 }
 
-/** Muestra una vista previa del detalle de producto en el tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
-fun ProductScreenPreview() {
+fun ProductViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(
             selectedItem = "search",
             showBottomBar = true,
             topBarNumber = 6
         ) { innerPadding ->
-            ProductScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+            ProductView(
+                productNameResId = LocalProductProvider.product.nameResId,
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding()
+                ),
+                viewModel = ProductViewModel()
+            )
         }
     }
 }
 
-/** Muestra una vista previa del detalle de producto en el tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
-fun ProductScreenDarkPreview() {
+fun ProductViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(
             selectedItem = "search",
             showBottomBar = true,
             topBarNumber = 6
         ) { innerPadding ->
-            ProductScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+            ProductView(
+                productNameResId = LocalProductProvider.product.nameResId,
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding()
+                ),
+                viewModel = ProductViewModel()
+            )
         }
     }
 }

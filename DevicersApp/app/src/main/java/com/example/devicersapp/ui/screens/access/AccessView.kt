@@ -1,7 +1,5 @@
 package com.example.devicersapp.ui.screens.access
 
-import com.example.devicersapp.ui.theme.LocalDevicersColors
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,44 +10,41 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.ui.theme.DevicersAppTheme
-import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.screens.access.components.ForgotPasswordLink
+import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.authentication.AuthenticationDividerText
 import com.example.devicersapp.ui.utils.authentication.AuthenticationField
 import com.example.devicersapp.ui.utils.authentication.AuthenticationFooter
 import com.example.devicersapp.ui.utils.authentication.PrimaryButton
 import com.example.devicersapp.ui.utils.authentication.ScreenTitle
 import com.example.devicersapp.ui.utils.authentication.SocialButtons
+import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
-/** Renderiza la pantalla de acceso, la puerta de entrada a la comunidad de Devicers. */
+/** Renderiza la pantalla de acceso y observa su estado desde el ViewModel. */
 @Composable
-fun AccessScreen(
+fun AccessView(
     modifier: Modifier = Modifier,
     onSignInClick: () -> Unit,
-    onCreateAccountClick: () -> Unit = {}
+    onCreateAccountClick: () -> Unit = {},
+    viewModel: AccessViewModel
 ) {
-    // La pantalla conserva el estado; los campos reutilizables solo lo muestran y emiten cambios.
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var isPasswordVisible by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsState()
 
-    AccessScreenContent(
-        email = email,
-        password = password,
-        isPasswordVisible = isPasswordVisible,
-        onEmailChange = { email = it },
-        onPasswordChange = { password = it },
-        onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
+    AccessViewContent(
+        email = uiState.email,
+        password = uiState.password,
+        isPasswordVisible = uiState.isPasswordVisible,
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onPasswordVisibilityChange = viewModel::onPasswordVisibilityChange,
         onSignInClick = onSignInClick,
         onCreateAccountClick = onCreateAccountClick,
         modifier = modifier
@@ -58,21 +53,9 @@ fun AccessScreen(
     )
 }
 
-/**
- * Reúne el contenido visual que muestra [AccessScreen].
- *
- * @param email Correo controlado por la pantalla de acceso.
- * @param password Contraseña controlada por la pantalla de acceso.
- * @param isPasswordVisible Indica si la contraseña se muestra sin ocultar.
- * @param onEmailChange Acción que solicita actualizar el correo.
- * @param onPasswordChange Acción que solicita actualizar la contraseña.
- * @param onPasswordVisibilityChange Acción que solicita alternar la visibilidad de la contraseña.
- * @param onSignInClick Acción solicitada al iniciar sesión.
- * @param onCreateAccountClick Acción solicitada al abrir la pantalla de registro.
- * @param modifier Modificador aplicado al contenido.
- */
+/** Contenido visual y sin estado propio de la pantalla de acceso. */
 @Composable
-fun AccessScreenContent(
+fun AccessViewContent(
     email: String,
     password: String,
     isPasswordVisible: Boolean,
@@ -89,7 +72,6 @@ fun AccessScreenContent(
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // La marca se muestra desde TopBar5, gestionada por el Scaffold compartido.
         Spacer(modifier = Modifier.height(36.dp))
 
         ScreenTitle(
@@ -118,7 +100,6 @@ fun AccessScreenContent(
             onPasswordVisibilityChange = onPasswordVisibilityChange
         )
 
-        // El enlace de recuperación se alinea al borde derecho del formulario.
         ForgotPasswordLink(
             modifier = Modifier.align(Alignment.End)
         )
@@ -153,31 +134,31 @@ fun AccessScreenContent(
     }
 }
 
-/** Muestra una vista previa de la composición completa de acceso en el tema claro. */
 @Composable
 @Preview(showBackground = true, heightDp = 800)
-fun AccessScreenPreview() {
+fun AccessViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            AccessScreen(
+            AccessView(
                 modifier = Modifier.padding(innerPadding),
                 onSignInClick = {},
-                onCreateAccountClick = {}
+                onCreateAccountClick = {},
+                viewModel = AccessViewModel()
             )
         }
     }
 }
 
-/** Muestra una vista previa de la composición completa de acceso en el tema oscuro. */
 @Composable
 @Preview(showBackground = true, heightDp = 800)
-fun AccessScreenDarkPreview() {
+fun AccessViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            AccessScreen(
+            AccessView(
                 modifier = Modifier.padding(innerPadding),
                 onSignInClick = {},
-                onCreateAccountClick = {}
+                onCreateAccountClick = {},
+                viewModel = AccessViewModel()
             )
         }
     }
