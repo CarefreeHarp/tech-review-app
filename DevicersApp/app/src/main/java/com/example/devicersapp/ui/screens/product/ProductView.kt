@@ -71,6 +71,16 @@ fun ProductView(
     }
 }
 
+/**
+ * Ensambla el detalle visual del producto, su resumen de calificaciones y sus reseñas.
+ *
+ * @param product Producto seleccionado que se presenta en el encabezado.
+ * @param ratingSummary Distribución y promedio de calificaciones del producto.
+ * @param reviews Reseñas asociadas al producto, renderizadas de forma perezosa.
+ * @param onRateClick Acción solicitada al comenzar una calificación.
+ * @param onViewMoreClick Acción solicitada al abrir una reseña completa.
+ * @param modifier Modificador aplicado al contenedor del detalle.
+ */
 @Composable
 fun ProductViewContent(
     product: ProductContent,

@@ -1,6 +1,5 @@
 package com.example.devicersapp.navigation
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
@@ -10,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,7 +16,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.ui.screens.access.AccessView
 import com.example.devicersapp.ui.screens.access.AccessViewModel
 import com.example.devicersapp.ui.screens.activity.ActivityView
@@ -84,173 +81,6 @@ sealed class AppDestination(val route: String) {
     data object ProfileSavedReviews : AppDestination("profile-saved-reviews")
 }
 
-/** Describe la estructura visual compartida que necesita un destino de navegación. */
-private data class NavigationUiConfiguration(
-    val selectedItem: String = "",
-    val showBottomBar: Boolean = false,
-    val topBarNumber: Int? = null,
-    @param:StringRes val topBarUserHandleResId: Int? = null
-)
-
-/** Obtiene la configuración visual correspondiente al destino actual. */
-private fun navigationConfigurationFor(
-    route: String?,
-    profileId: String? = null
-): NavigationUiConfiguration = when (route) {
-
-    AppDestination.Login.route ->
-        NavigationUiConfiguration(
-            topBarNumber = 5
-        )
-
-    AppDestination.Home.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.Home.route,
-            showBottomBar = true,
-            topBarNumber = 5
-        )
-
-    AppDestination.SearchProduct.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.SearchProduct.route,
-            showBottomBar = true
-        )
-
-    AppDestination.CreateReview.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.CreateReview.route,
-            showBottomBar = true,
-            topBarNumber = 3
-        )
-
-    AppDestination.Activity.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.Activity.route,
-            showBottomBar = true,
-            topBarNumber = 10
-        )
-
-    AppDestination.OwnProfile.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.OwnProfile.route,
-            showBottomBar = true,
-            topBarNumber = 1,
-            topBarUserHandleResId =
-                LocalProfileProvider.profile.handleResId
-        )
-
-    AppDestination.Register.route ->
-        NavigationUiConfiguration(
-            topBarNumber = 5
-        )
-
-    AppDestination.SearchProfile.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.SearchProduct.route,
-            showBottomBar = true
-        )
-
-    AppDestination.FoundProducts.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.SearchProduct.route,
-            showBottomBar = true,
-            topBarNumber = 8
-        )
-
-    AppDestination.ProfileSearchResults.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.SearchProduct.route,
-            showBottomBar = true,
-            topBarNumber = 7
-        )
-
-    "${AppDestination.Product.route}/{productNameResId}" ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.SearchProduct.route,
-            showBottomBar = true,
-            topBarNumber = 6
-        )
-
-    "${AppDestination.RateProduct.route}/{productNameResId}" ->
-        NavigationUiConfiguration(
-            topBarNumber = 2
-        )
-
-    AppDestination.Review.route ->
-        NavigationUiConfiguration(
-            topBarNumber = 4
-        )
-
-    AppDestination.RequestProduct.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.CreateReview.route,
-            topBarNumber = 9
-        )
-
-    AppDestination.Profile.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.OwnProfile.route,
-            showBottomBar = true,
-            topBarNumber = 1,
-            topBarUserHandleResId =
-                LocalProfileProvider.profile.handleResId
-        )
-
-    AppDestination.ProfileSavedReviews.route ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.OwnProfile.route,
-            showBottomBar = true,
-            topBarNumber = 1,
-            topBarUserHandleResId =
-                LocalProfileProvider.profile.handleResId
-        )
-
-    "${AppDestination.Profile.route}/{profileId}" ->
-        NavigationUiConfiguration(
-            selectedItem = AppDestination.OwnProfile.route,
-            showBottomBar = true,
-            topBarNumber = 1,
-            topBarUserHandleResId = profileId?.let { id ->
-                LocalProfileProvider
-                    .getPublicProfileById(id)
-                    ?.handleResId
-            }
-        )
-
-    "${AppDestination.Review.route}/{reviewId}" ->
-        NavigationUiConfiguration(
-            topBarNumber = 4
-        )
-
-    else ->
-        NavigationUiConfiguration(
-            topBarNumber = 5
-        )
-}
-
-/**
- * Navega entre destinos principales y conserva el historial,
- * excepto al volver al inicio.
- */
-private fun NavHostController.navigateToDestination(
-    route: String
-) {
-    // No modifica la pila si ya estamos en ese destino.
-    if (currentDestination?.route == route) {
-        return
-    }
-
-    navigate(route) {
-        if (route == AppDestination.Home.route) {
-            popUpTo(0) {
-                inclusive = true
-            }
-        }
-
-        launchSingleTop = true
-    }
-}
-
 /**
  * Define el grafo de navegación principal de Devicers.
  *
@@ -267,7 +97,7 @@ fun AppNavigation(
 
     val backStackEntry by navController.currentBackStackEntryAsState()
 
-    val configuration = navigationConfigurationFor(
+    val configuration = NavigationLogic.configurationFor(
         route = backStackEntry?.destination?.route,
         profileId = backStackEntry
             ?.arguments
@@ -310,6 +140,8 @@ fun AppNavigation(
 
             // ==================== RUTAS SIN PARÁMETROS ====================
             composable(route = AppDestination.Login.route) {
+                val accessViewModel: AccessViewModel = viewModel()
+
                 AccessView(
                     onSignInClick = {
                         navController.navigate(AppDestination.Home.route) {
@@ -319,7 +151,7 @@ fun AppNavigation(
                     onCreateAccountClick = {
                         navController.navigate(AppDestination.Register.route)
                     },
-                    viewModel = viewModel<AccessViewModel>()
+                    viewModel = accessViewModel
                 )
             }
             composable(route = AppDestination.Home.route) {
@@ -345,8 +177,10 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.SearchProduct.route) {
+                val searchProductViewModel: SearchProductViewModel = viewModel()
+
                 SearchProductView(
-                    viewModel = viewModel<SearchProductViewModel>(),
+                    viewModel = searchProductViewModel,
                     onApplyFilters = {
                         navController.navigate(AppDestination.FoundProducts.route)
                     },
@@ -356,6 +190,8 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.CreateReview.route) {
+                val createReviewViewModel: CreateReviewViewModel = viewModel()
+
                 CreateReviewView(
                     onProductClick = { product ->
                         navController.navigate(
@@ -369,10 +205,12 @@ fun AppNavigation(
                             AppDestination.RequestProduct.route
                         )
                     },
-                    viewModel = viewModel<CreateReviewViewModel>()
+                    viewModel = createReviewViewModel
                 )
             }
             composable(route = AppDestination.Activity.route) {
+                val activityViewModel: ActivityViewModel = viewModel()
+
                 ActivityView(
                     onReviewClick = { reviewId ->
                         navController.navigate(AppDestination.Review.createRoute(reviewId))
@@ -380,7 +218,7 @@ fun AppNavigation(
                     onProfileClick = { profileId ->
                         navController.navigate(AppDestination.Profile.createRoute(profileId))
                     },
-                    viewModel = viewModel<ActivityViewModel>()
+                    viewModel = activityViewModel
                 )
             }
             composable(route = AppDestination.OwnProfile.route) {
@@ -418,8 +256,10 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.SearchProfile.route) {
+                val searchProfileViewModel: SearchProfileViewModel = viewModel()
+
                 SearchProfileView(
-                    viewModel = viewModel<SearchProfileViewModel>(),
+                    viewModel = searchProfileViewModel,
                     onProductsClick = {
                         navController.navigate(AppDestination.SearchProduct.route)
                     },
@@ -470,8 +310,10 @@ fun AppNavigation(
             }
 
             composable(route = AppDestination.RequestProduct.route) {
+                val requestProductViewModel: RequestProductViewModel = viewModel()
+
                 RequestProductView(
-                    viewModel = viewModel<RequestProductViewModel>()
+                    viewModel = requestProductViewModel
                 )
             }
 
@@ -524,8 +366,10 @@ fun AppNavigation(
                     it.arguments?.getInt("productNameResId")
 
                 if (productNameResId != null) {
+                    val rateProductViewModel: RateProductViewModel = viewModel()
+
                     RateProductView(
-                        viewModel = viewModel<RateProductViewModel>(),
+                        viewModel = rateProductViewModel,
                         productNameResId = productNameResId,
                         onPublishClick = {
                             navController.navigateToDestination(
@@ -548,6 +392,8 @@ fun AppNavigation(
                 val reviewId = it.arguments?.getInt("reviewId")
 
                 if (reviewId != null) {
+                    val reviewViewModel: ReviewViewModel = viewModel()
+
                     ReviewView(
                         reviewId = reviewId,
                         onProductClick = { productNameResId ->
@@ -557,7 +403,7 @@ fun AppNavigation(
                                 )
                             )
                         },
-                        viewModel = viewModel<ReviewViewModel>()
+                        viewModel = reviewViewModel
                     )
                 } else {
                     Text(
