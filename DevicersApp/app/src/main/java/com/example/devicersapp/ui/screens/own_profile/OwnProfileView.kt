@@ -17,10 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ReviewContent
+import com.example.devicersapp.ui.screens.activity.ActivityViewModel
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileHeader
@@ -124,6 +126,7 @@ fun OwnProfileViewContent(
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun OwnProfileViewPreview() {
+    val ownProfileViewModel: OwnProfileViewModel = viewModel()
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(
             selectedItem = "profile",
@@ -135,7 +138,7 @@ fun OwnProfileViewPreview() {
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                viewModel = OwnProfileViewModel()
+                viewModel = ownProfileViewModel
             )
         }
     }
@@ -145,6 +148,7 @@ fun OwnProfileViewPreview() {
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun OwnProfileViewDarkPreview() {
+    val ownProfileViewModel: OwnProfileViewModel = viewModel()
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(
             selectedItem = "profile",
@@ -156,7 +160,7 @@ fun OwnProfileViewDarkPreview() {
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                viewModel = OwnProfileViewModel()
+                viewModel = ownProfileViewModel
             )
         }
     }
