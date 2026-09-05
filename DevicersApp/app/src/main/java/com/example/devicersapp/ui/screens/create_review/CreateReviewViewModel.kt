@@ -1,13 +1,16 @@
 package com.example.devicersapp.ui.screens.create_review
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.data.local.LocalProductProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /** Conserva el estado y la lógica de búsqueda para crear una reseña. */
-class CreateReviewViewModel : ViewModel() {
+@HiltViewModel
+class CreateReviewViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateReviewState())
     val uiState: StateFlow<CreateReviewState> = _uiState

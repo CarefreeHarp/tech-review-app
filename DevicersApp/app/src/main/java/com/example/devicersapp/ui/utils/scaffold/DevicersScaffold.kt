@@ -30,6 +30,7 @@ import com.example.devicersapp.ui.utils.navigation.TopBar10
  * @param modifier Modificador aplicado al Scaffold.
  * @param onNavigationItemClick Acción solicitada al seleccionar un elemento de navegación.
  * @param onTopBarBackClick Acción solicitada por una barra superior con regreso interactivo.
+ * @param onSignOutClick Acción solicitada al cerrar sesión desde el menú de perfil.
  * @param content Contenido principal de la pantalla.
  */
 @Composable
@@ -41,6 +42,7 @@ fun DevicersScaffold(
     modifier: Modifier = Modifier,
     onNavigationItemClick: (String) -> Unit = {},
     onTopBarBackClick: () -> Unit = {},
+    onSignOutClick: () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     val colors = LocalDevicersColors.current
@@ -52,7 +54,8 @@ fun DevicersScaffold(
             when (topBarNumber) {
                 1 -> TopBar1(
                     userHandleResId = topBarUserHandleResId,
-                    onBackClick = onTopBarBackClick
+                    onBackClick = onTopBarBackClick,
+                    onSignOutClick = onSignOutClick
                 )
                 2 -> TopBar2(onBackClick = onTopBarBackClick)
                 3 -> TopBar3(onBackClick = onTopBarBackClick)

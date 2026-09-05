@@ -8,13 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.screens.access.AccessView
 import com.example.devicersapp.ui.screens.access.AccessViewModel
@@ -48,9 +48,13 @@ import com.example.devicersapp.ui.screens.search_product.SearchProductView
 import com.example.devicersapp.ui.screens.search_product.SearchProductViewModel
 import com.example.devicersapp.ui.screens.search_profile.SearchProfileView
 import com.example.devicersapp.ui.screens.search_profile.SearchProfileViewModel
+import com.example.devicersapp.ui.session.SessionViewModel
+import com.example.devicersapp.ui.screens.splash.SplashView
+import com.example.devicersapp.ui.screens.splash.SplashViewModel
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 /** Representa de forma segura las rutas que componen la navegación principal de la aplicación. */
 sealed class AppDestination(val route: String) {
+    data object Splash : AppDestination("splash")
     data object Login : AppDestination("login")
     data object Home : AppDestination("home")
     data object SearchProduct : AppDestination("search")
@@ -84,16 +88,17 @@ sealed class AppDestination(val route: String) {
 /**
  * Define el grafo de navegación principal de Devicers.
  *
- * @param startDestination Ruta inicial del `NavHost`; por defecto abre la pantalla de inicio de sesión.
+ * @param startDestination Ruta inicial del `NavHost`; por defecto comprueba la sesión activa.
  * @param navController Controlador que conserva el historial de destinos de la aplicación.
  * @param modifier Modificador aplicado al contenedor del grafo.
  */
 @Composable
 fun AppNavigation(
-    startDestination: String = AppDestination.Login.route,
+    startDestination: String = AppDestination.Splash.route,
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
+    val sessionViewModel: SessionViewModel = hiltViewModel()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
 
@@ -115,6 +120,15 @@ fun AppNavigation(
         },
         onTopBarBackClick = {
             navController.popBackStack()
+        },
+        onSignOutClick = {
+            sessionViewModel.signOut()
+            navController.navigate(AppDestination.Login.route) {
+                popUpTo(0) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
         }
     ) { innerPadding ->
 
@@ -139,8 +153,25 @@ fun AppNavigation(
         ) {
 
             // ==================== RUTAS SIN PARÁMETROS ====================
+            composable(route = AppDestination.Splash.route) {
+                val splashViewModel: SplashViewModel = hiltViewModel()
+
+                SplashView(
+                    onUserAuthenticated = {
+                        navController.navigate(AppDestination.Home.route) {
+                            popUpTo(AppDestination.Splash.route) { inclusive = true }
+                        }
+                    },
+                    onUserUnauthenticated = {
+                        navController.navigate(AppDestination.Login.route) {
+                            popUpTo(AppDestination.Splash.route) { inclusive = true }
+                        }
+                    },
+                    viewModel = splashViewModel
+                )
+            }
             composable(route = AppDestination.Login.route) {
-                val accessViewModel: AccessViewModel = viewModel()
+                val accessViewModel: AccessViewModel = hiltViewModel()
 
                 AccessView(
                     onSignInClick = {
@@ -155,7 +186,7 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.Home.route) {
-                val homeViewModel: HomeViewModel = viewModel()
+                val homeViewModel: HomeViewModel = hiltViewModel()
 
                 HomeView(
                     viewModel = homeViewModel,
@@ -177,7 +208,7 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.SearchProduct.route) {
-                val searchProductViewModel: SearchProductViewModel = viewModel()
+                val searchProductViewModel: SearchProductViewModel = hiltViewModel()
 
                 SearchProductView(
                     viewModel = searchProductViewModel,
@@ -190,7 +221,7 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.CreateReview.route) {
-                val createReviewViewModel: CreateReviewViewModel = viewModel()
+                val createReviewViewModel: CreateReviewViewModel = hiltViewModel()
 
                 CreateReviewView(
                     onProductClick = { product ->
@@ -209,7 +240,7 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.Activity.route) {
-                val activityViewModel: ActivityViewModel = viewModel()
+                val activityViewModel: ActivityViewModel = hiltViewModel()
 
                 ActivityView(
                     onReviewClick = { reviewId ->
@@ -222,7 +253,7 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.OwnProfile.route) {
-                val ownProfileViewModel: OwnProfileViewModel = viewModel()
+                val ownProfileViewModel: OwnProfileViewModel = hiltViewModel()
 
                 OwnProfileView(
                     viewModel = ownProfileViewModel,
@@ -239,7 +270,7 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.Register.route) {
-                val registerViewModel: RegisterViewModel = viewModel()
+                val registerViewModel: RegisterViewModel = hiltViewModel()
 
                 RegisterView(
                     viewModel = registerViewModel,
@@ -256,7 +287,7 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.SearchProfile.route) {
-                val searchProfileViewModel: SearchProfileViewModel = viewModel()
+                val searchProfileViewModel: SearchProfileViewModel = hiltViewModel()
 
                 SearchProfileView(
                     viewModel = searchProfileViewModel,
@@ -269,7 +300,7 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.FoundProducts.route) {
-                val foundProductsViewModel: FoundProductsViewModel = viewModel()
+                val foundProductsViewModel: FoundProductsViewModel = hiltViewModel()
 
                 FoundProductsView(
                     viewModel = foundProductsViewModel,
@@ -281,7 +312,7 @@ fun AppNavigation(
                 )
             }
             composable(route = AppDestination.ProfileSearchResults.route) {
-                val profileSearchResultsViewModel: ProfileSearchResultsViewModel = viewModel()
+                val profileSearchResultsViewModel: ProfileSearchResultsViewModel = hiltViewModel()
 
                 ProfileSearchResultsView(
                     viewModel = profileSearchResultsViewModel,
@@ -294,7 +325,7 @@ fun AppNavigation(
             }
 
             composable(route = AppDestination.ProfileSavedReviews.route) {
-                val profileSavedReviewsViewModel: ProfileSavedReviewsViewModel = viewModel()
+                val profileSavedReviewsViewModel: ProfileSavedReviewsViewModel = hiltViewModel()
 
                 ProfileSavedReviewsView(
                     viewModel = profileSavedReviewsViewModel,
@@ -310,7 +341,7 @@ fun AppNavigation(
             }
 
             composable(route = AppDestination.RequestProduct.route) {
-                val requestProductViewModel: RequestProductViewModel = viewModel()
+                val requestProductViewModel: RequestProductViewModel = hiltViewModel()
 
                 RequestProductView(
                     viewModel = requestProductViewModel
@@ -332,7 +363,7 @@ fun AppNavigation(
 
                 if (productNameResId != null) {
 
-                    val productViewModel: ProductViewModel = viewModel()
+                    val productViewModel: ProductViewModel = hiltViewModel()
 
                     ProductView(
                         viewModel = productViewModel,
@@ -366,7 +397,7 @@ fun AppNavigation(
                     it.arguments?.getInt("productNameResId")
 
                 if (productNameResId != null) {
-                    val rateProductViewModel: RateProductViewModel = viewModel()
+                    val rateProductViewModel: RateProductViewModel = hiltViewModel()
 
                     RateProductView(
                         viewModel = rateProductViewModel,
@@ -392,7 +423,7 @@ fun AppNavigation(
                 val reviewId = it.arguments?.getInt("reviewId")
 
                 if (reviewId != null) {
-                    val reviewViewModel: ReviewViewModel = viewModel()
+                    val reviewViewModel: ReviewViewModel = hiltViewModel()
 
                     ReviewView(
                         reviewId = reviewId,
@@ -425,7 +456,7 @@ fun AppNavigation(
                 val profileId = it.arguments?.getString("profileId")
 
                 if (profileId != null) {
-                    val profileViewModel: ProfileViewModel = viewModel()
+                    val profileViewModel: ProfileViewModel = hiltViewModel()
 
                     ProfileView(
                         viewModel = profileViewModel,

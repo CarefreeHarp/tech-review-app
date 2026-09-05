@@ -1,12 +1,20 @@
 package com.example.devicersapp.ui.screens.register
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.devicersapp.data.repository.AuthRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 /** Gestiona la validación y las acciones de presentación del registro. */
-class RegisterViewModel : ViewModel() {
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val authRepository: AuthRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterState())
     val uiState: StateFlow<RegisterState> = _uiState
@@ -36,8 +44,8 @@ class RegisterViewModel : ViewModel() {
         _uiState.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
     }
 
-    /** Valida el formulario y devuelve si sus datos permiten crear la cuenta. */
-    fun onCreateAccount(): Boolean {
+    /** Valida el formulario y registra la cuenta antes de notificar el éxito a la vista. */
+    fun onCreateAccount(onRegistrationSuccess: () -> Unit) {
         var isRegistrationValid = false
 
         _uiState.update { state ->
@@ -45,9 +53,32 @@ class RegisterViewModel : ViewModel() {
             isRegistrationValid = validatedState.isEmailValid &&
                 validatedState.isPasswordValid &&
                 validatedState.isConfirmationPasswordValid
-            validatedState.copy(showValidationWarning = true)
+            validatedState.copy(
+                showValidationWarning = true,
+                registrationErrorMessage = null
+            )
         }
-        return isRegistrationValid
+        if (!isRegistrationValid) return
+
+        viewModelScope.launch {
+            if (signUp()) {
+                onRegistrationSuccess()
+            }
+        }
+    }
+
+    /** Registra una cuenta y devuelve si Firebase completó la operación correctamente. */
+    suspend fun signUp(): Boolean = try {
+        authRepository.signUp(
+            email = _uiState.value.email,
+            password = _uiState.value.password
+        )
+        true
+    } catch (exception: Exception) {
+        _uiState.update { state ->
+            state.copy(registrationErrorMessage = exception.message.toString())
+        }
+        false
     }
 
     /** Construye un estado consistente sin duplicar las reglas de validación. */

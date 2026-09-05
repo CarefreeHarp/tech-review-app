@@ -45,7 +45,7 @@ fun RequestProductView(
     val uiState by viewModel.uiState.collectAsState()
 
     RequestProductViewContent(
-        uiState = uiState,
+        state = uiState,
         onProductNameChange = viewModel::onProductNameChange,
         onCategoryChange = viewModel::onCategoryChange,
         onBrandChange = viewModel::onBrandChange,
@@ -61,7 +61,7 @@ fun RequestProductView(
 /**
  * Ensambla los campos, el área de fotografía y la acción de envío de la solicitud.
  *
- * @param uiState Estado inmutable que describe el formulario y sus validaciones.
+ * @param state Estado inmutable que describe el formulario y sus validaciones.
  * @param onProductNameChange Acción que solicita actualizar el nombre.
  * @param onCategoryChange Acción que solicita actualizar la categoría.
  * @param onBrandChange Acción que solicita actualizar la marca.
@@ -72,7 +72,7 @@ fun RequestProductView(
  */
 @Composable
 fun RequestProductViewContent(
-    uiState: RequestProductState,
+    state: RequestProductState,
     onProductNameChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
     onBrandChange: (String) -> Unit,
@@ -103,7 +103,7 @@ fun RequestProductViewContent(
             placeholder = R.string.request_product_name_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = false,
-            text = uiState.productName,
+            text = state.productName,
             onTextChange = onProductNameChange
         )
 
@@ -114,7 +114,7 @@ fun RequestProductViewContent(
             placeholder = R.string.request_product_category_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = false,
-            text = uiState.category,
+            text = state.category,
             onTextChange = onCategoryChange
         )
 
@@ -125,7 +125,7 @@ fun RequestProductViewContent(
             placeholder = R.string.request_product_brand_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = false,
-            text = uiState.brand,
+            text = state.brand,
             onTextChange = onBrandChange
         )
 
@@ -136,12 +136,12 @@ fun RequestProductViewContent(
             placeholder = R.string.launch_date_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = false,
-            text = uiState.releaseDate,
+            text = state.releaseDate,
             // El ViewModel filtra las letras, incluso cuando el contenido llega por pegado de texto.
             onTextChange = onReleaseDateChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        if (uiState.showReleaseDateError) {
+        if (state.showReleaseDateError) {
             Text(
                 text = stringResource(R.string.launch_date_invalid),
                 modifier = Modifier.padding(top = 4.dp),
@@ -160,17 +160,17 @@ fun RequestProductViewContent(
             modifier = Modifier
                 .fillMaxWidth()
                 // Una solicitud sin nombre o con una fecha imposible no se puede enviar.
-                .clickable(enabled = uiState.canSendRequest, onClick = onSendRequest)
+                .clickable(enabled = state.canSendRequest, onClick = onSendRequest)
                 .height(52.dp)
                 .background(
-                    color = if (uiState.canSendRequest) colors.primary else colors.border,
+                    color = if (state.canSendRequest) colors.primary else colors.border,
                     shape = RoundedCornerShape(12.dp)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = stringResource(R.string.request_product_send),
-                color = if (uiState.canSendRequest) colors.textOnPrimary else colors.textSecondary,
+                color = if (state.canSendRequest) colors.textOnPrimary else colors.textSecondary,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -192,7 +192,7 @@ fun RequestProductViewPreview() {
             topBarNumber = 9
         ) { innerPadding ->
             RequestProductViewContent(
-                uiState = RequestProductState(),
+                state = RequestProductState(),
                 onProductNameChange = {},
                 onCategoryChange = {},
                 onBrandChange = {},
@@ -219,7 +219,7 @@ fun RequestProductViewDarkPreview() {
             topBarNumber = 9
         ) { innerPadding ->
             RequestProductViewContent(
-                uiState = RequestProductState(),
+                state = RequestProductState(),
                 onProductNameChange = {},
                 onCategoryChange = {},
                 onBrandChange = {},

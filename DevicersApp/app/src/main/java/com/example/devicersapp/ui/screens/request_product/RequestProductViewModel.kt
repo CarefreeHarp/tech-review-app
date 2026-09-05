@@ -1,14 +1,17 @@
 package com.example.devicersapp.ui.screens.request_product
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.ui.utils.search.formatLaunchDate
 import com.example.devicersapp.ui.utils.search.isValidLaunchDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /** Gestiona la validación y las acciones de presentación de la solicitud de producto. */
-class RequestProductViewModel : ViewModel() {
+@HiltViewModel
+class RequestProductViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(RequestProductState())
     val uiState: StateFlow<RequestProductState> = _uiState

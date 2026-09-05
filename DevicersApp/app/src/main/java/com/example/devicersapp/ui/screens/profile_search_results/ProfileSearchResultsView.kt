@@ -36,9 +36,7 @@ fun ProfileSearchResultsView(
     val uiState by viewModel.uiState.collectAsState()
 
     ProfileSearchResultsViewContent(
-        results = uiState.results,
-        searchText = uiState.searchText,
-        followedProfileIds = uiState.followedProfileIds,
+        state = uiState,
         onSearchTextChange = viewModel::onSearchTextChange,
         onFollow = viewModel::onFollow,
         onProfileClick = onProfileClick,
@@ -51,9 +49,7 @@ fun ProfileSearchResultsView(
 /** Ensambla la búsqueda, el conteo de coincidencias y la lista de perfiles encontrados. */
 @Composable
 fun ProfileSearchResultsViewContent(
-    results: List<ProfileSearchResultContent>,
-    searchText: String,
-    followedProfileIds: Set<String>,
+    state: ProfileSearchResultsState,
     onSearchTextChange: (String) -> Unit,
     onFollow: (String) -> Unit,
     onProfileClick: (String) -> Unit,
@@ -67,23 +63,23 @@ fun ProfileSearchResultsViewContent(
             placeholder = R.string.profile_search_results_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = true,
-            text = searchText,
+            text = state.searchText,
             onTextChange = onSearchTextChange
         )
         Spacer(modifier = Modifier.height(18.dp))
         LazyColumn(modifier = Modifier.weight(1f)) {
             item {
                 Text(
-                    text = stringResource(R.string.profile_search_results_count, results.size),
+                    text = stringResource(R.string.profile_search_results_count, state.results.size),
                     color = colors.textSecondary,
                     style = SearchControlText
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
-            items(results, key = { it.id }) { result ->
+            items(state.results, key = { it.id }) { result ->
                 ProfileResultCard(
                     result = result,
-                    isFollowed = result.id in followedProfileIds,
+                    isFollowed = result.id in state.followedProfileIds,
                     onFollow = { onFollow(result.id) },
                     onProfileClick = { onProfileClick(result.id) }
                 )
@@ -103,10 +99,12 @@ fun ProfileSearchResultsViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 7) {
                 innerPadding ->
-            ProfileSearchResultsView(
-                onProfileClick = {},
+            ProfileSearchResultsViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                viewModel = ProfileSearchResultsViewModel()
+                state = ProfileSearchResultsState(results = LocalProfileProvider.profiles),
+                onSearchTextChange = {},
+                onFollow = {},
+                onProfileClick = {}
             )
         }
     }
@@ -119,10 +117,12 @@ fun ProfileSearchResultsViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 7) {
                 innerPadding ->
-            ProfileSearchResultsView(
-                onProfileClick = {},
+            ProfileSearchResultsViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                viewModel = ProfileSearchResultsViewModel()
+                state = ProfileSearchResultsState(results = LocalProfileProvider.profiles),
+                onSearchTextChange = {},
+                onFollow = {},
+                onProfileClick = {}
             )
         }
     }

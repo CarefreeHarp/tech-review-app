@@ -39,16 +39,14 @@ fun RegisterView(
     val uiState by viewModel.uiState.collectAsState()
 
     RegisterViewContent(
-        uiState = uiState,
+        state = uiState,
         onUsernameChange = viewModel::onUsernameChange,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
         onConfirmationPasswordChange = viewModel::onConfirmationPasswordChange,
         onPasswordVisibilityChange = viewModel::onPasswordVisibilityChange,
         onCreateAccount = {
-            if (viewModel.onCreateAccount()) {
-                onCreateAccountClick()
-            }
+            viewModel.onCreateAccount(onRegistrationSuccess = onCreateAccountClick)
         },
         onSignInClick = onSignInClick,
         modifier = modifier
@@ -60,7 +58,7 @@ fun RegisterView(
 /** Ensambla el formulario controlado por el estado inmutable de registro. */
 @Composable
 fun RegisterViewContent(
-    uiState: RegisterState,
+    state: RegisterState,
     onUsernameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -82,46 +80,48 @@ fun RegisterViewContent(
         AuthenticationField(
             labelResId = R.string.username,
             placeholderResId = R.string.username_placeholder,
-            value = uiState.username,
+            value = state.username,
             onValueChange = onUsernameChange
         )
         Spacer(modifier = Modifier.height(18.dp))
         AuthenticationField(
             labelResId = R.string.email,
             placeholderResId = R.string.email_placeholder,
-            value = uiState.email,
+            value = state.email,
             onValueChange = onEmailChange
         )
         Spacer(modifier = Modifier.height(18.dp))
         AuthenticationField(
             labelResId = R.string.password,
             placeholderResId = R.string.password_placeholder,
-            value = uiState.password,
+            value = state.password,
             onValueChange = onPasswordChange,
             isPassword = true,
-            isPasswordVisible = uiState.isPasswordVisible,
+            isPasswordVisible = state.isPasswordVisible,
             onPasswordVisibilityChange = onPasswordVisibilityChange
         )
         Spacer(modifier = Modifier.height(18.dp))
         AuthenticationField(
             labelResId = R.string.confirm_password,
             placeholderResId = R.string.password_placeholder,
-            value = uiState.confirmationPassword,
+            value = state.confirmationPassword,
             onValueChange = onConfirmationPasswordChange,
             isPassword = true,
-            isPasswordVisible = uiState.isPasswordVisible,
+            isPasswordVisible = state.isPasswordVisible,
             onPasswordVisibilityChange = onPasswordVisibilityChange
         )
         Spacer(modifier = Modifier.height(24.dp))
 
-        if (uiState.showValidationWarning &&
-            (!uiState.isEmailValid || !uiState.isPasswordValid ||
-                !uiState.isConfirmationPasswordValid)
+        if (state.showValidationWarning &&
+            (!state.isEmailValid || !state.isPasswordValid ||
+                !state.isConfirmationPasswordValid ||
+                state.registrationErrorMessage != null)
         ) {
             RegisterValidationWarning(
-                isEmailValid = uiState.isEmailValid,
-                isPasswordValid = uiState.isPasswordValid,
-                isConfirmationPasswordValid = uiState.isConfirmationPasswordValid
+                isEmailValid = state.isEmailValid,
+                isPasswordValid = state.isPasswordValid,
+                isConfirmationPasswordValid = state.isConfirmationPasswordValid,
+                errorMessage = state.registrationErrorMessage
             )
             Spacer(modifier = Modifier.height(12.dp))
         }
@@ -151,9 +151,16 @@ fun RegisterViewContent(
 fun RegisterViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            RegisterView(
+            RegisterViewContent(
                 modifier = Modifier.padding(innerPadding),
-                viewModel = RegisterViewModel()
+                state = RegisterState(),
+                onUsernameChange = {},
+                onEmailChange = {},
+                onPasswordChange = {},
+                onConfirmationPasswordChange = {},
+                onPasswordVisibilityChange = {},
+                onCreateAccount = {},
+                onSignInClick = {}
             )
         }
     }
@@ -165,9 +172,16 @@ fun RegisterViewPreview() {
 fun RegisterViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            RegisterView(
+            RegisterViewContent(
                 modifier = Modifier.padding(innerPadding),
-                viewModel = RegisterViewModel()
+                state = RegisterState(),
+                onUsernameChange = {},
+                onEmailChange = {},
+                onPasswordChange = {},
+                onConfirmationPasswordChange = {},
+                onPasswordVisibilityChange = {},
+                onCreateAccount = {},
+                onSignInClick = {}
             )
         }
     }

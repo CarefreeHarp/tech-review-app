@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.screens.access.components.AccessAuthenticationError
 import com.example.devicersapp.ui.screens.access.components.ForgotPasswordLink
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
@@ -39,13 +40,13 @@ fun AccessView(
     val uiState by viewModel.uiState.collectAsState()
 
     AccessViewContent(
-        email = uiState.email,
-        password = uiState.password,
-        isPasswordVisible = uiState.isPasswordVisible,
+        state = uiState,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
         onPasswordVisibilityChange = viewModel::onPasswordVisibilityChange,
-        onSignInClick = onSignInClick,
+        onSignInClick = {
+            viewModel.onSignIn(onSignInSuccess = onSignInClick)
+        },
         onCreateAccountClick = onCreateAccountClick,
         modifier = modifier
             .fillMaxSize()
@@ -56,9 +57,7 @@ fun AccessView(
 /** Contenido visual y sin estado propio de la pantalla de acceso. */
 @Composable
 fun AccessViewContent(
-    email: String,
-    password: String,
-    isPasswordVisible: Boolean,
+    state: AccessState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onPasswordVisibilityChange: () -> Unit,
@@ -84,7 +83,7 @@ fun AccessViewContent(
         AuthenticationField(
             labelResId = R.string.email,
             placeholderResId = R.string.email_placeholder,
-            value = email,
+            value = state.email,
             onValueChange = onEmailChange
         )
 
@@ -93,16 +92,23 @@ fun AccessViewContent(
         AuthenticationField(
             labelResId = R.string.password,
             placeholderResId = R.string.password_placeholder,
-            value = password,
+            value = state.password,
             onValueChange = onPasswordChange,
             isPassword = true,
-            isPasswordVisible = isPasswordVisible,
+            isPasswordVisible = state.isPasswordVisible,
             onPasswordVisibilityChange = onPasswordVisibilityChange
         )
 
         ForgotPasswordLink(
             modifier = Modifier.align(Alignment.End)
         )
+
+        if (state.signInErrorMessage != null) {
+            Spacer(modifier = Modifier.height(18.dp))
+            AccessAuthenticationError(
+                errorMessage = state.signInErrorMessage
+            )
+        }
 
         Spacer(modifier = Modifier.height(18.dp))
 
@@ -139,11 +145,14 @@ fun AccessViewContent(
 fun AccessViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            AccessView(
+            AccessViewContent(
                 modifier = Modifier.padding(innerPadding),
+                state = AccessState(),
+                onEmailChange = {},
+                onPasswordChange = {},
+                onPasswordVisibilityChange = {},
                 onSignInClick = {},
-                onCreateAccountClick = {},
-                viewModel = AccessViewModel()
+                onCreateAccountClick = {}
             )
         }
     }
@@ -154,11 +163,14 @@ fun AccessViewPreview() {
 fun AccessViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 5) { innerPadding ->
-            AccessView(
+            AccessViewContent(
                 modifier = Modifier.padding(innerPadding),
+                state = AccessState(),
+                onEmailChange = {},
+                onPasswordChange = {},
+                onPasswordVisibilityChange = {},
                 onSignInClick = {},
-                onCreateAccountClick = {},
-                viewModel = AccessViewModel()
+                onCreateAccountClick = {}
             )
         }
     }

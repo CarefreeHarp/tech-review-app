@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -44,28 +45,25 @@ fun ProfileView(
         viewModel.loadProfile(profileId)
     }
 
-    uiState.profile?.let { profile ->
-        ProfileViewContent(
-            profile = profile,
-            reviews = uiState.reviews,
+    ProfileViewContent(
+            state = uiState,
             onFollowClick = onFollowClick,
             onReviewClick = onReviewClick,
             modifier = modifier
                 .fillMaxSize()
                 .background(LocalDevicersColors.current.background)
-        )
-    }
+    )
 }
 
 /** Ensambla la cabecera del perfil y la cuadrícula de productos que ya calificó. */
 @Composable
 fun ProfileViewContent(
-    profile: ProfileContent,
-    reviews: List<ReviewContent>,
+    state: ProfileState,
     onFollowClick: () -> Unit,
     onReviewClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val profile = state.profile ?: return
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier.padding(horizontal = 20.dp),
@@ -90,7 +88,7 @@ fun ProfileViewContent(
                 selectedColor = LocalDevicersColors.current.primaryText
             )
         }
-        itemsIndexed(reviews) { _, review ->
+        itemsIndexed(state.reviews) { _, review ->
             ProfileProductCard(review = review, onClick = { onReviewClick(review.id) })
         }
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -110,9 +108,14 @@ fun ProfileViewPreview() {
             topBarNumber = 1,
             topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
-            ProfileView(
+            ProfileViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                viewModel = ProfileViewModel()
+                state = ProfileState(
+                    profile = LocalProfileProvider.profile,
+                    reviews = LocalReviewProvider.reviewsForProfile(LocalProfileProvider.profile.id)
+                ),
+                onFollowClick = {},
+                onReviewClick = {}
             )
         }
     }
@@ -129,9 +132,14 @@ fun ProfileViewDarkPreview() {
             topBarNumber = 1,
             topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
-            ProfileView(
+            ProfileViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                viewModel = ProfileViewModel()
+                state = ProfileState(
+                    profile = LocalProfileProvider.profile,
+                    reviews = LocalReviewProvider.reviewsForProfile(LocalProfileProvider.profile.id)
+                ),
+                onFollowClick = {},
+                onReviewClick = {}
             )
         }
     }

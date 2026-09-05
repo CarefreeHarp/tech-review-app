@@ -37,7 +37,7 @@ fun RateProductView(
     }
 
     RateProductViewContent(
-        uiState = uiState,
+        state = uiState,
         onRatingChange = viewModel::onRatingChange,
         onTitleChange = viewModel::onTitleChange,
         onExperienceChange = viewModel::onExperienceChange,
@@ -54,7 +54,7 @@ fun RateProductView(
 /**
  * Ensambla los componentes presentacionales de la pantalla de calificación.
  *
- * @param uiState Estado inmutable que describe el producto y el formulario de la reseña.
+ * @param state Estado inmutable que describe el producto y el formulario de la reseña.
  * @param onRatingChange Acción al seleccionar una calificación.
  * @param onTitleChange Acción al cambiar el título.
  * @param onExperienceChange Acción al cambiar la experiencia.
@@ -66,7 +66,7 @@ fun RateProductView(
  */
 @Composable
 fun RateProductViewContent(
-    uiState: RateProductState,
+    state: RateProductState,
     onRatingChange: (Int) -> Unit,
     onTitleChange: (String) -> Unit,
     onExperienceChange: (String) -> Unit,
@@ -77,7 +77,7 @@ fun RateProductViewContent(
     modifier: Modifier = Modifier
 ) {
     // La calificación solo se puede mostrar cuando el ViewModel ya resolvió el producto.
-    val product = uiState.product ?: return
+    val product = state.product ?: return
 
     LazyColumn(
         modifier = modifier
@@ -100,7 +100,7 @@ fun RateProductViewContent(
 
         item {
             RatingSelector(
-                rating = uiState.rating,
+                rating = state.rating,
                 onRatingChange = onRatingChange
             )
 
@@ -109,16 +109,16 @@ fun RateProductViewContent(
 
         item {
             ReviewForm(
-                title = uiState.title,
+                title = state.title,
                 onTitleChange = onTitleChange,
 
-                experience = uiState.experience,
+                experience = state.experience,
                 onExperienceChange = onExperienceChange,
 
-                advantage = uiState.advantage,
+                advantage = state.advantage,
                 onAdvantageChange = onAdvantageChange,
 
-                disadvantage = uiState.disadvantage,
+                disadvantage = state.disadvantage,
                 onDisadvantageChange = onDisadvantageChange,
 
                 onPublishClick = onPublishClick
@@ -136,7 +136,7 @@ fun RateProductViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(topBarNumber = 2) { innerPadding ->
             RateProductViewContent(
-                uiState = RateProductState(product = LocalProductProvider.product),
+                state = RateProductState(product = LocalProductProvider.product),
                 onRatingChange = {},
                 onTitleChange = {},
                 onExperienceChange = {},
@@ -160,7 +160,7 @@ fun RateProductViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 2) { innerPadding ->
             RateProductViewContent(
-                uiState = RateProductState(product = LocalProductProvider.product),
+                state = RateProductState(product = LocalProductProvider.product),
                 onRatingChange = {},
                 onTitleChange = {},
                 onExperienceChange = {},

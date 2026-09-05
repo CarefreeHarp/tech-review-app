@@ -58,6 +58,9 @@
     <string name="register_validation_confirmation">
         Las contraseñas deben coincidir.
     </string>
+    <string name="access_authentication_error_preview">
+        No fue posible iniciar sesión. Inténtalo de nuevo.
+    </string>
 
     <!-- SEARCH -->
     <string name="home_tab_for_you">Para ti</string>
@@ -725,4 +728,5 @@
     <string name="create_review_product_ten_brand">Vocal • Audio</string>
     <string name="create_review_product_ten_image">Imagen de micrófono</string>
 
+    <string name="sign_out">Cerrar sesión</string>
 </resources>

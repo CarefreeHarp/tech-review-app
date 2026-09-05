@@ -42,11 +42,8 @@ fun CreateReviewView(
     val uiState by viewModel.uiState.collectAsState()
 
     CreateReviewViewContent(
-        categories = uiState.categories,
-        products = uiState.filteredProducts,
-        searchText = uiState.searchText,
+        state = uiState,
         onSearchTextChange = viewModel::onSearchTextChange,
-        selectedCategoryId = uiState.selectedCategoryId,
         onCategoryChange = viewModel::onCategoryChange,
         onProductClick = onProductClick,
         onRequestProductClick = onRequestProductClick,
@@ -59,11 +56,8 @@ fun CreateReviewView(
 /**
  * Ensambla las categorías y los productos sugeridos para comenzar una reseña.
  *
- * @param categories Categorías que se pueden seleccionar.
- * @param products Productos filtrados que se mostrarán.
- * @param searchText Texto actual de búsqueda.
+ * @param state Estado inmutable con las categorías, productos y filtros visibles.
  * @param onSearchTextChange Acción que solicita actualizar el texto.
- * @param selectedCategoryId Identificador de la categoría activa.
  * @param onCategoryChange Acción que solicita actualizar la categoría.
  * @param onProductClick Acción solicitada al elegir un producto.
  * @param onRequestProductClick Acción solicitada cuando el producto no existe.
@@ -71,11 +65,8 @@ fun CreateReviewView(
  */
 @Composable
 fun CreateReviewViewContent(
-    categories: List<ProductCategoryContent>,
-    products: List<ProductSearchContent>,
-    searchText: String,
+    state: CreateReviewState,
     onSearchTextChange: (String) -> Unit,
-    selectedCategoryId: String,
     onCategoryChange: (String) -> Unit,
     onProductClick: (ProductSearchContent) -> Unit,
     onRequestProductClick: () -> Unit,
@@ -92,15 +83,15 @@ fun CreateReviewViewContent(
             placeholder = R.string.create_review_search_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = true,
-            text = searchText,
+            text = state.searchText,
             onTextChange = onSearchTextChange
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CategoryChipRow(
-            categories = categories,
-            selectedCategoryId = selectedCategoryId,
+            categories = state.categories,
+            selectedCategoryId = state.selectedCategoryId,
             onCategoryChange = onCategoryChange
         )
 
@@ -127,7 +118,7 @@ fun CreateReviewViewContent(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            if (products.isEmpty()) {
+            if (state.filteredProducts.isEmpty()) {
                 item {
                     Text(
                         text = stringResource(
@@ -140,7 +131,7 @@ fun CreateReviewViewContent(
                 }
             } else {
                 itemsIndexed(
-                    items = products,
+                    items = state.filteredProducts,
                     key = { _, product -> product.id }
                 ) { index, product ->
 
@@ -151,7 +142,7 @@ fun CreateReviewViewContent(
                         }
                     )
 
-                    if (index < products.lastIndex) {
+                    if (index < state.filteredProducts.lastIndex) {
                         HorizontalDivider(
                             modifier = Modifier.fillMaxWidth(),
                             thickness = 1.dp,
@@ -189,11 +180,11 @@ fun CreateReviewLightPreview() {
             topBarNumber = 3
         ) { innerPadding ->
             CreateReviewViewContent(
-                categories = LocalProductProvider.categories,
-                products = LocalProductProvider.products,
-                searchText = "",
+                state = CreateReviewState(
+                    categories = LocalProductProvider.categories,
+                    filteredProducts = LocalProductProvider.products
+                ),
                 onSearchTextChange = {},
-                selectedCategoryId = "all",
                 onCategoryChange = {},
                 onProductClick = {},
                 onRequestProductClick = {},
@@ -225,11 +216,11 @@ fun CreateReviewDarkPreview() {
             topBarNumber = 3
         ) { innerPadding ->
             CreateReviewViewContent(
-                categories = LocalProductProvider.categories,
-                products = LocalProductProvider.products,
-                searchText = "",
+                state = CreateReviewState(
+                    categories = LocalProductProvider.categories,
+                    filteredProducts = LocalProductProvider.products
+                ),
                 onSearchTextChange = {},
-                selectedCategoryId = "all",
                 onCategoryChange = {},
                 onProductClick = {},
                 onRequestProductClick = {},

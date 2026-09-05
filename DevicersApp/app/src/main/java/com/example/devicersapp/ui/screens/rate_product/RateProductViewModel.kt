@@ -1,13 +1,16 @@
 package com.example.devicersapp.ui.screens.rate_product
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.data.local.LocalProductProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /** Conserva el producto calificado y el contenido que la persona escribe en su reseña. */
-class RateProductViewModel : ViewModel() {
+@HiltViewModel
+class RateProductViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(RateProductState())
     val uiState: StateFlow<RateProductState> = _uiState

@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProductProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.models.RatingSummaryContent
 import com.example.devicersapp.ui.models.ReviewContent
@@ -54,42 +55,33 @@ fun ProductView(
         viewModel.loadProduct(productNameResId)
     }
 
-    val product = uiState.product
-    val ratingSummary = uiState.ratingSummary
-
-    if (product != null && ratingSummary != null) {
-        ProductViewContent(
-            product = product,
-            ratingSummary = ratingSummary,
-            reviews = uiState.reviews,
+    ProductViewContent(
+            state = uiState,
             onRateClick = onRateClick,
             onViewMoreClick = onViewMoreClick,
             modifier = modifier
                 .fillMaxSize()
                 .background(LocalDevicersColors.current.background)
-        )
-    }
+    )
 }
 
 /**
  * Ensambla el detalle visual del producto, su resumen de calificaciones y sus reseñas.
  *
- * @param product Producto seleccionado que se presenta en el encabezado.
- * @param ratingSummary Distribución y promedio de calificaciones del producto.
- * @param reviews Reseñas asociadas al producto, renderizadas de forma perezosa.
+ * @param state Estado inmutable con el producto, sus calificaciones y reseñas.
  * @param onRateClick Acción solicitada al comenzar una calificación.
  * @param onViewMoreClick Acción solicitada al abrir una reseña completa.
  * @param modifier Modificador aplicado al contenedor del detalle.
  */
 @Composable
 fun ProductViewContent(
-    product: ProductContent,
-    ratingSummary: RatingSummaryContent,
-    reviews: List<ReviewContent>,
+    state: ProductState,
     onRateClick: (Int) -> Unit,
     onViewMoreClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val product = state.product ?: return
+    val ratingSummary = state.ratingSummary ?: return
     val colors = LocalDevicersColors.current
 
     Column(
@@ -159,7 +151,7 @@ fun ProductViewContent(
                 Spacer(modifier = Modifier.height(14.dp))
             }
 
-            itemsIndexed(reviews) { _, review ->
+            itemsIndexed(state.reviews) { _, review ->
                 ReviewCard(
                     review = review,
                     onViewMoreClick = {
@@ -186,12 +178,19 @@ fun ProductViewPreview() {
             showBottomBar = true,
             topBarNumber = 6
         ) { innerPadding ->
-            ProductView(
-                productNameResId = LocalProductProvider.product.nameResId,
+            ProductViewContent(
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                viewModel = ProductViewModel()
+                state = ProductState(
+                    product = LocalProductProvider.product,
+                    ratingSummary = LocalProductProvider.ratingSummary,
+                    reviews = LocalReviewProvider.reviewsForProduct(
+                        LocalProductProvider.product.nameResId
+                    )
+                ),
+                onRateClick = {},
+                onViewMoreClick = {}
             )
         }
     }
@@ -206,12 +205,19 @@ fun ProductViewDarkPreview() {
             showBottomBar = true,
             topBarNumber = 6
         ) { innerPadding ->
-            ProductView(
-                productNameResId = LocalProductProvider.product.nameResId,
+            ProductViewContent(
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                viewModel = ProductViewModel()
+                state = ProductState(
+                    product = LocalProductProvider.product,
+                    ratingSummary = LocalProductProvider.ratingSummary,
+                    reviews = LocalReviewProvider.reviewsForProduct(
+                        LocalProductProvider.product.nameResId
+                    )
+                ),
+                onRateClick = {},
+                onViewMoreClick = {}
             )
         }
     }

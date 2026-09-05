@@ -43,15 +43,8 @@ fun ReviewView(
         viewModel.loadReview(reviewId)
     }
 
-    val product = uiState.product
-    val review = uiState.review
-
-    if (product != null && review != null) {
-        ReviewViewContent(
-            product = product,
-            review = review,
-            replies = uiState.replies,
-            replyText = uiState.replyText,
+    ReviewViewContent(
+            state = uiState,
             onReplyTextChange = viewModel::onReplyTextChange,
             onProductClick = onProductClick,
             onSendReply = {
@@ -62,32 +55,28 @@ fun ReviewView(
                     viewModel.clearReplyText()
                 }
             },
-            expandedReplies = uiState.expandedReplies,
             onViewAnswers = viewModel::onViewAnswers,
             modifier = modifier
                 .fillMaxSize()
                 .background(LocalDevicersColors.current.background)
-        )
-    }
+    )
 }
 
 /** Ensambla el producto, la reseña, las respuestas y el compositor. */
 @Composable
 fun ReviewViewContent(
-    product: ProductContent,
-    review: ReviewContent,
-    replies: List<ReplyContent>,
-    replyText: String,
+    state: ReviewState,
     onReplyTextChange: (String) -> Unit,
     onProductClick: (Int) -> Unit,
     onSendReply: () -> Unit,
-    expandedReplies: Map<Int, Boolean> = emptyMap(),
     onViewAnswers: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val product = state.product ?: return
+    val review = state.review ?: return
     Box(modifier = modifier) {
         ReplyList(
-            replies = replies,
+            replies = state.replies,
             header = {
                 item {
                     Spacer(modifier = Modifier.height(22.dp))
@@ -115,7 +104,7 @@ fun ReviewViewContent(
                     )
                 }
             },
-            expandedReplies = expandedReplies,
+            expandedReplies = state.expandedReplies,
             onViewAnswers = onViewAnswers,
             modifier = Modifier
                 .fillMaxSize()
@@ -123,7 +112,7 @@ fun ReviewViewContent(
         )
 
         ReplyComposer(
-            value = replyText,
+            value = state.replyText,
             onValueChange = onReplyTextChange,
             onSendClick = onSendReply,
             modifier = Modifier
@@ -144,10 +133,11 @@ fun ReviewViewPreview() {
         DevicersAppTheme(darkTheme = false) {
             DevicersScaffold(topBarNumber = 4) { innerPadding ->
                 ReviewViewContent(
-                    product = product,
-                    review = review,
-                    replies = review.comments,
-                    replyText = "",
+                    state = ReviewState(
+                        product = product,
+                        review = review,
+                        replies = review.comments
+                    ),
                     onReplyTextChange = {},
                     onProductClick = {},
                     onSendReply = {},
@@ -174,10 +164,11 @@ fun ReviewViewDarkPreview() {
         DevicersAppTheme(darkTheme = true) {
             DevicersScaffold(topBarNumber = 4) { innerPadding ->
                 ReviewViewContent(
-                    product = product,
-                    review = review,
-                    replies = review.comments,
-                    replyText = "",
+                    state = ReviewState(
+                        product = product,
+                        review = review,
+                        replies = review.comments
+                    ),
                     onReplyTextChange = {},
                     onProductClick = {},
                     onSendReply = {},

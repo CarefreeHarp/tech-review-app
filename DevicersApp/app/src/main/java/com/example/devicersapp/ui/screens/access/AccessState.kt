@@ -4,5 +4,6 @@ package com.example.devicersapp.ui.screens.access
 data class AccessState(
     val email: String = "",
     val password: String = "",
-    val isPasswordVisible: Boolean = false
+    val isPasswordVisible: Boolean = false,
+    val signInErrorMessage: String? = null
 )

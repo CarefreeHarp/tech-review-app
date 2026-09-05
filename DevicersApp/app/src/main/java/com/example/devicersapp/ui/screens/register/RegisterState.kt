@@ -10,5 +10,6 @@ data class RegisterState(
     val showValidationWarning: Boolean = false,
     val isEmailValid: Boolean = false,
     val isPasswordValid: Boolean = false,
-    val isConfirmationPasswordValid: Boolean = false
+    val isConfirmationPasswordValid: Boolean = false,
+    val registrationErrorMessage: String? = null
 )

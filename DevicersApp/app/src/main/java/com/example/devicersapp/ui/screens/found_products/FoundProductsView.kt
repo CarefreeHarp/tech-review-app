@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.models.ProductSearchContent
 import com.example.devicersapp.ui.screens.found_products.components.FoundProductCard
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -41,14 +42,8 @@ fun FoundProductsView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // Conserva el comportamiento existente: si no se ha escrito nada,
-    // se muestra la consulta inicial definida en los recursos.
-    val queryHint = stringResource(R.string.found_products_query)
-    val query = uiState.searchText.ifEmpty { queryHint }
-
     FoundProductsViewContent(
-        results = uiState.results,
-        searchText = query,
+        state = uiState,
         onSearchTextChange = viewModel::onSearchTextChange,
         onProductClick = onProductClick,
         modifier = modifier
@@ -62,13 +57,16 @@ fun FoundProductsView(
  */
 @Composable
 fun FoundProductsViewContent(
-    results: List<ProductSearchContent>,
-    searchText: String,
+    state: FoundProductsState,
     onSearchTextChange: (String) -> Unit,
     onProductClick: (ProductSearchContent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
+    // Conserva la consulta inicial definida en recursos cuando el estado aún no tiene texto.
+    val searchText = state.searchText.ifEmpty {
+        stringResource(R.string.found_products_query)
+    }
 
     Column(
         modifier = modifier.padding(horizontal = 20.dp)
@@ -88,7 +86,7 @@ fun FoundProductsViewContent(
         Text(
             text = stringResource(
                 R.string.found_products_count,
-                results.size
+                state.results.size
             ),
             color = colors.textSecondary,
             style = SearchControlText
@@ -100,7 +98,7 @@ fun FoundProductsViewContent(
             modifier = Modifier.weight(1f)
         ) {
             items(
-                items = results,
+                items = state.results,
                 key = { it.id }
             ) { product ->
                 FoundProductCard(
@@ -131,11 +129,13 @@ fun FoundProductsViewPreview() {
             showBottomBar = true,
             topBarNumber = 8
         ) { innerPadding ->
-            FoundProductsView(
+            FoundProductsViewContent(
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                viewModel = FoundProductsViewModel()
+                state = FoundProductsState(results = LocalProductProvider.products),
+                onSearchTextChange = {},
+                onProductClick = {}
             )
         }
     }
@@ -151,11 +151,13 @@ fun FoundProductsViewDarkPreview() {
             showBottomBar = true,
             topBarNumber = 8
         ) { innerPadding ->
-            FoundProductsView(
+            FoundProductsViewContent(
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                viewModel = FoundProductsViewModel()
+                state = FoundProductsState(results = LocalProductProvider.products),
+                onSearchTextChange = {},
+                onProductClick = {}
             )
         }
     }

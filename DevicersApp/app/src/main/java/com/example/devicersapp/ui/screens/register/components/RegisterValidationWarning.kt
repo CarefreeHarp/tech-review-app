@@ -24,6 +24,7 @@ import com.example.devicersapp.R
  * @param isEmailValid Indica si el correo tiene un formato válido.
  * @param isPasswordValid Indica si la contraseña cumple los requisitos definidos.
  * @param isConfirmationPasswordValid Indica si la confirmación coincide con la contraseña.
+ * @param errorMessage Mensaje de error retornado por Firebase al intentar registrar la cuenta.
  * @param modifier Modificador aplicado al aviso.
  */
 @Composable
@@ -31,6 +32,7 @@ fun RegisterValidationWarning(
     isEmailValid: Boolean,
     isPasswordValid: Boolean,
     isConfirmationPasswordValid: Boolean,
+    errorMessage: String? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -67,6 +69,13 @@ fun RegisterValidationWarning(
         if (!isConfirmationPasswordValid) {
             Text(
                 text = stringResource(R.string.register_validation_confirmation),
+                style = MaterialTheme.typography.bodySmall,
+                color = LocalDevicersColors.current.error
+            )
+        }
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage,
                 style = MaterialTheme.typography.bodySmall,
                 color = LocalDevicersColors.current.error
             )

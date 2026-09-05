@@ -17,9 +17,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.activity.ActivityViewModel
@@ -44,10 +44,8 @@ fun OwnProfileView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    uiState.profile?.let { profile ->
-        OwnProfileViewContent(
-            profile = profile,
-            reviews = uiState.reviews,
+    OwnProfileViewContent(
+            state = uiState,
             onSavedClick = onSavedReviewsClick,
             onReviewClick = onReviewClick,
             onEditProfileClick = onEditProfileClick,
@@ -55,8 +53,7 @@ fun OwnProfileView(
             modifier = modifier
                 .fillMaxSize()
                 .background(LocalDevicersColors.current.background)
-        )
-    }
+    )
 }
 
 /**
@@ -64,14 +61,14 @@ fun OwnProfileView(
  */
 @Composable
 fun OwnProfileViewContent(
-    profile: ProfileContent,
-    reviews: List<ReviewContent>,
+    state: OwnProfileState,
     onSavedClick: () -> Unit,
     onReviewClick: (Int) -> Unit,
     onEditProfileClick: () -> Unit,
     onEditAvatarClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val profile = state.profile ?: return
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier.padding(horizontal = 20.dp),
@@ -107,7 +104,7 @@ fun OwnProfileViewContent(
             )
         }
 
-        itemsIndexed(reviews) { _, review ->
+        itemsIndexed(state.reviews) { _, review ->
             ProfileProductCard(
                 review = review,
                 onClick = {
@@ -126,7 +123,6 @@ fun OwnProfileViewContent(
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun OwnProfileViewPreview() {
-    val ownProfileViewModel: OwnProfileViewModel = viewModel()
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(
             selectedItem = "profile",
@@ -134,11 +130,18 @@ fun OwnProfileViewPreview() {
             topBarNumber = 1,
             topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
-            OwnProfileView(
+            OwnProfileViewContent(
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                viewModel = ownProfileViewModel
+                state = OwnProfileState(
+                    profile = LocalProfileProvider.profile,
+                    reviews = LocalReviewProvider.reviewsForProfile(LocalProfileProvider.profile.id)
+                ),
+                onSavedClick = {},
+                onReviewClick = {},
+                onEditProfileClick = {},
+                onEditAvatarClick = {}
             )
         }
     }
@@ -148,7 +151,6 @@ fun OwnProfileViewPreview() {
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun OwnProfileViewDarkPreview() {
-    val ownProfileViewModel: OwnProfileViewModel = viewModel()
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(
             selectedItem = "profile",
@@ -156,11 +158,18 @@ fun OwnProfileViewDarkPreview() {
             topBarNumber = 1,
             topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
-            OwnProfileView(
+            OwnProfileViewContent(
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                viewModel = ownProfileViewModel
+                state = OwnProfileState(
+                    profile = LocalProfileProvider.profile,
+                    reviews = LocalReviewProvider.reviewsForProfile(LocalProfileProvider.profile.id)
+                ),
+                onSavedClick = {},
+                onReviewClick = {},
+                onEditProfileClick = {},
+                onEditAvatarClick = {}
             )
         }
     }

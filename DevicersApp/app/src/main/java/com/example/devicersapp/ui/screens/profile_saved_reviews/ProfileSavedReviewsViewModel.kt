@@ -1,14 +1,17 @@
 package com.example.devicersapp.ui.screens.profile_saved_reviews
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.data.local.LocalReviewProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /** Prepara la lista local de reseñas que la persona guardó. */
-class ProfileSavedReviewsViewModel : ViewModel() {
+@HiltViewModel
+class ProfileSavedReviewsViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         ProfileSavedReviewsState(profile = LocalProfileProvider.profile)

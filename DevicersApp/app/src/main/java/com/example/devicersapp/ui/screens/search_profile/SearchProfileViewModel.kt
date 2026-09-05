@@ -1,12 +1,15 @@
 package com.example.devicersapp.ui.screens.search_profile
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /** Conserva la consulta y los filtros con los que se acota la búsqueda de perfiles. */
-class SearchProfileViewModel : ViewModel() {
+@HiltViewModel
+class SearchProfileViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchProfileState())
     val uiState: StateFlow<SearchProfileState> = _uiState

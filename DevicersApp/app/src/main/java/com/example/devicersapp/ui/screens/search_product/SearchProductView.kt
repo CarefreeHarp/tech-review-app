@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,7 +38,7 @@ fun SearchProductView(
     val uiState by viewModel.uiState.collectAsState()
 
     SearchProductViewContent(
-        uiState = uiState,
+        state = uiState,
         onSearchTextChange = viewModel::onSearchTextChange,
         onBrandChange = viewModel::onBrandChange,
         onProductNameChange = viewModel::onProductNameChange,
@@ -57,7 +59,7 @@ fun SearchProductView(
 /**
  * Reúne el título, la búsqueda general y la tarjeta de filtros de productos.
  *
- * @param uiState Estado inmutable que describe la consulta y los filtros activos.
+ * @param state Estado inmutable que describe la consulta y los filtros activos.
  * @param onSearchTextChange Acción que solicita actualizar la búsqueda general.
  * @param onBrandChange Acción que solicita actualizar la marca.
  * @param onProductNameChange Acción que solicita actualizar el nombre del producto.
@@ -73,7 +75,7 @@ fun SearchProductView(
  */
 @Composable
 fun SearchProductViewContent(
-    uiState: SearchProductState,
+    state: SearchProductState,
     onSearchTextChange: (String) -> Unit,
     onBrandChange: (String) -> Unit,
     onProductNameChange: (String) -> Unit,
@@ -87,9 +89,10 @@ fun SearchProductViewContent(
     onProductsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // El contenido no es una colección repetida, así que basta con un contenedor desplazable.
+    // El formulario completo puede superar pantallas pequeñas, por eso se desplaza como una unidad.
     Column(
         modifier = modifier
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp)
     ) {
         Spacer(modifier = Modifier.height(24.dp))
@@ -107,7 +110,7 @@ fun SearchProductViewContent(
             placeholder = R.string.search_product_placeholder,
             backgroundColor = LocalDevicersColors.current.surface,
             showSearchIcon = true,
-            text = uiState.searchText,
+            text = state.searchText,
             onTextChange = onSearchTextChange
         )
 
@@ -121,25 +124,25 @@ fun SearchProductViewContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         SearchProductFilterPanel(
-            brand = uiState.brand,
+            brand = state.brand,
             onBrandChange = onBrandChange,
 
-            productName = uiState.productName,
+            productName = state.productName,
             onProductNameChange = onProductNameChange,
 
-            launchDate = uiState.launchDate,
+            launchDate = state.launchDate,
             onLaunchDateChange = onLaunchDateChange,
 
-            isLaunchDateValid = uiState.isLaunchDateValid,
-            showLaunchDateError = uiState.showLaunchDateError,
+            isLaunchDateValid = state.isLaunchDateValid,
+            showLaunchDateError = state.showLaunchDateError,
 
-            selectedCategory = uiState.selectedCategory,
+            selectedCategory = state.selectedCategory,
             onCategorySelected = onCategorySelected,
 
-            minimumRating = uiState.minimumRating,
+            minimumRating = state.minimumRating,
             onRatingChange = onRatingChange,
 
-            sortBy = uiState.sortBy,
+            sortBy = state.sortBy,
             onSortChange = onSortChange,
             onClearFilters = onClearFilters,
             onApplyFilters = onApplyFilters
@@ -157,7 +160,7 @@ fun SearchProductViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(selectedItem = "search", showBottomBar = true) { innerPadding ->
             SearchProductViewContent(
-                uiState = SearchProductState(),
+                state = SearchProductState(),
                 onSearchTextChange = {},
                 onBrandChange = {},
                 onProductNameChange = {},
@@ -185,7 +188,7 @@ fun SearchProductViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(selectedItem = "search", showBottomBar = true) { innerPadding ->
             SearchProductViewContent(
-                uiState = SearchProductState(),
+                state = SearchProductState(),
                 onSearchTextChange = {},
                 onBrandChange = {},
                 onProductNameChange = {},

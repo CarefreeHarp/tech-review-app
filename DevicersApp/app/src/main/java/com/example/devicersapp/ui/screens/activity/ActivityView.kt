@@ -34,9 +34,8 @@ fun ActivityView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    ActivityScreenContent(
-        activityGroups = uiState.activityGroups,
-        followedActivityIds = uiState.followedActivityIds,
+    ActivityViewContent(
+        state = uiState,
         onFollow = viewModel::followActivity,
         onActivityClick = { activity ->
             when (activity.type) {
@@ -57,16 +56,14 @@ fun ActivityView(
 /**
  * Ensambla la lista agrupada de eventos de actividad.
  *
- * @param activityGroups Grupos locales de eventos que se mostrarán.
- * @param followedActivityIds Identificadores de eventos cuyos autores ya se siguen.
+ * @param state Estado inmutable con los grupos y seguimientos visibles.
  * @param onFollow Acción solicitada al seleccionar seguir.
  * @param onActivityClick Acción solicitada al abrir el destino de una notificación.
  * @param modifier Modificador aplicado al contenido.
  */
 @Composable
-fun ActivityScreenContent(
-    activityGroups: List<ActivityGroupContent>,
-    followedActivityIds: Set<String>,
+fun ActivityViewContent(
+    state: ActivityState,
     onFollow: (String) -> Unit,
     onActivityClick: (ActivityContent) -> Unit,
     modifier: Modifier = Modifier
@@ -77,7 +74,7 @@ fun ActivityScreenContent(
         contentPadding = PaddingValues(bottom = 110.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        activityGroups.forEachIndexed { groupIndex, group ->
+        state.activityGroups.forEachIndexed { groupIndex, group ->
             item(key = "${group.id}_header") {
                 ActivitySection(titleResId = group.titleResId)
             }
@@ -88,7 +85,7 @@ fun ActivityScreenContent(
                 // Cada actividad es un ítem independiente para que LazyColumn la componga bajo demanda.
                 ActivityCard(
                     activity = activity,
-                    isFollowed = activity.id in followedActivityIds,
+                    isFollowed = activity.id in state.followedActivityIds,
                     onFollow = { onFollow(activity.id) },
                     onClick = { onActivityClick(activity) },
                     isHighlighted = groupIndex == 0
@@ -108,11 +105,12 @@ fun ActivityScreenPreview() {
             showBottomBar = true,
             topBarNumber = 10
         ) { innerPadding ->
-            ActivityScreenContent(
-                activityGroups = LocalActivityProvider.activityGroups(
-                    currentTimeMillis = System.currentTimeMillis()
+            ActivityViewContent(
+                state = ActivityState(
+                    activityGroups = LocalActivityProvider.activityGroups(
+                        currentTimeMillis = System.currentTimeMillis()
+                    )
                 ),
-                followedActivityIds = emptySet(),
                 onFollow = {},
                 onActivityClick = {},
                 modifier = Modifier
@@ -136,11 +134,12 @@ fun ActivityScreenDarkPreview() {
             showBottomBar = true,
             topBarNumber = 10
         ) { innerPadding ->
-            ActivityScreenContent(
-                activityGroups = LocalActivityProvider.activityGroups(
-                    currentTimeMillis = System.currentTimeMillis()
+            ActivityViewContent(
+                state = ActivityState(
+                    activityGroups = LocalActivityProvider.activityGroups(
+                        currentTimeMillis = System.currentTimeMillis()
+                    )
                 ),
-                followedActivityIds = emptySet(),
                 onFollow = {},
                 onActivityClick = {},
                 modifier = Modifier

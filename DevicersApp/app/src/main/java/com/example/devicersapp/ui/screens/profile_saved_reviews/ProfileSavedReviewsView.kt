@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.profile_saved_reviews.components.SavedReviewCard
@@ -45,9 +46,7 @@ fun ProfileSavedReviewsView(
     val uiState by viewModel.uiState.collectAsState()
 
     ProfileSavedReviewsViewContent(
-        profile = uiState.profile,
-        savedReviews = uiState.savedReviews,
-        isReviewsSelected = uiState.isReviewsSelected,
+        state = uiState,
         onReviewsClick = {
             viewModel.onReviewsSelected()
             onReviewsClick()
@@ -63,9 +62,7 @@ fun ProfileSavedReviewsView(
 /** Ensambla el encabezado y la cuadrícula de reseñas guardadas del perfil propio. */
 @Composable
 fun ProfileSavedReviewsViewContent(
-    profile: ProfileContent,
-    savedReviews: List<ReviewContent>,
-    isReviewsSelected: Boolean,
+    state: ProfileSavedReviewsState,
     onReviewsClick: () -> Unit,
     onSavedClick: () -> Unit,
     onReviewClick: (Int) -> Unit,
@@ -83,10 +80,10 @@ fun ProfileSavedReviewsViewContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
-                ProfileAvatar(avatarResId = profile.avatarResId, modifier = Modifier.size(84.dp))
+                ProfileAvatar(avatarResId = state.profile.avatarResId, modifier = Modifier.size(84.dp))
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = stringResource(profile.handleResId),
+                    text = stringResource(state.profile.handleResId),
                     color = LocalDevicersColors.current.textPrimary,
                     style = MaterialTheme.typography.titleMedium
                 )
@@ -94,7 +91,7 @@ fun ProfileSavedReviewsViewContent(
                 SectionTabsRow(
                     startLabelResId = R.string.profile_reviews,
                     endLabelResId = R.string.profile_saved,
-                    isStartSelected = isReviewsSelected,
+                    isStartSelected = state.isReviewsSelected,
                     onStartClick = onReviewsClick,
                     onEndClick = onSavedClick,
                     selectedColor = LocalDevicersColors.current.primaryText
@@ -102,7 +99,7 @@ fun ProfileSavedReviewsViewContent(
                 Spacer(modifier = Modifier.height(18.dp))
             }
         }
-        itemsIndexed(savedReviews) { _, savedReview ->
+        itemsIndexed(state.savedReviews) { _, savedReview ->
             SavedReviewCard(review = savedReview, onClick = { onReviewClick(savedReview.id) })
         }
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -122,9 +119,17 @@ fun ProfileSavedReviewsViewPreview() {
             topBarNumber = 1,
             topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
-            ProfileSavedReviewsView(
+            ProfileSavedReviewsViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                viewModel = ProfileSavedReviewsViewModel()
+                state = ProfileSavedReviewsState(
+                    profile = LocalProfileProvider.profile,
+                    savedReviews = LocalProfileProvider.savedReviews.mapNotNull { savedReview ->
+                        LocalReviewProvider.findById(savedReview.reviewId)
+                    }
+                ),
+                onReviewsClick = {},
+                onSavedClick = {},
+                onReviewClick = {}
             )
         }
     }
@@ -141,9 +146,17 @@ fun ProfileSavedReviewsViewDarkPreview() {
             topBarNumber = 1,
             topBarUserHandleResId = LocalProfileProvider.profile.handleResId
         ) { innerPadding ->
-            ProfileSavedReviewsView(
+            ProfileSavedReviewsViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                viewModel = ProfileSavedReviewsViewModel()
+                state = ProfileSavedReviewsState(
+                    profile = LocalProfileProvider.profile,
+                    savedReviews = LocalProfileProvider.savedReviews.mapNotNull { savedReview ->
+                        LocalReviewProvider.findById(savedReview.reviewId)
+                    }
+                ),
+                onReviewsClick = {},
+                onSavedClick = {},
+                onReviewClick = {}
             )
         }
     }

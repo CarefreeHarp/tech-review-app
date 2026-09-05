@@ -38,7 +38,7 @@ fun SearchProfileView(
     val uiState by viewModel.uiState.collectAsState()
 
     SearchProfileViewContent(
-        uiState = uiState,
+        state = uiState,
         onSearchTextChange = viewModel::onSearchTextChange,
         onUsernameChange = viewModel::onUsernameChange,
         onInterestsChange = viewModel::onInterestsChange,
@@ -58,7 +58,7 @@ fun SearchProfileView(
 /**
  * Reúne el título, la búsqueda general y la tarjeta de filtros de perfiles.
  *
- * @param uiState Estado inmutable que describe la consulta y los filtros activos.
+ * @param state Estado inmutable que describe la consulta y los filtros activos.
  * @param onSearchTextChange Acción que solicita actualizar la búsqueda general.
  * @param onUsernameChange Acción que solicita actualizar el nombre de usuario.
  * @param onInterestsChange Acción que solicita actualizar los intereses.
@@ -73,7 +73,7 @@ fun SearchProfileView(
  */
 @Composable
 fun SearchProfileViewContent(
-    uiState: SearchProfileState,
+    state: SearchProfileState,
     onSearchTextChange: (String) -> Unit,
     onUsernameChange: (String) -> Unit,
     onInterestsChange: (String) -> Unit,
@@ -109,7 +109,7 @@ fun SearchProfileViewContent(
             placeholder = R.string.search_profile_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = true,
-            text = uiState.searchText,
+            text = state.searchText,
             onTextChange = onSearchTextChange
         )
 
@@ -123,19 +123,19 @@ fun SearchProfileViewContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         SearchProfileFilterPanel(
-            username = uiState.username,
+            username = state.username,
             onUsernameChange = onUsernameChange,
 
-            interests = uiState.interests,
+            interests = state.interests,
             onInterestsChange = onInterestsChange,
 
-            minimumReviews = uiState.minimumReviews,
+            minimumReviews = state.minimumReviews,
             onMinimumReviewsChange = onMinimumReviewsChange,
 
-            relationship = uiState.relationship,
+            relationship = state.relationship,
             onRelationshipChange = onRelationshipChange,
 
-            sortBy = uiState.sortBy,
+            sortBy = state.sortBy,
             onSortChange = onSortChange,
             onClearFilters = onClearFilters,
             onApplyFilters = onApplyFilters
@@ -153,7 +153,7 @@ fun SearchProfileViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(selectedItem = "search", showBottomBar = true) { innerPadding ->
             SearchProfileViewContent(
-                uiState = SearchProfileState(),
+                state = SearchProfileState(),
                 onSearchTextChange = {},
                 onUsernameChange = {},
                 onInterestsChange = {},
@@ -180,7 +180,7 @@ fun SearchProfileViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(selectedItem = "search", showBottomBar = true) { innerPadding ->
             SearchProfileViewContent(
-                uiState = SearchProfileState(),
+                state = SearchProfileState(),
                 onSearchTextChange = {},
                 onUsernameChange = {},
                 onInterestsChange = {},

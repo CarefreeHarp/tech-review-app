@@ -1,14 +1,17 @@
 package com.example.devicersapp.ui.screens.own_profile
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.data.local.LocalReviewProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /** Conserva y carga el estado de la pantalla del perfil propio. */
-class OwnProfileViewModel : ViewModel() {
+@HiltViewModel
+class OwnProfileViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(OwnProfileState())
     val uiState: StateFlow<OwnProfileState> = _uiState

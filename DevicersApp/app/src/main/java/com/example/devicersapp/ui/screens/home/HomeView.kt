@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
+import com.example.devicersapp.data.local.LocalProfileProvider
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.home.components.FeedReviewItem
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -45,8 +47,7 @@ fun HomeView(
     val uiState by viewModel.uiState.collectAsState()
 
     HomeViewContent(
-        feedItems = uiState.feedItems,
-        isForYouSelected = uiState.isForYouSelected,
+        state = uiState,
         onForYouClick = viewModel::onForYouClick,
         onFollowingClick = viewModel::onFollowingClick,
         onReviewClick = onReviewClick,
@@ -63,8 +64,7 @@ fun HomeView(
  */
 @Composable
 fun HomeViewContent(
-    feedItems: List<HomeFeedItem>,
-    isForYouSelected: Boolean,
+    state: HomeState,
     onForYouClick: () -> Unit,
     onFollowingClick: () -> Unit,
     onReviewClick: (Int) -> Unit,
@@ -80,7 +80,7 @@ fun HomeViewContent(
         SectionTabsRow(
             startLabelResId = R.string.home_tab_for_you,
             endLabelResId = R.string.home_tab_following,
-            isStartSelected = isForYouSelected,
+            isStartSelected = state.isForYouSelected,
             onStartClick = onForYouClick,
             onEndClick = onFollowingClick
         )
@@ -98,7 +98,7 @@ fun HomeViewContent(
                 Spacer(modifier = Modifier.height(20.dp))
             }
 
-            itemsIndexed(feedItems) { index, feedItem ->
+            itemsIndexed(state.feedItems) { index, feedItem ->
                 val review = feedItem.review
 
                 FeedReviewItem(
@@ -115,7 +115,7 @@ fun HomeViewContent(
                     }
                 )
 
-                if (index < feedItems.lastIndex) {
+                if (index < state.feedItems.lastIndex) {
                     Spacer(modifier = Modifier.height(20.dp))
 
                     HorizontalDivider(
@@ -145,11 +145,25 @@ fun HomeViewPreview() {
             showBottomBar = true,
             topBarNumber = 5
         ) { innerPadding ->
-            HomeView(
+            HomeViewContent(
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                viewModel = HomeViewModel()
+                state = HomeState(
+                    feedItems = LocalReviewProvider.reviews.map { review ->
+                        HomeFeedItem(
+                            review = review,
+                            author = requireNotNull(
+                                LocalProfileProvider.getProfileById(review.authorId)
+                            )
+                        )
+                    }
+                ),
+                onForYouClick = {},
+                onFollowingClick = {},
+                onReviewClick = {},
+                onCommentClick = {},
+                onSendClick = {}
             )
         }
     }
@@ -165,11 +179,25 @@ fun HomeViewDarkPreview() {
             showBottomBar = true,
             topBarNumber = 5
         ) { innerPadding ->
-            HomeView(
+            HomeViewContent(
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                viewModel = HomeViewModel()
+                state = HomeState(
+                    feedItems = LocalReviewProvider.reviews.map { review ->
+                        HomeFeedItem(
+                            review = review,
+                            author = requireNotNull(
+                                LocalProfileProvider.getProfileById(review.authorId)
+                            )
+                        )
+                    }
+                ),
+                onForYouClick = {},
+                onFollowingClick = {},
+                onReviewClick = {},
+                onCommentClick = {},
+                onSendClick = {}
             )
         }
     }

@@ -1,13 +1,16 @@
 package com.example.devicersapp.ui.screens.search_product
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.ui.utils.search.isValidLaunchDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /** Conserva la consulta y los filtros con los que se acota la búsqueda de productos. */
-class SearchProductViewModel : ViewModel() {
+@HiltViewModel
+class SearchProductViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchProductState())
     val uiState: StateFlow<SearchProductState> = _uiState

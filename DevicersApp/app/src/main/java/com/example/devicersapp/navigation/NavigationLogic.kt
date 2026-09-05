@@ -19,6 +19,7 @@ object NavigationLogic {
         route: String?,
         profileId: String? = null
     ): NavigationUiConfiguration = when (route) {
+        AppDestination.Splash.route -> NavigationUiConfiguration()
         AppDestination.Login.route -> NavigationUiConfiguration(topBarNumber = 5)
         AppDestination.Home.route -> NavigationUiConfiguration(
             selectedItem = AppDestination.Home.route,
