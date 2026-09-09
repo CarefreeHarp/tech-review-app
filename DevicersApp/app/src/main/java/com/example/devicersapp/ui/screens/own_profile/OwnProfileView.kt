@@ -82,6 +82,8 @@ fun OwnProfileViewContent(
                 ProfileHeader(
                     profile = profile,
                     actionLabelResId = R.string.profile_edit,
+                    displayName = state.displayName,
+                    email = state.email,
                     showEditBadge = true,
                     onActionClick = onEditProfileClick,
                     onEditAvatarClick = onEditAvatarClick

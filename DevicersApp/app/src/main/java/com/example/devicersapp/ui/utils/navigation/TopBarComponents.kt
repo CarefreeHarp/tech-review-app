@@ -39,10 +39,19 @@ import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.theme.ScreenTitleText
 import com.example.devicersapp.ui.utils.authentication.AuthenticationHeader
 
-/** Muestra la barra superior del perfil actualmente consultado. */
+/**
+ * Muestra la barra superior del perfil actualmente consultado.
+ *
+ * @param userHandleResId Recurso usado como alias de respaldo para perfiles locales.
+ * @param userHandle Alias dinámico del perfil autenticado que tiene prioridad sobre el recurso local.
+ * @param onBackClick Acción solicitada al regresar desde el perfil.
+ * @param onSignOutClick Acción solicitada al cerrar la sesión desde el menú.
+ * @param modifier Modificador aplicado al contenedor de la barra.
+ */
 @Composable
 fun TopBar1(
     @StringRes userHandleResId: Int? = null,
+    userHandle: String? = null,
     onBackClick: () -> Unit = {},
     onSignOutClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -69,9 +78,11 @@ fun TopBar1(
                     modifier = Modifier.size(20.dp)
                 )
             }
-            if (userHandleResId != null) {
+            val visibleUserHandle = userHandle?.takeIf { it.isNotBlank() }
+                ?: userHandleResId?.let { stringResource(it) }
+            if (visibleUserHandle != null) {
                 Text(
-                    text = stringResource(userHandleResId),
+                    text = visibleUserHandle,
                     modifier = Modifier.align(Alignment.Center),
                     style = MaterialTheme.typography.titleMedium,
                     color = colors.textPrimary

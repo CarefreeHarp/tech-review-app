@@ -73,6 +73,7 @@ class RegisterViewModel @Inject constructor(
             email = _uiState.value.email,
             password = _uiState.value.password
         )
+        authRepository.updateDisplayName(_uiState.value.username.trim())
         true
     } catch (exception: Exception) {
         _uiState.update { state ->

@@ -5,6 +5,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -99,6 +100,7 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
     val sessionViewModel: SessionViewModel = hiltViewModel()
+    val sessionState by sessionViewModel.uiState.collectAsState()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
 
@@ -114,6 +116,10 @@ fun AppNavigation(
         showBottomBar = configuration.showBottomBar,
         topBarNumber = configuration.topBarNumber,
         topBarUserHandleResId = configuration.topBarUserHandleResId,
+        topBarUserHandle = sessionState.currentProfileHandle.takeIf {
+            backStackEntry?.destination?.route == AppDestination.OwnProfile.route ||
+                backStackEntry?.destination?.route == AppDestination.ProfileSavedReviews.route
+        },
         modifier = modifier,
         onNavigationItemClick = { route ->
             navController.navigateToDestination(route)

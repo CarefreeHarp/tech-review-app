@@ -27,6 +27,7 @@ import com.example.devicersapp.ui.utils.navigation.TopBar10
  * @param showBottomBar Indica si el Scaffold debe mostrar la barra de navegación inferior.
  * @param topBarNumber Número de la barra superior que debe mostrar la pantalla, o `null` si no tiene.
  * @param topBarUserHandleResId Recurso del nombre de usuario que muestra la barra superior de perfil.
+ * @param topBarUserHandle Alias dinámico de la cuenta autenticada que sustituye el recurso cuando existe.
  * @param modifier Modificador aplicado al Scaffold.
  * @param onNavigationItemClick Acción solicitada al seleccionar un elemento de navegación.
  * @param onTopBarBackClick Acción solicitada por una barra superior con regreso interactivo.
@@ -39,6 +40,7 @@ fun DevicersScaffold(
     showBottomBar: Boolean = false,
     topBarNumber: Int? = null,
     @StringRes topBarUserHandleResId: Int? = null,
+    topBarUserHandle: String? = null,
     modifier: Modifier = Modifier,
     onNavigationItemClick: (String) -> Unit = {},
     onTopBarBackClick: () -> Unit = {},
@@ -54,6 +56,7 @@ fun DevicersScaffold(
             when (topBarNumber) {
                 1 -> TopBar1(
                     userHandleResId = topBarUserHandleResId,
+                    userHandle = topBarUserHandle,
                     onBackClick = onTopBarBackClick,
                     onSignOutClick = onSignOutClick
                 )

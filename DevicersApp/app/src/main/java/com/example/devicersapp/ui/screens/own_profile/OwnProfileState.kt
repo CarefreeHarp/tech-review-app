@@ -5,6 +5,9 @@ import com.example.devicersapp.ui.models.ReviewContent
 
 /** Representa el estado visible de la pantalla del perfil propio. */
 data class OwnProfileState(
+    val userId: String? = null,
+    val displayName: String = "",
+    val email: String = "",
     val profile: ProfileContent? = null,
     val reviews: List<ReviewContent> = emptyList()
 )

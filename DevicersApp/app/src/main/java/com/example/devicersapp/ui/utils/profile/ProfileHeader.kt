@@ -41,6 +41,8 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
  *
  * @param profile Datos visibles del perfil, incluido el recurso de su avatar.
  * @param actionLabelResId Texto de la acción principal, que cambia según de quién sea el perfil.
+ * @param displayName Nombre proveniente de la cuenta autenticada; si no existe, se usa el alias del perfil.
+ * @param email Correo de la cuenta autenticada que se muestra debajo del nombre cuando está disponible.
  * @param modifier Modificador aplicado al contenedor del perfil.
  * @param showEditBadge Indica si la foto ofrece la insignia para cambiarla, en el perfil propio.
  * @param showStats Indica si se muestran las métricas de reseñas, seguidores y seguidos.
@@ -54,6 +56,8 @@ fun ProfileHeader(
     profile: ProfileContent,
     @StringRes actionLabelResId: Int,
     modifier: Modifier = Modifier,
+    displayName: String = "",
+    email: String = "",
     showEditBadge: Boolean = false,
     showStats: Boolean = true,
     showAction: Boolean = true,
@@ -95,10 +99,19 @@ fun ProfileHeader(
         Spacer(modifier = Modifier.height(14.dp))
 
         Text(
-            text = stringResource(profile.handleResId),
+            text = displayName.ifBlank { stringResource(profile.handleResId) },
             style = MaterialTheme.typography.titleMedium,
             color = colors.textPrimary
         )
+
+        if (email.isNotBlank()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = email,
+                style = MaterialTheme.typography.bodyMedium,
+                color = colors.textSecondary
+            )
+        }
 
         // Las secciones que se concentran en el contenido guardado prescinden de las métricas.
         if (showStats) {
