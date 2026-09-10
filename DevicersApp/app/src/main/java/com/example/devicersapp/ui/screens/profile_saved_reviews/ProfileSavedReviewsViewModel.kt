@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.data.local.LocalReviewProvider
+import com.example.devicersapp.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -11,7 +12,9 @@ import javax.inject.Inject
 
 /** Prepara la lista local de reseñas que la persona guardó. */
 @HiltViewModel
-class ProfileSavedReviewsViewModel @Inject constructor() : ViewModel() {
+class ProfileSavedReviewsViewModel @Inject constructor(
+    private val authRepository: AuthRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         ProfileSavedReviewsState(profile = LocalProfileProvider.profile)
@@ -27,6 +30,7 @@ class ProfileSavedReviewsViewModel @Inject constructor() : ViewModel() {
         _uiState.update {
             ProfileSavedReviewsState(
                 profile = LocalProfileProvider.profile,
+                email = authRepository.currentUser?.email.orEmpty(),
                 savedReviews = LocalProfileProvider.savedReviews.mapNotNull { savedReview ->
                     LocalReviewProvider.findById(savedReview.reviewId)
                 }

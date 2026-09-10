@@ -6,6 +6,7 @@ import com.example.devicersapp.ui.models.ReviewContent
 /** Representa el contenido y la pestaña activa de las reseñas guardadas. */
 data class ProfileSavedReviewsState(
     val profile: ProfileContent,
+    val email: String = "",
     val savedReviews: List<ReviewContent> = emptyList(),
     val isReviewsSelected: Boolean = false
 )

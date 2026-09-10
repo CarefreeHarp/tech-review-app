@@ -41,10 +41,11 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
  *
  * @param profile Datos visibles del perfil, incluido el recurso de su avatar.
  * @param actionLabelResId Texto de la acción principal, que cambia según de quién sea el perfil.
- * @param displayName Nombre proveniente de la cuenta autenticada; si no existe, se usa el alias del perfil.
- * @param email Correo de la cuenta autenticada que se muestra debajo del nombre cuando está disponible.
+ * @param displayName Nombre que se muestra en la cabecera cuando corresponde al perfil actual.
+ * @param email Correo de la cuenta autenticada que se muestra debajo de la foto cuando está disponible.
  * @param modifier Modificador aplicado al contenedor del perfil.
  * @param showEditBadge Indica si la foto ofrece la insignia para cambiarla, en el perfil propio.
+ * @param showDisplayName Indica si debe mostrarse el nombre debajo de la foto.
  * @param showStats Indica si se muestran las métricas de reseñas, seguidores y seguidos.
  * @param showAction Indica si se muestra el botón de acción principal.
  * @param showBiography Indica si se muestra la biografía del perfil.
@@ -59,6 +60,7 @@ fun ProfileHeader(
     displayName: String = "",
     email: String = "",
     showEditBadge: Boolean = false,
+    showDisplayName: Boolean = true,
     showStats: Boolean = true,
     showAction: Boolean = true,
     showBiography: Boolean = true,
@@ -98,14 +100,16 @@ fun ProfileHeader(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        Text(
-            text = displayName.ifBlank { stringResource(profile.handleResId) },
-            style = MaterialTheme.typography.titleMedium,
-            color = colors.textPrimary
-        )
+        if (showDisplayName) {
+            Text(
+                text = displayName.ifBlank { stringResource(profile.handleResId) },
+                style = MaterialTheme.typography.titleMedium,
+                color = colors.textPrimary
+            )
+        }
 
         if (email.isNotBlank()) {
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(if (showDisplayName) 4.dp else 0.dp))
             Text(
                 text = email,
                 style = MaterialTheme.typography.bodyMedium,

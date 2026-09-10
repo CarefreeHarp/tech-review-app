@@ -28,15 +28,16 @@ class SessionViewModel @Inject constructor(
     private fun observeCurrentProfile() {
         viewModelScope.launch {
             authRepository.currentUserState.collectLatest { user ->
-                val accountName = user?.displayName?.trim().orEmpty()
-                val emailAlias = user?.email?.substringBefore("@").orEmpty()
-                val handle = (accountName.ifBlank { emailAlias })
-                    .removePrefix("@")
-                    .takeIf { it.isNotBlank() }
-                    ?.let { "@$it" }
-                    .orEmpty()
-
-                _uiState.update { it.copy(currentProfileHandle = handle) }
+                val displayName = user?.displayName?.trim().orEmpty()
+                _uiState.update {
+                    it.copy(
+                        currentProfileHandle = displayName
+                            .removePrefix("@")
+                            .takeIf { name -> name.isNotBlank() }
+                            ?.let { name -> "@$name" }
+                            .orEmpty()
+                    )
+                }
             }
         }
     }

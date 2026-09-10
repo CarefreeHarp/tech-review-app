@@ -27,18 +27,11 @@ class OwnProfileViewModel @Inject constructor(
     fun loadProfile() {
         val profile = LocalProfileProvider.profile
         val authenticatedUser = authRepository.currentUser
-        val accountName = authenticatedUser?.displayName?.trim().orEmpty()
-        val emailAlias = authenticatedUser?.email?.substringBefore("@").orEmpty()
-        val currentProfileHandle = (accountName.ifBlank { emailAlias })
-            .removePrefix("@")
-            .takeIf { it.isNotBlank() }
-            ?.let { "@$it" }
-            .orEmpty()
 
         _uiState.update { currentState ->
             currentState.copy(
                 userId = authenticatedUser?.uid,
-                displayName = currentProfileHandle,
+                displayName = authenticatedUser?.displayName.orEmpty(),
                 email = authenticatedUser?.email.orEmpty(),
                 profile = profile,
                 reviews = LocalReviewProvider.reviewsForProfile(profile.id)

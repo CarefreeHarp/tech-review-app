@@ -85,6 +85,7 @@ fun OwnProfileViewContent(
                     displayName = state.displayName,
                     email = state.email,
                     showEditBadge = true,
+                    showDisplayName = false,
                     onActionClick = onEditProfileClick,
                     onEditAvatarClick = onEditAvatarClick
                 )
