@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.dagger.hilt)
+    implementation(libs.firebase.storage)
     ksp(libs.dagger.ksp)
     implementation(libs.hilt.compose.navigation)
     implementation(libs.firebase.analytics)
