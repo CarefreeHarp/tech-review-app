@@ -22,5 +22,6 @@ object FirebaseHiltModule {
     fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
 
     @Provides
+    @Singleton
     fun storage(): FirebaseStorage = Firebase.storage
 }
