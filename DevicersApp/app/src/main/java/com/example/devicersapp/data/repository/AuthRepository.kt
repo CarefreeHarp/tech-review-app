@@ -42,4 +42,11 @@ class AuthRepository @Inject constructor(
         authRemoteDataSource.signOut()
         _currentUserState.value = null
     }
+
+    // Actualiza la foto de perfil del usuario autenticado
+    suspend fun updateProfileImage(url:String){
+
+        authRemoteDataSource.updateProfileImage(url)
+        _currentUserState.value = authRemoteDataSource.currentUser
+    }
 }
