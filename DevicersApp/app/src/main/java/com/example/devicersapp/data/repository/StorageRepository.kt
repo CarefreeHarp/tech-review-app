@@ -1,7 +1,6 @@
 package com.example.devicersapp.data.repository
 
 import android.net.Uri
-import com.example.devicersapp.data.datasource.AuthRemoteDataSource
 import com.example.devicersapp.data.datasource.StorageRemoteDataSource
 import com.google.firebase.storage.StorageException
 import javax.inject.Inject
@@ -16,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class StorageRepository @Inject constructor(
     private val storage: StorageRemoteDataSource,
-    private val auth: AuthRemoteDataSource
+    private val auth: AuthRepository
 ) {
 
     /**
@@ -35,9 +34,10 @@ class StorageRepository @Inject constructor(
             val path = "profileImages/$userId.jpg"
             val url = storage.uploadImage(path, uri)
 
-            auth.updateProfileImage(url)
-
-            Result.success(url)
+            auth.updateProfileImage(url).fold(
+                onSuccess = { Result.success(url) },
+                onFailure = { exception -> Result.failure(exception) }
+            )
         } catch (e: StorageException) {
             Result.failure(
                 Exception(getStorageErrorMessage(e), e)

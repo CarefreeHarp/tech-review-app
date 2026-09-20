@@ -120,6 +120,7 @@ fun AppNavigation(
             backStackEntry?.destination?.route == AppDestination.OwnProfile.route ||
                 backStackEntry?.destination?.route == AppDestination.ProfileSavedReviews.route
         },
+        topBarProfileImageUrl = sessionState.profileImageUrl,
         modifier = modifier,
         onNavigationItemClick = { route ->
             navController.navigateToDestination(route)

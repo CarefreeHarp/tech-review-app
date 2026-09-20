@@ -28,6 +28,7 @@ import com.example.devicersapp.ui.utils.navigation.TopBar10
  * @param topBarNumber Número de la barra superior que debe mostrar la pantalla, o `null` si no tiene.
  * @param topBarUserHandleResId Recurso del nombre de usuario que muestra la barra superior de perfil.
  * @param topBarUserHandle Alias dinámico de la cuenta autenticada que sustituye el recurso cuando existe.
+ * @param topBarProfileImageUrl URL de la foto del usuario autenticado para encabezados que la muestran.
  * @param modifier Modificador aplicado al Scaffold.
  * @param onNavigationItemClick Acción solicitada al seleccionar un elemento de navegación.
  * @param onTopBarBackClick Acción solicitada por una barra superior con regreso interactivo.
@@ -41,6 +42,7 @@ fun DevicersScaffold(
     topBarNumber: Int? = null,
     @StringRes topBarUserHandleResId: Int? = null,
     topBarUserHandle: String? = null,
+    topBarProfileImageUrl: String? = null,
     modifier: Modifier = Modifier,
     onNavigationItemClick: (String) -> Unit = {},
     onTopBarBackClick: () -> Unit = {},
@@ -69,7 +71,7 @@ fun DevicersScaffold(
                 7 -> TitleTopBar(R.string.profile_search_results_title, onTopBarBackClick)
                 8 -> TitleTopBar(R.string.found_products_title, onTopBarBackClick)
                 9 -> TitleTopBar(R.string.request_product_title, onTopBarBackClick)
-                10 -> TopBar10()
+                10 -> TopBar10(profileImageUrl = topBarProfileImageUrl)
             }
         },
         bottomBar = {

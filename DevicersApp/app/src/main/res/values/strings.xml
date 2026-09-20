@@ -61,6 +61,16 @@
     <string name="access_authentication_error_preview">
         No fue posible iniciar sesión. Inténtalo de nuevo.
     </string>
+    <string name="auth_error_invalid_credentials">Correo o contraseña incorrectos.</string>
+    <string name="auth_error_user_not_found">No existe una cuenta con este correo electrónico.</string>
+    <string name="auth_error_email_in_use">Este correo electrónico ya está registrado.</string>
+    <string name="auth_error_weak_password">La contraseña no cumple los requisitos de seguridad.</string>
+    <string name="auth_error_network">No hay conexión. Revisa tu red e inténtalo nuevamente.</string>
+    <string name="auth_error_too_many_requests">Se realizaron demasiados intentos. Espera un momento antes de volver a intentarlo.</string>
+    <string name="auth_error_sign_in">No fue posible iniciar sesión. Inténtalo nuevamente.</string>
+    <string name="auth_error_sign_up">No fue posible crear la cuenta. Inténtalo nuevamente.</string>
+    <string name="auth_error_update_profile">No fue posible actualizar tu perfil. Inténtalo nuevamente.</string>
+    <string name="auth_error_sign_out">No fue posible cerrar sesión. Inténtalo nuevamente.</string>
 
     <!-- SEARCH -->
     <string name="home_tab_for_you">Para ti</string>

@@ -19,6 +19,7 @@ ksp = "2.3.10"
 googleServices = "4.5.0"
 firebaseCrashlyticsPlugin = "3.0.8"
 coroutines = "1.10.2"
+coil = "3.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +52,8 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutines" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

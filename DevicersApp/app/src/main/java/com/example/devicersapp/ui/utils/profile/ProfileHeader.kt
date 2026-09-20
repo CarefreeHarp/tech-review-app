@@ -43,6 +43,7 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
  * @param actionLabelResId Texto de la acción principal, que cambia según de quién sea el perfil.
  * @param displayName Nombre que se muestra en la cabecera cuando corresponde al perfil actual.
  * @param email Correo de la cuenta autenticada que se muestra debajo de la foto cuando está disponible.
+ * @param profileImageUrl URL remota de la foto del perfil propio, si existe.
  * @param modifier Modificador aplicado al contenedor del perfil.
  * @param showEditBadge Indica si la foto ofrece la insignia para cambiarla, en el perfil propio.
  * @param showDisplayName Indica si debe mostrarse el nombre debajo de la foto.
@@ -59,6 +60,7 @@ fun ProfileHeader(
     modifier: Modifier = Modifier,
     displayName: String = "",
     email: String = "",
+    profileImageUrl: String? = null,
     showEditBadge: Boolean = false,
     showDisplayName: Boolean = true,
     showStats: Boolean = true,
@@ -76,6 +78,7 @@ fun ProfileHeader(
         Box {
             ProfileAvatar(
                 avatarResId = profile.avatarResId,
+                imageUrl = profileImageUrl,
                 modifier = Modifier.size(84.dp)
             )
             // Solo el perfil propio ofrece cambiar la foto, con la insignia sobre su borde.

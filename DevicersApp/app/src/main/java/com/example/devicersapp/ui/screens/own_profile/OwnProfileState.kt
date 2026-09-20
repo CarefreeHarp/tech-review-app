@@ -9,5 +9,6 @@ data class OwnProfileState(
     val displayName: String = "",
     val email: String = "",
     val profile: ProfileContent? = null,
+    val profileImageUrl: String? = null,
     val reviews: List<ReviewContent> = emptyList()
 )

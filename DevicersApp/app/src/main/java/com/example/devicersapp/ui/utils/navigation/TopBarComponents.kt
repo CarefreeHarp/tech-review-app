@@ -38,6 +38,7 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.theme.ScreenTitleText
 import com.example.devicersapp.ui.utils.authentication.AuthenticationHeader
+import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 
 /**
  * Muestra la barra superior del perfil actualmente consultado.
@@ -369,28 +370,40 @@ fun TopBar5(modifier: Modifier = Modifier) {
     )
 }
 
-/** Muestra la barra superior de la actividad reciente del usuario. */
+/** Muestra la barra superior de la actividad reciente y el avatar del usuario autenticado. */
 @Composable
-fun TopBar10(modifier: Modifier = Modifier) {
+fun TopBar10(
+    profileImageUrl: String? = null,
+    modifier: Modifier = Modifier
+) {
     val colors = LocalDevicersColors.current
     Column(modifier = modifier.fillMaxWidth()) {
-        Column(
+        Row(
             modifier = Modifier
                 // Mantiene el título por debajo de la barra de estado en dispositivos con notch.
                 .statusBarsPadding()
                 .padding(horizontal = 20.dp)
                 .padding(top = 12.dp, bottom = 20.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = stringResource(R.string.activity_title),
-                style = ScreenTitleText,
-                color = colors.textPrimary
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(R.string.activity_subtitle),
-                style = MaterialTheme.typography.bodyMedium,
-                color = colors.textSecondary
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.activity_title),
+                    style = ScreenTitleText,
+                    color = colors.textPrimary
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.activity_subtitle),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.textSecondary
+                )
+            }
+            ProfileAvatar(
+                avatarResId = R.drawable.profile_avatar_00,
+                imageUrl = profileImageUrl,
+                modifier = Modifier.size(42.dp)
             )
         }
         HorizontalDivider(
