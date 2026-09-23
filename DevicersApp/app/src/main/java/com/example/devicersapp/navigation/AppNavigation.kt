@@ -114,6 +114,7 @@ fun AppNavigation(
     DevicersScaffold(
         selectedItem = configuration.selectedItem,
         showBottomBar = configuration.showBottomBar,
+        showDrawer = configuration.showDrawer,
         topBarNumber = configuration.topBarNumber,
         topBarUserHandleResId = configuration.topBarUserHandleResId,
         topBarUserHandle = sessionState.currentProfileHandle.takeIf {
