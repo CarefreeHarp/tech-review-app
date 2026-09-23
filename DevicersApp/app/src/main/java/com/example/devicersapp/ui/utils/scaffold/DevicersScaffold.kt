@@ -92,8 +92,6 @@ fun DevicersScaffold(
             modifier = modifier.fillMaxSize(),
             containerColor = colors.background,
             topBar = {
-                // Centraliza las variantes de encabezado para que
-                // las pantallas solo soliciten su número.
                 when (topBarNumber) {
                     1 -> TopBar1(
                         userHandleResId = topBarUserHandleResId,
@@ -114,7 +112,17 @@ fun DevicersScaffold(
                         onBackClick = onTopBarBackClick
                     )
 
-                    5 -> TopBar5()
+                    5 -> TopBar5(
+                        onMenuClick = if (showDrawer) {
+                            {
+                                coroutineScope.launch {
+                                    drawerState.open()
+                                }
+                            }
+                        } else {
+                            null
+                        }
+                    )
 
                     6 -> TopBar6(
                         onBackClick = onTopBarBackClick

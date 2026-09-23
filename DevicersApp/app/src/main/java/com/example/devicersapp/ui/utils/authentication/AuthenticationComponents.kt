@@ -2,6 +2,9 @@ package com.example.devicersapp.ui.utils.authentication
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
@@ -79,24 +82,41 @@ fun PrimaryButton(
  * @param modifier Modificador aplicado a la fila del encabezado.
  */
 @Composable
-fun AuthenticationHeader(modifier: Modifier = Modifier) {
-    val logoRes = if (LocalDevicersColors.current.isDarkTheme) {
+fun AuthenticationHeader(
+    modifier: Modifier = Modifier,
+    onMenuClick: (() -> Unit)? = null
+) {
+    val colors = LocalDevicersColors.current
+
+    val logoRes = if (colors.isDarkTheme) {
         R.drawable.logo_oscuro
     } else {
         R.drawable.logo_claro
     }
 
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        // El Figma editorial centra la marca en el encabezado de todas las pantallas.
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+    Box(
+        modifier = modifier.fillMaxWidth()
     ) {
         Image(
             painter = painterResource(logoRes),
             contentDescription = stringResource(R.string.devicers_logo_description),
-            modifier = Modifier.size(width = 186.dp, height = 50.dp)
+            modifier = Modifier
+                .size(width = 186.dp, height = 50.dp)
+                .align(Alignment.Center)
         )
+
+        if (onMenuClick != null) {
+            IconButton(
+                onClick = onMenuClick,
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.menu_icon),
+                    contentDescription = "Abrir menú lateral",
+                    tint = colors.textPrimary
+                )
+            }
+        }
     }
 }
 
