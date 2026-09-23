@@ -360,13 +360,15 @@ fun TitleTopBar(
 
 /** Muestra la barra superior de marca compartida por inicio de sesión y registro. */
 @Composable
-fun TopBar5(modifier: Modifier = Modifier) {
+fun TopBar5(
+    modifier: Modifier = Modifier,
+    onMenuClick: (() -> Unit)? = null
+) {
     AuthenticationHeader(
         modifier = modifier
-            // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
             .statusBarsPadding()
-            // El relleno simétrico evita que la marca centrada se desplace hacia un costado.
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 20.dp),
+        onMenuClick = onMenuClick
     )
 }
 
