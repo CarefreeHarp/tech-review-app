@@ -53,17 +53,20 @@ class AccessViewModel @Inject constructor(
         }
     }
 
-    /** Inicia sesión y devuelve si Firebase completó la operación correctamente. */
-    private suspend fun signIn(): Boolean = try {
-        authRepository.signIn(
+    /** Inicia sesión y refleja en el estado el error contenido en el resultado. */
+    private suspend fun signIn(): Boolean {
+        val result = authRepository.signIn(
             email = _uiState.value.email,
             password = _uiState.value.password
         )
-        true
-    } catch (exception: Exception) {
-        _uiState.update { state ->
-            state.copy(signInErrorMessage = exception.message.toString())
-        }
-        false
+        return result.fold(
+            onSuccess = { true },
+            onFailure = { exception ->
+                _uiState.update { state ->
+                    state.copy(signInErrorMessage = exception.message.orEmpty())
+                }
+                false
+            }
+        )
     }
 }

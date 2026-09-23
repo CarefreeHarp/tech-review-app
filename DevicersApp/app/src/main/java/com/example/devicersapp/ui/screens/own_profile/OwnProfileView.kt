@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.own_profile
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,20 +38,24 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
 @Composable
 fun OwnProfileView(
     onEditProfileClick: () -> Unit = {},
-    onEditAvatarClick: () -> Unit = {},
     onReviewClick: (Int) -> Unit = {},
     onSavedReviewsClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: OwnProfileViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let(viewModel::uploadImageToFirebase)
+    }
 
     OwnProfileViewContent(
             state = uiState,
             onSavedClick = onSavedReviewsClick,
             onReviewClick = onReviewClick,
             onEditProfileClick = onEditProfileClick,
-            onEditAvatarClick = onEditAvatarClick,
+            onEditAvatarClick = { imagePicker.launch("image/*") },
             modifier = modifier
                 .fillMaxSize()
                 .background(LocalDevicersColors.current.background)
@@ -84,6 +90,7 @@ fun OwnProfileViewContent(
                     actionLabelResId = R.string.profile_edit,
                     displayName = state.displayName,
                     email = state.email,
+                    profileImageUrl = state.profileImageUrl,
                     showEditBadge = true,
                     showDisplayName = false,
                     onActionClick = onEditProfileClick,
