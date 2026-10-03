@@ -8,47 +8,45 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
-/** Provee el cliente REST y los servicios compartidos durante toda la aplicación. */
+/** Provee Retrofit y los servicios compartidos durante toda la aplicación. */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // El emulador accede al localhost del computador mediante esta dirección.
-    private const val BASE_URL = "http://10.0.2.2:3000/"
-
-    /** Entrega el cliente HTTP compartido por los servicios de la API. */
-    @Provides
+    /** Configura la conexión al backend del computador desde el emulador. */
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
-
-    /** Configura Retrofit con el cliente compartido y la conversión de JSON con Gson. */
     @Provides
-    @Singleton
-    fun provideRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    fun providesRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:3000/")
+            // Scalars atiende el texto antes de que Gson intente interpretarlo como JSON.
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
     /** Entrega el servicio de usuarios creado por Retrofit. */
-    @Provides
     @Singleton
-    fun provideUsersRetrofitService(retrofit: Retrofit): UsersRetrofitService =
-        retrofit.create(UsersRetrofitService::class.java)
+    @Provides
+    fun providesUsersRetrofitService(retrofit: Retrofit): UsersRetrofitService {
+        return retrofit.create(UsersRetrofitService::class.java)
+    }
 
     /** Entrega el servicio de artículos creado por Retrofit. */
-    @Provides
     @Singleton
-    fun provideProductRetrofitService(retrofit: Retrofit): ProductRetrofitService =
-        retrofit.create(ProductRetrofitService::class.java)
+    @Provides
+    fun providesProductRetrofitService(retrofit: Retrofit): ProductRetrofitService {
+        return retrofit.create(ProductRetrofitService::class.java)
+    }
 
     /** Entrega el servicio de reseñas creado por Retrofit. */
-    @Provides
     @Singleton
-    fun provideReviewRetrofitService(retrofit: Retrofit): ReviewRetrofitService =
-        retrofit.create(ReviewRetrofitService::class.java)
+    @Provides
+    fun providesReviewRetrofitService(retrofit: Retrofit): ReviewRetrofitService {
+        return retrofit.create(ReviewRetrofitService::class.java)
+    }
 }
