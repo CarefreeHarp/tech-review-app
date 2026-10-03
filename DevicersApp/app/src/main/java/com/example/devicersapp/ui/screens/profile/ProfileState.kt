@@ -1,5 +1,6 @@
 package com.example.devicersapp.ui.screens.profile
 
+import android.net.Uri
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ReviewContent
 

@@ -35,7 +35,8 @@ class SessionViewModel @Inject constructor(
                             .removePrefix("@")
                             .takeIf { name -> name.isNotBlank() }
                             ?.let { name -> "@$name" }
-                            .orEmpty()
+                            .orEmpty(),
+                        profileImageUrl = user?.photoUrl?.toString()
                     )
                 }
             }

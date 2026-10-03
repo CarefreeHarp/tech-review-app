@@ -67,19 +67,31 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    /** Registra una cuenta y devuelve si Firebase completó la operación correctamente. */
-    suspend fun signUp(): Boolean = try {
-        authRepository.signUp(
+    /** Registra una cuenta y refleja en el estado el error contenido en el resultado. */
+    suspend fun signUp(): Boolean {
+        val signUpResult = authRepository.signUp(
             email = _uiState.value.email,
             password = _uiState.value.password
         )
-        authRepository.updateDisplayName(_uiState.value.username.trim())
-        true
-    } catch (exception: Exception) {
-        _uiState.update { state ->
-            state.copy(registrationErrorMessage = exception.message.toString())
+        if (signUpResult.isFailure) {
+            updateRegistrationError(signUpResult.exceptionOrNull())
+            return false
         }
-        false
+
+        val updateNameResult = authRepository.updateDisplayName(_uiState.value.username.trim())
+        if (updateNameResult.isFailure) {
+            updateRegistrationError(updateNameResult.exceptionOrNull())
+            return false
+        }
+
+        return true
+    }
+
+    /** Publica un error de autenticación recibido desde el repositorio. */
+    private fun updateRegistrationError(exception: Throwable?) {
+        _uiState.update { state ->
+            state.copy(registrationErrorMessage = exception?.message.orEmpty())
+        }
     }
 
     /** Construye un estado consistente sin duplicar las reglas de validación. */

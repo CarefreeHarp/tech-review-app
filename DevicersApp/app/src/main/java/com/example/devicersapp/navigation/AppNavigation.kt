@@ -114,12 +114,14 @@ fun AppNavigation(
     DevicersScaffold(
         selectedItem = configuration.selectedItem,
         showBottomBar = configuration.showBottomBar,
+        showDrawer = configuration.showDrawer,
         topBarNumber = configuration.topBarNumber,
         topBarUserHandleResId = configuration.topBarUserHandleResId,
         topBarUserHandle = sessionState.currentProfileHandle.takeIf {
             backStackEntry?.destination?.route == AppDestination.OwnProfile.route ||
                 backStackEntry?.destination?.route == AppDestination.ProfileSavedReviews.route
         },
+        topBarProfileImageUrl = sessionState.profileImageUrl,
         modifier = modifier,
         onNavigationItemClick = { route ->
             navController.navigateToDestination(route)
