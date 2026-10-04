@@ -1,85 +1,170 @@
 package com.example.devicersapp.ui.screens.create_review
 
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.CancellationException
-import com.example.devicersapp.data.repository.ProductRepository
-import com.example.devicersapp.ui.mappers.toSearchContent
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.devicersapp.data.dto.ProductDto
 import com.example.devicersapp.data.local.LocalProductProvider
+import com.example.devicersapp.data.repository.ProductRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.net.ConnectException
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
-/** Conserva el estado y la lógica de búsqueda para crear una reseña. */
+/**
+ * Conserva el estado y la lógica de búsqueda para crear una reseña.
+ */
 @HiltViewModel
-class CreateReviewViewModel @Inject constructor(private val repository: ProductRepository) : ViewModel() {
+class CreateReviewViewModel @Inject constructor(
+    private val productRepository: ProductRepository
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CreateReviewState())
-    val uiState: StateFlow<CreateReviewState> = _uiState
+    private val _uiState =
+        MutableStateFlow(CreateReviewState())
+
+    val uiState: StateFlow<CreateReviewState> =
+        _uiState
 
     init {
         loadProducts()
     }
 
-    /** Carga las categorías y productos disponibles. */
+    /**
+     * Carga los productos disponibles desde el backend.
+     */
     fun loadProducts() {
-        if (_uiState.value.loading) return
-        _uiState.update { it.copy(loading = true, error = null) }
+
         viewModelScope.launch {
-            try {
-                val products = repository.getProducts().filter { it.isActive }.map { it.toSearchContent() }
-                _uiState.update {
-                    val updated = it.copy(products = products, loading = false)
-                    updated.copy(filteredProducts = filterProducts(updated))
+
+            _uiState.update { currentState ->
+                currentState.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
+
+            val result =
+                productRepository.getProducts()
+
+            if (result.isSuccess) {
+
+                val products =
+                    result.getOrNull() ?: emptyList()
+
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        categories = LocalProductProvider.categories,
+                        products = products,
+                        filteredProducts = products,
+                        isLoading = false,
+                        errorMessage = null
+                    )
                 }
-            } catch (e: CancellationException) { throw e }
-            catch (e: Exception) { _uiState.update { it.copy(loading = false, error = "No se pudo cargar el catálogo.") } }
+
+            } else {
+
+                val exception =
+                    result.exceptionOrNull()
+
+                val message = when (exception) {
+
+                    is ConnectException ->
+                        "No fue posible conectarse con el servidor."
+
+                    is SocketTimeoutException ->
+                        "El servidor está tardando demasiado en responder."
+
+                    else ->
+                        "No fue posible cargar los productos."
+                }
+
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        isLoading = false,
+                        errorMessage = message
+                    )
+                }
+            }
         }
     }
 
-    /** Actualiza el texto de búsqueda y vuelve a filtrar los productos. */
+    /**
+     * Actualiza el texto de búsqueda.
+     */
     fun onSearchTextChange(searchText: String) {
+
         _uiState.update { currentState ->
-            val newState = currentState.copy(searchText = searchText)
+
+            val newState =
+                currentState.copy(
+                    searchText = searchText
+                )
+
             newState.copy(
-                filteredProducts = filterProducts(newState)
+                filteredProducts =
+                    filterProducts(newState)
             )
         }
     }
 
-    /** Actualiza la categoría activa y vuelve a filtrar los productos. */
+    /**
+     * Actualiza la categoría seleccionada.
+     */
     fun onCategoryChange(categoryId: String) {
+
         _uiState.update { currentState ->
-            val newState = currentState.copy(
-                selectedCategoryId = categoryId
-            )
+
+            val newState =
+                currentState.copy(
+                    selectedCategoryId = categoryId
+                )
 
             newState.copy(
-                filteredProducts = filterProducts(newState)
+                filteredProducts =
+                    filterProducts(newState)
             )
         }
     }
 
-    /** Filtra el catálogo según la categoría seleccionada y el texto escrito. */
+    /**
+     * Filtra los productos.
+     */
     private fun filterProducts(
         state: CreateReviewState
-    ): List<com.example.devicersapp.ui.models.ProductSearchContent> {
+    ): List<ProductDto> {
+
         return state.products.filter { product ->
+
+            val selectedCategoryId = when (state.selectedCategoryId) {
+                "cellphones" -> 1
+                "audio" -> 3
+                "computers" -> 2
+                else -> null
+            }
+
             val matchesCategory =
                 state.selectedCategoryId == "all" ||
-                        product.categoryId == state.selectedCategoryId
+                        product.categoryId == selectedCategoryId
+
+            val search = state.searchText.trim()
 
             val matchesSearch =
-                state.searchText.isBlank() ||
-                        product.searchTerms.any { term ->
-                            term.contains(
-                                state.searchText.trim(),
-                                ignoreCase = true
-                            )
-                        }
+                search.isBlank() ||
+                        product.name.contains(
+                            search,
+                            ignoreCase = true
+                        ) ||
+                        product.model?.contains(
+                            search,
+                            ignoreCase = true
+                        ) == true ||
+                        product.description?.contains(
+                            search,
+                            ignoreCase = true
+                        ) == true
 
             matchesCategory && matchesSearch
         }

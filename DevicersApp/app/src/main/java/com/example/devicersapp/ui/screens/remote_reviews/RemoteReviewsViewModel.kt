@@ -27,13 +27,13 @@ constructor(private val reviews: ReviewRepository, private val products: Product
         loadJob =
             viewModelScope.launch {
                 try {
-                    val catalog = products.getProducts()
+                    val catalog = products.getProducts().getOrThrow()
                     val records =
                         if (reviewId == null)
-                            reviews.getReviewsByUser(CURRENT_USER_ID).filter {
+                            reviews.getReviewsByUser(CURRENT_USER_ID).getOrThrow().filter {
                                 it.userId == CURRENT_USER_ID
                             }
-                        else listOf(reviews.getReviewById(reviewId))
+                        else listOf(reviews.getReviewById(reviewId).getOrThrow())
                     state.update {
                         it.copy(
                             loading = false,
@@ -125,7 +125,7 @@ constructor(private val reviews: ReviewRepository, private val products: Product
         }
         mutate {
             val id = draft.editingId ?: return@mutate
-            require(reviews.getReviewById(id).userId == CURRENT_USER_ID)
+            require(reviews.getReviewById(id).getOrThrow().userId == CURRENT_USER_ID)
             val record =
                 reviews.updateReview(
                     id,
@@ -134,7 +134,7 @@ constructor(private val reviews: ReviewRepository, private val products: Product
                         title = draft.title.trim(),
                         body = draft.body.trim(),
                     ),
-                )
+                ).getOrThrow()
             state.update { current ->
                 current.copy(
                     editing = false,
@@ -153,8 +153,8 @@ constructor(private val reviews: ReviewRepository, private val products: Product
     fun delete() {
         val id = state.value.deleteId ?: return
         mutate {
-            require(reviews.getReviewById(id).userId == CURRENT_USER_ID)
-            reviews.deleteReview(id)
+            require(reviews.getReviewById(id).getOrThrow().userId == CURRENT_USER_ID)
+            reviews.deleteReview(id).getOrThrow()
             state.update {
                 it.copy(
                     deleteId = null,

@@ -32,7 +32,7 @@ constructor(private val users: UsersRepository, private val reviews: ReviewRepos
             viewModelScope.launch {
                 try {
                     val user = users.getUserById(id)
-                    val items = reviews.getReviewsByUser(id).filter { it.userId == id }
+                    val items = reviews.getReviewsByUser(id).getOrThrow().filter { it.userId == id }
                     val articles = user.reviews.orEmpty().associateBy { it.id }
                     state.value =
                         ProfileState(

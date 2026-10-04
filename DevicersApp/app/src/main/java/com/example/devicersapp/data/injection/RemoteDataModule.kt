@@ -11,10 +11,4 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 abstract class RemoteDataModule {
     @Binds abstract fun users(source: UsersRetrofitDataSourceImplementation): UsersRemoteDataSource
-
-    @Binds
-    abstract fun reviews(source: ReviewRetrofitDataSourceImplementation): ReviewRemoteDataSource
-
-    @Binds
-    abstract fun products(source: ProductRetrofitDataSourceImplementation): ProductRemoteDataSource
 }

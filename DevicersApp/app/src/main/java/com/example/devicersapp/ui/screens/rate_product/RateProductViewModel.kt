@@ -29,7 +29,7 @@ class RateProductViewModel @Inject constructor(private val products: ProductRepo
         loadJob = viewModelScope.launch {
             try {
                 require(productId != null && productId > 0)
-                val product = products.getProductById(productId).toProductContent()
+                val product = products.getProductById(productId).getOrThrow().toProductContent()
                 _uiState.value = RateProductState(product = product)
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { _uiState.value = RateProductState(error = "No se pudo cargar el producto. Elige uno del catálogo actualizado.") }
@@ -52,7 +52,7 @@ class RateProductViewModel @Inject constructor(private val products: ProductRepo
                     if (draft.advantage.isNotBlank()) append("\n\nVentajas: ${draft.advantage.trim()}")
                     if (draft.disadvantage.isNotBlank()) append("\n\nDesventajas: ${draft.disadvantage.trim()}")
                 }
-                reviews.createReview(CreateReviewRequestDto(CURRENT_USER_ID, productId, draft.rating, body, draft.title.trim()))
+                reviews.createReview(CreateReviewRequestDto(CURRENT_USER_ID, productId, draft.rating, body, draft.title.trim())).getOrThrow()
                 _uiState.update { it.copy(saving = false, published = true) }
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { _uiState.update { it.copy(saving = false, error = "No se pudo publicar. Tu borrador se conserva; intenta de nuevo.") } }

@@ -29,7 +29,7 @@ import com.example.devicersapp.ui.utils.search.SearchEntityToggle
 /** Renderiza la búsqueda de productos y conecta sus eventos con el estado del ViewModel. */
 @Composable
 fun SearchProductView(
-    onApplyFilters: () -> Unit = {},
+    onApplyFilters: (SearchProductState) -> Unit = {},
     onUsersClick: () -> Unit = {},
     onProductsClick: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -52,7 +52,9 @@ fun SearchProductView(
         onProductsClick = onProductsClick,
         modifier = modifier
             .fillMaxSize()
-            .background(LocalDevicersColors.current.background)
+            .background(
+                LocalDevicersColors.current.background
+            )
     )
 }
 
@@ -84,7 +86,7 @@ fun SearchProductViewContent(
     onRatingChange: (Float) -> Unit,
     onSortChange: (String) -> Unit,
     onClearFilters: () -> Unit,
-    onApplyFilters: () -> Unit,
+    onApplyFilters: (SearchProductState) -> Unit,
     onUsersClick: () -> Unit,
     onProductsClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -144,8 +146,12 @@ fun SearchProductViewContent(
 
             sortBy = state.sortBy,
             onSortChange = onSortChange,
+
             onClearFilters = onClearFilters,
-            onApplyFilters = onApplyFilters
+
+            onApplyFilters = {
+                onApplyFilters(state)
+            }
         )
 
         // Deja aire para que la barra flotante no tape el botón de aplicar.

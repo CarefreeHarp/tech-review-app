@@ -1,10 +1,10 @@
 # Tareas 6 y 7: Profile y CRUD de reseñas
 
-Rama Android: `task/#6-7`, basada en `origin/develop` (`0a05ba3`). Backend revisado en `develop` (`9621847`), sin cambios de código.
+Rama Android: `task/#6-7`, con `origin/task/#4` (`972c9a4`) integrado sobre la base `origin/develop` (`0a05ba3`). Backend revisado en `develop` (`9621847`), sin cambios de código.
 
 ## Arquitectura
 
-Las vistas observan StateFlow en sus ViewModels Hilt. Los ViewModels acceden a repositories, interfaces RemoteDataSource y sus implementaciones Retrofit. RemoteDataModule enlaza las interfaces a las implementaciones; AppModule conserva la configuración de Retrofit del equipo.
+Las vistas observan StateFlow en sus ViewModels Hilt. Los ViewModels acceden a repositories, interfaces RemoteDataSource y sus implementaciones Retrofit. AppModule conserva los servicios Retrofit y los proveedores de Product/Review de la tarea 4; RemoteDataModule enlaza únicamente Users. ProductRepository y ReviewRepository conservan el contrato Result de la tarea 4, propagan cancelaciones y son compartidos por todos los flujos.
 
 Los modelos de presentación mantienen los recursos locales para previews y pantallas aún no migradas. Los campos opcionales y RemoteContentMappers permiten mostrar nombres, biografía, imágenes, producto, título y texto de la API sin usar IDs de recursos como IDs de base de datos. Profile conserva ProfileHeader y ProfileProductCard; CreateReview, RateProduct y Review conservan sus componentes originales.
 
@@ -19,8 +19,9 @@ Ventajas y desventajas se agregan al cuerpo porque el contrato del backend solo 
 
 ## Integración con el equipo
 
-OwnProfile, Home y Product permanecen en manos de sus tareas respectivas. La tarea 4 debe entregar el `article.id` real a `RateProduct.createRoute`; el argumento interno de esa ruta ahora es `productId`. El Product local todavía envía un recurso Android; si se entra por ese flujo, el formulario muestra error y permite volver al catálogo remoto. El resumen del producto en una reseña remota no abre el detalle local para evitar mostrar un artículo equivocado. Reactivar `onProductClick` con el ID real cuando Product consuma la API.
+La tarea 4 conserva su catálogo, filtros, Product y fuentes Retrofit. CreateReview usa su catálogo y añade el acceso a Mis reseñas. RateProduct incorpora la publicación protegida contra envíos simultáneos y conserva el borrador ante errores. Review añade autor real, navegación a Profile y acceso a administración. No hay implementaciones paralelas de Product/Review ni registros Hilt duplicados.
 
+Product → RateProduct, Profile → Review y Review → Product usan los IDs reales del backend. Al publicar se retira el formulario del historial tanto si se entró desde Product como desde CreateReview. Product vuelve a consultar sus reseñas al regresar. Se mantiene una sola dependencia foundation-layout, administrada por el BOM existente.
 Los accesos desde Home/Activity/OwnProfile aún locales necesitan que sus respectivas tareas migren los identificadores; no se inventan equivalencias entre datos locales y del servidor.
 
 ## Validación y entorno local
@@ -29,7 +30,7 @@ Los accesos desde Home/Activity/OwnProfile aún locales necesitan que sus respec
 - Pruebas de Profile, cambio rápido de usuario, errores, borradores, usuario temporal, permisos de edición/eliminación, detalle remoto y contrato HTTP (incluido DELETE 204).
 - Backend: `npm test` pasa las 7 pruebas existentes. Estas usan el almacén en memoria del repositorio.
 - Una base PostgreSQL temporal con el esquema y los datos iniciales actuales pasó consultas de Profile y el ciclo POST, GET, PUT y DELETE. Se eliminó al finalizar.
-- Una prueba instrumentada en Android 16 pasó desde un emulador contra esa API temporal: Profile, reseñas del usuario seleccionado y CRUD con `userId = 1`. Pasaron las 2 pruebas instrumentadas y las 13 pruebas unitarias Android.
+- Una prueba instrumentada en Android 16 pasó desde un emulador contra esa API temporal: Profile, reseñas del usuario seleccionado y CRUD con `userId = 1`. Tras integrar la tarea 4 pasaron las 4 pruebas instrumentadas y las 13 pruebas unitarias Android.
 - También se recorrieron las pantallas en el emulador: resultados con tres usuarios reales, Profile de `mariana.tech` con sus dos reseñas, selección de producto, publicación de una reseña, edición de su puntuación y eliminación confirmada. El estado final se comprobó por la interfaz y con `GET /users/1/reviews`.
 - La base local `devicers` está desactualizada: le falta `users.firebase_uid`. La prueba aislada evita cambiar sus datos.
 - El puerto 3000 está ocupado por otra aplicación. AppModule mantiene `http://10.0.2.2:3000/` como valor normal y admite `-PdevicersApiBaseUrl=http://10.0.2.2:3001/` para pruebas.
@@ -50,4 +51,16 @@ Para recorrer las pantallas manualmente sin Firebase, instala una variante debug
 .\gradlew.bat :app:installDebug -PdevicersApiBaseUrl=http://10.0.2.2:3001/ -PdevicersTestStartDestination=profile-search-results
 ```
 
-Inicia la app y visita Buscar usuarios → Profile, Crear reseña → elegir producto → publicar, y Crear reseña → Mis reseñas → editar/eliminar. La propiedad `devicersTestStartDestination` solo se aplica a compilaciones debug; sin ella la app comienza en Splash como siempre. También admite `create` y `my-reviews` para abrir esas pantallas directamente. La ruta desde Product depende de la integración de la tarea 4.
+Inicia la app y visita Buscar usuarios → Profile, Crear reseña → elegir producto → publicar, y Crear reseña → Mis reseñas → editar/eliminar. La propiedad `devicersTestStartDestination` solo se aplica a compilaciones debug; sin ella la app comienza en Splash como siempre. También admite `create` y `my-reviews` para abrir esas pantallas directamente. La ruta desde Product ya está integrada con la tarea 4.
+
+## Validación de la integración con tarea 4
+
+Para ejecutar también la comprobación del grafo real de navegación:
+
+```powershell
+.\gradlew.bat :app:assembleDebug :app:testDebugUnitTest :app:connectedDebugAndroidTest -PdevicersApiBaseUrl=http://10.0.2.2:3001/ -PdevicersTestStartDestination=profile-search-results
+```
+
+`IntegratedBackendFlowTest` recorre Profile, Product, publicación, detalle, edición y eliminación mediante los ViewModels y repositorios compartidos contra PostgreSQL temporal. Comprueba los IDs y la actualización de Product después de editar y eliminar; limpia la reseña temporal al finalizar. `IntegratedNavigationTest` comprueba en Compose el recorrido Profile → Review → Product → RateProduct con el grafo y Hilt reales. Las pruebas instrumentadas de integración solo se habilitan contra la URL aislada; la de navegación requiere además el destino debug indicado.
+
+No se modifica develop ni se crea PR. Comparar contra `origin/task/#4` permite revisar los cambios propios de 6–7; comparar contra develop incluye también la dependencia task/#4 mientras esa rama no esté integrada allí.

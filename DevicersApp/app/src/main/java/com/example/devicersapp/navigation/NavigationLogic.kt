@@ -102,7 +102,7 @@ object NavigationLogic {
                 topBarNumber = 7
             )
 
-        "${AppDestination.Product.route}/{productNameResId}" ->
+        "${AppDestination.Product.route}/{productId}" ->
             NavigationUiConfiguration(
                 selectedItem = AppDestination.SearchProduct.route,
                 showBottomBar = true,

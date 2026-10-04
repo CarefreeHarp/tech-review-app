@@ -1,24 +1,99 @@
 package com.example.devicersapp.data.repository
 
 import com.example.devicersapp.data.datasource.ReviewRemoteDataSource
-import com.example.devicersapp.data.dto.*
+import com.example.devicersapp.data.dto.CreateReviewRequestDto
+import com.example.devicersapp.data.dto.ReviewDto
+import com.example.devicersapp.data.dto.UpdateReviewRequestDto
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 
-class ReviewRepository @Inject constructor(private val source: ReviewRemoteDataSource) {
-    suspend fun getReviews(): List<ReviewDto> = source.getReviews()
+class ReviewRepository @Inject constructor(
+    private val reviewRemoteDataSource: ReviewRemoteDataSource
+) {
 
-    suspend fun getReviewById(reviewId: Int): ReviewDto = source.getReviewById(reviewId)
+    suspend fun getReviews(): Result<List<ReviewDto>> {
+        return try {
+            val reviews = reviewRemoteDataSource.getReviews()
+            Result.success(reviews)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
-    suspend fun getReviewsByUser(userId: Int): List<ReviewDto> = source.getReviewsByUser(userId)
+    suspend fun getReviewById(reviewId: Int): Result<ReviewDto> {
+        return try {
+            val review = reviewRemoteDataSource.getReviewById(reviewId)
+            Result.success(review)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
-    suspend fun getReviewsByProduct(productId: Int): List<ReviewDto> =
-        source.getReviewsByProduct(productId)
+    suspend fun getReviewsByUser(userId: Int): Result<List<ReviewDto>> {
+        return try {
+            val reviews = reviewRemoteDataSource.getReviewsByUser(userId)
+            Result.success(reviews)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
-    suspend fun createReview(request: CreateReviewRequestDto): ReviewDto =
-        source.createReview(request)
+    suspend fun getReviewsByProduct(productId: Int): Result<List<ReviewDto>> {
+        return try {
+            val reviews = reviewRemoteDataSource.getReviewsByProduct(productId)
+            Result.success(reviews)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
-    suspend fun updateReview(reviewId: Int, request: UpdateReviewRequestDto): ReviewDto =
-        source.updateReview(reviewId, request)
+    suspend fun createReview(
+        request: CreateReviewRequestDto
+    ): Result<ReviewDto> {
+        return try {
+            val review = reviewRemoteDataSource.createReview(request)
+            Result.success(review)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
-    suspend fun deleteReview(reviewId: Int): Unit = source.deleteReview(reviewId)
+    suspend fun updateReview(
+        reviewId: Int,
+        request: UpdateReviewRequestDto
+    ): Result<ReviewDto> {
+        return try {
+            val review = reviewRemoteDataSource.updateReview(
+                reviewId,
+                request
+            )
+
+            Result.success(review)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteReview(reviewId: Int): Result<Unit> {
+        return try {
+            reviewRemoteDataSource.deleteReview(reviewId)
+            Result.success(Unit)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

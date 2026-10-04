@@ -1,6 +1,5 @@
 package com.example.devicersapp.ui.screens.found_products.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -25,76 +24,132 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProductProvider
-import com.example.devicersapp.ui.models.ProductSearchContent
+import com.example.devicersapp.data.dto.ProductDto
 import com.example.devicersapp.ui.theme.CardHighlightText
 import com.example.devicersapp.ui.theme.CardMetadataText
-import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.rating.RatingStars
+import kotlin.math.roundToInt
 
 /**
- * Muestra un producto encontrado con su imagen, su metadata y su calificación.
- *
- * @param product Producto devuelto por la búsqueda.
- * @param modifier Modificador aplicado a la tarjeta.
- * @param onClick Acción solicitada al abrir el detalle del producto.
+ * Muestra un producto obtenido desde el backend.
  */
 @Composable
 fun FoundProductCard(
-    product: ProductSearchContent,
+    product: ProductDto,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
 
+    /*
+     * El endpoint de artículos puede incluir las reseñas de manera anidada.
+     * Si las incluye, calculamos el promedio.
+     * Si no, simplemente no mostramos la calificación.
+     */
+    val reviews = product.reviews ?: emptyList()
+
+    val averageRating =
+        if (reviews.isNotEmpty()) {
+            reviews.map { it.rating }.average()
+        } else {
+            null
+        }
+
+    val roundedRating =
+        averageRating
+            ?.roundToInt()
+            ?.coerceIn(1, 5)
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            // La sombra suave despega la tarjeta del fondo, como en el diseño editorial.
-            .shadow(elevation = 4.dp, shape = RoundedCornerShape(18.dp))
-            .background(colors.surface, RoundedCornerShape(18.dp))
-            .clickable { onClick() }
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(18.dp)
+            )
+            .background(
+                color = colors.surface,
+                shape = RoundedCornerShape(18.dp)
+            )
+            .clickable {
+                onClick()
+            }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(product.imageResId),
-            contentDescription = stringResource(product.imageDescriptionResId),
+
+        AsyncImage(
+            model = product.imageUrl,
+            contentDescription = product.name,
+            placeholder = painterResource(
+                R.drawable.device_00
+            ),
+            error = painterResource(
+                R.drawable.device_00
+            ),
             modifier = Modifier
                 .size(62.dp)
-                .clip(RoundedCornerShape(14.dp)),
+                .clip(
+                    RoundedCornerShape(14.dp)
+                ),
             contentScale = ContentScale.Fit
         )
 
-        Spacer(modifier = Modifier.width(14.dp))
+        Spacer(
+            modifier = Modifier.width(14.dp)
+        )
 
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+
             Text(
-                text = stringResource(product.nameResId),
+                text = product.name,
                 color = colors.textPrimary,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(2.dp))
+
+            Spacer(
+                modifier = Modifier.height(2.dp)
+            )
+
             Text(
-                text = stringResource(product.brandResId),
+                text = product.model ?: "Sin modelo",
                 color = colors.textSecondary,
                 style = CardMetadataText,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(6.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RatingStars(rating = product.rating)
-                product.averageResId?.let { averageResId ->
-                    Spacer(modifier = Modifier.width(8.dp))
+
+            if (roundedRating != null) {
+
+                Spacer(
+                    modifier = Modifier.height(6.dp)
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    RatingStars(
+                        rating = roundedRating
+                    )
+
+                    Spacer(
+                        modifier = Modifier.width(8.dp)
+                    )
+
                     Text(
-                        text = stringResource(averageResId),
+                        text = String.format(
+                            "%.1f",
+                            averageRating
+                        ),
                         color = colors.textPrimary,
                         style = CardHighlightText
                     )
@@ -102,28 +157,21 @@ fun FoundProductCard(
             }
         }
 
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(
+            modifier = Modifier.width(10.dp)
+        )
 
-        // La flecha reutiliza el ícono de regreso girado, en vez de duplicar el recurso.
         Icon(
-            painter = painterResource(R.drawable.back_icon),
-            contentDescription = stringResource(R.string.found_products_open),
+            painter = painterResource(
+                R.drawable.back_icon
+            ),
+            contentDescription = stringResource(
+                R.string.found_products_open
+            ),
             modifier = Modifier
                 .size(18.dp)
                 .rotate(180f),
             tint = colors.textSecondary
-        )
-    }
-}
-
-/** Muestra una vista previa de un producto encontrado. */
-@Composable
-@Preview(showBackground = true)
-fun FoundProductCardPreview() {
-    DevicersAppTheme {
-        FoundProductCard(
-            product = LocalProductProvider.products.first(),
-            modifier = Modifier.padding(16.dp)
         )
     }
 }

@@ -35,8 +35,8 @@ class ReviewViewModel @Inject constructor(
         _uiState.value = ReviewState(loading = true)
         loadJob = viewModelScope.launch {
             try {
-                val review = reviews.getReviewById(reviewId)
-                val product = products.getProductById(review.articleId)
+                val review = reviews.getReviewById(reviewId).getOrThrow()
+                val product = products.getProductById(review.articleId).getOrThrow()
                 val author = users.getUserById(review.userId)
                 _uiState.value = ReviewState(
                     product = product.toProductContent(),
