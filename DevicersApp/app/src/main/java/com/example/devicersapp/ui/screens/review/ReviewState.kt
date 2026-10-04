@@ -10,6 +10,7 @@ data class ReviewState(
     val error: String? = null,
     val product: ProductContent? = null,
     val review: ReviewContent? = null,
+    val isLocal: Boolean = false,
     val replies: List<ReplyContent> = emptyList(),
     val replyText: String = "",
     val expandedReplies: Map<Int, Boolean> = emptyMap()

@@ -101,6 +101,7 @@ sealed class AppDestination(val route: String) {
     }
     data object Review : AppDestination("review") {
         fun createRoute(reviewId: Int) = "review/$reviewId"
+        fun createLocalRoute(reviewId: Int) = "review/local/$reviewId"
 
     }
     data object RequestProduct : AppDestination("request-product")
@@ -224,12 +225,12 @@ fun AppNavigation(
                     viewModel = homeViewModel,
                     onReviewClick = { reviewId ->
                         navController.navigate(
-                            AppDestination.Review.createRoute(reviewId)
+                            AppDestination.Review.createLocalRoute(reviewId)
                         )
                     },
                     onCommentClick = { reviewId ->
                         navController.navigate(
-                            AppDestination.Review.createRoute(reviewId)
+                            AppDestination.Review.createLocalRoute(reviewId)
                         )
                     },
                     onSendClick = {
@@ -297,7 +298,7 @@ fun AppNavigation(
 
                 ActivityView(
                     onReviewClick = { reviewId ->
-                        navController.navigate(AppDestination.Review.createRoute(reviewId))
+                        navController.navigate(AppDestination.Review.createLocalRoute(reviewId))
                     },
                     onProfileClick = { profileId ->
                         navController.navigate(AppDestination.Profile.createRoute(profileId))
@@ -312,7 +313,7 @@ fun AppNavigation(
                     viewModel = ownProfileViewModel,
                     onReviewClick = { reviewId ->
                         navController.navigate(
-                            AppDestination.Review.createRoute(reviewId)
+                            AppDestination.Review.createLocalRoute(reviewId)
                         )
                     },
                     onSavedReviewsClick = {
@@ -440,7 +441,7 @@ fun AppNavigation(
                     viewModel = profileSavedReviewsViewModel,
                     onReviewClick = { reviewId ->
                         navController.navigate(
-                            AppDestination.Review.createRoute(reviewId)
+                            AppDestination.Review.createLocalRoute(reviewId)
                         )
                     },
                     onReviewsClick = {
@@ -509,6 +510,22 @@ fun AppNavigation(
                             }
                         }
                     )
+                }
+            }
+            composable(
+                route = "${AppDestination.Review.route}/local/{reviewId}",
+                arguments = listOf(navArgument("reviewId") { type = NavType.IntType })
+            ) {
+                val reviewId = it.arguments?.getInt("reviewId")
+                if (reviewId != null) {
+                    val reviewViewModel: ReviewViewModel = hiltViewModel()
+                    ReviewView(
+                        reviewId = reviewId,
+                        localReview = true,
+                        viewModel = reviewViewModel
+                    )
+                } else {
+                    Text(text = stringResource(R.string.review_not_found))
                 }
             }
             composable(

@@ -40,7 +40,7 @@ import androidx.compose.foundation.clickable
 @Composable
 fun ReviewProductSummary(
     product: ProductContent,
-    onClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier) {
     val colors = LocalDevicersColors.current
 
@@ -51,7 +51,7 @@ fun ReviewProductSummary(
             // La sombra suave despega la tarjeta del fondo, como en el diseño editorial.
             .shadow(elevation = 6.dp, shape = RoundedCornerShape(20.dp))
             .background(colors.surface, RoundedCornerShape(20.dp))
-            .clickable { onClick() }
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

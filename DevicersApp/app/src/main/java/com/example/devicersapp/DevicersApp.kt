@@ -21,6 +21,7 @@ fun DevicersApp(
         val startDestination = if (BuildConfig.DEBUG) {
             BuildConfig.DEVICERS_TEST_START_DESTINATION.takeIf {
                 it in setOf(
+                    AppDestination.Home.route,
                     AppDestination.ProfileSearchResults.route,
                     AppDestination.CreateReview.route,
                     AppDestination.MyReviews.route

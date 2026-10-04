@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import com.example.devicersapp.data.repository.ReviewRepository
 import com.example.devicersapp.data.repository.ProductRepository
 import com.example.devicersapp.data.repository.UsersRepository
+import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.mappers.toReviewContent
 import com.example.devicersapp.ui.mappers.toProductContent
 import androidx.lifecycle.ViewModel
@@ -47,6 +48,18 @@ class ReviewViewModel @Inject constructor(
             } catch (exception: Exception) {
                 _uiState.value = ReviewState(error = "No se pudo cargar la reseña. Intenta nuevamente.")
             }
+        }
+    }
+
+    /** Abre una reseña del feed local sin confundir su ID con el de la API. */
+    fun loadLocalReview(reviewId: Int) {
+        loadJob?.cancel()
+        val review = LocalReviewProvider.findById(reviewId)
+        val product = LocalReviewProvider.findProductByReviewId(reviewId)
+        _uiState.value = if (review != null && product != null) {
+            ReviewState(product = product, review = review, replies = review.comments, isLocal = true)
+        } else {
+            ReviewState(error = "No se encontró la reseña.", isLocal = true)
         }
     }
 

@@ -40,12 +40,12 @@ import com.example.devicersapp.ui.utils.review.ReviewActionsRow
  * @param modifier Modificador aplicado al contenedor.
  */
 @Composable
-fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onAuthorClick: () -> Unit = {}) {
+fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onAuthorClick: (() -> Unit)? = null) {
     val colors = LocalDevicersColors.current
     val author = if (review.authorName == null) LocalProfileProvider.getProfileById(review.authorId) else null
 
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.clickable(onClick = onAuthorClick), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = if (onAuthorClick != null) Modifier.clickable(onClick = onAuthorClick) else Modifier, verticalAlignment = Alignment.CenterVertically) {
             ProfileAvatar(
                 avatarResId = author?.avatarResId ?: R.drawable.no_pfp_icon,
                 imageUrl = review.authorImageUrl,
@@ -70,7 +70,7 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onAuthorC
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(modifier = Modifier.clickable(onClick = onAuthorClick), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = if (onAuthorClick != null) Modifier.clickable(onClick = onAuthorClick) else Modifier, verticalAlignment = Alignment.CenterVertically) {
             RatingStars(rating = review.rating, style = RatingStarsLargeText)
             // El promedio del producto acompaña a la calificación entera que dio el autor.
             review.productAverageResId?.let { averageResId ->

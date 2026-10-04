@@ -32,6 +32,7 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 @Composable
 fun ReviewView(
     reviewId: Int,
+    localReview: Boolean = false,
     onManageReviewsClick: () -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
     onProductClick: (Int) -> Unit = {},
@@ -42,12 +43,14 @@ fun ReviewView(
     val uiState by viewModel.uiState.collectAsState()
 
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    androidx.compose.runtime.DisposableEffect(lifecycleOwner, reviewId) {
+    androidx.compose.runtime.DisposableEffect(lifecycleOwner, reviewId, localReview) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
-            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) viewModel.loadReview(reviewId)
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                if (localReview) viewModel.loadLocalReview(reviewId) else viewModel.loadReview(reviewId)
+            }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
-        viewModel.loadReview(reviewId)
+        if (localReview) viewModel.loadLocalReview(reviewId) else viewModel.loadReview(reviewId)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
@@ -55,7 +58,9 @@ fun ReviewView(
     uiState.error?.let { error ->
         androidx.compose.foundation.layout.Column {
             androidx.compose.material3.Text(error)
-            androidx.compose.material3.TextButton(onClick = { viewModel.loadReview(reviewId) }) { androidx.compose.material3.Text("Reintentar") }
+            androidx.compose.material3.TextButton(onClick = {
+                if (localReview) viewModel.loadLocalReview(reviewId) else viewModel.loadReview(reviewId)
+            }) { androidx.compose.material3.Text("Reintentar") }
         }
         return
     }
@@ -104,16 +109,14 @@ fun ReviewViewContent(
 
                     ReviewProductSummary(
                         product = product,
-                        onClick = {
-                            onProductClick(product.id ?: product.nameResId)
-                        }
+                        onClick = if (state.isLocal) null else ({ onProductClick(product.id ?: product.nameResId) })
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
 
                     ReviewDetail(
                         review = review,
-                        onAuthorClick = { onAuthorClick(review.authorId) }
+                        onAuthorClick = if (state.isLocal) null else ({ onAuthorClick(review.authorId) })
                     )
 
                     if (review.authorId == com.example.devicersapp.data.repository.CURRENT_USER_ID.toString()) {

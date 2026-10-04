@@ -22,7 +22,7 @@ Ventajas y desventajas se agregan al cuerpo porque el contrato del backend solo 
 La tarea 4 conserva su catálogo, filtros, Product y fuentes Retrofit. CreateReview usa su catálogo y añade el acceso a Mis reseñas. RateProduct incorpora la publicación protegida contra envíos simultáneos y conserva el borrador ante errores. Review añade autor real, navegación a Profile y acceso a administración. No hay implementaciones paralelas de Product/Review ni registros Hilt duplicados.
 
 Product → RateProduct, Profile → Review y Review → Product usan los IDs reales del backend. Al publicar se retira el formulario del historial tanto si se entró desde Product como desde CreateReview. Product vuelve a consultar sus reseñas al regresar. Se mantiene una sola dependencia foundation-layout, administrada por el BOM existente.
-Los accesos desde Home/Activity/OwnProfile aún locales necesitan que sus respectivas tareas migren los identificadores; no se inventan equivalencias entre datos locales y del servidor.
+Home, Activity, OwnProfile y reseñas guardadas aún muestran datos locales. Sus accesos a detalle usan una ruta local separada, por lo que «Ver más» muestra la misma reseña sin enviar su ID de ejemplo al backend. La navegación entre estas pantallas y los datos remotos todavía requiere que sus respectivas tareas migren los identificadores; no se inventan equivalencias entre IDs locales y del servidor.
 
 ## Validación y entorno local
 
@@ -31,6 +31,7 @@ Los accesos desde Home/Activity/OwnProfile aún locales necesitan que sus respec
 - Backend: `npm test` pasa las 7 pruebas existentes. Estas usan el almacén en memoria del repositorio.
 - Una base PostgreSQL temporal con el esquema y los datos iniciales actuales pasó consultas de Profile y el ciclo POST, GET, PUT y DELETE. Se eliminó al finalizar.
 - Una prueba instrumentada en Android 16 pasó desde un emulador contra esa API temporal: Profile, reseñas del usuario seleccionado y CRUD con `userId = 1`. Tras integrar la tarea 4 pasaron las 4 pruebas instrumentadas y las 13 pruebas unitarias Android.
+- `HomeLocalReviewNavigationTest` comprueba en el emulador que «Ver más» abre el detalle de la reseña local seleccionada aun sin backend, mientras los detalles remotos conservan su ruta independiente.
 - También se recorrieron las pantallas en el emulador: resultados con tres usuarios reales, Profile de `mariana.tech` con sus dos reseñas, selección de producto, publicación de una reseña, edición de su puntuación y eliminación confirmada. El estado final se comprobó por la interfaz y con `GET /users/1/reviews`.
 - La base local `devicers` está desactualizada: le falta `users.firebase_uid`. La prueba aislada evita cambiar sus datos.
 - El puerto 3000 está ocupado por otra aplicación. AppModule mantiene `http://10.0.2.2:3000/` como valor normal y admite `-PdevicersApiBaseUrl=http://10.0.2.2:3001/` para pruebas.

@@ -158,7 +158,8 @@ object NavigationLogic {
                 }
             )
 
-        "${AppDestination.Review.route}/{reviewId}" ->
+        "${AppDestination.Review.route}/{reviewId}",
+        "${AppDestination.Review.route}/local/{reviewId}" ->
             NavigationUiConfiguration(
                 topBarNumber = 4
             )
