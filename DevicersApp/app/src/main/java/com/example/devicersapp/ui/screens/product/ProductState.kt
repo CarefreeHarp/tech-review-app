@@ -1,12 +1,12 @@
 package com.example.devicersapp.ui.screens.product
 
-import com.example.devicersapp.ui.models.ProductContent
-import com.example.devicersapp.ui.models.RatingSummaryContent
-import com.example.devicersapp.ui.models.ReviewContent
+import com.example.devicersapp.data.dto.ProductDto
+import com.example.devicersapp.data.dto.ReviewDto
 
 /** Representa el estado visible de la pantalla de detalle de producto. */
 data class ProductState(
-    val product: ProductContent? = null,
-    val ratingSummary: RatingSummaryContent? = null,
-    val reviews: List<ReviewContent> = emptyList()
+    val product: ProductDto? = null,
+    val reviews: List<ReviewDto> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 )

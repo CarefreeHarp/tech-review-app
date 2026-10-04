@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.foundation.layout)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.dagger.hilt)
     implementation(libs.firebase.storage)

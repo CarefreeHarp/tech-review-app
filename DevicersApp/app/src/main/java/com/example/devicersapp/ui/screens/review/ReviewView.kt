@@ -1,13 +1,19 @@
 package com.example.devicersapp.ui.screens.review
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,21 +50,26 @@ fun ReviewView(
     }
 
     ReviewViewContent(
-            state = uiState,
-            onReplyTextChange = viewModel::onReplyTextChange,
-            onProductClick = onProductClick,
-            onSendReply = {
-                val replyText = uiState.replyText
+        state = uiState,
+        onReplyTextChange = viewModel::onReplyTextChange,
+        onProductClick = onProductClick,
+        onSendReply = {
+            val replyText = uiState.replyText
 
-                if (replyText.isNotBlank()) {
-                    onSendReply(replyText)
-                    viewModel.clearReplyText()
-                }
-            },
-            onViewAnswers = viewModel::onViewAnswers,
-            modifier = modifier
-                .fillMaxSize()
-                .background(LocalDevicersColors.current.background)
+            if (replyText.isNotBlank()) {
+                onSendReply(replyText)
+                viewModel.clearReplyText()
+            }
+        },
+        onViewAnswers = viewModel::onViewAnswers,
+        onRetry = {
+            viewModel.loadReview(reviewId)
+        },
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                LocalDevicersColors.current.background
+            )
     )
 }
 
@@ -70,8 +81,65 @@ fun ReviewViewContent(
     onProductClick: (Int) -> Unit,
     onSendReply: () -> Unit,
     onViewAnswers: (Int) -> Unit = {},
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalDevicersColors.current
+
+    if (state.isLoading) {
+
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+
+        return
+    }
+
+    if (state.errorMessage != null) {
+
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            Text(
+                text = "No se pudo cargar la reseña",
+                color = colors.textPrimary,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+
+            Text(
+                text = state.errorMessage,
+                color = colors.textSecondary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
+
+            Button(
+                onClick = onRetry
+            ) {
+                Text(
+                    text = "Reintentar"
+                )
+            }
+        }
+
+        return
+    }
+
     val product = state.product ?: return
     val review = state.review ?: return
     Box(modifier = modifier) {
@@ -85,7 +153,7 @@ fun ReviewViewContent(
                     ReviewProductSummary(
                         product = product,
                         onClick = {
-                            onProductClick(product.nameResId)
+                            onProductClick(product.id)
                         }
                     )
 
@@ -119,67 +187,5 @@ fun ReviewViewContent(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
         )
-    }
-}
-
-/** Muestra una vista previa del detalle de una reseña en el tema claro. */
-@Composable
-@Preview(showBackground = true, heightDp = 1000)
-fun ReviewViewPreview() {
-    val review = LocalReviewProvider.productReviews.first()
-    val product = LocalReviewProvider.findProductByReviewId(review.id)
-
-    if (product != null) {
-        DevicersAppTheme(darkTheme = false) {
-            DevicersScaffold(topBarNumber = 4) { innerPadding ->
-                ReviewViewContent(
-                    state = ReviewState(
-                        product = product,
-                        review = review,
-                        replies = review.comments
-                    ),
-                    onReplyTextChange = {},
-                    onProductClick = {},
-                    onSendReply = {},
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .background(
-                            LocalDevicersColors.current.background
-                        )
-                )
-            }
-        }
-    }
-}
-
-/** Muestra una vista previa del detalle de una reseña en el tema oscuro. */
-@Composable
-@Preview(showBackground = true, heightDp = 1000)
-fun ReviewViewDarkPreview() {
-    val review = LocalReviewProvider.productReviews.first()
-    val product = LocalReviewProvider.findProductByReviewId(review.id)
-
-    if (product != null) {
-        DevicersAppTheme(darkTheme = true) {
-            DevicersScaffold(topBarNumber = 4) { innerPadding ->
-                ReviewViewContent(
-                    state = ReviewState(
-                        product = product,
-                        review = review,
-                        replies = review.comments
-                    ),
-                    onReplyTextChange = {},
-                    onProductClick = {},
-                    onSendReply = {},
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .background(
-                            LocalDevicersColors.current.background
-                        )
-                )
-            }
-        }
     }
 }

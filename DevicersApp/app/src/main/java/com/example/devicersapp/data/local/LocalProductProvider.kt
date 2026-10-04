@@ -11,10 +11,18 @@ import com.example.devicersapp.ui.models.RatingSummaryContent
 object LocalProductProvider {
 
     val categories = listOf(
-        ProductCategoryContent(id = "all", labelResId = R.string.all),
-        ProductCategoryContent(id = "cellphones", labelResId = R.string.cellphones),
-        ProductCategoryContent(id = "audio", labelResId = R.string.audio),
-        ProductCategoryContent(id = "computers", labelResId = R.string.computers)
+        ProductCategoryContent(
+            id = "all",
+            labelResId = R.string.all
+        ),
+        ProductCategoryContent(
+            id = "cellphones",
+            labelResId = R.string.cellphones
+        ),
+        ProductCategoryContent(
+            id = "audio",
+            labelResId = R.string.audio
+        )
     )
 
     val products = listOf(

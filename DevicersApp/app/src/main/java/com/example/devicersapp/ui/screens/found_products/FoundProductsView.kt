@@ -1,8 +1,8 @@
 package com.example.devicersapp.ui.screens.found_products
 
-import com.example.devicersapp.ui.theme.LocalDevicersColors
-
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,78 +10,159 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProductProvider
-import com.example.devicersapp.ui.models.ProductSearchContent
+import com.example.devicersapp.data.dto.ProductDto
 import com.example.devicersapp.ui.screens.found_products.components.FoundProductCard
-import com.example.devicersapp.ui.theme.DevicersAppTheme
+import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.utils.navigation.SearchBar
-import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
 /**
  * Configura los resultados de productos y observa su estado desde el ViewModel.
- *
- * @param onProductClick Acción solicitada al abrir el detalle de un producto.
- * @param modifier Modificador aplicado a la pantalla.
- * @param viewModel ViewModel que conserva el estado de la pantalla.
  */
 @Composable
 fun FoundProductsView(
-    onProductClick: (ProductSearchContent) -> Unit = {},
+    productName: String,
+    category: String,
+    minimumRating: Float,
+    sortBy: String,
+    onProductClick: (ProductDto) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: FoundProductsViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(
+        productName,
+        category,
+        minimumRating,
+        sortBy
+    ) {
+        viewModel.loadProducts(
+            productName,
+            category,
+            minimumRating,
+            sortBy
+        )
+    }
+
     FoundProductsViewContent(
         state = uiState,
         onSearchTextChange = viewModel::onSearchTextChange,
         onProductClick = onProductClick,
+        onRetry = {
+            viewModel.loadProducts(
+                productName,
+                category,
+                minimumRating,
+                sortBy
+            )
+        },
         modifier = modifier
             .fillMaxSize()
-            .background(LocalDevicersColors.current.background)
+            .background(
+                LocalDevicersColors.current.background
+            )
     )
 }
 
-/**
- * Ensambla la búsqueda, el conteo de coincidencias y la lista de productos encontrados.
- */
 @Composable
 fun FoundProductsViewContent(
     state: FoundProductsState,
     onSearchTextChange: (String) -> Unit,
-    onProductClick: (ProductSearchContent) -> Unit,
+    onProductClick: (ProductDto) -> Unit,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-    // Conserva la consulta inicial definida en recursos cuando el estado aún no tiene texto.
-    val searchText = state.searchText.ifEmpty {
-        stringResource(R.string.found_products_query)
+
+    if (state.isLoading) {
+
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+
+        return
+    }
+
+    if (state.errorMessage != null) {
+
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            Text(
+                text = "No se pudieron cargar los productos",
+                color = colors.textPrimary,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+
+            Text(
+                text = state.errorMessage,
+                color = colors.textSecondary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
+
+            Button(
+                onClick = onRetry
+            ) {
+                Text(
+                    text = "Reintentar"
+                )
+            }
+        }
+
+        return
     }
 
     Column(
-        modifier = modifier.padding(horizontal = 20.dp)
+        modifier = modifier.padding(
+            horizontal = 20.dp
+        )
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
 
         SearchBar(
             placeholder = R.string.search_product_placeholder,
             backgroundColor = colors.surface,
             showSearchIcon = true,
-            text = searchText,
+            text = state.searchText,
             onTextChange = onSearchTextChange
         )
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(
+            modifier = Modifier.height(18.dp)
+        )
 
         Text(
             text = stringResource(
@@ -92,15 +173,21 @@ fun FoundProductsViewContent(
             style = SearchControlText
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
 
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
+
             items(
                 items = state.results,
-                key = { it.id }
+                key = { product ->
+                    product.id
+                }
             ) { product ->
+
                 FoundProductCard(
                     product = product,
                     onClick = {
@@ -108,57 +195,62 @@ fun FoundProductsViewContent(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(
+                    modifier = Modifier.height(14.dp)
+                )
             }
 
             item {
-                // Deja aire para que la barra flotante no tape el último producto.
-                Spacer(modifier = Modifier.height(110.dp))
+                Spacer(
+                    modifier = Modifier.height(110.dp)
+                )
             }
         }
     }
 }
 
-/** Muestra una vista previa de los productos encontrados en el tema claro. */
-@Composable
-@Preview(showBackground = true, heightDp = 900)
-fun FoundProductsViewPreview() {
-    DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(
-            selectedItem = "search",
-            showBottomBar = true,
-            topBarNumber = 8
-        ) { innerPadding ->
-            FoundProductsViewContent(
-                modifier = Modifier.padding(
-                    top = innerPadding.calculateTopPadding()
-                ),
-                state = FoundProductsState(results = LocalProductProvider.products),
-                onSearchTextChange = {},
-                onProductClick = {}
-            )
-        }
-    }
-}
 
-/** Muestra una vista previa de los productos encontrados en el tema oscuro. */
-@Composable
-@Preview(showBackground = true, heightDp = 900)
-fun FoundProductsViewDarkPreview() {
-    DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(
-            selectedItem = "search",
-            showBottomBar = true,
-            topBarNumber = 8
-        ) { innerPadding ->
-            FoundProductsViewContent(
-                modifier = Modifier.padding(
-                    top = innerPadding.calculateTopPadding()
-                ),
-                state = FoundProductsState(results = LocalProductProvider.products),
-                onSearchTextChange = {},
-                onProductClick = {}
-            )
-        }
-    }
-}
+
+///** Muestra una vista previa de los productos encontrados en el tema claro. */
+//@Composable
+//@Preview(showBackground = true, heightDp = 900)
+//fun FoundProductsViewPreview() {
+//    DevicersAppTheme(darkTheme = false) {
+//        DevicersScaffold(
+//            selectedItem = "search",
+//            showBottomBar = true,
+//            topBarNumber = 8
+//        ) { innerPadding ->
+//            FoundProductsViewContent(
+//                modifier = Modifier.padding(
+//                    top = innerPadding.calculateTopPadding()
+//                ),
+//                state = FoundProductsState(results = LocalProductProvider.products),
+//                onSearchTextChange = {},
+//                onProductClick = {}
+//            )
+//        }
+//    }
+//}
+//
+///** Muestra una vista previa de los productos encontrados en el tema oscuro. */
+//@Composable
+//@Preview(showBackground = true, heightDp = 900)
+//fun FoundProductsViewDarkPreview() {
+//    DevicersAppTheme(darkTheme = true) {
+//        DevicersScaffold(
+//            selectedItem = "search",
+//            showBottomBar = true,
+//            topBarNumber = 8
+//        ) { innerPadding ->
+//            FoundProductsViewContent(
+//                modifier = Modifier.padding(
+//                    top = innerPadding.calculateTopPadding()
+//                ),
+//                state = FoundProductsState(results = LocalProductProvider.products),
+//                onSearchTextChange = {},
+//                onProductClick = {}
+//            )
+//        }
+//    }
+//}

@@ -1,39 +1,51 @@
 package com.example.devicersapp.ui.screens.rate_product
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.screens.rate_product.components.RateableProductCard
 import com.example.devicersapp.ui.screens.rate_product.components.RatingSelector
 import com.example.devicersapp.ui.screens.rate_product.components.ReviewForm
-import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
-import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
-/** Renderiza la calificación y solicita la carga del producto que llega por argumento. */
+/**
+ * Renderiza la calificación y solicita la carga del producto que llega por argumento.
+ */
 @Composable
 fun RateProductView(
-    productNameResId: Int? = null,
+    productId: Int,
     onPublishClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: RateProductViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(productNameResId) {
-        viewModel.loadProduct(productNameResId)
+    LaunchedEffect(productId) {
+        viewModel.loadProduct(productId)
+    }
+
+    LaunchedEffect(uiState.publishedSuccessfully) {
+        if (uiState.publishedSuccessfully) {
+            onPublishClick()
+        }
     }
 
     RateProductViewContent(
@@ -44,25 +56,22 @@ fun RateProductView(
         onAdvantageChange = viewModel::onAdvantageChange,
         onDisadvantageChange = viewModel::onDisadvantageChange,
         onChangeProduct = viewModel::onChangeProduct,
-        onPublishClick = onPublishClick,
+        onPublishClick = {
+            viewModel.publishReview()
+        },
+        onRetry = {
+            viewModel.loadProduct(productId)
+        },
         modifier = modifier
             .fillMaxSize()
-            .background(LocalDevicersColors.current.background)
+            .background(
+                LocalDevicersColors.current.background
+            )
     )
 }
 
 /**
  * Ensambla los componentes presentacionales de la pantalla de calificación.
- *
- * @param state Estado inmutable que describe el producto y el formulario de la reseña.
- * @param onRatingChange Acción al seleccionar una calificación.
- * @param onTitleChange Acción al cambiar el título.
- * @param onExperienceChange Acción al cambiar la experiencia.
- * @param onAdvantageChange Acción al cambiar la ventaja.
- * @param onDisadvantageChange Acción al cambiar la desventaja.
- * @param onChangeProduct Acción para cambiar de producto.
- * @param onPublishClick Acción para publicar la calificación.
- * @param modifier Modificador aplicado a la lista raíz.
  */
 @Composable
 fun RateProductViewContent(
@@ -74,9 +83,63 @@ fun RateProductViewContent(
     onDisadvantageChange: (String) -> Unit,
     onChangeProduct: () -> Unit,
     onPublishClick: () -> Unit,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // La calificación solo se puede mostrar cuando el ViewModel ya resolvió el producto.
+    val colors = LocalDevicersColors.current
+
+    if (state.isLoading) {
+
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+
+        return
+    }
+
+    if (state.errorMessage != null) {
+
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            Text(
+                text = "No se pudo cargar el producto",
+                color = colors.textPrimary,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+
+            Text(
+                text = state.errorMessage,
+                color = colors.textSecondary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
+
+            Button(
+                onClick = onRetry
+            ) {
+                Text("Reintentar")
+            }
+        }
+
+        return
+    }
+
     val product = state.product ?: return
 
     LazyColumn(
@@ -86,28 +149,59 @@ fun RateProductViewContent(
     ) {
 
         item {
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
         }
 
         item {
+
             RateableProductCard(
                 product = product,
                 onChangeProduct = onChangeProduct
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
         }
 
         item {
+
             RatingSelector(
                 rating = state.rating,
                 onRatingChange = onRatingChange
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(
+                modifier = Modifier.height(28.dp)
+            )
         }
 
         item {
+
+            if (state.publishError != null) {
+
+                Text(
+                    text = state.publishError,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
+            }
+
+            if (state.isPublishing) {
+
+                CircularProgressIndicator()
+
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
+            }
+
             ReviewForm(
                 title = state.title,
                 onTitleChange = onTitleChange,
@@ -124,54 +218,8 @@ fun RateProductViewContent(
                 onPublishClick = onPublishClick
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
-        }
-    }
-}
-
-/** Muestra la calificación de producto en tema claro. */
-@Composable
-@Preview(showBackground = true, heightDp = 1100)
-fun RateProductViewPreview() {
-    DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(topBarNumber = 2) { innerPadding ->
-            RateProductViewContent(
-                state = RateProductState(product = LocalProductProvider.product),
-                onRatingChange = {},
-                onTitleChange = {},
-                onExperienceChange = {},
-                onAdvantageChange = {},
-                onDisadvantageChange = {},
-                onChangeProduct = {},
-                onPublishClick = {},
-                modifier = Modifier
-                    .padding(top = innerPadding.calculateTopPadding())
-                    .fillMaxSize()
-                    .background(LocalDevicersColors.current.background)
-            )
-        }
-    }
-}
-
-/** Muestra la calificación de producto en tema oscuro. */
-@Composable
-@Preview(showBackground = true, heightDp = 1100)
-fun RateProductViewDarkPreview() {
-    DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(topBarNumber = 2) { innerPadding ->
-            RateProductViewContent(
-                state = RateProductState(product = LocalProductProvider.product),
-                onRatingChange = {},
-                onTitleChange = {},
-                onExperienceChange = {},
-                onAdvantageChange = {},
-                onDisadvantageChange = {},
-                onChangeProduct = {},
-                onPublishClick = {},
-                modifier = Modifier
-                    .padding(top = innerPadding.calculateTopPadding())
-                    .fillMaxSize()
-                    .background(LocalDevicersColors.current.background)
+            Spacer(
+                modifier = Modifier.height(32.dp)
             )
         }
     }

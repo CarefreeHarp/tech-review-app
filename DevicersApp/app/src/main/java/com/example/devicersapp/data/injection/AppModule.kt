@@ -11,6 +11,10 @@ import javax.inject.Singleton
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import com.example.devicersapp.data.datasource.ProductRemoteDataSource
+import com.example.devicersapp.data.datasource.ReviewRemoteDataSource
+import com.example.devicersapp.data.datasource.implementations.ProductRetrofitDataSourceImplementation
+import com.example.devicersapp.data.datasource.implementations.ReviewRetrofitDataSourceImplementation
 
 /** Provee Retrofit y los servicios compartidos durante toda la aplicación. */
 @Module
@@ -48,5 +52,21 @@ object AppModule {
     @Provides
     fun providesReviewRetrofitService(retrofit: Retrofit): ReviewRetrofitService {
         return retrofit.create(ReviewRetrofitService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesProductRemoteDataSource(
+        service: ProductRetrofitService
+    ): ProductRemoteDataSource {
+        return ProductRetrofitDataSourceImplementation(service)
+    }
+
+    @Singleton
+    @Provides
+    fun providesReviewRemoteDataSource(
+        service: ReviewRetrofitService
+    ): ReviewRemoteDataSource {
+        return ReviewRetrofitDataSourceImplementation(service)
     }
 }
