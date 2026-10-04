@@ -1,5 +1,6 @@
 package com.example.devicersapp.data.injection
 
+import com.example.devicersapp.BuildConfig
 import com.example.devicersapp.data.datasource.services.ProductRetrofitService
 import com.example.devicersapp.data.datasource.services.ReviewRetrofitService
 import com.example.devicersapp.data.datasource.services.UsersRetrofitService
@@ -22,7 +23,7 @@ object AppModule {
     @Provides
     fun providesRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/")
+            .baseUrl(BuildConfig.DEVICERS_API_BASE_URL)
             // Scalars atiende el texto antes de que Gson intente interpretarlo como JSON.
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())

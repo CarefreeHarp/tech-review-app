@@ -23,6 +23,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField(
+            "String",
+            "DEVICERS_API_BASE_URL",
+            "\"${providers.gradleProperty("devicersApiBaseUrl").orElse("http://10.0.2.2:3000/").get()}\""
+        )
     }
 
     buildTypes {
@@ -38,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

@@ -28,6 +28,19 @@ Los accesos desde Home/Activity/OwnProfile aún locales necesitan que sus respec
 - Android: `./gradlew :app:assembleDebug :app:testDebugUnitTest`.
 - Pruebas de Profile, cambio rápido de usuario, errores, borradores, usuario temporal, permisos de edición/eliminación, detalle remoto y contrato HTTP (incluido DELETE 204).
 - Backend: `npm test` pasa las 7 pruebas existentes. Estas usan el almacén en memoria del repositorio.
-- La comprobación adicional con PostgreSQL local detectó que `users.firebase_uid` no existe en la base `devicers`: el esquema local debe actualizarse según los modelos del equipo antes de probar la app contra esa base. No se modificaron ni eliminaron sus datos.
-- El puerto 3000 está ocupado por otra aplicación. Retrofit mantiene `http://10.0.2.2:3000/`, conforme a AppModule. Resolver el puerto antes de ejecutar Devicers localmente.
-- No había dispositivo/emulador conectado durante la validación; no se afirma una prueba visual en Android.
+- Una base PostgreSQL temporal con el esquema y los datos iniciales actuales pasó consultas de Profile y el ciclo POST, GET, PUT y DELETE. Se eliminó al finalizar.
+- Una prueba instrumentada en Android 16 pasó desde un emulador contra esa API temporal: Profile, reseñas del usuario seleccionado y CRUD con `userId = 1`. Pasaron las 2 pruebas instrumentadas y las 13 pruebas unitarias Android. No se hizo una prueba visual de las pantallas, porque requiere iniciar sesión en Firebase.
+- La base local `devicers` está desactualizada: le falta `users.firebase_uid`. La prueba aislada evita cambiar sus datos.
+- El puerto 3000 está ocupado por otra aplicación. AppModule mantiene `http://10.0.2.2:3000/` como valor normal y admite `-PdevicersApiBaseUrl=http://10.0.2.2:3001/` para pruebas.
+
+### Repetir la prueba en este equipo
+
+Con PostgreSQL activo y ambos repositorios como carpetas hermanas, inicia un emulador desde Android Studio. Desde la raíz del repositorio Android, ejecuta `node scripts/start-test-api.mjs` en una terminal y déjala abierta. El script crea una base temporal y abre la API en el puerto 3001. En otra terminal, dentro de `DevicersApp`, ejecuta:
+
+```powershell
+.\gradlew.bat :app:connectedDebugAndroidTest -PdevicersApiBaseUrl=http://10.0.2.2:3001/
+```
+
+Al terminar, pulsa Enter en la primera terminal. El script cierra la API y elimina la base temporal. La prueba de red se omite cuando se ejecutan las pruebas instrumentadas con la URL normal de la app.
+
+Para recorrer las pantallas manualmente, instala la variante con la misma propiedad (`:app:installDebug`), inicia sesión con una cuenta Firebase de prueba y visita Buscar usuarios → Profile, Crear reseña → elegir producto → publicar, y Crear reseña → Mis reseñas → editar/eliminar. La ruta desde Product depende de la integración de la tarea 4.
