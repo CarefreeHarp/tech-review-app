@@ -37,12 +37,15 @@ fun CreateReviewView(
     onProductClick: (ProductSearchContent) -> Unit = {},
     onRequestProductClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    onManageReviewsClick: () -> Unit = {},
     viewModel: CreateReviewViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     CreateReviewViewContent(
         state = uiState,
+        onRetry = viewModel::loadProducts,
+        onManageReviewsClick = onManageReviewsClick,
         onSearchTextChange = viewModel::onSearchTextChange,
         onCategoryChange = viewModel::onCategoryChange,
         onProductClick = onProductClick,
@@ -66,6 +69,8 @@ fun CreateReviewView(
 @Composable
 fun CreateReviewViewContent(
     state: CreateReviewState,
+    onRetry: () -> Unit = {},
+    onManageReviewsClick: () -> Unit = {},
     onSearchTextChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
     onProductClick: (ProductSearchContent) -> Unit,
@@ -77,6 +82,9 @@ fun CreateReviewViewContent(
     Column(
         modifier = modifier.padding(horizontal = 20.dp)
     ) {
+        androidx.compose.material3.TextButton(onClick = onManageReviewsClick) { Text("Mis reseñas") }
+        if (state.loading) androidx.compose.material3.LinearProgressIndicator()
+        state.error?.let { Text(it); androidx.compose.material3.TextButton(onClick = onRetry) { Text("Reintentar") } }
         Spacer(modifier = Modifier.height(16.dp))
 
         SearchBar(

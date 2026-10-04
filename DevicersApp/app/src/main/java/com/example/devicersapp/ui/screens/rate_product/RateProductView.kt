@@ -25,17 +25,28 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 /** Renderiza la calificación y solicita la carga del producto que llega por argumento. */
 @Composable
 fun RateProductView(
-    productNameResId: Int? = null,
+    productId: Int? = null,
     onPublishClick: () -> Unit = {},
+    onChooseProduct: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: RateProductViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(productNameResId) {
-        viewModel.loadProduct(productNameResId)
+    LaunchedEffect(productId) {
+        viewModel.loadProduct(productId)
     }
 
+    LaunchedEffect(uiState.published) { if (uiState.published) onPublishClick() }
+    if (uiState.loading) { androidx.compose.material3.CircularProgressIndicator(); return }
+    if (uiState.product == null) {
+        androidx.compose.foundation.layout.Column {
+            androidx.compose.material3.Text(uiState.error.orEmpty())
+            androidx.compose.material3.TextButton(onClick = onChooseProduct) { androidx.compose.material3.Text("Elegir producto") }
+            androidx.compose.material3.TextButton(onClick = { viewModel.loadProduct(productId) }) { androidx.compose.material3.Text("Reintentar") }
+        }
+        return
+    }
     RateProductViewContent(
         state = uiState,
         onRatingChange = viewModel::onRatingChange,
@@ -44,7 +55,7 @@ fun RateProductView(
         onAdvantageChange = viewModel::onAdvantageChange,
         onDisadvantageChange = viewModel::onDisadvantageChange,
         onChangeProduct = viewModel::onChangeProduct,
-        onPublishClick = onPublishClick,
+        onPublishClick = viewModel::publish,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -86,6 +97,8 @@ fun RateProductViewContent(
     ) {
 
         item {
+            if (state.saving) androidx.compose.material3.LinearProgressIndicator()
+            state.error?.let { androidx.compose.material3.Text(it, color = androidx.compose.material3.MaterialTheme.colorScheme.error) }
             Spacer(modifier = Modifier.height(20.dp))
         }
 
@@ -121,7 +134,8 @@ fun RateProductViewContent(
                 disadvantage = state.disadvantage,
                 onDisadvantageChange = onDisadvantageChange,
 
-                onPublishClick = onPublishClick
+                onPublishClick = onPublishClick,
+                enabled = !state.saving
             )
 
             Spacer(modifier = Modifier.height(32.dp))

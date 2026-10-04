@@ -1,5 +1,10 @@
 package com.example.devicersapp.ui.screens.create_review
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.ui.mappers.toSearchContent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.data.local.LocalProductProvider
@@ -10,7 +15,7 @@ import javax.inject.Inject
 
 /** Conserva el estado y la lógica de búsqueda para crear una reseña. */
 @HiltViewModel
-class CreateReviewViewModel @Inject constructor() : ViewModel() {
+class CreateReviewViewModel @Inject constructor(private val repository: ProductRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateReviewState())
     val uiState: StateFlow<CreateReviewState> = _uiState
@@ -20,15 +25,18 @@ class CreateReviewViewModel @Inject constructor() : ViewModel() {
     }
 
     /** Carga las categorías y productos disponibles. */
-    private fun loadProducts() {
-        _uiState.update { currentState ->
-            val products = LocalProductProvider.products
-
-            currentState.copy(
-                categories = LocalProductProvider.categories,
-                products = products,
-                filteredProducts = products
-            )
+    fun loadProducts() {
+        if (_uiState.value.loading) return
+        _uiState.update { it.copy(loading = true, error = null) }
+        viewModelScope.launch {
+            try {
+                val products = repository.getProducts().filter { it.isActive }.map { it.toSearchContent() }
+                _uiState.update {
+                    val updated = it.copy(products = products, loading = false)
+                    updated.copy(filteredProducts = filterProducts(updated))
+                }
+            } catch (e: CancellationException) { throw e }
+            catch (e: Exception) { _uiState.update { it.copy(loading = false, error = "No se pudo cargar el catálogo.") } }
         }
     }
 

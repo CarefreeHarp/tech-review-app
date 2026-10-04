@@ -5,6 +5,8 @@ import com.example.devicersapp.ui.models.ProductSearchContent
 
 /** Representa el estado visible de la pantalla para crear una reseña. */
 data class CreateReviewState(
+    val loading: Boolean = false,
+    val error: String? = null,
     val categories: List<ProductCategoryContent> = emptyList(),
     val products: List<ProductSearchContent> = emptyList(),
     val filteredProducts: List<ProductSearchContent> = emptyList(),

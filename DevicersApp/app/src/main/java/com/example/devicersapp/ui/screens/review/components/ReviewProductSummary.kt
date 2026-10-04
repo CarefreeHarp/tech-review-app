@@ -56,8 +56,10 @@ fun ReviewProductSummary(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (product.showImage) {
-            Image(
-                painter = painterResource(product.imageResId),
+            coil3.compose.AsyncImage(
+                model = product.imageUrl,
+                fallback = painterResource(product.imageResId),
+                error = painterResource(product.imageResId),
                 contentDescription = stringResource(product.imageDescriptionResId),
                 modifier = Modifier
                     .width(136.dp)
@@ -71,13 +73,13 @@ fun ReviewProductSummary(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(product.nameResId),
+                text = product.name ?: stringResource(product.nameResId),
                 style = MaterialTheme.typography.titleMedium,
                 color = colors.textPrimary
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = stringResource(product.brandResId),
+                text = product.metadata ?: stringResource(product.brandResId),
                 style = MaterialTheme.typography.bodySmall,
                 color = colors.textSecondary
             )

@@ -9,7 +9,11 @@ data class ProductContent(
     @param:StringRes val brandResId: Int,
     @param:DrawableRes val imageResId: Int,
     @param:StringRes val imageDescriptionResId: Int,
-    val showImage: Boolean = true
+    val showImage: Boolean = true,
+    val id: Int? = null,
+    val name: String? = null,
+    val metadata: String? = null,
+    val imageUrl: String? = null
 )
 
 /**
@@ -36,7 +40,10 @@ data class ProductSearchContent(
     @param:StringRes val imageDescriptionResId: Int,
     @param:DrawableRes val imageResId: Int,
     val rating: Int,
-    @param:StringRes val averageResId: Int? = null
+    @param:StringRes val averageResId: Int? = null,
+    val name: String? = null,
+    val metadata: String? = null,
+    val imageUrl: String? = null
 ) {
     init { require(rating in 1..5) { "La calificación debe estar entre 1 y 5." } }
 }

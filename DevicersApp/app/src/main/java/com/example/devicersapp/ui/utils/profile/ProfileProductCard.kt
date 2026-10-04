@@ -54,8 +54,10 @@ fun ProfileProductCard(
             .clickable { onClick() }
             .padding(16.dp)
     ) {
-        Image(
-            painter = painterResource(review.productImageResId),
+        coil3.compose.AsyncImage(
+            model = review.productImageUrl,
+            fallback = painterResource(review.productImageResId),
+            error = painterResource(review.productImageResId),
             contentDescription = stringResource(R.string.review_product_image),
             modifier = Modifier
                 .size(58.dp)
@@ -66,7 +68,7 @@ fun ProfileProductCard(
         Spacer(modifier = Modifier.height(14.dp))
 
         Text(
-            text = stringResource(review.productNameResId),
+            text = review.productName ?: stringResource(review.productNameResId),
             color = colors.textPrimary,
             style = MaterialTheme.typography.titleSmall,
             maxLines = 1,

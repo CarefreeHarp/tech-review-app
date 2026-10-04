@@ -1,5 +1,10 @@
 package com.example.devicersapp.ui.screens.profile_search_results
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import com.example.devicersapp.data.repository.UsersRepository
+import com.example.devicersapp.ui.mappers.toSearchContent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.data.local.LocalProfileProvider
@@ -10,7 +15,7 @@ import javax.inject.Inject
 
 /** Conserva la consulta y los seguimientos visibles en los resultados de perfiles. */
 @HiltViewModel
-class ProfileSearchResultsViewModel @Inject constructor() : ViewModel() {
+class ProfileSearchResultsViewModel @Inject constructor(private val users: UsersRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileSearchResultsState())
     val uiState: StateFlow<ProfileSearchResultsState> = _uiState
@@ -20,8 +25,16 @@ class ProfileSearchResultsViewModel @Inject constructor() : ViewModel() {
     }
 
     /** Carga los perfiles disponibles cuando se crea el ViewModel. */
-    private fun loadResults() {
-        _uiState.update { it.copy(results = LocalProfileProvider.profiles) }
+    fun loadResults() {
+        if (_uiState.value.loading) return
+        _uiState.update { it.copy(loading = true, error = null) }
+        viewModelScope.launch {
+            try {
+                val results = users.getUsers().map { it.toSearchContent() }
+                _uiState.update { it.copy(results = results, loading = false) }
+            } catch (e: CancellationException) { throw e }
+            catch (e: Exception) { _uiState.update { it.copy(loading = false, error = "No se pudieron cargar los usuarios.") } }
+        }
     }
 
     /** Conserva el texto con el que se afina la búsqueda. */

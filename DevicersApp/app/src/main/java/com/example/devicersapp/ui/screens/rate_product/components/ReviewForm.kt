@@ -48,6 +48,7 @@ fun ReviewForm(
     disadvantage: String,
     onDisadvantageChange: (String) -> Unit,
     onPublishClick: () -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -139,6 +140,7 @@ fun ReviewForm(
 
         Button(
             onClick = onPublishClick,
+            enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),

@@ -34,7 +34,7 @@ fun ProfileStat(
     ) {
         // El número va en negrita porque es el dato que se compara entre perfiles.
         Text(
-            text = stringResource(stat.numberResId),
+            text = stat.number ?: stringResource(stat.numberResId),
             style = MaterialTheme.typography.titleMedium,
             color = LocalDevicersColors.current.textPrimary
         )

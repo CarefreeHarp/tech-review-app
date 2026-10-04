@@ -63,8 +63,10 @@ fun RateableProductCard(
     ) {
 
         if (product.showImage) {
-            Image(
-                painter = painterResource(product.imageResId),
+            coil3.compose.AsyncImage(
+                model = product.imageUrl,
+                fallback = painterResource(product.imageResId),
+                error = painterResource(product.imageResId),
                 contentDescription = stringResource(product.imageDescriptionResId),
                 modifier = Modifier
                     .size(60.dp)
@@ -78,7 +80,7 @@ fun RateableProductCard(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = stringResource(product.nameResId),
+                text = product.name ?: stringResource(product.nameResId),
                 style = MaterialTheme.typography.titleMedium,
                 color = colors.textPrimary
             )
@@ -86,7 +88,7 @@ fun RateableProductCard(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = stringResource(product.brandResId),
+                text = product.metadata ?: stringResource(product.brandResId),
                 style = CardMetadataText,
                 color = colors.textSecondary
             )

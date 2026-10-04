@@ -65,6 +65,7 @@ fun ProfileResultCard(
     ) {
         ProfileAvatar(
             avatarResId = result.avatarResId,
+            imageUrl = result.imageUrl,
             modifier = Modifier.size(52.dp)
         )
 
@@ -72,7 +73,7 @@ fun ProfileResultCard(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(result.handleResId),
+                text = result.username ?: stringResource(result.handleResId),
                 color = colors.textPrimary,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
@@ -80,7 +81,7 @@ fun ProfileResultCard(
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = stringResource(result.interestsResId),
+                text = result.biography ?: stringResource(result.interestsResId),
                 color = colors.textSecondary,
                 style = CardMetadataText,
                 maxLines = 1,
@@ -88,7 +89,7 @@ fun ProfileResultCard(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = stringResource(result.reviewCountResId),
+                text = result.reviewCount?.let { "$it reseñas" } ?: stringResource(result.reviewCountResId),
                 color = colors.textSecondary,
                 style = MaterialTheme.typography.bodySmall
             )

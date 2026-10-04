@@ -58,8 +58,10 @@ fun ProductReviewItem(
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(product.imageResId),
+        coil3.compose.AsyncImage(
+            model = product.imageUrl,
+                fallback = painterResource(product.imageResId),
+                error = painterResource(product.imageResId),
             contentDescription = stringResource(product.imageDescriptionResId),
             modifier = Modifier
                 .size(58.dp)
@@ -71,7 +73,7 @@ fun ProductReviewItem(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(product.nameResId),
+                text = product.name ?: stringResource(product.nameResId),
                 color = colors.textPrimary,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
@@ -79,7 +81,7 @@ fun ProductReviewItem(
             )
             Spacer(modifier = Modifier.height(3.dp))
             Text(
-                text = stringResource(product.brandResId),
+                text = product.metadata ?: stringResource(product.brandResId),
                 color = colors.textSecondary,
                 style = CardMetadataText,
                 maxLines = 1,

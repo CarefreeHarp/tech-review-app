@@ -109,7 +109,7 @@ object NavigationLogic {
                 topBarNumber = 6
             )
 
-        "${AppDestination.RateProduct.route}/{productNameResId}" ->
+        "${AppDestination.RateProduct.route}/{productId}" ->
             NavigationUiConfiguration(
                 topBarNumber = 2
             )
@@ -131,6 +131,13 @@ object NavigationLogic {
                 showBottomBar = true,
                 topBarNumber = 1,
                 topBarUserHandleResId = LocalProfileProvider.profile.handleResId
+            )
+
+        AppDestination.MyReviews.route ->
+            NavigationUiConfiguration(
+                selectedItem = AppDestination.CreateReview.route,
+                showBottomBar = true,
+                topBarNumber = 2
             )
 
         AppDestination.ProfileSavedReviews.route ->

@@ -78,7 +78,7 @@ fun ProfileHeader(
         Box {
             ProfileAvatar(
                 avatarResId = profile.avatarResId,
-                imageUrl = profileImageUrl,
+                imageUrl = profileImageUrl ?: profile.imageUrl,
                 modifier = Modifier.size(84.dp)
             )
             // Solo el perfil propio ofrece cambiar la foto, con la insignia sobre su borde.
@@ -105,7 +105,7 @@ fun ProfileHeader(
 
         if (showDisplayName) {
             Text(
-                text = displayName.ifBlank { stringResource(profile.handleResId) },
+                text = displayName.ifBlank { profile.username ?: stringResource(profile.handleResId) },
                 style = MaterialTheme.typography.titleMedium,
                 color = colors.textPrimary
             )
@@ -156,7 +156,7 @@ fun ProfileHeader(
         if (showBiography) {
             Spacer(modifier = Modifier.height(if (showAction) 18.dp else 22.dp))
             Text(
-                text = stringResource(profile.biographyResId),
+                text = profile.biography ?: stringResource(profile.biographyResId),
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colors.textSecondary

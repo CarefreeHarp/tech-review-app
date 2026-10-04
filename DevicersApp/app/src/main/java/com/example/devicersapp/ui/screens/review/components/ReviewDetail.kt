@@ -2,6 +2,7 @@ package com.example.devicersapp.ui.screens.review.components
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,20 +40,21 @@ import com.example.devicersapp.ui.utils.review.ReviewActionsRow
  * @param modifier Modificador aplicado al contenedor.
  */
 @Composable
-fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier) {
+fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onAuthorClick: () -> Unit = {}) {
     val colors = LocalDevicersColors.current
-    val author = requireNotNull(LocalProfileProvider.getProfileById(review.authorId))
+    val author = if (review.authorName == null) LocalProfileProvider.getProfileById(review.authorId) else null
 
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.clickable(onClick = onAuthorClick), verticalAlignment = Alignment.CenterVertically) {
             ProfileAvatar(
-                avatarResId = author.avatarResId,
+                avatarResId = author?.avatarResId ?: R.drawable.no_pfp_icon,
+                imageUrl = review.authorImageUrl,
                 modifier = Modifier.size(48.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = stringResource(author.handleResId),
+                    text = review.authorName ?: author?.let { stringResource(it.handleResId) }.orEmpty(),
                     style = MaterialTheme.typography.titleSmall,
                     color = colors.textPrimary
                 )
@@ -68,7 +70,7 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.clickable(onClick = onAuthorClick), verticalAlignment = Alignment.CenterVertically) {
             RatingStars(rating = review.rating, style = RatingStarsLargeText)
             // El promedio del producto acompaña a la calificación entera que dio el autor.
             review.productAverageResId?.let { averageResId ->
@@ -83,8 +85,12 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(14.dp))
 
+        review.title?.takeIf { it.isNotBlank() }?.let { title ->
+            Text(title, style = MaterialTheme.typography.titleMedium, color = colors.textPrimary)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
         Text(
-            text = stringResource(review.textResId),
+            text = review.body ?: stringResource(review.textResId),
             style = ReviewContentText,
             color = colors.textPrimary
         )

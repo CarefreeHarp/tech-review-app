@@ -1,8 +1,16 @@
 package com.example.devicersapp.ui.screens.review
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import com.example.devicersapp.data.repository.ReviewRepository
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.UsersRepository
+import com.example.devicersapp.ui.mappers.toReviewContent
+import com.example.devicersapp.ui.mappers.toProductContent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.example.devicersapp.data.local.LocalReviewProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -10,24 +18,35 @@ import javax.inject.Inject
 
 /** Obtiene y conserva el contenido y las acciones del detalle de una reseña. */
 @HiltViewModel
-class ReviewViewModel @Inject constructor() : ViewModel() {
+class ReviewViewModel @Inject constructor(
+    private val reviews: ReviewRepository,
+    private val products: ProductRepository,
+    private val users: UsersRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReviewState())
     val uiState: StateFlow<ReviewState> = _uiState
 
     /** Carga la reseña solicitada y el producto asociado. */
-    fun loadReview(reviewId: Int) {
-        val review = LocalReviewProvider.findById(reviewId)
-        val product = LocalReviewProvider.findProductByReviewId(reviewId)
+    private var loadJob: Job? = null
 
-        _uiState.update { currentState ->
-            currentState.copy(
-                product = product,
-                review = review,
-                replies = review?.comments.orEmpty(),
-                replyText = "",
-                expandedReplies = emptyMap()
-            )
+    fun loadReview(reviewId: Int) {
+        loadJob?.cancel()
+        _uiState.value = ReviewState(loading = true)
+        loadJob = viewModelScope.launch {
+            try {
+                val review = reviews.getReviewById(reviewId)
+                val product = products.getProductById(review.articleId)
+                val author = users.getUserById(review.userId)
+                _uiState.value = ReviewState(
+                    product = product.toProductContent(),
+                    review = review.copy(article = product, user = author).toReviewContent()
+                )
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (exception: Exception) {
+                _uiState.value = ReviewState(error = "No se pudo cargar la reseña. Intenta nuevamente.")
+            }
         }
     }
 

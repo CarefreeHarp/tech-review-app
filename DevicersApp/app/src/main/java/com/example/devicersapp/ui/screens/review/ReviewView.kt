@@ -32,6 +32,8 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 @Composable
 fun ReviewView(
     reviewId: Int,
+    onManageReviewsClick: () -> Unit = {},
+    onAuthorClick: (String) -> Unit = {},
     onProductClick: (Int) -> Unit = {},
     onSendReply: (String) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -39,12 +41,28 @@ fun ReviewView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(reviewId) {
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    androidx.compose.runtime.DisposableEffect(lifecycleOwner, reviewId) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) viewModel.loadReview(reviewId)
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
         viewModel.loadReview(reviewId)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+    if (uiState.loading) { androidx.compose.material3.CircularProgressIndicator(); return }
+    uiState.error?.let { error ->
+        androidx.compose.foundation.layout.Column {
+            androidx.compose.material3.Text(error)
+            androidx.compose.material3.TextButton(onClick = { viewModel.loadReview(reviewId) }) { androidx.compose.material3.Text("Reintentar") }
+        }
+        return
+    }
     ReviewViewContent(
             state = uiState,
+            onManageReviewsClick = onManageReviewsClick,
+            onAuthorClick = onAuthorClick,
             onReplyTextChange = viewModel::onReplyTextChange,
             onProductClick = onProductClick,
             onSendReply = {
@@ -66,6 +84,8 @@ fun ReviewView(
 @Composable
 fun ReviewViewContent(
     state: ReviewState,
+    onManageReviewsClick: () -> Unit = {},
+    onAuthorClick: (String) -> Unit = {},
     onReplyTextChange: (String) -> Unit,
     onProductClick: (Int) -> Unit,
     onSendReply: () -> Unit,
@@ -85,16 +105,20 @@ fun ReviewViewContent(
                     ReviewProductSummary(
                         product = product,
                         onClick = {
-                            onProductClick(product.nameResId)
+                            onProductClick(product.id ?: product.nameResId)
                         }
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
 
                     ReviewDetail(
-                        review = review
+                        review = review,
+                        onAuthorClick = { onAuthorClick(review.authorId) }
                     )
 
+                    if (review.authorId == com.example.devicersapp.data.repository.CURRENT_USER_ID.toString()) {
+                        androidx.compose.material3.TextButton(onClick = onManageReviewsClick) { androidx.compose.material3.Text("Administrar mis reseñas") }
+                    }
                     Spacer(modifier = Modifier.height(24.dp))
 
                     HorizontalDivider(

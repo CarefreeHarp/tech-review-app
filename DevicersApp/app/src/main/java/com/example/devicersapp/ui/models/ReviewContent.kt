@@ -28,7 +28,13 @@ data class ReviewContent(
     val comments: List<ReplyContent> = emptyList(),
     @param:StringRes val timeAgoResId: Int? = null,
     @param:StringRes val productAverageResId: Int? = null,
-    val id: Int = productNameResId
+    val id: Int = productNameResId,
+    val productName: String? = null,
+    val productImageUrl: String? = null,
+    val body: String? = null,
+    val authorName: String? = null,
+    val authorImageUrl: String? = null,
+    val title: String? = null
 ) {
     init { require(rating in 1..5) { "La calificación debe estar entre 1 y 5." } }
 }

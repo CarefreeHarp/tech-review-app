@@ -37,6 +37,8 @@ import com.example.devicersapp.ui.screens.profile_saved_reviews.ProfileSavedRevi
 import com.example.devicersapp.ui.screens.profile_saved_reviews.ProfileSavedReviewsViewModel
 import com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsView
 import com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsViewModel
+import com.example.devicersapp.ui.screens.remote_reviews.RemoteReviewsView
+import com.example.devicersapp.ui.screens.remote_reviews.RemoteReviewsViewModel
 import com.example.devicersapp.ui.screens.rate_product.RateProductView
 import com.example.devicersapp.ui.screens.rate_product.RateProductViewModel
 import com.example.devicersapp.ui.screens.register.RegisterView
@@ -60,6 +62,7 @@ sealed class AppDestination(val route: String) {
     data object Home : AppDestination("home")
     data object SearchProduct : AppDestination("search")
     data object CreateReview : AppDestination("create")
+    data object MyReviews : AppDestination("my-reviews")
     data object Activity : AppDestination("activity")
     data object OwnProfile : AppDestination("profile")
     data object Register : AppDestination("register")
@@ -235,7 +238,7 @@ fun AppNavigation(
                     onProductClick = { product ->
                         navController.navigate(
                             AppDestination.RateProduct.createRoute(
-                                product.nameResId
+                                product.id.toInt()
                             )
                         )
                     },
@@ -244,7 +247,16 @@ fun AppNavigation(
                             AppDestination.RequestProduct.route
                         )
                     },
+                    onManageReviewsClick = { navController.navigate(AppDestination.MyReviews.route) },
                     viewModel = createReviewViewModel
+                )
+            }
+            composable(AppDestination.MyReviews.route) {
+                val remoteViewModel: RemoteReviewsViewModel = hiltViewModel()
+                RemoteReviewsView(
+                    viewModel = remoteViewModel,
+                    onProfileClick = { id -> navController.navigate(AppDestination.Profile.createRoute(id)) },
+                    onCreateClick = { navController.navigate(AppDestination.CreateReview.route) }
                 )
             }
             composable(route = AppDestination.Activity.route) {
@@ -393,27 +405,28 @@ fun AppNavigation(
             }
 
             composable(
-                route = "${AppDestination.RateProduct.route}/{productNameResId}",
+                route = "${AppDestination.RateProduct.route}/{productId}",
                 arguments = listOf(
-                    navArgument("productNameResId") {
+                    navArgument("productId") {
                         type = NavType.IntType
                     }
                 )
             ) {
 
-                val productNameResId =
-                    it.arguments?.getInt("productNameResId")
+                val productId =
+                    it.arguments?.getInt("productId")
 
-                if (productNameResId != null) {
+                if (productId != null) {
                     val rateProductViewModel: RateProductViewModel = hiltViewModel()
 
                     RateProductView(
                         viewModel = rateProductViewModel,
-                        productNameResId = productNameResId,
+                        onChooseProduct = { navController.navigate(AppDestination.CreateReview.route) },
+                        productId = productId,
                         onPublishClick = {
-                            navController.navigateToDestination(
-                                AppDestination.Home.route
-                            )
+                            navController.navigate(AppDestination.MyReviews.route) {
+                                popUpTo(AppDestination.CreateReview.route)
+                            }
                         }
                     )
                 } else {
@@ -432,17 +445,11 @@ fun AppNavigation(
 
                 if (reviewId != null) {
                     val reviewViewModel: ReviewViewModel = hiltViewModel()
-
                     ReviewView(
                         reviewId = reviewId,
-                        onProductClick = { productNameResId ->
-                            navController.navigate(
-                                AppDestination.Product.createRoute(
-                                    productNameResId
-                                )
-                            )
-                        },
-                        viewModel = reviewViewModel
+                        viewModel = reviewViewModel,
+                        onManageReviewsClick = { navController.navigate(AppDestination.MyReviews.route) },
+                        onAuthorClick = { id -> navController.navigate(AppDestination.Profile.createRoute(id)) }
                     )
                 } else {
                     Text(

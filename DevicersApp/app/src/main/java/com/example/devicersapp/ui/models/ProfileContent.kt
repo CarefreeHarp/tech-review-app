@@ -9,13 +9,17 @@ data class ProfileContent(
     @param:DrawableRes val avatarResId: Int,
     @param:StringRes val handleResId: Int,
     @param:StringRes val biographyResId: Int,
+    val username: String? = null,
+    val biography: String? = null,
+    val imageUrl: String? = null,
     val stats: List<ProfileStatContent>
 )
 
 /** Representa una estadística visible dentro de un perfil. */
 data class ProfileStatContent(
     @param:StringRes val numberResId: Int,
-    @param:StringRes val labelResId: Int
+    @param:StringRes val labelResId: Int,
+    val number: String? = null
 )
 
 /**
@@ -41,5 +45,9 @@ data class ProfileSearchResultContent(
     @param:DrawableRes val avatarResId: Int,
     @param:StringRes val handleResId: Int,
     @param:StringRes val interestsResId: Int,
-    @param:StringRes val reviewCountResId: Int
+    @param:StringRes val reviewCountResId: Int,
+    val username: String? = null,
+    val biography: String? = null,
+    val imageUrl: String? = null,
+    val reviewCount: Int? = null
 )
