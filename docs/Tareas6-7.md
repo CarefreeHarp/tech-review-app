@@ -29,7 +29,8 @@ Los accesos desde Home/Activity/OwnProfile aún locales necesitan que sus respec
 - Pruebas de Profile, cambio rápido de usuario, errores, borradores, usuario temporal, permisos de edición/eliminación, detalle remoto y contrato HTTP (incluido DELETE 204).
 - Backend: `npm test` pasa las 7 pruebas existentes. Estas usan el almacén en memoria del repositorio.
 - Una base PostgreSQL temporal con el esquema y los datos iniciales actuales pasó consultas de Profile y el ciclo POST, GET, PUT y DELETE. Se eliminó al finalizar.
-- Una prueba instrumentada en Android 16 pasó desde un emulador contra esa API temporal: Profile, reseñas del usuario seleccionado y CRUD con `userId = 1`. Pasaron las 2 pruebas instrumentadas y las 13 pruebas unitarias Android. No se hizo una prueba visual de las pantallas, porque requiere iniciar sesión en Firebase.
+- Una prueba instrumentada en Android 16 pasó desde un emulador contra esa API temporal: Profile, reseñas del usuario seleccionado y CRUD con `userId = 1`. Pasaron las 2 pruebas instrumentadas y las 13 pruebas unitarias Android.
+- También se recorrieron las pantallas en el emulador: resultados con tres usuarios reales, Profile de `mariana.tech` con sus dos reseñas, selección de producto, publicación de una reseña, edición de su puntuación y eliminación confirmada. El estado final se comprobó por la interfaz y con `GET /users/1/reviews`.
 - La base local `devicers` está desactualizada: le falta `users.firebase_uid`. La prueba aislada evita cambiar sus datos.
 - El puerto 3000 está ocupado por otra aplicación. AppModule mantiene `http://10.0.2.2:3000/` como valor normal y admite `-PdevicersApiBaseUrl=http://10.0.2.2:3001/` para pruebas.
 
@@ -43,4 +44,10 @@ Con PostgreSQL activo y ambos repositorios como carpetas hermanas, inicia un emu
 
 Al terminar, pulsa Enter en la primera terminal. El script cierra la API y elimina la base temporal. La prueba de red se omite cuando se ejecutan las pruebas instrumentadas con la URL normal de la app.
 
-Para recorrer las pantallas manualmente, instala la variante con la misma propiedad (`:app:installDebug`), inicia sesión con una cuenta Firebase de prueba y visita Buscar usuarios → Profile, Crear reseña → elegir producto → publicar, y Crear reseña → Mis reseñas → editar/eliminar. La ruta desde Product depende de la integración de la tarea 4.
+Para recorrer las pantallas manualmente sin Firebase, instala una variante debug que abra directamente los resultados de usuarios:
+
+```powershell
+.\gradlew.bat :app:installDebug -PdevicersApiBaseUrl=http://10.0.2.2:3001/ -PdevicersTestStartDestination=profile-search-results
+```
+
+Inicia la app y visita Buscar usuarios → Profile, Crear reseña → elegir producto → publicar, y Crear reseña → Mis reseñas → editar/eliminar. La propiedad `devicersTestStartDestination` solo se aplica a compilaciones debug; sin ella la app comienza en Splash como siempre. También admite `create` y `my-reviews` para abrir esas pantallas directamente. La ruta desde Product depende de la integración de la tarea 4.

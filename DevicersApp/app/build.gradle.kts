@@ -28,6 +28,11 @@ android {
             "DEVICERS_API_BASE_URL",
             "\"${providers.gradleProperty("devicersApiBaseUrl").orElse("http://10.0.2.2:3000/").get()}\""
         )
+        buildConfigField(
+            "String",
+            "DEVICERS_TEST_START_DESTINATION",
+            "\"${providers.gradleProperty("devicersTestStartDestination").orElse("splash").get()}\""
+        )
     }
 
     buildTypes {
