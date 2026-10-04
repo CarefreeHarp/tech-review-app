@@ -63,4 +63,4 @@ Para ejecutar también la comprobación del grafo real de navegación:
 
 `IntegratedBackendFlowTest` recorre Profile, Product, publicación, detalle, edición y eliminación mediante los ViewModels y repositorios compartidos contra PostgreSQL temporal. Comprueba los IDs y la actualización de Product después de editar y eliminar; limpia la reseña temporal al finalizar. `IntegratedNavigationTest` comprueba en Compose el recorrido Profile → Review → Product → RateProduct con el grafo y Hilt reales. Las pruebas instrumentadas de integración solo se habilitan contra la URL aislada; la de navegación requiere además el destino debug indicado.
 
-No se modifica develop ni se crea PR. Comparar contra `origin/task/#4` permite revisar los cambios propios de 6–7; comparar contra develop incluye también la dependencia task/#4 mientras esa rama no esté integrada allí.
+El PR #42 propone integrar `task/#6-7` en `develop`; todavía no se ha hecho el merge. Comparar contra `origin/task/#4` permite revisar los cambios propios de 6–7; comparar contra develop incluye también la dependencia task/#4 mientras esa rama no esté integrada allí.
