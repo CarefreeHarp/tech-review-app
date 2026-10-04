@@ -198,6 +198,11 @@ fun AppNavigation(
 
                 HomeView(
                     viewModel = homeViewModel,
+                    onProductClick = { productId ->
+                        navController.navigate(
+                            AppDestination.Product.createRoute(productId)
+                        )
+                    },
                     onReviewClick = { reviewId ->
                         navController.navigate(
                             AppDestination.Review.createRoute(reviewId)

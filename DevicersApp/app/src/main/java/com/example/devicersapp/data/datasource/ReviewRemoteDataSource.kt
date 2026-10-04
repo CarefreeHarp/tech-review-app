@@ -1,6 +1,8 @@
 package com.example.devicersapp.data.datasource
 
+import com.example.devicersapp.data.dto.CommentDto
 import com.example.devicersapp.data.dto.ReviewDto
+import com.example.devicersapp.data.dto.ReviewLikeDto
 import com.example.devicersapp.data.dto.CreateReviewRequestDto
 import com.example.devicersapp.data.dto.UpdateReviewRequestDto
 
@@ -19,4 +21,8 @@ interface ReviewRemoteDataSource {
     suspend fun updateReview(reviewId: Int, request: UpdateReviewRequestDto): ReviewDto
 
     suspend fun deleteReview(reviewId: Int): Unit
+
+    suspend fun getComments(): List<CommentDto>
+
+    suspend fun getReviewLikes(): List<ReviewLikeDto>
 }

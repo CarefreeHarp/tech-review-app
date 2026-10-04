@@ -1,6 +1,8 @@
 package com.example.devicersapp.data.datasource.services
 
+import com.example.devicersapp.data.dto.CommentDto
 import com.example.devicersapp.data.dto.ReviewDto
+import com.example.devicersapp.data.dto.ReviewLikeDto
 import com.example.devicersapp.data.dto.CreateReviewRequestDto
 import com.example.devicersapp.data.dto.UpdateReviewRequestDto
 import retrofit2.http.Body
@@ -32,4 +34,10 @@ interface ReviewRetrofitService {
 
     @DELETE("reviews/{reviewId}")
     suspend fun deleteReview(@Path("reviewId") reviewId: Int): Unit
+
+    @GET("comments")
+    suspend fun getComments(): List<CommentDto>
+
+    @GET("review-likes")
+    suspend fun getReviewLikes(): List<ReviewLikeDto>
 }

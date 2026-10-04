@@ -3,6 +3,7 @@ package com.example.devicersapp.ui.screens.home
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,18 +12,26 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProfileProvider
-import com.example.devicersapp.data.local.LocalReviewProvider
-import com.example.devicersapp.ui.models.ReviewContent
+import com.example.devicersapp.data.local.LocalFeedReviewProvider
+import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.screens.home.components.FeedReviewItem
+import com.example.devicersapp.ui.screens.home.components.HomeFeedErrorMessage
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
@@ -30,6 +39,7 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
 /**
  * Configura la pantalla principal y observa su estado desde el ViewModel.
  *
+ * @param onProductClick Acción solicitada al abrir el detalle de un artículo reseñado.
  * @param onReviewClick Acción solicitada al abrir el detalle de una reseña.
  * @param onCommentClick Acción solicitada al abrir los comentarios de una reseña.
  * @param onSendClick Acción solicitada al compartir una reseña.
@@ -38,9 +48,10 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
  */
 @Composable
 fun HomeView(
+    onProductClick: (Int) -> Unit = {},
     onReviewClick: (Int) -> Unit = {},
     onCommentClick: (Int) -> Unit = {},
-    onSendClick: (ReviewContent) -> Unit = {},
+    onSendClick: (FeedReviewContent) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel
 ) {
@@ -50,6 +61,8 @@ fun HomeView(
         state = uiState,
         onForYouClick = viewModel::onForYouClick,
         onFollowingClick = viewModel::onFollowingClick,
+        onRetryClick = viewModel::onRetryClick,
+        onProductClick = onProductClick,
         onReviewClick = onReviewClick,
         onCommentClick = onCommentClick,
         onSendClick = onSendClick,
@@ -60,19 +73,22 @@ fun HomeView(
 }
 
 /**
- * Muestra las pestañas del feed y la lista de reseñas publicadas.
+ * Muestra las pestañas del feed y, según el estado, la carga, el error o la lista de reseñas.
  */
 @Composable
 fun HomeViewContent(
     state: HomeState,
     onForYouClick: () -> Unit,
     onFollowingClick: () -> Unit,
+    onRetryClick: () -> Unit,
+    onProductClick: (Int) -> Unit,
     onReviewClick: (Int) -> Unit,
     onCommentClick: (Int) -> Unit,
-    onSendClick: (ReviewContent) -> Unit,
+    onSendClick: (FeedReviewContent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
+    val loadingDescription = stringResource(R.string.home_feed_loading)
 
     Column(
         modifier = modifier.padding(horizontal = 20.dp)
@@ -93,43 +109,81 @@ fun HomeViewContent(
             color = colors.border
         )
 
-        LazyColumn {
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
-            }
-
-            itemsIndexed(state.feedItems) { index, feedItem ->
-                val review = feedItem.review
-
-                FeedReviewItem(
-                    review = review,
-                    author = feedItem.author,
-                    onViewMoreClick = {
-                        onReviewClick(review.id)
-                    },
-                    onCommentClick = {
-                        onCommentClick(review.id)
-                    },
-                    onSendClick = {
-                        onSendClick(review)
-                    }
-                )
-
-                if (index < state.feedItems.lastIndex) {
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth(),
-                        thickness = 1.dp,
-                        color = colors.border
+        when {
+            state.isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.semantics { contentDescription = loadingDescription },
+                        color = colors.primary
                     )
-
-                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
 
-            item {
-                Spacer(modifier = Modifier.height(110.dp))
+            state.errorMessageResId != null -> {
+                HomeFeedErrorMessage(
+                    messageResId = state.errorMessageResId,
+                    onRetryClick = onRetryClick
+                )
+            }
+
+            state.feedReviews.isEmpty() -> {
+                Text(
+                    text = stringResource(R.string.home_feed_empty),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    color = colors.textSecondary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            else -> {
+                LazyColumn {
+                    item {
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+
+                    itemsIndexed(
+                        items = state.feedReviews,
+                        key = { _, review -> review.reviewId }
+                    ) { index, review ->
+                        FeedReviewItem(
+                            review = review,
+                            onProductClick = {
+                                onProductClick(review.productId)
+                            },
+                            onViewMoreClick = {
+                                onReviewClick(review.reviewId)
+                            },
+                            onCommentClick = {
+                                onCommentClick(review.reviewId)
+                            },
+                            onSendClick = {
+                                onSendClick(review)
+                            }
+                        )
+
+                        if (index < state.feedReviews.lastIndex) {
+                            Spacer(modifier = Modifier.height(20.dp))
+
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth(),
+                                thickness = 1.dp,
+                                color = colors.border
+                            )
+
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(110.dp))
+                    }
+                }
             }
         }
     }
@@ -149,18 +203,11 @@ fun HomeViewPreview() {
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                state = HomeState(
-                    feedItems = LocalReviewProvider.reviews.map { review ->
-                        HomeFeedItem(
-                            review = review,
-                            author = requireNotNull(
-                                LocalProfileProvider.getProfileById(review.authorId)
-                            )
-                        )
-                    }
-                ),
+                state = HomeState(feedReviews = LocalFeedReviewProvider.reviews),
                 onForYouClick = {},
                 onFollowingClick = {},
+                onRetryClick = {},
+                onProductClick = {},
                 onReviewClick = {},
                 onCommentClick = {},
                 onSendClick = {}
@@ -183,18 +230,11 @@ fun HomeViewDarkPreview() {
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                state = HomeState(
-                    feedItems = LocalReviewProvider.reviews.map { review ->
-                        HomeFeedItem(
-                            review = review,
-                            author = requireNotNull(
-                                LocalProfileProvider.getProfileById(review.authorId)
-                            )
-                        )
-                    }
-                ),
+                state = HomeState(feedReviews = LocalFeedReviewProvider.reviews),
                 onForYouClick = {},
                 onFollowingClick = {},
+                onRetryClick = {},
+                onProductClick = {},
                 onReviewClick = {},
                 onCommentClick = {},
                 onSendClick = {}

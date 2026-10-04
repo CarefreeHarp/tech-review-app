@@ -1,16 +1,19 @@
 package com.example.devicersapp.ui.screens.home
 
-import com.example.devicersapp.ui.models.ProfileContent
-import com.example.devicersapp.ui.models.ReviewContent
+import androidx.annotation.StringRes
+import com.example.devicersapp.ui.models.FeedReviewContent
 
-/** Representa una reseña del feed junto con la información de su autor. */
-data class HomeFeedItem(
-    val review: ReviewContent,
-    val author: ProfileContent
-)
-
-/** Representa el estado visible de la pantalla principal. */
+/**
+ * Representa el estado visible de la pantalla principal.
+ *
+ * @param feedReviews Reseñas obtenidas del backend, de la más reciente a la más antigua.
+ * @param isLoading Indica si hay una carga del feed en curso.
+ * @param errorMessageResId Mensaje del último error de carga, o `null` si la carga fue exitosa.
+ * @param isForYouSelected Indica si la pestaña "Para ti" está seleccionada.
+ */
 data class HomeState(
-    val feedItems: List<HomeFeedItem> = emptyList(),
+    val feedReviews: List<FeedReviewContent> = emptyList(),
+    val isLoading: Boolean = false,
+    @param:StringRes val errorMessageResId: Int? = null,
     val isForYouSelected: Boolean = true
 )

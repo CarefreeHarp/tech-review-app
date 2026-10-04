@@ -1,5 +1,9 @@
 package com.example.devicersapp.data.injection
 
+import com.example.devicersapp.data.datasource.ProductRemoteDataSource
+import com.example.devicersapp.data.datasource.ReviewRemoteDataSource
+import com.example.devicersapp.data.datasource.implementations.ProductRetrofitDataSourceImplementation
+import com.example.devicersapp.data.datasource.implementations.ReviewRetrofitDataSourceImplementation
 import com.example.devicersapp.data.datasource.services.ProductRetrofitService
 import com.example.devicersapp.data.datasource.services.ReviewRetrofitService
 import com.example.devicersapp.data.datasource.services.UsersRetrofitService
@@ -48,5 +52,19 @@ object AppModule {
     @Provides
     fun providesReviewRetrofitService(retrofit: Retrofit): ReviewRetrofitService {
         return retrofit.create(ReviewRetrofitService::class.java)
+    }
+
+    /** Asocia el contrato de artículos con su implementación basada en Retrofit. */
+    @Singleton
+    @Provides
+    fun providesProductRemoteDataSource(service: ProductRetrofitService): ProductRemoteDataSource {
+        return ProductRetrofitDataSourceImplementation(service)
+    }
+
+    /** Asocia el contrato de reseñas con su implementación basada en Retrofit. */
+    @Singleton
+    @Provides
+    fun providesReviewRemoteDataSource(service: ReviewRetrofitService): ReviewRemoteDataSource {
+        return ReviewRetrofitDataSourceImplementation(service)
     }
 }

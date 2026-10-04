@@ -75,6 +75,14 @@
     <!-- SEARCH -->
     <string name="home_tab_for_you">Para ti</string>
     <string name="home_tab_following">Siguiendo</string>
+    <string name="home_feed_author_handle">\@%1$s</string>
+    <string name="home_feed_product_metadata">%1$s • %2$s</string>
+    <string name="home_feed_product_average">%1$.1f</string>
+    <string name="home_feed_loading">Cargando reseñas</string>
+    <string name="home_feed_empty">Todavía no hay reseñas publicadas.</string>
+    <string name="home_feed_error_connection">No pudimos conectarnos con el servidor. Revisa tu conexión e intenta de nuevo.</string>
+    <string name="home_feed_error_server">No pudimos cargar las reseñas. Intenta de nuevo más tarde.</string>
+    <string name="home_feed_retry">Reintentar</string>
     <string name="search_product_title">Buscar producto</string>
 
     <string name="search_product_placeholder">Buscar dispositivos</string>
