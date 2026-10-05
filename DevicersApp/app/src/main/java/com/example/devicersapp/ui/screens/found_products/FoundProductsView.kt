@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.found_products
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.dto.ProductDto
+import com.example.devicersapp.ui.models.ProductInfo
 import com.example.devicersapp.ui.screens.found_products.components.FoundProductCard
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
@@ -38,7 +39,7 @@ fun FoundProductsView(
     category: String,
     minimumRating: Float,
     sortBy: String,
-    onProductClick: (ProductDto) -> Unit = {},
+    onProductClick: (ProductInfo) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: FoundProductsViewModel
 ) {
@@ -82,7 +83,7 @@ fun FoundProductsView(
 fun FoundProductsViewContent(
     state: FoundProductsState,
     onSearchTextChange: (String) -> Unit,
-    onProductClick: (ProductDto) -> Unit,
+    onProductClick: (ProductInfo) -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -90,12 +91,7 @@ fun FoundProductsViewContent(
 
     if (state.isLoading) {
 
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        CenteredLoading(modifier)
 
         return
     }

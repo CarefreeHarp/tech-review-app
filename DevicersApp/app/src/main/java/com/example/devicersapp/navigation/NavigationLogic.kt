@@ -2,7 +2,6 @@ package com.example.devicersapp.navigation
 
 import androidx.annotation.StringRes
 import androidx.navigation.NavHostController
-import com.example.devicersapp.data.local.LocalProfileProvider
 
 /**
  * Describe la estructura visual compartida que necesita un destino de navegación.
@@ -68,13 +67,13 @@ object NavigationLogic {
                 topBarNumber = 10
             )
 
-        AppDestination.OwnProfile.route ->
+        AppDestination.OwnProfile.route,
+        AppDestination.OwnProfile.routeWithDeletionArgument ->
             NavigationUiConfiguration(
                 selectedItem = AppDestination.OwnProfile.route,
                 showBottomBar = true,
                 showDrawer = true,
-                topBarNumber = 1,
-                topBarUserHandleResId = LocalProfileProvider.profile.handleResId
+                topBarNumber = 1
             )
 
         AppDestination.Register.route ->
@@ -114,6 +113,9 @@ object NavigationLogic {
                 topBarNumber = 2
             )
 
+        "${AppDestination.EditReview.route}/{reviewId}" ->
+            NavigationUiConfiguration(topBarNumber = 11)
+
         AppDestination.Review.route ->
             NavigationUiConfiguration(
                 topBarNumber = 4
@@ -129,33 +131,21 @@ object NavigationLogic {
             NavigationUiConfiguration(
                 selectedItem = AppDestination.OwnProfile.route,
                 showBottomBar = true,
-                topBarNumber = 1,
-                topBarUserHandleResId = LocalProfileProvider.profile.handleResId
-            )
-
-        AppDestination.MyReviews.route ->
-            NavigationUiConfiguration(
-                selectedItem = AppDestination.CreateReview.route,
-                showBottomBar = true,
-                topBarNumber = 2
+                topBarNumber = 1
             )
 
         AppDestination.ProfileSavedReviews.route ->
             NavigationUiConfiguration(
                 selectedItem = AppDestination.OwnProfile.route,
                 showBottomBar = true,
-                topBarNumber = 1,
-                topBarUserHandleResId = LocalProfileProvider.profile.handleResId
+                topBarNumber = 1
             )
 
         "${AppDestination.Profile.route}/{profileId}" ->
             NavigationUiConfiguration(
                 selectedItem = AppDestination.OwnProfile.route,
                 showBottomBar = true,
-                topBarNumber = 1,
-                topBarUserHandleResId = profileId?.let { id ->
-                    LocalProfileProvider.getPublicProfileById(id)?.handleResId
-                }
+                topBarNumber = 1
             )
 
         "${AppDestination.Review.route}/{reviewId}",
@@ -183,7 +173,8 @@ fun NavHostController.navigateToDestination(route: String) {
 
     // No se modifica la pila si el ítem pulsado ya representa
     // la pantalla visible.
-    if (currentDestination?.route == route) {
+    if (currentDestination?.route == route ||
+        (route == AppDestination.OwnProfile.route && currentDestination?.route == AppDestination.OwnProfile.routeWithDeletionArgument)) {
         return
     }
 

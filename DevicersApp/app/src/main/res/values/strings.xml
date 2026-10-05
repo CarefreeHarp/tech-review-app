@@ -75,6 +75,14 @@
     <!-- SEARCH -->
     <string name="home_tab_for_you">Para ti</string>
     <string name="home_tab_following">Siguiendo</string>
+    <string name="home_feed_author_handle">\@%1$s</string>
+    <string name="home_feed_product_metadata">%1$s • %2$s</string>
+    <string name="home_feed_product_average">%1$.1f</string>
+    <string name="home_feed_loading">Cargando reseñas</string>
+    <string name="home_feed_empty">Todavía no hay reseñas publicadas.</string>
+    <string name="home_feed_error_connection">No pudimos conectarnos con el servidor. Revisa tu conexión e intenta de nuevo.</string>
+    <string name="home_feed_error_server">No pudimos cargar las reseñas. Intenta de nuevo más tarde.</string>
+    <string name="home_feed_retry">Reintentar</string>
     <string name="search_product_title">Buscar producto</string>
 
     <string name="search_product_placeholder">Buscar dispositivos</string>
@@ -739,4 +747,23 @@
     <string name="create_review_product_ten_image">Imagen de micrófono</string>
 
     <string name="sign_out">Cerrar sesión</string>
+    <string name="remote_review_reply_to">Responder a @%1$s</string>
+    <string name="remote_review_count">%1$d reseñas</string>
+    <string name="remote_product_load_error">No fue posible cargar el producto y sus reseñas.</string>
+    <string name="own_profile_load_error">No pudimos cargar tu perfil y tus reseñas. Intenta nuevamente.</string>
+    <string name="profile_saved_load_error">No pudimos cargar tus reseñas guardadas. Intenta nuevamente.</string>
+    <string name="own_profile_empty_reviews">Todavía no has publicado reseñas.</string>
+    <string name="profile_saved_empty_reviews">Todavía no tienes reseñas guardadas.</string>
+    <string name="review_actions_menu">Opciones de la reseña</string>
+    <string name="review_action_delete">Eliminar reseña</string>
+    <string name="review_action_edit">Editar reseña</string>
+    <string name="review_delete_error">No pudimos eliminar la reseña. Intenta nuevamente.</string>
+    <string name="edit_review_title">Editar reseña</string>
+    <string name="edit_review_description">Actualiza tu calificación y tu experiencia con este producto.</string>
+    <string name="edit_review_save">Guardar cambios</string>
+    <string name="edit_review_load_error">No pudimos cargar la reseña para editarla. Intenta nuevamente.</string>
+    <string name="edit_review_owner_error">Solo puedes editar tus propias reseñas.</string>
+    <string name="edit_review_validation_error">Selecciona una calificación y escribe tu experiencia.</string>
+    <string name="edit_review_save_error">No pudimos guardar los cambios. Tu borrador se conserva; intenta nuevamente.</string>
+    <string name="screen_loading">Cargando</string>
 </resources>

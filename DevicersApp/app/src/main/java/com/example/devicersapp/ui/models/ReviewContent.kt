@@ -53,7 +53,11 @@ data class ReplyContent(
     @param:StringRes val timeAgoResId: Int,
     @param:StringRes val textResId: Int,
     val likes: Int = 0,
-    val depth: Int = 0
+    val depth: Int = 0,
+    val authorName: String? = null,
+    val authorImageUrl: String? = null,
+    val body: String? = null,
+    val createdAtMillis: Long? = null
 ) {
     init {
         require(likes >= 0) { "La cantidad de reacciones no puede ser negativa." }

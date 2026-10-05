@@ -1,8 +1,10 @@
 package com.example.devicersapp.ui.screens.found_products
 
+import com.example.devicersapp.data.repository.CategoryRepository
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.devicersapp.data.dto.ProductDto
+import com.example.devicersapp.ui.models.ProductInfo
 import com.example.devicersapp.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,13 +20,14 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class FoundProductsViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FoundProductsState())
     val uiState: StateFlow<FoundProductsState> = _uiState
 
-    private var products: List<ProductDto> = emptyList()
+    private var products: List<ProductInfo> = emptyList()
 
 //    init {
 //        loadProducts()
@@ -49,12 +52,21 @@ class FoundProductsViewModel @Inject constructor(
                 )
             }
 
-            val result = productRepository.getProducts()
+            val result = productRepository.getProducts().mapCatching { products ->
+                products to categoryRepository.getCategories().getOrThrow()
+            }
 
             if (result.isSuccess) {
 
-                val allProducts =
-                    result.getOrNull() ?: emptyList()
+                val (allProducts, categories) = result.getOrThrow()
+                val requestedName = when (category) {
+                    "cellphones" -> "Celulares"
+                    "audio" -> "Audio"
+                    "computers" -> "Computadores"
+                    else -> category
+                }
+                val rootIds = categories.filter { it.name.equals(requestedName, ignoreCase = true) || it.id.toString() == category }.map { it.id }.toSet()
+                val parents = categories.associate { it.id to it.parentCategoryId }
 
                 var filteredProducts =
                     allProducts.filter { product ->
@@ -66,32 +78,23 @@ class FoundProductsViewModel @Inject constructor(
                                         ignoreCase = true
                                     )
 
-                        val matchesCategory =
-                            when (category) {
-
-                                "all" ->
-                                    true
-
-                                "cellphones" ->
-                                    product.categoryId == 2
-
-                                "audio" ->
-                                    product.categoryId == 1 ||
-                                            product.categoryId == 3
-
-                                else ->
-                                    true
-                            }
+                        var categoryId: Int? = product.categoryId
+                        val visited = mutableSetOf<Int>()
+                        var matchesCategory = category == "all"
+                        while (categoryId != null && visited.add(categoryId)) {
+                            if (categoryId in rootIds) matchesCategory = true
+                            categoryId = parents[categoryId]
+                        }
 
                         val matchesRating =
-                            if (product.reviews.isNullOrEmpty()) {
+                            if (product.reviews.none { it.isActive }) {
 
-                                true
+                                minimumRating <= 0f
 
                             } else {
 
                                 val average =
-                                    product.reviews
+                                    product.reviews.filter { it.isActive }
                                         .map { review ->
                                             review.rating
                                         }

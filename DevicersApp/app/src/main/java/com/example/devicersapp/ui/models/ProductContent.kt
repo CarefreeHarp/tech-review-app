@@ -45,13 +45,15 @@ data class ProductSearchContent(
     val metadata: String? = null,
     val imageUrl: String? = null
 ) {
-    init { require(rating in 1..5) { "La calificación debe estar entre 1 y 5." } }
+    init { require(rating in 0..5) { "Cero indica ausencia de reseñas; una calificación está entre 1 y 5." } }
 }
 
 /** Representa una categoría que se puede seleccionar para filtrar productos. */
 data class ProductCategoryContent(
     val id: String,
-    @param:StringRes val labelResId: Int
+    @param:StringRes val labelResId: Int,
+    val label: String? = null,
+    val parentCategoryId: String? = null
 )
 
 /** Representa el resumen de calificaciones de un producto. */

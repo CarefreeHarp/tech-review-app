@@ -38,34 +38,43 @@ import com.example.devicersapp.ui.utils.review.ReviewActionsRow
  *
  * @param review Información visible de la reseña.
  * @param modifier Modificador aplicado al contenedor.
+ * @param actions Acciones del autor alineadas al extremo derecho de su misma fila.
  */
 @Composable
-fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onAuthorClick: (() -> Unit)? = null) {
+fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onAuthorClick: (() -> Unit)? = null, actions: @Composable () -> Unit = {}) {
     val colors = LocalDevicersColors.current
     val author = if (review.authorName == null) LocalProfileProvider.getProfileById(review.authorId) else null
 
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(modifier = if (onAuthorClick != null) Modifier.clickable(onClick = onAuthorClick) else Modifier, verticalAlignment = Alignment.CenterVertically) {
-            ProfileAvatar(
-                avatarResId = author?.avatarResId ?: R.drawable.no_pfp_icon,
-                imageUrl = review.authorImageUrl,
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
-                Text(
-                    text = review.authorName ?: author?.let { stringResource(it.handleResId) }.orEmpty(),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = colors.textPrimary
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.weight(1f).then(
+                    if (onAuthorClick != null) Modifier.clickable(onClick = onAuthorClick) else Modifier
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ProfileAvatar(
+                    avatarResId = author?.avatarResId ?: R.drawable.profile_avatar_00,
+                    imageUrl = review.authorImageUrl,
+                    modifier = Modifier.size(48.dp)
                 )
-                review.timeAgoResId?.let { timeAgoResId ->
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
                     Text(
-                        text = stringResource(timeAgoResId),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = colors.textSecondary
+                        text = review.authorName ?: author?.let { stringResource(it.handleResId) }.orEmpty(),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = colors.textPrimary
                     )
+                    review.timeAgoResId?.let { timeAgoResId ->
+                        Text(
+                            text = stringResource(timeAgoResId),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colors.textSecondary
+                        )
+                    }
                 }
             }
+            actions()
         }
 
         Spacer(modifier = Modifier.height(16.dp))

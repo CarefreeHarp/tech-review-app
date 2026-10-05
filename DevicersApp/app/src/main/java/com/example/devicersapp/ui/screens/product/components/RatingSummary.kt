@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.devicersapp.data.dto.ReviewDto
+import androidx.compose.ui.res.stringResource
+import com.example.devicersapp.R
+import com.example.devicersapp.ui.models.ReviewInfo
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.rating.RatingStars
 import kotlin.math.roundToInt
@@ -24,7 +26,7 @@ import kotlin.math.roundToInt
  */
 @Composable
 fun RatingSummary(
-    reviews: List<ReviewDto>,
+    reviews: List<ReviewInfo>,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -71,7 +73,7 @@ fun RatingSummary(
             )
 
             Text(
-                text = "${reviews.size} reseñas",
+                text = stringResource(R.string.remote_review_count, reviews.size),
                 style = MaterialTheme.typography.bodySmall,
                 color = colors.textSecondary
             )

@@ -33,7 +33,7 @@ class BackendFlowInstrumentedTest {
         val selectedReviews = reviews.getReviewsByUser(2)
         assertEquals(2, user.id)
         assertTrue(selectedReviews.isNotEmpty())
-        assertTrue(selectedReviews.all { it.userId == 2 })
+        assertTrue(selectedReviews.all { it.user_id == 2 })
 
         val product = products.getProducts().first()
         val originalIds = reviews.getReviewsByUser(1).map { it.id }.toSet()
@@ -43,8 +43,8 @@ class BackendFlowInstrumentedTest {
                 CreateReviewRequestDto(1, product.id, 4, "Prueba desde Android", "Temporal")
             )
             createdId = created.id
-            assertEquals(1, created.userId)
-            assertEquals(product.id, created.articleId)
+            assertEquals(1, created.user_id)
+            assertEquals(product.id, created.article_id)
             assertTrue(reviews.getReviewsByUser(1).any { it.id == created.id })
 
             val updated = reviews.updateReview(

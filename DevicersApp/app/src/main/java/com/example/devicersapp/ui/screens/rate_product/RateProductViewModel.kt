@@ -1,13 +1,14 @@
 package com.example.devicersapp.ui.screens.rate_product
 
+import com.example.devicersapp.core.config.CURRENT_USER_ID
+
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import com.example.devicersapp.data.repository.*
-import com.example.devicersapp.data.dto.CreateReviewRequestDto
-import com.example.devicersapp.ui.mappers.toProductContent
+import com.example.devicersapp.ui.models.ReviewDraft
+import com.example.devicersapp.data.dto.toProductContent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.example.devicersapp.data.local.LocalProductProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -52,7 +53,7 @@ class RateProductViewModel @Inject constructor(private val products: ProductRepo
                     if (draft.advantage.isNotBlank()) append("\n\nVentajas: ${draft.advantage.trim()}")
                     if (draft.disadvantage.isNotBlank()) append("\n\nDesventajas: ${draft.disadvantage.trim()}")
                 }
-                reviews.createReview(CreateReviewRequestDto(CURRENT_USER_ID, productId, draft.rating, body, draft.title.trim())).getOrThrow()
+                reviews.createReview(ReviewDraft(CURRENT_USER_ID, productId, draft.rating, body, draft.title.trim())).getOrThrow()
                 _uiState.update { it.copy(saving = false, published = true) }
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { _uiState.update { it.copy(saving = false, error = "No se pudo publicar. Tu borrador se conserva; intenta de nuevo.") } }

@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.review
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -9,19 +11,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.devicersapp.R
+import androidx.compose.ui.res.stringResource
 import com.example.devicersapp.data.local.LocalReviewProvider
-import com.example.devicersapp.ui.models.ProductContent
-import com.example.devicersapp.ui.models.ReplyContent
-import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.review.components.ReplyComposer
 import com.example.devicersapp.ui.screens.review.components.ReplyList
+import com.example.devicersapp.ui.screens.review.components.ReviewActionsMenu
 import com.example.devicersapp.ui.screens.review.components.ReviewDetail
 import com.example.devicersapp.ui.screens.review.components.ReviewProductSummary
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -33,7 +34,8 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 fun ReviewView(
     reviewId: Int,
     localReview: Boolean = false,
-    onManageReviewsClick: () -> Unit = {},
+    onEditClick: (Int) -> Unit = {},
+    onDeleteRequested: (Int) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
     onProductClick: (Int) -> Unit = {},
     onSendReply: (String) -> Unit = {},
@@ -54,19 +56,25 @@ fun ReviewView(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    if (uiState.loading) { androidx.compose.material3.CircularProgressIndicator(); return }
     uiState.error?.let { error ->
         androidx.compose.foundation.layout.Column {
             androidx.compose.material3.Text(error)
             androidx.compose.material3.TextButton(onClick = {
                 if (localReview) viewModel.loadLocalReview(reviewId) else viewModel.loadReview(reviewId)
-            }) { androidx.compose.material3.Text("Reintentar") }
+            }) { androidx.compose.material3.Text(stringResource(R.string.home_feed_retry)) }
         }
         return
     }
     ReviewViewContent(
             state = uiState,
-            onManageReviewsClick = onManageReviewsClick,
+            onEditClick = { id ->
+                if (uiState.canManage && !uiState.deletionRequested) {
+                    viewModel.setActionsMenuExpanded(false)
+                    onEditClick(id)
+                }
+            },
+            onDeleteClick = { viewModel.requestDeletion()?.let(onDeleteRequested) },
+            onActionsMenuChange = viewModel::setActionsMenuExpanded,
             onAuthorClick = onAuthorClick,
             onReplyTextChange = viewModel::onReplyTextChange,
             onProductClick = onProductClick,
@@ -89,7 +97,9 @@ fun ReviewView(
 @Composable
 fun ReviewViewContent(
     state: ReviewState,
-    onManageReviewsClick: () -> Unit = {},
+    onEditClick: (Int) -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    onActionsMenuChange: (Boolean) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
     onReplyTextChange: (String) -> Unit,
     onProductClick: (Int) -> Unit,
@@ -97,6 +107,7 @@ fun ReviewViewContent(
     onViewAnswers: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    if (state.loading) { CenteredLoading(modifier); return }
     val product = state.product ?: return
     val review = state.review ?: return
     Box(modifier = modifier) {
@@ -116,12 +127,20 @@ fun ReviewViewContent(
 
                     ReviewDetail(
                         review = review,
+                        actions = {
+                            if (state.canManage && !state.isLocal) {
+                                ReviewActionsMenu(
+                                    expanded = state.actionsMenuExpanded,
+                                    enabled = !state.deletionRequested,
+                                    onExpandedChange = onActionsMenuChange,
+                                    onEdit = { onEditClick(review.id) },
+                                    onDelete = onDeleteClick
+                                )
+                            }
+                        },
                         onAuthorClick = if (state.isLocal) null else ({ onAuthorClick(review.authorId) })
                     )
 
-                    if (review.authorId == com.example.devicersapp.data.repository.CURRENT_USER_ID.toString()) {
-                        androidx.compose.material3.TextButton(onClick = onManageReviewsClick) { androidx.compose.material3.Text("Administrar mis reseñas") }
-                    }
                     Spacer(modifier = Modifier.height(24.dp))
 
                     HorizontalDivider(
@@ -139,6 +158,7 @@ fun ReviewViewContent(
         )
 
         ReplyComposer(
+            placeholder = if (state.isLocal) null else stringResource(R.string.remote_review_reply_to, review.authorName.orEmpty()),
             value = state.replyText,
             onValueChange = onReplyTextChange,
             onSendClick = onSendReply,

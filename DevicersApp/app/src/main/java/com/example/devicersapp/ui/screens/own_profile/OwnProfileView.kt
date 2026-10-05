@@ -14,6 +14,10 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import com.example.devicersapp.ui.utils.profile.ProfileLoadStatus
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -22,9 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.data.local.LocalReviewProvider
-import com.example.devicersapp.ui.models.ProfileContent
-import com.example.devicersapp.ui.models.ReviewContent
-import com.example.devicersapp.ui.screens.activity.ActivityViewModel
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileHeader
@@ -37,6 +38,7 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
  */
 @Composable
 fun OwnProfileView(
+    deleteReviewId: Int? = null,
     onEditProfileClick: () -> Unit = {},
     onReviewClick: (Int) -> Unit = {},
     onSavedReviewsClick: () -> Unit = {},
@@ -44,6 +46,10 @@ fun OwnProfileView(
     viewModel: OwnProfileViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    // Refresca los datos al regresar de publicar, editar o consultar una reseña.
+    androidx.lifecycle.compose.LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+        if (deleteReviewId != null) viewModel.deleteReviewAndLoadProfile(deleteReviewId) else viewModel.loadProfile()
+    }
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
@@ -51,14 +57,15 @@ fun OwnProfileView(
     }
 
     OwnProfileViewContent(
-            state = uiState,
-            onSavedClick = onSavedReviewsClick,
-            onReviewClick = onReviewClick,
-            onEditProfileClick = onEditProfileClick,
-            onEditAvatarClick = { imagePicker.launch("image/*") },
-            modifier = modifier
-                .fillMaxSize()
-                .background(LocalDevicersColors.current.background)
+        state = uiState,
+        onRetry = viewModel::loadProfile,
+        onSavedClick = onSavedReviewsClick,
+        onReviewClick = onReviewClick,
+        onEditProfileClick = onEditProfileClick,
+        onEditAvatarClick = { imagePicker.launch("image/*") },
+        modifier = modifier
+            .fillMaxSize()
+            .background(LocalDevicersColors.current.background)
     )
 }
 
@@ -72,8 +79,13 @@ fun OwnProfileViewContent(
     onReviewClick: (Int) -> Unit,
     onEditProfileClick: () -> Unit,
     onEditAvatarClick: () -> Unit,
+    onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    if (state.loading || state.errorMessageResId != null) {
+        ProfileLoadStatus(state.loading, state.errorMessageResId, onRetry, modifier)
+        return
+    }
     val profile = state.profile ?: return
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -114,6 +126,13 @@ fun OwnProfileViewContent(
             )
         }
 
+        if (state.reviews.isEmpty()) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Text(stringResource(R.string.own_profile_empty_reviews),
+                    color = LocalDevicersColors.current.textSecondary,
+                    style = MaterialTheme.typography.bodyMedium)
+            }
+        }
         itemsIndexed(state.reviews) { _, review ->
             ProfileProductCard(
                 review = review,

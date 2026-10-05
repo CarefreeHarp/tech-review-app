@@ -24,7 +24,7 @@ fun DevicersApp(
                     AppDestination.Home.route,
                     AppDestination.ProfileSearchResults.route,
                     AppDestination.CreateReview.route,
-                    AppDestination.MyReviews.route
+                    AppDestination.OwnProfile.route
                 )
             } ?: AppDestination.Splash.route
         } else {

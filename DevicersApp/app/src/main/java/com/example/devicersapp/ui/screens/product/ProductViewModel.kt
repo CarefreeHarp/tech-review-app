@@ -1,88 +1,47 @@
 package com.example.devicersapp.ui.screens.product
 
+import com.example.devicersapp.domain.usecase.ReviewContentUseCase
+
+import com.example.devicersapp.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.data.repository.ProductRepository
 import com.example.devicersapp.data.repository.ReviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import java.net.ConnectException
-import java.net.SocketTimeoutException
 
-import android.util.Log
-
+/** Consulta el producto y todas las reseñas visibles con sus autores y datos asociados. */
 @HiltViewModel
 class ProductViewModel @Inject constructor(
     private val productRepository: ProductRepository,
-    private val reviewRepository: ReviewRepository
+    private val reviewRepository: ReviewRepository,
+    private val reviewContent: ReviewContentUseCase
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(ProductState())
     val uiState: StateFlow<ProductState> = _uiState
+    private var loadJob: Job? = null
 
+    /** Renueva el detalle; una consulta fallida no se presenta como ausencia de reseñas. */
     fun loadProduct(productId: Int) {
-
-        viewModelScope.launch {
-
-            _uiState.update { currentState ->
-                currentState.copy(
-                    isLoading = true,
-                    errorMessage = null
-                )
-            }
-
-            val productResult =
-                productRepository.getProductById(productId)
-
-            if (productResult.isSuccess) {
-
-                val product = productResult.getOrNull()
-
-                val reviewsResult =
-                    reviewRepository.getReviewsByProduct(productId)
-
-                val reviews =
-                    if (reviewsResult.isSuccess) {
-                        reviewsResult.getOrNull() ?: emptyList()
-                    } else {
-                        emptyList()
-                    }
-
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        product = product,
-                        reviews = reviews,
-                        isLoading = false,
-                        errorMessage = null
-                    )
-                }
-
-            } else {
-
-                val exception = productResult.exceptionOrNull()
-
-                val message = when (exception) {
-
-                    is ConnectException ->
-                        "No fue posible conectarse con el servidor."
-
-                    is SocketTimeoutException ->
-                        "El servidor está tardando demasiado en responder."
-
-                    else ->
-                        "No fue posible cargar la información del producto."
-                }
-
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        isLoading = false,
-                        errorMessage = message
-                    )
-                }
+        loadJob?.cancel()
+        _uiState.update { ProductState(isLoading = true) }
+        loadJob = viewModelScope.launch {
+            try {
+                val product = productRepository.getProductById(productId).getOrThrow()
+                val records = reviewRepository.getReviewsByProduct(productId).getOrThrow()
+                    .filter { it.articleId == productId && it.isActive }
+                val reviews = reviewContent.getReviewContents(records)
+                _uiState.update { ProductState(product = product, reviews = reviews) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _uiState.update { ProductState(errorMessageResId = R.string.remote_product_load_error) }
             }
         }
     }

@@ -9,5 +9,6 @@ data class ProfileState(
     val profile: ProfileContent? = null,
     val reviews: List<ReviewContent> = emptyList(),
     val loading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val isFollowed: Boolean = false
 )

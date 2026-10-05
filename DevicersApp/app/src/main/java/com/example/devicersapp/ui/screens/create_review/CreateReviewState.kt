@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.create_review
 
-import com.example.devicersapp.data.dto.ProductDto
+import com.example.devicersapp.ui.models.ProductInfo
 import com.example.devicersapp.ui.models.ProductCategoryContent
 
 /**
@@ -8,8 +8,8 @@ import com.example.devicersapp.ui.models.ProductCategoryContent
  */
 data class CreateReviewState(
     val categories: List<ProductCategoryContent> = emptyList(),
-    val products: List<ProductDto> = emptyList(),
-    val filteredProducts: List<ProductDto> = emptyList(),
+    val products: List<ProductInfo> = emptyList(),
+    val filteredProducts: List<ProductInfo> = emptyList(),
     val searchText: String = "",
     val selectedCategoryId: String = "all",
     val isLoading: Boolean = false,

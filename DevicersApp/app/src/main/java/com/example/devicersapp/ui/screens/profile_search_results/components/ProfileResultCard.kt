@@ -47,7 +47,8 @@ fun ProfileResultCard(
     isFollowed: Boolean,
     onFollow: () -> Unit,
     onProfileClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    followEnabled: Boolean = true
 ) {
     val colors = LocalDevicersColors.current
 
@@ -89,7 +90,7 @@ fun ProfileResultCard(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = result.reviewCount?.let { "$it reseñas" } ?: stringResource(result.reviewCountResId),
+                text = result.reviewCount?.let { stringResource(R.string.remote_review_count, it) } ?: stringResource(result.reviewCountResId),
                 color = colors.textSecondary,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -99,6 +100,7 @@ fun ProfileResultCard(
 
         Button(
             onClick = onFollow,
+            enabled = followEnabled,
             modifier = Modifier.height(40.dp),
             shape = RoundedCornerShape(percent = 50),
             colors = ButtonDefaults.buttonColors(

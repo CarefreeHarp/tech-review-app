@@ -25,8 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.example.devicersapp.ui.utils.images.localImageResIdFor
 import com.example.devicersapp.R
-import com.example.devicersapp.data.dto.ProductDto
+import com.example.devicersapp.ui.models.ProductInfo
 import com.example.devicersapp.ui.theme.CardMetadataText
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
@@ -36,7 +37,7 @@ import com.example.devicersapp.ui.theme.SearchControlText
  */
 @Composable
 fun ProductReviewItem(
-    product: ProductDto,
+    product: ProductInfo,
     onRateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -50,10 +51,10 @@ fun ProductReviewItem(
     ) {
 
         AsyncImage(
-            model = product.imageUrl,
+            model = localImageResIdFor(product.imageUrl) ?: product.imageUrl,
             contentDescription = product.name,
-            placeholder = painterResource(R.drawable.device_00),
-            error = painterResource(R.drawable.device_00),
+            placeholder = painterResource(R.drawable.logo_icono_claro),
+            error = painterResource(R.drawable.logo_icono_claro),
             modifier = Modifier
                 .size(58.dp)
                 .clip(RoundedCornerShape(14.dp)),
@@ -81,7 +82,7 @@ fun ProductReviewItem(
             )
 
             Text(
-                text = product.model ?: "Sin modelo",
+                text = product.model.orEmpty(),
                 color = colors.textSecondary,
                 style = CardMetadataText,
                 maxLines = 1,

@@ -27,7 +27,7 @@ class IntegratedNavigationTest {
         val products = retrofit.create(ProductRetrofitService::class.java)
         val user = runBlocking { users.getUserById(2) }
         val review = runBlocking { reviews.getReviewsByUser(user.id).first() }
-        val product = runBlocking { products.getProductById(review.articleId) }
+        val product = runBlocking { products.getProductById(review.article_id) }
         awaitText(user.username)
         compose.onNodeWithText(user.username).performClick()
         awaitText(product.name)

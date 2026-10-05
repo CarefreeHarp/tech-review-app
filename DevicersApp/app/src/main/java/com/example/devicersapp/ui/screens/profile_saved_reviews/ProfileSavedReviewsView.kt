@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.example.devicersapp.ui.utils.profile.ProfileLoadStatus
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,8 +27,6 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.data.local.LocalReviewProvider
-import com.example.devicersapp.ui.models.ProfileContent
-import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.screens.profile_saved_reviews.components.SavedReviewCard
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
@@ -43,9 +43,14 @@ fun ProfileSavedReviewsView(
     viewModel: ProfileSavedReviewsViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    // Refresca los datos al regresar de publicar, editar o consultar una reseña.
+    androidx.lifecycle.compose.LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+        viewModel.loadSavedReviews()
+    }
 
     ProfileSavedReviewsViewContent(
         state = uiState,
+        onRetry = viewModel::loadSavedReviews,
         onReviewsClick = {
             viewModel.onReviewsSelected()
             onReviewsClick()
@@ -65,8 +70,14 @@ fun ProfileSavedReviewsViewContent(
     onReviewsClick: () -> Unit,
     onSavedClick: () -> Unit,
     onReviewClick: (Int) -> Unit,
+    onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    if (state.loading || state.errorMessageResId != null) {
+        ProfileLoadStatus(state.loading, state.errorMessageResId, onRetry, modifier)
+        return
+    }
+    val profile = state.profile ?: return
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier.padding(horizontal = 20.dp),
@@ -79,7 +90,7 @@ fun ProfileSavedReviewsViewContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
-                ProfileAvatar(avatarResId = state.profile.avatarResId, modifier = Modifier.size(84.dp))
+                ProfileAvatar(avatarResId = profile.avatarResId, imageUrl = state.profileImageUrl, modifier = Modifier.size(84.dp))
                 Spacer(modifier = Modifier.height(16.dp))
                 if (state.email.isNotBlank()) {
                     Text(
@@ -98,6 +109,13 @@ fun ProfileSavedReviewsViewContent(
                     selectedColor = LocalDevicersColors.current.primaryText
                 )
                 Spacer(modifier = Modifier.height(18.dp))
+            }
+        }
+        if (state.savedReviews.isEmpty()) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Text(stringResource(R.string.profile_saved_empty_reviews),
+                    color = LocalDevicersColors.current.textSecondary,
+                    style = MaterialTheme.typography.bodyMedium)
             }
         }
         itemsIndexed(state.savedReviews) { _, savedReview ->

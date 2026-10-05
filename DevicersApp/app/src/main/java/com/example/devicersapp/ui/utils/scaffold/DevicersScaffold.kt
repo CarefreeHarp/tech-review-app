@@ -135,6 +135,8 @@ fun DevicersScaffold(
                         onTopBarBackClick
                     )
 
+                    11 -> TitleTopBar(R.string.edit_review_title, onTopBarBackClick)
+
                     10 -> TopBar10(
                         profileImageUrl = topBarProfileImageUrl
                     )

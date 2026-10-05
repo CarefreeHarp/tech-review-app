@@ -1,15 +1,16 @@
 package com.example.devicersapp.ui.screens.review
 
+import com.example.devicersapp.domain.usecase.ReviewContentUseCase
+
+import com.example.devicersapp.core.config.CURRENT_USER_ID
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import com.example.devicersapp.data.repository.ReviewRepository
-import com.example.devicersapp.data.repository.ProductRepository
-import com.example.devicersapp.data.repository.UsersRepository
 import com.example.devicersapp.data.local.LocalReviewProvider
-import com.example.devicersapp.ui.mappers.toReviewContent
-import com.example.devicersapp.ui.mappers.toProductContent
+import com.example.devicersapp.data.dto.toReviewContent
+import com.example.devicersapp.data.dto.toProductContent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
     private val reviews: ReviewRepository,
-    private val products: ProductRepository,
-    private val users: UsersRepository
+    private val reviewContent: ReviewContentUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReviewState())
@@ -32,21 +32,25 @@ class ReviewViewModel @Inject constructor(
     private var loadJob: Job? = null
 
     fun loadReview(reviewId: Int) {
+        if (_uiState.value.deletionRequested) return
         loadJob?.cancel()
-        _uiState.value = ReviewState(loading = true)
+        _uiState.update { ReviewState(loading = true) }
         loadJob = viewModelScope.launch {
             try {
-                val review = reviews.getReviewById(reviewId).getOrThrow()
-                val product = products.getProductById(review.articleId).getOrThrow()
-                val author = users.getUserById(review.userId)
-                _uiState.value = ReviewState(
-                    product = product.toProductContent(),
-                    review = review.copy(article = product, user = author).toReviewContent()
-                )
+                val review = reviewContent.getReviewContents(listOf(reviews.getReviewById(reviewId).getOrThrow())).single()
+                val content = review.toReviewContent()
+                _uiState.update {
+                    ReviewState(
+                        product = requireNotNull(review.article).toProductContent(),
+                        review = content,
+                        canManage = review.userId == CURRENT_USER_ID,
+                        replies = content.comments
+                    )
+                }
             } catch (exception: CancellationException) {
                 throw exception
             } catch (exception: Exception) {
-                _uiState.value = ReviewState(error = "No se pudo cargar la reseña. Intenta nuevamente.")
+                _uiState.update { ReviewState(error = "No se pudo cargar la reseña. Intenta nuevamente.") }
             }
         }
     }
@@ -56,11 +60,26 @@ class ReviewViewModel @Inject constructor(
         loadJob?.cancel()
         val review = LocalReviewProvider.findById(reviewId)
         val product = LocalReviewProvider.findProductByReviewId(reviewId)
-        _uiState.value = if (review != null && product != null) {
+        _uiState.update { if (review != null && product != null) {
             ReviewState(product = product, review = review, replies = review.comments, isLocal = true)
         } else {
             ReviewState(error = "No se encontró la reseña.", isLocal = true)
-        }
+        } }
+    }
+
+    /** Expone el menú únicamente para la reseña remota de la sesión actual. */
+    fun setActionsMenuExpanded(expanded: Boolean) {
+        _uiState.update { it.copy(actionsMenuExpanded = expanded && it.canManage && !it.deletionRequested) }
+    }
+
+    /** Autoriza la salida inmediata al perfil, que se encargará de completar la eliminación. */
+    fun requestDeletion(): Int? {
+        val current = _uiState.value
+        val review = current.review ?: return null
+        if (!current.canManage || current.isLocal || review.authorId != CURRENT_USER_ID.toString() ||
+            current.deletionRequested) return null
+        _uiState.update { it.copy(deletionRequested = true, actionsMenuExpanded = false) }
+        return review.id
     }
 
     /** Actualiza el texto escrito en el compositor de respuestas. */

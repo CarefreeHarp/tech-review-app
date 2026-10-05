@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.product
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -87,17 +88,12 @@ fun ProductViewContent(
 
     if (state.isLoading) {
 
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        CenteredLoading(modifier)
 
         return
     }
 
-    if (state.errorMessage != null) {
+    if (state.errorMessage != null || state.errorMessageResId != null) {
 
         Column(
             modifier = modifier
@@ -108,7 +104,7 @@ fun ProductViewContent(
         ) {
 
             Text(
-                text = "No se pudo cargar el producto",
+                text = stringResource(R.string.remote_product_load_error),
                 color = colors.textPrimary,
                 style = MaterialTheme.typography.titleMedium
             )
@@ -118,7 +114,7 @@ fun ProductViewContent(
             )
 
             Text(
-                text = state.errorMessage,
+                text = state.errorMessageResId?.let { stringResource(it) } ?: state.errorMessage.orEmpty(),
                 color = colors.textSecondary,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -131,7 +127,7 @@ fun ProductViewContent(
                 onClick = onRetry
             ) {
                 Text(
-                    text = "Reintentar"
+                    text = stringResource(R.string.home_feed_retry)
                 )
             }
         }

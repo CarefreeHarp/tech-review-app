@@ -26,8 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.example.devicersapp.ui.utils.images.localImageResIdFor
 import com.example.devicersapp.R
-import com.example.devicersapp.data.dto.ProductDto
+import com.example.devicersapp.ui.models.ProductInfo
 import com.example.devicersapp.ui.theme.CardHighlightText
 import com.example.devicersapp.ui.theme.CardMetadataText
 import com.example.devicersapp.ui.theme.LocalDevicersColors
@@ -39,7 +40,7 @@ import kotlin.math.roundToInt
  */
 @Composable
 fun FoundProductCard(
-    product: ProductDto,
+    product: ProductInfo,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
@@ -50,7 +51,7 @@ fun FoundProductCard(
      * Si las incluye, calculamos el promedio.
      * Si no, simplemente no mostramos la calificación.
      */
-    val reviews = product.reviews ?: emptyList()
+    val reviews = product.reviews.filter { it.isActive }
 
     val averageRating =
         if (reviews.isNotEmpty()) {
@@ -83,13 +84,13 @@ fun FoundProductCard(
     ) {
 
         AsyncImage(
-            model = product.imageUrl,
+            model = localImageResIdFor(product.imageUrl) ?: product.imageUrl,
             contentDescription = product.name,
             placeholder = painterResource(
-                R.drawable.device_00
+                R.drawable.logo_icono_claro
             ),
             error = painterResource(
-                R.drawable.device_00
+                R.drawable.logo_icono_claro
             ),
             modifier = Modifier
                 .size(62.dp)
@@ -120,7 +121,7 @@ fun FoundProductCard(
             )
 
             Text(
-                text = product.model ?: "Sin modelo",
+                text = product.model.orEmpty(),
                 color = colors.textSecondary,
                 style = CardMetadataText,
                 maxLines = 1,

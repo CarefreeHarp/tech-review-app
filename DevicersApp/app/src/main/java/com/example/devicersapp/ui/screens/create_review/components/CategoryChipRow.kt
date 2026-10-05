@@ -1,7 +1,8 @@
 package com.example.devicersapp.ui.screens.create_review.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,15 +29,16 @@ fun CategoryChipRow(
     onCategoryChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    LazyRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        categories.forEach { category ->
+        items(categories, key = { it.id }) { category ->
             // Reutiliza el mismo chip que filtra la búsqueda, para no repetir su apariencia.
             FilterChip(
                 textResId = category.labelResId,
+                text = category.label,
                 selected = category.id == selectedCategoryId,
                 onClick = { onCategoryChange(category.id) }
             )

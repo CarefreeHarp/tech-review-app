@@ -9,18 +9,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.example.devicersapp.data.dto.ProductDto
+import com.example.devicersapp.ui.models.ProductInfo
+import com.example.devicersapp.ui.utils.images.localImageResIdFor
 
 /**
- * Muestra la imagen principal del producto obtenida desde el backend.
+ * Muestra la imagen principal del producto desde un recurso local o una URL enviada por el backend.
  */
 @Composable
 fun ProductImageCard(
-    product: ProductDto,
+    product: ProductInfo,
     modifier: Modifier = Modifier
 ) {
     AsyncImage(
-        model = product.imageUrl,
+        model = localImageResIdFor(product.imageUrl) ?: product.imageUrl,
         contentDescription = product.name,
         modifier = modifier
             .fillMaxWidth()
@@ -33,7 +34,7 @@ fun ProductImageCard(
 //hibribda para ambos casos
 //@Composable
 //fun ProductImageCard(
-//    product: ProductDto,
+//    product: ProductInfo,
 //    modifier: Modifier = Modifier
 //) {
 //    AsyncImage(

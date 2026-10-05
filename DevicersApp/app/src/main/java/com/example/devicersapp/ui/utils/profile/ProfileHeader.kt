@@ -65,6 +65,7 @@ fun ProfileHeader(
     showDisplayName: Boolean = true,
     showStats: Boolean = true,
     showAction: Boolean = true,
+    actionEnabled: Boolean = true,
     showBiography: Boolean = true,
     onActionClick: () -> Unit = {},
     onEditAvatarClick: () -> Unit = {}
@@ -137,6 +138,7 @@ fun ProfileHeader(
 
             Button(
                 onClick = onActionClick,
+                enabled = actionEnabled,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),

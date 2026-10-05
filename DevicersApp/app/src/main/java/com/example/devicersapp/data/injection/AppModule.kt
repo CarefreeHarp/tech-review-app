@@ -1,9 +1,7 @@
 package com.example.devicersapp.data.injection
 
 import com.example.devicersapp.BuildConfig
-import com.example.devicersapp.data.datasource.services.ProductRetrofitService
-import com.example.devicersapp.data.datasource.services.ReviewRetrofitService
-import com.example.devicersapp.data.datasource.services.UsersRetrofitService
+import com.example.devicersapp.data.datasource.services.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,19 +53,59 @@ object AppModule {
         return retrofit.create(ReviewRetrofitService::class.java)
     }
 
+    /** Asocia el contrato de artículos con su implementación basada en Retrofit. */
     @Singleton
     @Provides
-    fun providesProductRemoteDataSource(
-        service: ProductRetrofitService
-    ): ProductRemoteDataSource {
+    fun providesProductRemoteDataSource(service: ProductRetrofitService): ProductRemoteDataSource {
         return ProductRetrofitDataSourceImplementation(service)
     }
 
+    /** Asocia el contrato de reseñas con su implementación basada en Retrofit. */
     @Singleton
     @Provides
-    fun providesReviewRemoteDataSource(
-        service: ReviewRetrofitService
-    ): ReviewRemoteDataSource {
+    fun providesReviewRemoteDataSource(service: ReviewRetrofitService): ReviewRemoteDataSource {
         return ReviewRetrofitDataSourceImplementation(service)
     }
+    /** Crea el servicio exclusivo de Follow. */
+    @Singleton
+    @Provides
+    fun providesFollowRetrofitService(retrofit: Retrofit): FollowRetrofitService =
+        retrofit.create(FollowRetrofitService::class.java)
+
+    /** Crea el servicio exclusivo de Comment. */
+    @Singleton
+    @Provides
+    fun providesCommentRetrofitService(retrofit: Retrofit): CommentRetrofitService =
+        retrofit.create(CommentRetrofitService::class.java)
+
+    /** Crea el servicio exclusivo de ReviewLike. */
+    @Singleton
+    @Provides
+    fun providesReviewLikeRetrofitService(retrofit: Retrofit): ReviewLikeRetrofitService =
+        retrofit.create(ReviewLikeRetrofitService::class.java)
+
+    /** Crea el servicio exclusivo de CommentLike. */
+    @Singleton
+    @Provides
+    fun providesCommentLikeRetrofitService(retrofit: Retrofit): CommentLikeRetrofitService =
+        retrofit.create(CommentLikeRetrofitService::class.java)
+
+    /** Crea el servicio exclusivo de ReviewBookmark. */
+    @Singleton
+    @Provides
+    fun providesReviewBookmarkRetrofitService(retrofit: Retrofit): ReviewBookmarkRetrofitService =
+        retrofit.create(ReviewBookmarkRetrofitService::class.java)
+
+    /** Crea el servicio exclusivo de Brand. */
+    @Singleton
+    @Provides
+    fun providesBrandRetrofitService(retrofit: Retrofit): BrandRetrofitService =
+        retrofit.create(BrandRetrofitService::class.java)
+
+    /** Crea el servicio exclusivo de Category. */
+    @Singleton
+    @Provides
+    fun providesCategoryRetrofitService(retrofit: Retrofit): CategoryRetrofitService =
+        retrofit.create(CategoryRetrofitService::class.java)
+
 }

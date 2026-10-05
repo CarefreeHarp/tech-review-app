@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.profile
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -71,7 +73,7 @@ fun ProfileViewContent(
     onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    if (state.loading) { androidx.compose.material3.CircularProgressIndicator(); return }
+    if (state.loading) { CenteredLoading(modifier); return }
     state.error?.let { error ->
         Column(modifier.padding(20.dp)) {
             androidx.compose.material3.Text(error)
@@ -91,7 +93,8 @@ fun ProfileViewContent(
                 Spacer(modifier = Modifier.height(15.dp))
                 ProfileHeader(
                     profile = profile,
-                    actionLabelResId = R.string.profile_follow,
+                    actionLabelResId = if (state.isFollowed) R.string.activity_following else R.string.profile_follow,
+                    actionEnabled = false,
                     onActionClick = onFollowClick
                 )
             }

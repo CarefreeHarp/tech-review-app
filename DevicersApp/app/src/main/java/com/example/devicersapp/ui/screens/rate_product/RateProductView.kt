@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.rate_product
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.data.local.LocalProductProvider
-import com.example.devicersapp.ui.screens.rate_product.components.RateableProductCard
-import com.example.devicersapp.ui.screens.rate_product.components.RatingSelector
-import com.example.devicersapp.ui.screens.rate_product.components.ReviewForm
+import com.example.devicersapp.ui.utils.review_form.RateableProductCard
+import com.example.devicersapp.ui.utils.review_form.RatingSelector
+import com.example.devicersapp.ui.utils.review_form.ReviewForm
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
@@ -38,7 +40,7 @@ fun RateProductView(
     }
 
     LaunchedEffect(uiState.published) { if (uiState.published) onPublishClick() }
-    if (uiState.loading) { androidx.compose.material3.CircularProgressIndicator(); return }
+    if (uiState.loading || uiState.saving) { CenteredLoading(modifier); return }
     if (uiState.product == null) {
         androidx.compose.foundation.layout.Column {
             androidx.compose.material3.Text(uiState.error.orEmpty())
@@ -87,6 +89,7 @@ fun RateProductViewContent(
     onPublishClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    if (state.loading || state.saving) { CenteredLoading(modifier); return }
     // La calificación solo se puede mostrar cuando el ViewModel ya resolvió el producto.
     val product = state.product ?: return
 
@@ -97,7 +100,6 @@ fun RateProductViewContent(
     ) {
 
         item {
-            if (state.saving) androidx.compose.material3.LinearProgressIndicator()
             state.error?.let { androidx.compose.material3.Text(it, color = androidx.compose.material3.MaterialTheme.colorScheme.error) }
             Spacer(modifier = Modifier.height(20.dp))
         }

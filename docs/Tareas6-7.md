@@ -52,7 +52,7 @@ Para recorrer las pantallas manualmente sin Firebase, instala una variante debug
 .\gradlew.bat :app:installDebug -PdevicersApiBaseUrl=http://10.0.2.2:3001/ -PdevicersTestStartDestination=profile-search-results
 ```
 
-Inicia la app y visita Buscar usuarios → Profile, Crear reseña → elegir producto → publicar, y Crear reseña → Mis reseñas → editar/eliminar. La propiedad `devicersTestStartDestination` solo se aplica a compilaciones debug; sin ella la app comienza en Splash como siempre. También admite `create` y `my-reviews` para abrir esas pantallas directamente. La ruta desde Product ya está integrada con la tarea 4.
+Inicia la app y visita Buscar usuarios → Profile, Crear reseña → elegir producto → publicar, y Perfil → reseña propia → menú de tres puntos → editar/eliminar. La propiedad `devicersTestStartDestination` solo se aplica a compilaciones debug; sin ella la app comienza en Splash como siempre. También admite `create` y `profile` para abrir esas pantallas directamente. La ruta desde Product ya está integrada con la tarea 4.
 
 ## Validación de la integración con tarea 4
 

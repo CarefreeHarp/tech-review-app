@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.profile_search_results
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -57,11 +59,11 @@ fun ProfileSearchResultsViewContent(
     onProfileClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    if (state.loading) { CenteredLoading(modifier); return }
     val colors = LocalDevicersColors.current
     val results = state.results.filter { it.username?.contains(state.searchText, ignoreCase = true) ?: true }
 
     Column(modifier = modifier.padding(horizontal = 20.dp)) {
-        if (state.loading) androidx.compose.material3.LinearProgressIndicator()
         state.error?.let { Text(it); androidx.compose.material3.TextButton(onClick = onRetry) { Text("Reintentar") } }
         Spacer(modifier = Modifier.height(28.dp))
         SearchBar(
@@ -85,6 +87,7 @@ fun ProfileSearchResultsViewContent(
                 ProfileResultCard(
                     result = result,
                     isFollowed = result.id in state.followedProfileIds,
+                    followEnabled = false,
                     onFollow = { onFollow(result.id) },
                     onProfileClick = { onProfileClick(result.id) }
                 )

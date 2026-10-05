@@ -19,7 +19,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.devicersapp.data.dto.ReviewDto
+import com.example.devicersapp.R
+import androidx.compose.ui.res.stringResource
+import com.example.devicersapp.ui.models.ReviewInfo
 import com.example.devicersapp.ui.theme.CardHighlightText
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.ReviewContentText
@@ -30,7 +32,7 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
  */
 @Composable
 fun ReviewCard(
-    review: ReviewDto,
+    review: ReviewInfo,
     onViewMoreClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -60,7 +62,7 @@ fun ReviewCard(
             ) {
 
                 Text(
-                    text = review.user?.username ?: "Usuario ${review.userId}",
+                    text = requireNotNull(review.user).username,
                     style = CardHighlightText,
                     color = colors.textPrimary
                 )
@@ -106,7 +108,7 @@ fun ReviewCard(
             modifier = Modifier.align(Alignment.End)
         ) {
             Text(
-                text = "Ver más",
+                text = stringResource(R.string.review_show_more),
                 color = colors.primary,
                 style = MaterialTheme.typography.labelLarge
             )

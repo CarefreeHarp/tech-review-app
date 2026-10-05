@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.devicersapp.ui.utils.images.localImageResIdFor
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -57,7 +58,7 @@ fun ReviewProductSummary(
     ) {
         if (product.showImage) {
             coil3.compose.AsyncImage(
-                model = product.imageUrl,
+                model = localImageResIdFor(product.imageUrl) ?: product.imageUrl,
                 fallback = painterResource(product.imageResId),
                 error = painterResource(product.imageResId),
                 contentDescription = stringResource(product.imageDescriptionResId),

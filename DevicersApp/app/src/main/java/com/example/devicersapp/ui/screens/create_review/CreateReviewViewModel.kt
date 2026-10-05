@@ -1,9 +1,13 @@
 package com.example.devicersapp.ui.screens.create_review
 
+import com.example.devicersapp.data.repository.CategoryRepository
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.devicersapp.data.dto.ProductDto
-import com.example.devicersapp.data.local.LocalProductProvider
+import com.example.devicersapp.ui.models.ProductInfo
+import com.example.devicersapp.R
+import com.example.devicersapp.data.dto.toCategoryContent
+import com.example.devicersapp.ui.models.ProductCategoryContent
 import com.example.devicersapp.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +23,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class CreateReviewViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
     private val _uiState =
@@ -46,17 +51,17 @@ class CreateReviewViewModel @Inject constructor(
                 )
             }
 
-            val result =
-                productRepository.getProducts()
+            val result = productRepository.getProducts().mapCatching { products ->
+                products to categoryRepository.getCategories().getOrThrow()
+            }
 
             if (result.isSuccess) {
 
-                val products =
-                    result.getOrNull() ?: emptyList()
+                val (products, categories) = result.getOrThrow()
 
                 _uiState.update { currentState ->
                     currentState.copy(
-                        categories = LocalProductProvider.categories,
+                        categories = listOf(ProductCategoryContent("all", R.string.all)) + categories.map { it.toCategoryContent() },
                         products = products,
                         filteredProducts = products,
                         isLoading = false,
@@ -134,20 +139,18 @@ class CreateReviewViewModel @Inject constructor(
      */
     private fun filterProducts(
         state: CreateReviewState
-    ): List<ProductDto> {
+    ): List<ProductInfo> {
 
         return state.products.filter { product ->
 
-            val selectedCategoryId = when (state.selectedCategoryId) {
-                "cellphones" -> 1
-                "audio" -> 3
-                "computers" -> 2
-                else -> null
+            val parents = state.categories.associate { it.id to it.parentCategoryId }
+            var categoryId: String? = product.categoryId.toString()
+            val visited = mutableSetOf<String>()
+            var matchesCategory = state.selectedCategoryId == "all"
+            while (categoryId != null && visited.add(categoryId)) {
+                if (categoryId == state.selectedCategoryId) matchesCategory = true
+                categoryId = parents[categoryId]
             }
-
-            val matchesCategory =
-                state.selectedCategoryId == "all" ||
-                        product.categoryId == selectedCategoryId
 
             val search = state.searchText.trim()
 

@@ -11,6 +11,9 @@ data class ReviewState(
     val product: ProductContent? = null,
     val review: ReviewContent? = null,
     val isLocal: Boolean = false,
+    val canManage: Boolean = false,
+    val actionsMenuExpanded: Boolean = false,
+    val deletionRequested: Boolean = false,
     val replies: List<ReplyContent> = emptyList(),
     val replyText: String = "",
     val expandedReplies: Map<Int, Boolean> = emptyMap()

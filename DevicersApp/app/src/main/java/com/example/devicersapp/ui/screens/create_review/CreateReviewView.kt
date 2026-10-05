@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.create_review
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.dto.ProductDto
+import com.example.devicersapp.ui.models.ProductInfo
 import com.example.devicersapp.ui.screens.create_review.components.CategoryChipRow
 import com.example.devicersapp.ui.screens.create_review.components.ProductMissingCard
 import com.example.devicersapp.ui.screens.create_review.components.ProductReviewItem
@@ -36,8 +37,7 @@ import com.example.devicersapp.ui.utils.navigation.SearchBar
 /** Configura la pantalla para crear una reseña y observa su estado desde el ViewModel. */
 @Composable
 fun CreateReviewView(
-    onManageReviewsClick: () -> Unit = {},
-    onProductClick: (ProductDto) -> Unit = {},
+    onProductClick: (ProductInfo) -> Unit = {},
     onRequestProductClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: CreateReviewViewModel
@@ -46,7 +46,6 @@ fun CreateReviewView(
 
     CreateReviewViewContent(
         state = uiState,
-        onManageReviewsClick = onManageReviewsClick,
         onSearchTextChange = viewModel::onSearchTextChange,
         onCategoryChange = viewModel::onCategoryChange,
         onProductClick = onProductClick,
@@ -72,11 +71,10 @@ fun CreateReviewView(
  */
 @Composable
 fun CreateReviewViewContent(
-    onManageReviewsClick: () -> Unit = {},
     state: CreateReviewState,
     onSearchTextChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
-    onProductClick: (ProductDto) -> Unit,
+    onProductClick: (ProductInfo) -> Unit,
     onRequestProductClick: () -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
@@ -85,12 +83,7 @@ fun CreateReviewViewContent(
 
     if (state.isLoading) {
 
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        CenteredLoading(modifier)
 
         return
     }
@@ -175,10 +168,6 @@ fun CreateReviewViewContent(
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            item {
-                TextButton(onClick = onManageReviewsClick) { Text("Mis reseñas") }
-            }
-
             item {
                 Spacer(modifier = Modifier.height(12.dp))
             }
