@@ -9,5 +9,9 @@ data class RateProductState(
     val title: String = "",
     val experience: String = "",
     val advantage: String = "",
-    val disadvantage: String = ""
+    val disadvantage: String = "",
+    val loading: Boolean = false,
+    val saving: Boolean = false,
+    val published: Boolean = false,
+    val error: String? = null
 )

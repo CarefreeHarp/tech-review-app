@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.own_profile
 
+import androidx.annotation.StringRes
+
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ReviewContent
 
@@ -10,5 +12,8 @@ data class OwnProfileState(
     val email: String = "",
     val profile: ProfileContent? = null,
     val profileImageUrl: String? = null,
-    val reviews: List<ReviewContent> = emptyList()
+    val reviews: List<ReviewContent> = emptyList(),
+    val loading: Boolean = false,
+    val deleting: Boolean = false,
+    @param:StringRes val errorMessageResId: Int? = null
 )

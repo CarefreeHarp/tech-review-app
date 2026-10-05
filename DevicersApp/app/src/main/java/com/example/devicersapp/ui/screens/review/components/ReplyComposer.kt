@@ -40,7 +40,8 @@ fun ReplyComposer(
     value: String,
     onValueChange: (String) -> Unit,
     onSendClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    placeholder: String? = null
 ) {
     val colors = LocalDevicersColors.current
 
@@ -69,7 +70,7 @@ fun ReplyComposer(
                 Box(contentAlignment = Alignment.CenterStart) {
                     if (value.isEmpty()) {
                         Text(
-                            text = stringResource(R.string.review_reply_placeholder),
+                            text = placeholder ?: stringResource(R.string.review_reply_placeholder),
                             style = MaterialTheme.typography.bodyMedium,
                             color = colors.textSecondary
                         )

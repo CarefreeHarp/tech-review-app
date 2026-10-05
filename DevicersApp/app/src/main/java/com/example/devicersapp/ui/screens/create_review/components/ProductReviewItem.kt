@@ -1,6 +1,5 @@
 package com.example.devicersapp.ui.screens.create_review.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,29 +23,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import com.example.devicersapp.ui.utils.images.localImageResIdFor
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProductProvider
-import com.example.devicersapp.ui.models.ProductSearchContent
+import com.example.devicersapp.ui.models.ProductInfo
 import com.example.devicersapp.ui.theme.CardMetadataText
-import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
 
 /**
  * Muestra un producto sugerido que puede elegirse para comenzar una reseña.
- *
- * La fila descansa sobre el fondo y se separa de las demás con divisores, de modo que la
- * acción de elegir quede alineada al centro de cada producto.
- *
- * @param product Producto mostrado en la fila.
- * @param onRateClick Acción solicitada al elegir el producto.
- * @param modifier Modificador aplicado a la fila.
  */
 @Composable
 fun ProductReviewItem(
-    product: ProductSearchContent,
+    product: ProductInfo,
     onRateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -58,28 +49,40 @@ fun ProductReviewItem(
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(product.imageResId),
-            contentDescription = stringResource(product.imageDescriptionResId),
+
+        AsyncImage(
+            model = localImageResIdFor(product.imageUrl) ?: product.imageUrl,
+            contentDescription = product.name,
+            placeholder = painterResource(R.drawable.logo_icono_claro),
+            error = painterResource(R.drawable.logo_icono_claro),
             modifier = Modifier
                 .size(58.dp)
                 .clip(RoundedCornerShape(14.dp)),
             contentScale = ContentScale.Fit
         )
 
-        Spacer(modifier = Modifier.width(14.dp))
+        Spacer(
+            modifier = Modifier.width(14.dp)
+        )
 
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+
             Text(
-                text = stringResource(product.nameResId),
+                text = product.name,
                 color = colors.textPrimary,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(3.dp))
+
+            Spacer(
+                modifier = Modifier.height(3.dp)
+            )
+
             Text(
-                text = stringResource(product.brandResId),
+                text = product.model.orEmpty(),
                 color = colors.textSecondary,
                 style = CardMetadataText,
                 maxLines = 1,
@@ -87,7 +90,9 @@ fun ProductReviewItem(
             )
         }
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(
+            modifier = Modifier.width(12.dp)
+        )
 
         Button(
             onClick = onRateClick,
@@ -109,15 +114,15 @@ fun ProductReviewItem(
     }
 }
 
-/** Muestra una vista previa de un producto seleccionable para reseñar. */
-@Composable
-@Preview(showBackground = true)
-fun ProductReviewItemPreview() {
-    DevicersAppTheme {
-        ProductReviewItem(
-            product = LocalProductProvider.products.first(),
-            onRateClick = {},
-            modifier = Modifier.padding(horizontal = 20.dp)
-        )
-    }
-}
+///** Muestra una vista previa de un producto seleccionable para reseñar. */
+//@Composable
+//@Preview(showBackground = true)
+//fun ProductReviewItemPreview() {
+//    DevicersAppTheme {
+//        ProductReviewItem(
+//            product = LocalProductProvider.products.first(),
+//            onRateClick = {},
+//            modifier = Modifier.padding(horizontal = 20.dp)
+//        )
+//    }
+//}

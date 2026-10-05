@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.rate_product.components
+package com.example.devicersapp.ui.utils.review_form
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,6 +35,9 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
  * @param disadvantage Desventaja escrita por la persona usuaria.
  * @param onDisadvantageChange Acción al cambiar la desventaja.
  * @param onPublishClick Acción solicitada al publicar.
+ * @param enabled Deshabilita los campos y el envío mientras hay una operación pendiente.
+ * @param submitLabelResId Texto del botón para publicar o guardar cambios.
+ * @param experienceMaxLength Límite opcional; la edición conserva cuerpos existentes completos.
  * @param modifier Modificador aplicado al formulario.
  */
 @Composable
@@ -48,6 +51,9 @@ fun ReviewForm(
     disadvantage: String,
     onDisadvantageChange: (String) -> Unit,
     onPublishClick: () -> Unit,
+    enabled: Boolean = true,
+    @androidx.annotation.StringRes submitLabelResId: Int = R.string.rate_product_publish,
+    experienceMaxLength: Int? = 500,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -66,6 +72,7 @@ fun ReviewForm(
 
         ReviewInputField(
             value = title,
+            enabled = enabled,
             onValueChange = onTitleChange,
             placeholder = stringResource(R.string.rate_product_review_title_placeholder)
         )
@@ -82,11 +89,12 @@ fun ReviewForm(
 
         ReviewInputField(
             value = experience,
+            enabled = enabled,
             onValueChange = onExperienceChange,
             placeholder = stringResource(R.string.rate_product_experience_placeholder),
             singleLine = false,
             minLines = 4,
-            maxLength = 500
+            maxLength = experienceMaxLength
         )
 
         Spacer(modifier = Modifier.height(18.dp))
@@ -110,6 +118,7 @@ fun ReviewForm(
 
                 ReviewInputField(
                     value = advantage,
+                    enabled = enabled,
                     onValueChange = onAdvantageChange,
                     placeholder = stringResource(R.string.rate_product_advantage_placeholder)
                 )
@@ -129,6 +138,7 @@ fun ReviewForm(
 
                 ReviewInputField(
                     value = disadvantage,
+                    enabled = enabled,
                     onValueChange = onDisadvantageChange,
                     placeholder = stringResource(R.string.rate_product_disadvantage_placeholder)
                 )
@@ -139,6 +149,7 @@ fun ReviewForm(
 
         Button(
             onClick = onPublishClick,
+            enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
@@ -149,7 +160,7 @@ fun ReviewForm(
             )
         ) {
             Text(
-                text = stringResource(R.string.rate_product_publish),
+                text = stringResource(submitLabelResId),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold
             )

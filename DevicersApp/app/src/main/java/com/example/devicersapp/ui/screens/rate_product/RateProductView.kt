@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.rate_product
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.data.local.LocalProductProvider
-import com.example.devicersapp.ui.screens.rate_product.components.RateableProductCard
-import com.example.devicersapp.ui.screens.rate_product.components.RatingSelector
-import com.example.devicersapp.ui.screens.rate_product.components.ReviewForm
+import com.example.devicersapp.ui.utils.review_form.RateableProductCard
+import com.example.devicersapp.ui.utils.review_form.RatingSelector
+import com.example.devicersapp.ui.utils.review_form.ReviewForm
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
@@ -25,17 +27,28 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 /** Renderiza la calificación y solicita la carga del producto que llega por argumento. */
 @Composable
 fun RateProductView(
-    productNameResId: Int? = null,
+    productId: Int? = null,
     onPublishClick: () -> Unit = {},
+    onChooseProduct: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: RateProductViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(productNameResId) {
-        viewModel.loadProduct(productNameResId)
+    LaunchedEffect(productId) {
+        viewModel.loadProduct(productId)
     }
 
+    LaunchedEffect(uiState.published) { if (uiState.published) onPublishClick() }
+    if (uiState.loading || uiState.saving) { CenteredLoading(modifier); return }
+    if (uiState.product == null) {
+        androidx.compose.foundation.layout.Column {
+            androidx.compose.material3.Text(uiState.error.orEmpty())
+            androidx.compose.material3.TextButton(onClick = onChooseProduct) { androidx.compose.material3.Text("Elegir producto") }
+            androidx.compose.material3.TextButton(onClick = { viewModel.loadProduct(productId) }) { androidx.compose.material3.Text("Reintentar") }
+        }
+        return
+    }
     RateProductViewContent(
         state = uiState,
         onRatingChange = viewModel::onRatingChange,
@@ -44,7 +57,7 @@ fun RateProductView(
         onAdvantageChange = viewModel::onAdvantageChange,
         onDisadvantageChange = viewModel::onDisadvantageChange,
         onChangeProduct = viewModel::onChangeProduct,
-        onPublishClick = onPublishClick,
+        onPublishClick = viewModel::publish,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -76,6 +89,7 @@ fun RateProductViewContent(
     onPublishClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    if (state.loading || state.saving) { CenteredLoading(modifier); return }
     // La calificación solo se puede mostrar cuando el ViewModel ya resolvió el producto.
     val product = state.product ?: return
 
@@ -86,6 +100,7 @@ fun RateProductViewContent(
     ) {
 
         item {
+            state.error?.let { androidx.compose.material3.Text(it, color = androidx.compose.material3.MaterialTheme.colorScheme.error) }
             Spacer(modifier = Modifier.height(20.dp))
         }
 
@@ -121,7 +136,8 @@ fun RateProductViewContent(
                 disadvantage = state.disadvantage,
                 onDisadvantageChange = onDisadvantageChange,
 
-                onPublishClick = onPublishClick
+                onPublishClick = onPublishClick,
+                enabled = !state.saving
             )
 
             Spacer(modifier = Modifier.height(32.dp))

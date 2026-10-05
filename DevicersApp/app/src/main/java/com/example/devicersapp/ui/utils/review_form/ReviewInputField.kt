@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.rate_product.components
+package com.example.devicersapp.ui.utils.review_form
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +29,7 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
  * @param singleLine Indica si el campo usa una sola línea.
  * @param minLines Cantidad mínima de líneas visibles.
  * @param maxLength Límite opcional de caracteres.
+ * @param enabled Permite bloquear la edición durante el envío.
  */
 @Composable
 fun ReviewInputField(
@@ -38,6 +39,7 @@ fun ReviewInputField(
     modifier: Modifier = Modifier,
     singleLine: Boolean = true,
     minLines: Int = 1,
+    enabled: Boolean = true,
     maxLength: Int? = null
 ) {
     val colors = LocalDevicersColors.current
@@ -52,6 +54,7 @@ fun ReviewInputField(
 
             OutlinedTextField(
                 value = value,
+                enabled = enabled,
                 onValueChange = { newValue ->
 
                     if (maxLength == null || newValue.length <= maxLength) {

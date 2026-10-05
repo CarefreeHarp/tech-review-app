@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.profile_search_results
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +39,7 @@ fun ProfileSearchResultsView(
 
     ProfileSearchResultsViewContent(
         state = uiState,
+        onRetry = viewModel::loadResults,
         onSearchTextChange = viewModel::onSearchTextChange,
         onFollow = viewModel::onFollow,
         onProfileClick = onProfileClick,
@@ -50,14 +53,18 @@ fun ProfileSearchResultsView(
 @Composable
 fun ProfileSearchResultsViewContent(
     state: ProfileSearchResultsState,
+    onRetry: () -> Unit = {},
     onSearchTextChange: (String) -> Unit,
     onFollow: (String) -> Unit,
     onProfileClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    if (state.loading) { CenteredLoading(modifier); return }
     val colors = LocalDevicersColors.current
+    val results = state.results.filter { it.username?.contains(state.searchText, ignoreCase = true) ?: true }
 
     Column(modifier = modifier.padding(horizontal = 20.dp)) {
+        state.error?.let { Text(it); androidx.compose.material3.TextButton(onClick = onRetry) { Text("Reintentar") } }
         Spacer(modifier = Modifier.height(28.dp))
         SearchBar(
             placeholder = R.string.profile_search_results_placeholder,
@@ -70,16 +77,17 @@ fun ProfileSearchResultsViewContent(
         LazyColumn(modifier = Modifier.weight(1f)) {
             item {
                 Text(
-                    text = stringResource(R.string.profile_search_results_count, state.results.size),
+                    text = stringResource(R.string.profile_search_results_count, results.size),
                     color = colors.textSecondary,
                     style = SearchControlText
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
-            items(state.results, key = { it.id }) { result ->
+            items(results, key = { it.id }) { result ->
                 ProfileResultCard(
                     result = result,
                     isFollowed = result.id in state.followedProfileIds,
+                    followEnabled = false,
                     onFollow = { onFollow(result.id) },
                     onProfileClick = { onProfileClick(result.id) }
                 )

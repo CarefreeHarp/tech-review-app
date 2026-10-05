@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.profile
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,12 +43,19 @@ fun ProfileView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    androidx.compose.runtime.DisposableEffect(lifecycleOwner, profileId) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) viewModel.loadProfile(profileId)
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
         viewModel.loadProfile(profileId)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     ProfileViewContent(
             state = uiState,
+            onRetry = { viewModel.loadProfile(profileId) },
             onFollowClick = onFollowClick,
             onReviewClick = onReviewClick,
             modifier = modifier
@@ -61,8 +70,17 @@ fun ProfileViewContent(
     state: ProfileState,
     onFollowClick: () -> Unit,
     onReviewClick: (Int) -> Unit,
+    onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    if (state.loading) { CenteredLoading(modifier); return }
+    state.error?.let { error ->
+        Column(modifier.padding(20.dp)) {
+            androidx.compose.material3.Text(error)
+            androidx.compose.material3.TextButton(onClick = onRetry) { androidx.compose.material3.Text("Reintentar") }
+        }
+        return
+    }
     val profile = state.profile ?: return
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -75,7 +93,8 @@ fun ProfileViewContent(
                 Spacer(modifier = Modifier.height(15.dp))
                 ProfileHeader(
                     profile = profile,
-                    actionLabelResId = R.string.profile_follow,
+                    actionLabelResId = if (state.isFollowed) R.string.activity_following else R.string.profile_follow,
+                    actionEnabled = false,
                     onActionClick = onFollowClick
                 )
             }
@@ -87,6 +106,9 @@ fun ProfileViewContent(
                 onClick = {},
                 selectedColor = LocalDevicersColors.current.primaryText
             )
+        }
+        if (state.reviews.isEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
+            androidx.compose.material3.Text("Este usuario todavía no ha publicado reseñas.")
         }
         itemsIndexed(state.reviews) { _, review ->
             ProfileProductCard(review = review, onClick = { onReviewClick(review.id) })

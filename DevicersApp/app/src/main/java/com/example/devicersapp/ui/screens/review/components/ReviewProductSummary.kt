@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.devicersapp.ui.utils.images.localImageResIdFor
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -40,7 +41,7 @@ import androidx.compose.foundation.clickable
 @Composable
 fun ReviewProductSummary(
     product: ProductContent,
-    onClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier) {
     val colors = LocalDevicersColors.current
 
@@ -51,13 +52,15 @@ fun ReviewProductSummary(
             // La sombra suave despega la tarjeta del fondo, como en el diseño editorial.
             .shadow(elevation = 6.dp, shape = RoundedCornerShape(20.dp))
             .background(colors.surface, RoundedCornerShape(20.dp))
-            .clickable { onClick() }
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (product.showImage) {
-            Image(
-                painter = painterResource(product.imageResId),
+            coil3.compose.AsyncImage(
+                model = localImageResIdFor(product.imageUrl) ?: product.imageUrl,
+                fallback = painterResource(product.imageResId),
+                error = painterResource(product.imageResId),
                 contentDescription = stringResource(product.imageDescriptionResId),
                 modifier = Modifier
                     .width(136.dp)
@@ -71,13 +74,13 @@ fun ReviewProductSummary(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(product.nameResId),
+                text = product.name ?: stringResource(product.nameResId),
                 style = MaterialTheme.typography.titleMedium,
                 color = colors.textPrimary
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = stringResource(product.brandResId),
+                text = product.metadata ?: stringResource(product.brandResId),
                 style = MaterialTheme.typography.bodySmall,
                 color = colors.textSecondary
             )

@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.rate_product.components
+package com.example.devicersapp.ui.utils.review_form
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,12 +23,14 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
  *
  * @param rating Calificación actualmente seleccionada.
  * @param onRatingChange Acción al seleccionar otra calificación.
+ * @param enabled Permite bloquear la selección durante el envío.
  * @param modifier Modificador aplicado al selector.
  */
 @Composable
 fun RatingSelector(
     rating: Int,
     onRatingChange: (Int) -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -53,6 +55,7 @@ fun RatingSelector(
 
                 RatingOption(
                     value = value,
+                    enabled = enabled,
                     selected = rating == value,
                     onClick = {
                         onRatingChange(value)

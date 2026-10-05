@@ -7,5 +7,8 @@ import com.example.devicersapp.ui.models.ReviewContent
 /** Representa los datos que necesita la vista de detalle de un perfil. */
 data class ProfileState(
     val profile: ProfileContent? = null,
-    val reviews: List<ReviewContent> = emptyList()
+    val reviews: List<ReviewContent> = emptyList(),
+    val loading: Boolean = false,
+    val error: String? = null,
+    val isFollowed: Boolean = false
 )

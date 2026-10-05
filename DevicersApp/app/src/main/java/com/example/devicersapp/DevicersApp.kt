@@ -3,6 +3,7 @@ package com.example.devicersapp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.devicersapp.navigation.AppNavigation
+import com.example.devicersapp.navigation.AppDestination
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 
 /**
@@ -17,7 +18,20 @@ fun DevicersApp(
     modifier: Modifier = Modifier
 ) {
     DevicersAppTheme {
+        val startDestination = if (BuildConfig.DEBUG) {
+            BuildConfig.DEVICERS_TEST_START_DESTINATION.takeIf {
+                it in setOf(
+                    AppDestination.Home.route,
+                    AppDestination.ProfileSearchResults.route,
+                    AppDestination.CreateReview.route,
+                    AppDestination.OwnProfile.route
+                )
+            } ?: AppDestination.Splash.route
+        } else {
+            AppDestination.Splash.route
+        }
         AppNavigation(
+            startDestination = startDestination,
             modifier = modifier
         )
     }

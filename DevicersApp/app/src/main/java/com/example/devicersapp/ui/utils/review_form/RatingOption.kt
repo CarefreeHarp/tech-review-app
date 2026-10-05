@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.rate_product.components
+package com.example.devicersapp.ui.utils.review_form
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +33,7 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
  * @param value Valor numérico de la opción.
  * @param selected Indica si esta opción está seleccionada.
  * @param onClick Acción solicitada al tocar la opción.
+ * @param enabled Permite bloquear la selección durante el envío.
  * @param modifier Modificador aplicado a la opción.
  */
 @Composable
@@ -40,6 +41,7 @@ fun RatingOption(
     value: Int,
     selected: Boolean,
     onClick: () -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -51,7 +53,7 @@ fun RatingOption(
                 color = if (selected) colors.rating else colors.ratingTrack,
                 shape = RoundedCornerShape(14.dp)
             )
-            .clickable(onClick = onClick)
+            .clickable(enabled = enabled, onClick = onClick)
             .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

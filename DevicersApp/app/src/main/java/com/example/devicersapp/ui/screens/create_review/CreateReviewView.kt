@@ -1,6 +1,10 @@
 package com.example.devicersapp.ui.screens.create_review
 
+import com.example.devicersapp.ui.utils.loading.CenteredLoading
+
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,32 +13,31 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProductProvider
-import com.example.devicersapp.ui.models.ProductCategoryContent
-import com.example.devicersapp.ui.models.ProductSearchContent
+import com.example.devicersapp.ui.models.ProductInfo
 import com.example.devicersapp.ui.screens.create_review.components.CategoryChipRow
 import com.example.devicersapp.ui.screens.create_review.components.ProductMissingCard
 import com.example.devicersapp.ui.screens.create_review.components.ProductReviewItem
-import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchHeadingText
 import com.example.devicersapp.ui.utils.navigation.SearchBar
-import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 
 /** Configura la pantalla para crear una reseña y observa su estado desde el ViewModel. */
 @Composable
 fun CreateReviewView(
-    onProductClick: (ProductSearchContent) -> Unit = {},
+    onProductClick: (ProductInfo) -> Unit = {},
     onRequestProductClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: CreateReviewViewModel
@@ -47,9 +50,12 @@ fun CreateReviewView(
         onCategoryChange = viewModel::onCategoryChange,
         onProductClick = onProductClick,
         onRequestProductClick = onRequestProductClick,
+        onRetry = viewModel::loadProducts,
         modifier = modifier
             .fillMaxSize()
-            .background(LocalDevicersColors.current.background)
+            .background(
+                LocalDevicersColors.current.background
+            )
     )
 }
 
@@ -68,11 +74,59 @@ fun CreateReviewViewContent(
     state: CreateReviewState,
     onSearchTextChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
-    onProductClick: (ProductSearchContent) -> Unit,
+    onProductClick: (ProductInfo) -> Unit,
     onRequestProductClick: () -> Unit,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier
-) {
+){
     val colors = LocalDevicersColors.current
+
+    if (state.isLoading) {
+
+        CenteredLoading(modifier)
+
+        return
+    }
+
+    if (state.errorMessage != null) {
+
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            Text(
+                text = "No se pudieron cargar los productos",
+                color = colors.textPrimary,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+
+            Text(
+                text = state.errorMessage,
+                color = colors.textSecondary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
+
+            Button(
+                onClick = onRetry
+            ) {
+                Text("Reintentar")
+            }
+        }
+
+        return
+    }
 
     Column(
         modifier = modifier.padding(horizontal = 20.dp)
@@ -165,74 +219,74 @@ fun CreateReviewViewContent(
     }
 }
 
-/** Muestra una vista previa de la creación de reseña en el tema claro. */
-@Composable
-@Preview(
-    name = "Crear reseña claro",
-    showBackground = true,
-    heightDp = 1000
-)
-fun CreateReviewLightPreview() {
-    DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(
-            selectedItem = "create",
-            showBottomBar = true,
-            topBarNumber = 3
-        ) { innerPadding ->
-            CreateReviewViewContent(
-                state = CreateReviewState(
-                    categories = LocalProductProvider.categories,
-                    filteredProducts = LocalProductProvider.products
-                ),
-                onSearchTextChange = {},
-                onCategoryChange = {},
-                onProductClick = {},
-                onRequestProductClick = {},
-                modifier = Modifier
-                    .padding(
-                        top = innerPadding.calculateTopPadding()
-                    )
-                    .fillMaxSize()
-                    .background(
-                        LocalDevicersColors.current.background
-                    )
-            )
-        }
-    }
-}
-
-/** Muestra una vista previa de la creación de reseña en el tema oscuro. */
-@Composable
-@Preview(
-    name = "Crear reseña oscuro",
-    showBackground = true,
-    heightDp = 1000
-)
-fun CreateReviewDarkPreview() {
-    DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(
-            selectedItem = "create",
-            showBottomBar = true,
-            topBarNumber = 3
-        ) { innerPadding ->
-            CreateReviewViewContent(
-                state = CreateReviewState(
-                    categories = LocalProductProvider.categories,
-                    filteredProducts = LocalProductProvider.products
-                ),
-                onSearchTextChange = {},
-                onCategoryChange = {},
-                onProductClick = {},
-                onRequestProductClick = {},
-                modifier = Modifier
-                    .padding(
-                        top = innerPadding.calculateTopPadding()
-                    )
-                    .fillMaxSize()
-                    .background(
-                        LocalDevicersColors.current.background
-                    )
-            )
-        }
-    }
-}
+///** Muestra una vista previa de la creación de reseña en el tema claro. */
+//@Composable
+//@Preview(
+//    name = "Crear reseña claro",
+//    showBackground = true,
+//    heightDp = 1000
+//)
+//fun CreateReviewLightPreview() {
+//    DevicersAppTheme(darkTheme = false) {
+//        DevicersScaffold(
+//            selectedItem = "create",
+//            showBottomBar = true,
+//            topBarNumber = 3
+//        ) { innerPadding ->
+//            CreateReviewViewContent(
+//                state = CreateReviewState(
+//                    categories = LocalProductProvider.categories,
+//                    filteredProducts = LocalProductProvider.products
+//                ),
+//                onSearchTextChange = {},
+//                onCategoryChange = {},
+//                onProductClick = {},
+//                onRequestProductClick = {},
+//                modifier = Modifier
+//                    .padding(
+//                        top = innerPadding.calculateTopPadding()
+//                    )
+//                    .fillMaxSize()
+//                    .background(
+//                        LocalDevicersColors.current.background
+//                    )
+//            )
+//        }
+//    }
+//}
+//
+///** Muestra una vista previa de la creación de reseña en el tema oscuro. */
+//@Composable
+//@Preview(
+//    name = "Crear reseña oscuro",
+//    showBackground = true,
+//    heightDp = 1000
+//)
+//fun CreateReviewDarkPreview() {
+//    DevicersAppTheme(darkTheme = true) {
+//        DevicersScaffold(
+//            selectedItem = "create",
+//            showBottomBar = true,
+//            topBarNumber = 3
+//        ) { innerPadding ->
+//            CreateReviewViewContent(
+//                state = CreateReviewState(
+//                    categories = LocalProductProvider.categories,
+//                    filteredProducts = LocalProductProvider.products
+//                ),
+//                onSearchTextChange = {},
+//                onCategoryChange = {},
+//                onProductClick = {},
+//                onRequestProductClick = {},
+//                modifier = Modifier
+//                    .padding(
+//                        top = innerPadding.calculateTopPadding()
+//                    )
+//                    .fillMaxSize()
+//                    .background(
+//                        LocalDevicersColors.current.background
+//                    )
+//            )
+//        }
+//    }
+//}

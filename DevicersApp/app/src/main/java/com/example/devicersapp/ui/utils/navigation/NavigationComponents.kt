@@ -228,7 +228,8 @@ fun FilterChip(
     @StringRes textResId: Int,
     selected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    text: String? = null
 ) {
     val colors = LocalDevicersColors.current
     // La pastilla completa y el borde distinguen la opción activa sin cambiar su tamaño.
@@ -249,7 +250,7 @@ fun FilterChip(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(textResId),
+            text = text ?: stringResource(textResId),
             color = if (selected) colors.textOnSelection else colors.textPrimary,
             style = SearchControlText,
             fontWeight = FontWeight.Bold,

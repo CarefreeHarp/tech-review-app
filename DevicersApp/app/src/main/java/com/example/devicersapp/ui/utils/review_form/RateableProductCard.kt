@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.screens.rate_product.components
+package com.example.devicersapp.ui.utils.review_form
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.devicersapp.ui.utils.images.localImageResIdFor
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProductContent
 import com.example.devicersapp.ui.theme.CardMetadataText
@@ -63,8 +64,10 @@ fun RateableProductCard(
     ) {
 
         if (product.showImage) {
-            Image(
-                painter = painterResource(product.imageResId),
+            coil3.compose.AsyncImage(
+                model = localImageResIdFor(product.imageUrl) ?: product.imageUrl,
+                fallback = painterResource(product.imageResId),
+                error = painterResource(product.imageResId),
                 contentDescription = stringResource(product.imageDescriptionResId),
                 modifier = Modifier
                     .size(60.dp)
@@ -78,7 +81,7 @@ fun RateableProductCard(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = stringResource(product.nameResId),
+                text = product.name ?: stringResource(product.nameResId),
                 style = MaterialTheme.typography.titleMedium,
                 color = colors.textPrimary
             )
@@ -86,7 +89,7 @@ fun RateableProductCard(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = stringResource(product.brandResId),
+                text = product.metadata ?: stringResource(product.brandResId),
                 style = CardMetadataText,
                 color = colors.textSecondary
             )
@@ -104,7 +107,7 @@ fun RateableProductCardPreview() {
             product = ProductContent(
                 nameResId = R.string.rate_product_name,
                 brandResId = R.string.rate_product_brand,
-                imageResId = R.drawable.device_00,
+                imageResId = R.drawable.logo_icono_claro,
                 imageDescriptionResId = R.string.rate_product_image_description
             ),
             onChangeProduct = {},

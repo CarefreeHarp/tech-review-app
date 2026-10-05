@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.devicersapp.ui.utils.images.localImageResIdFor
 import com.example.devicersapp.R
 import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ReviewContent
@@ -31,11 +32,11 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.rating.RatingStars
 
 /**
- * Muestra un producto ya calificado dentro de la cuadrícula del perfil.
+ * Muestra la foto del producto, el título de la reseña y su calificación en el perfil.
  *
  * @param review Reseña creada por el perfil y representada en la tarjeta.
  * @param modifier Modificador aplicado a la tarjeta.
- * @param onClick Acción solicitada al abrir el producto.
+ * @param onClick Acción solicitada al abrir la reseña.
  */
 @Composable
 fun ProfileProductCard(
@@ -54,8 +55,10 @@ fun ProfileProductCard(
             .clickable { onClick() }
             .padding(16.dp)
     ) {
-        Image(
-            painter = painterResource(review.productImageResId),
+        coil3.compose.AsyncImage(
+            model = localImageResIdFor(review.productImageUrl) ?: review.productImageUrl,
+            fallback = painterResource(review.productImageResId),
+            error = painterResource(review.productImageResId),
             contentDescription = stringResource(R.string.review_product_image),
             modifier = Modifier
                 .size(58.dp)
@@ -66,7 +69,7 @@ fun ProfileProductCard(
         Spacer(modifier = Modifier.height(14.dp))
 
         Text(
-            text = stringResource(review.productNameResId),
+            text = review.title?.takeIf { it.isNotBlank() } ?: stringResource(R.string.review_title),
             color = colors.textPrimary,
             style = MaterialTheme.typography.titleSmall,
             maxLines = 1,

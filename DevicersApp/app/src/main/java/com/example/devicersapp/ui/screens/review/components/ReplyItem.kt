@@ -58,7 +58,7 @@ fun ReplyItem(
     bottomSpacing: Dp = 0.dp
 ) {
     val colors = LocalDevicersColors.current
-    val author = requireNotNull(LocalProfileProvider.getProfileById(reply.authorId))
+    val author = if (reply.authorName == null) LocalProfileProvider.getProfileById(reply.authorId) else null
 
     Box(
         // La altura intrínseca deja que el conector abarque exactamente lo que ocupa la respuesta.
@@ -83,7 +83,8 @@ fun ReplyItem(
             Spacer(Modifier.width(ReplyThreadIndent * reply.depth))
 
             ProfileAvatar(
-                avatarResId = author.avatarResId,
+                avatarResId = author?.avatarResId ?: R.drawable.profile_avatar_00,
+                imageUrl = reply.authorImageUrl,
                 modifier = Modifier.size(ReplyAvatarSize)
             )
 
@@ -91,19 +92,22 @@ fun ReplyItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(author.handleResId),
+                    text = reply.authorName ?: author?.let { stringResource(it.handleResId) }.orEmpty(),
                     style = CardHighlightText,
                     color = colors.textPrimary
                 )
-                Text(
-                    text = stringResource(reply.timeAgoResId),
-                    style = CardMetadataText,
-                    color = colors.textSecondary
-                )
+                val timeAgo = reply.createdAtMillis?.let {
+                    android.text.format.DateUtils.getRelativeTimeSpanString(
+                        it, System.currentTimeMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS
+                    ).toString()
+                } ?: if (reply.body == null) stringResource(reply.timeAgoResId) else null
+                if (timeAgo != null) {
+                    Text(text = timeAgo, style = CardMetadataText, color = colors.textSecondary)
+                }
 
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = stringResource(reply.textResId),
+                    text = reply.body ?: stringResource(reply.textResId),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colors.textSecondary
                 )
@@ -123,7 +127,6 @@ fun ReplyItem(
                         style = CardMetadataText,
                         color = colors.textSecondary
                     )
-                    // La reacción y su contador se alimentarán desde los datos remotos de la respuesta.
                     Text(
                         text = stringResource(R.string.review_reply_action),
                         style = CardMetadataText,
