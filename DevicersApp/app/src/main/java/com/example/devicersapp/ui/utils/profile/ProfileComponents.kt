@@ -1,7 +1,5 @@
 package com.example.devicersapp.ui.utils.profile
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
-
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
@@ -66,15 +64,13 @@ fun ProfileAvatar(
     }
 }
 
-/** Muestra la carga del perfil o un error con la acción de reintento, sin datos de muestra. */
+/** Muestra un error del perfil con la acción de reintento, sin datos de muestra. */
 @Composable
 fun ProfileLoadStatus(
-    isLoading: Boolean,
     @StringRes errorMessageResId: Int?,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (isLoading) { CenteredLoading(modifier); return }
     val colors = LocalDevicersColors.current
     Column(
         modifier = modifier.fillMaxSize().padding(20.dp),
@@ -105,5 +101,5 @@ fun ProfileAvatarPreview() {
 @Composable
 @Preview(showBackground = true)
 fun ProfileLoadStatusPreview() {
-    ProfileLoadStatus(false, R.string.own_profile_load_error, onRetry = {})
+    ProfileLoadStatus(R.string.own_profile_load_error, onRetry = {})
 }

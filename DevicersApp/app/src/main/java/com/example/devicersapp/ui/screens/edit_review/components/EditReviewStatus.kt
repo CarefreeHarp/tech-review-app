@@ -1,7 +1,5 @@
 package com.example.devicersapp.ui.screens.edit_review.components
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,10 +15,9 @@ import com.example.devicersapp.ui.screens.edit_review.EditReviewState
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
-/** Muestra la carga o el error inicial sin habilitar un formulario incompleto. */
+/** Muestra el error inicial sin habilitar un formulario incompleto. */
 @Composable
 fun EditReviewStatus(state: EditReviewState, onRetry: () -> Unit, modifier: Modifier = Modifier) {
-    if (state.loading) { CenteredLoading(modifier); return }
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
         state.errorResId?.let {

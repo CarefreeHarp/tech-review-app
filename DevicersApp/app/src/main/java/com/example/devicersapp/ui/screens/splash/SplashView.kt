@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.splash
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
+import com.example.devicersapp.ui.screens.splash.components.SplashLoading
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,7 +40,7 @@ fun SplashViewContent(
     state: SplashState,
     modifier: Modifier = Modifier
 ) {
-    CenteredLoading(modifier)
+    SplashLoading(modifier)
 }
 
 /** Muestra una vista previa de la pantalla de bienvenida. */

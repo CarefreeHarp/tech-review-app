@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.create_review
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
+import com.example.devicersapp.ui.screens.create_review.components.CreateReviewSkeleton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -81,14 +81,7 @@ fun CreateReviewViewContent(
 ){
     val colors = LocalDevicersColors.current
 
-    if (state.isLoading) {
-
-        CenteredLoading(modifier)
-
-        return
-    }
-
-    if (state.errorMessage != null) {
+    if (!state.isLoading && state.errorMessage != null) {
 
         Column(
             modifier = modifier
@@ -142,6 +135,11 @@ fun CreateReviewViewContent(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        if (state.isLoading) {
+            CreateReviewSkeleton(modifier = Modifier.weight(1f))
+            return@Column
+        }
 
         CategoryChipRow(
             categories = state.categories,

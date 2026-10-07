@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.home
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
+import com.example.devicersapp.ui.screens.home.components.HomeSkeleton
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
@@ -88,7 +88,6 @@ fun HomeViewContent(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-    if (state.isLoading) { CenteredLoading(modifier); return }
 
     Column(
         modifier = modifier.padding(horizontal = 20.dp)
@@ -110,6 +109,8 @@ fun HomeViewContent(
         )
 
         when {
+            state.isLoading -> HomeSkeleton(modifier = Modifier.weight(1f))
+
             state.errorMessageResId != null -> {
                 HomeFeedErrorMessage(
                     messageResId = state.errorMessageResId,

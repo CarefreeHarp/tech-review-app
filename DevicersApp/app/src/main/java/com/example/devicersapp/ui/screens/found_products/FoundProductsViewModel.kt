@@ -48,6 +48,7 @@ class FoundProductsViewModel @Inject constructor(
             _uiState.update { currentState ->
                 currentState.copy(
                     isLoading = true,
+                    searchText = productName,
                     errorMessage = null
                 )
             }
@@ -124,8 +125,8 @@ class FoundProductsViewModel @Inject constructor(
 
                 _uiState.update { currentState ->
                     currentState.copy(
-                        results = filteredProducts,
-                        searchText = productName,
+                        // Aplica la consulta que pudo cambiar mientras la petición estaba pendiente.
+                        results = filterProducts(currentState.searchText),
                         isLoading = false,
                         errorMessage = null
                     )
@@ -215,35 +216,26 @@ class FoundProductsViewModel @Inject constructor(
      */
     fun onSearchTextChange(searchText: String) {
 
-        val filteredProducts =
-            if (searchText.isBlank()) {
-
-                products
-
-            } else {
-
-                products.filter { product ->
-
-                    product.name.contains(
-                        searchText,
-                        ignoreCase = true
-                    ) ||
-                            product.model?.contains(
-                                searchText,
-                                ignoreCase = true
-                            ) == true ||
-                            product.description?.contains(
-                                searchText,
-                                ignoreCase = true
-                            ) == true
-                }
-            }
+        val filteredProducts = filterProducts(searchText)
 
         _uiState.update { currentState ->
             currentState.copy(
                 searchText = searchText,
                 results = filteredProducts
             )
+        }
+    }
+
+    /** Filtra el catálogo ya consultado con el texto vigente, incluso tras una carga pendiente. */
+    private fun filterProducts(searchText: String): List<ProductInfo> {
+        return if (searchText.isBlank()) {
+            products
+        } else {
+            products.filter { product ->
+                product.name.contains(searchText, ignoreCase = true) ||
+                    product.model?.contains(searchText, ignoreCase = true) == true ||
+                    product.description?.contains(searchText, ignoreCase = true) == true
+            }
         }
     }
 }

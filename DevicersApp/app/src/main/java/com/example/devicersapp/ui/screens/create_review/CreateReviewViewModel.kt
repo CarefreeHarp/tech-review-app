@@ -60,13 +60,14 @@ class CreateReviewViewModel @Inject constructor(
                 val (products, categories) = result.getOrThrow()
 
                 _uiState.update { currentState ->
-                    currentState.copy(
+                    val loadedState = currentState.copy(
                         categories = listOf(ProductCategoryContent("all", R.string.all)) + categories.map { it.toCategoryContent() },
                         products = products,
-                        filteredProducts = products,
                         isLoading = false,
                         errorMessage = null
                     )
+                    // La búsqueda sigue disponible durante la carga; conserva la consulta más reciente.
+                    loadedState.copy(filteredProducts = filterProducts(loadedState))
                 }
 
             } else {
