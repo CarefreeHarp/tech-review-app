@@ -1,7 +1,12 @@
 package com.example.devicersapp.ui.screens.rate_product
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
+import com.example.devicersapp.ui.screens.rate_product.components.RateProductSkeleton
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.stringResource
+import com.example.devicersapp.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,17 +45,10 @@ fun RateProductView(
     }
 
     LaunchedEffect(uiState.published) { if (uiState.published) onPublishClick() }
-    if (uiState.loading || uiState.saving) { CenteredLoading(modifier); return }
-    if (uiState.product == null) {
-        androidx.compose.foundation.layout.Column {
-            androidx.compose.material3.Text(uiState.error.orEmpty())
-            androidx.compose.material3.TextButton(onClick = onChooseProduct) { androidx.compose.material3.Text("Elegir producto") }
-            androidx.compose.material3.TextButton(onClick = { viewModel.loadProduct(productId) }) { androidx.compose.material3.Text("Reintentar") }
-        }
-        return
-    }
     RateProductViewContent(
         state = uiState,
+        onChooseProduct = onChooseProduct,
+        onRetry = { viewModel.loadProduct(productId) },
         onRatingChange = viewModel::onRatingChange,
         onTitleChange = viewModel::onTitleChange,
         onExperienceChange = viewModel::onExperienceChange,
@@ -68,6 +66,8 @@ fun RateProductView(
  * Ensambla los componentes presentacionales de la pantalla de calificación.
  *
  * @param state Estado inmutable que describe el producto y el formulario de la reseña.
+ * @param onChooseProduct Acción para elegir un producto cuando no hay datos disponibles.
+ * @param onRetry Acción para reintentar la carga del producto.
  * @param onRatingChange Acción al seleccionar una calificación.
  * @param onTitleChange Acción al cambiar el título.
  * @param onExperienceChange Acción al cambiar la experiencia.
@@ -80,6 +80,8 @@ fun RateProductView(
 @Composable
 fun RateProductViewContent(
     state: RateProductState,
+    onChooseProduct: () -> Unit = {},
+    onRetry: () -> Unit = {},
     onRatingChange: (Int) -> Unit,
     onTitleChange: (String) -> Unit,
     onExperienceChange: (String) -> Unit,
@@ -89,9 +91,18 @@ fun RateProductViewContent(
     onPublishClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (state.loading || state.saving) { CenteredLoading(modifier); return }
+    // El guardado conserva el formulario visible; la silueta corresponde a la carga del producto.
+    if (state.loading) { RateProductSkeleton(modifier); return }
+    if (state.product == null) {
+        Column(modifier = modifier.padding(20.dp)) {
+            state.error?.let { Text(it, color = LocalDevicersColors.current.error) }
+            TextButton(onClick = onChooseProduct) { Text(stringResource(R.string.rate_product_choose_product)) }
+            TextButton(onClick = onRetry) { Text(stringResource(R.string.home_feed_retry)) }
+        }
+        return
+    }
     // La calificación solo se puede mostrar cuando el ViewModel ya resolvió el producto.
-    val product = state.product ?: return
+    val product = state.product
 
     LazyColumn(
         modifier = modifier
@@ -100,14 +111,14 @@ fun RateProductViewContent(
     ) {
 
         item {
-            state.error?.let { androidx.compose.material3.Text(it, color = androidx.compose.material3.MaterialTheme.colorScheme.error) }
+            state.error?.let { androidx.compose.material3.Text(it, color = LocalDevicersColors.current.error) }
             Spacer(modifier = Modifier.height(20.dp))
         }
 
         item {
             RateableProductCard(
                 product = product,
-                onChangeProduct = onChangeProduct
+                onChangeProduct = { if (!state.saving) onChangeProduct() }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -116,7 +127,8 @@ fun RateProductViewContent(
         item {
             RatingSelector(
                 rating = state.rating,
-                onRatingChange = onRatingChange
+                onRatingChange = onRatingChange,
+                enabled = !state.saving
             )
 
             Spacer(modifier = Modifier.height(28.dp))

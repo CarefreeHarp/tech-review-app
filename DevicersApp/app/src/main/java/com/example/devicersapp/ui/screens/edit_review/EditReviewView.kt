@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.edit_review
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
+import com.example.devicersapp.ui.screens.edit_review.components.EditReviewSkeleton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
@@ -66,7 +66,8 @@ fun EditReviewViewContent(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-    if (state.loading || state.saving) { CenteredLoading(modifier); return }
+    // Mantiene los datos escritos durante el envío y bloquea las acciones del formulario.
+    if (state.loading) { EditReviewSkeleton(modifier); return }
     if (state.product == null || !state.canEdit) {
         EditReviewStatus(state = state, onRetry = onRetry, modifier = modifier)
         return

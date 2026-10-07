@@ -1,4 +1,4 @@
-package com.example.devicersapp.ui.utils.loading
+package com.example.devicersapp.ui.screens.splash.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,9 +15,9 @@ import com.example.devicersapp.R
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
-/** Ocupa el área de la pantalla y centra el indicador mientras una operación está pendiente. */
+/** Indica la comprobación inicial de sesión, antes de conocer la pantalla de destino. */
 @Composable
-fun CenteredLoading(modifier: Modifier = Modifier) {
+fun SplashLoading(modifier: Modifier = Modifier) {
     val colors = LocalDevicersColors.current
     val description = stringResource(R.string.screen_loading)
     Box(modifier = modifier.fillMaxSize().background(colors.background), contentAlignment = Alignment.Center) {
@@ -26,9 +26,9 @@ fun CenteredLoading(modifier: Modifier = Modifier) {
     }
 }
 
-/** Muestra el indicador compartido con el fondo de la aplicación. */
+/** Muestra el indicador exclusivo de la comprobación inicial de sesión. */
 @Preview(showBackground = true)
 @Composable
-fun CenteredLoadingPreview() {
-    DevicersAppTheme { CenteredLoading() }
+fun SplashLoadingPreview() {
+    DevicersAppTheme { SplashLoading() }
 }

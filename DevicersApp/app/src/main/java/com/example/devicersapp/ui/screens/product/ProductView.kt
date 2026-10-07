@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.product
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
+import com.example.devicersapp.ui.screens.product.components.ProductSkeleton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -88,7 +88,7 @@ fun ProductViewContent(
 
     if (state.isLoading) {
 
-        CenteredLoading(modifier)
+        ProductSkeleton(modifier)
 
         return
     }

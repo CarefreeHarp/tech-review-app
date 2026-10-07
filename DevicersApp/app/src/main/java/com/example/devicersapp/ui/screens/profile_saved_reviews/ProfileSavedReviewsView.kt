@@ -1,5 +1,6 @@
 package com.example.devicersapp.ui.screens.profile_saved_reviews
 
+import com.example.devicersapp.ui.screens.profile_saved_reviews.components.ProfileSavedReviewsSkeleton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -73,8 +74,12 @@ fun ProfileSavedReviewsViewContent(
     onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    if (state.loading || state.errorMessageResId != null) {
-        ProfileLoadStatus(state.loading, state.errorMessageResId, onRetry, modifier)
+    if (state.loading) {
+        ProfileSavedReviewsSkeleton(onReviewsClick = onReviewsClick, modifier = modifier)
+        return
+    }
+    if (state.errorMessageResId != null) {
+        ProfileLoadStatus(state.errorMessageResId, onRetry, modifier)
         return
     }
     val profile = state.profile ?: return

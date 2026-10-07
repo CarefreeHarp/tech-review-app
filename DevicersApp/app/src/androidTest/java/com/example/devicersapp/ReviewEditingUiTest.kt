@@ -106,19 +106,17 @@ class ReviewEditingUiTest {
         }
     }
     @Test
-    fun reviewAndOwnProfileLoadsAndEditingSaveUseTheExactCenter() {
+    fun reviewAndOwnProfileAndEditingLoadUseSkeletonsInsteadOfSpinners() {
         fun render(content: @androidx.compose.runtime.Composable () -> Unit) {
             compose.runOnUiThread {
                 compose.activity.setContent {
                     DevicersAppTheme { Box(Modifier.fillMaxSize().testTag("loading-area")) { content() } }
                 }
             }
-            val area = compose.onNodeWithTag("loading-area").fetchSemanticsNode().boundsInRoot
-            val spinner = compose.onNodeWithContentDescription(compose.activity.getString(R.string.screen_loading))
-                .fetchSemanticsNode().boundsInRoot
-            assertEquals(area.center.x, spinner.center.x, 1f)
-            assertEquals(area.center.y, spinner.center.y, 1f)
-            compose.onAllNodes(hasProgressBarRangeInfo(androidx.compose.ui.semantics.ProgressBarRangeInfo.Indeterminate)).assertCountEquals(1)
+            compose.onNodeWithContentDescription(compose.activity.getString(R.string.screen_loading))
+                .assertIsDisplayed()
+            compose.onAllNodes(hasProgressBarRangeInfo(androidx.compose.ui.semantics.ProgressBarRangeInfo.Indeterminate))
+                .assertCountEquals(0)
         }
         render {
             ReviewViewContent(state = ReviewState(loading = true),
@@ -129,7 +127,7 @@ class ReviewEditingUiTest {
                 onSavedClick = {}, onReviewClick = {}, onEditProfileClick = {}, onEditAvatarClick = {})
         }
         render {
-            EditReviewViewContent(state = EditReviewState(saving = true, canEdit = true),
+            EditReviewViewContent(state = EditReviewState(loading = true, canEdit = true),
                 onRetry = {}, onRatingChange = {}, onTitleChange = {}, onExperienceChange = {},
                 onAdvantageChange = {}, onDisadvantageChange = {}, onSave = {})
         }

@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.profile
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
+import com.example.devicersapp.ui.screens.profile.components.ProfileSkeleton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -73,7 +73,7 @@ fun ProfileViewContent(
     onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    if (state.loading) { CenteredLoading(modifier); return }
+    if (state.loading) { ProfileSkeleton(modifier); return }
     state.error?.let { error ->
         Column(modifier.padding(20.dp)) {
             androidx.compose.material3.Text(error)

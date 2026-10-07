@@ -766,4 +766,5 @@
     <string name="edit_review_validation_error">Selecciona una calificación y escribe tu experiencia.</string>
     <string name="edit_review_save_error">No pudimos guardar los cambios. Tu borrador se conserva; intenta nuevamente.</string>
     <string name="screen_loading">Cargando</string>
+    <string name="rate_product_choose_product">Elegir producto</string>
 </resources>

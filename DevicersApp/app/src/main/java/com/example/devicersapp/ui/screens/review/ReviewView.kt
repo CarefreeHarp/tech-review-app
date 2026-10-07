@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.review
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
+import com.example.devicersapp.ui.screens.review.components.ReviewSkeleton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -107,7 +107,7 @@ fun ReviewViewContent(
     onViewAnswers: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    if (state.loading) { CenteredLoading(modifier); return }
+    if (state.loading) { ReviewSkeleton(modifier); return }
     val product = state.product ?: return
     val review = state.review ?: return
     Box(modifier = modifier) {

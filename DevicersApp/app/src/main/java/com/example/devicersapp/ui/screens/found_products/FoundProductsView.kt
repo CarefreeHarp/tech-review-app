@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.found_products
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
+import com.example.devicersapp.ui.screens.found_products.components.FoundProductsSkeleton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -79,6 +79,7 @@ fun FoundProductsView(
     )
 }
 
+/** Ensambla la búsqueda y muestra la carga, el error o los productos encontrados. */
 @Composable
 fun FoundProductsViewContent(
     state: FoundProductsState,
@@ -89,14 +90,7 @@ fun FoundProductsViewContent(
 ) {
     val colors = LocalDevicersColors.current
 
-    if (state.isLoading) {
-
-        CenteredLoading(modifier)
-
-        return
-    }
-
-    if (state.errorMessage != null) {
+    if (!state.isLoading && state.errorMessage != null) {
 
         Column(
             modifier = modifier
@@ -159,6 +153,11 @@ fun FoundProductsViewContent(
         Spacer(
             modifier = Modifier.height(18.dp)
         )
+
+        if (state.isLoading) {
+            FoundProductsSkeleton(modifier = Modifier.weight(1f))
+            return@Column
+        }
 
         Text(
             text = stringResource(

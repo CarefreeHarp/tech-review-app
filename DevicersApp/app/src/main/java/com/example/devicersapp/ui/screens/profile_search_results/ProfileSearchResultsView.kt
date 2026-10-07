@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.profile_search_results
 
-import com.example.devicersapp.ui.utils.loading.CenteredLoading
+import com.example.devicersapp.ui.screens.profile_search_results.components.ProfileSearchResultsSkeleton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -59,7 +59,6 @@ fun ProfileSearchResultsViewContent(
     onProfileClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (state.loading) { CenteredLoading(modifier); return }
     val colors = LocalDevicersColors.current
     val results = state.results.filter { it.username?.contains(state.searchText, ignoreCase = true) ?: true }
 
@@ -74,6 +73,10 @@ fun ProfileSearchResultsViewContent(
             onTextChange = onSearchTextChange
         )
         Spacer(modifier = Modifier.height(18.dp))
+        if (state.loading) {
+            ProfileSearchResultsSkeleton(modifier = Modifier.weight(1f))
+            return@Column
+        }
         LazyColumn(modifier = Modifier.weight(1f)) {
             item {
                 Text(
