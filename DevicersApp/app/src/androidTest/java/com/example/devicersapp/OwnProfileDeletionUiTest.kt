@@ -10,7 +10,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.devicersapp.data.datasource.*
 import com.example.devicersapp.data.dto.*
 import com.example.devicersapp.data.repository.*
-import com.example.devicersapp.domain.usecase.*
 import com.example.devicersapp.ui.screens.own_profile.OwnProfileView
 import com.example.devicersapp.ui.screens.own_profile.OwnProfileViewModel
 import com.example.devicersapp.ui.screens.review.ReviewView
@@ -27,36 +26,38 @@ import org.junit.runner.RunWith
 /** Mantiene el DELETE pendiente para comprobar la salida inmediata y el reintento desde el perfil. */
 @RunWith(AndroidJUnit4::class)
 class OwnProfileDeletionUiTest {
+    private val session = fixtureSession()
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
     @Test
     fun leavingDetailDoesNotCancelDeletionAndProfileWaitsUntilRefreshCompletes() {
         val api = DeletionApi()
         val repositories = ReviewRepository(api)
-        val users = UsersRepository(api)
-        val content = ReviewContentUseCase(ProductRepository(api), users,
-            CommentRepository(api), ReviewLikeRepository(api), CommentLikeRepository(api))
+        val users = UsersRepository(api, fixtureProfileImages)
+        val contentProducts = ProductRepository(api)
+        val contentUsers = users
+        val contentComments = CommentRepository(api)
+        val contentReviewLikes = ReviewLikeRepository(api)
+        val contentCommentLikes = CommentLikeRepository(api)
         val store = ViewModelStore()
         val detailStore = ViewModelStore()
         val profile = mutableStateOf<OwnProfileViewModel?>(null)
         compose.runOnUiThread {
-            val detail = ReviewViewModel(repositories, content).also { detailStore.put("detail", it) }
+            val detail = ReviewViewModel(repositories, contentProducts, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session).also { detailStore.put("detail", it) }
             compose.activity.setContent {
                 DevicersAppTheme {
                     val ownProfile = profile.value
                     if (ownProfile == null) {
                         ReviewView(reviewId = 42, viewModel = detail, onDeleteRequested = { id ->
                             val auth = AuthRepository(AuthRemoteDataSource(FirebaseAuth.getInstance()),
-                                compose.activity.applicationContext)
-                            profile.value = OwnProfileViewModel(auth,
-                                StorageRepository(StorageRemoteDataSource(FirebaseStorage.getInstance()), auth),
-                                ProfileContentUseCase(users, FollowRepository(api)), content, repositories,
-                                SavedStateHandle(mapOf("deleteReviewId" to id)))
+                                compose.activity.applicationContext,
+                                session)
+                            profile.value = OwnProfileViewModel(StorageRepository(StorageRemoteDataSource(FirebaseStorage.getInstance()), auth), fixtureOwnProfileRepository(session, repositories, contentProducts, FollowRepository(api)), SavedStateHandle(mapOf("deleteReviewId" to id)), session)
                                 .also { store.put("profile", it) }
                             detailStore.clear()
                         })
                     } else {
-                        OwnProfileView(viewModel = ownProfile, deleteReviewId = 42)
+                        OwnProfileView(viewModel = ownProfile)
                     }
                 }
             }
@@ -69,7 +70,7 @@ class OwnProfileDeletionUiTest {
             compose.waitUntil(10000) { api.deleteCalls == 1 }
             compose.onNodeWithContentDescription(compose.activity.getString(R.string.screen_loading)).assertExists()
             compose.runOnIdle {
-                assertEquals(FirebaseAuth.getInstance().currentUser?.uid, profile.value!!.uiState.value.userId)
+                assertEquals(session.requireCurrentProfile().id.toString(), profile.value!!.uiState.value.userId)
                 assertTrue(profile.value!!.uiState.value.loading)
                 assertTrue(profile.value!!.uiState.value.deleting)
                 assertEquals(1, api.records.size)
@@ -93,18 +94,19 @@ class OwnProfileDeletionUiTest {
     fun failedDeletionIsRetriedFromOwnProfileWithoutLosingTheReview() {
         val api = DeletionApi().apply { failDelete = true; deleteGate.complete(Unit) }
         val repositories = ReviewRepository(api)
-        val users = UsersRepository(api)
-        val content = ReviewContentUseCase(ProductRepository(api), users,
-            CommentRepository(api), ReviewLikeRepository(api), CommentLikeRepository(api))
+        val users = UsersRepository(api, fixtureProfileImages)
+        val contentProducts = ProductRepository(api)
+        val contentUsers = users
+        val contentComments = CommentRepository(api)
+        val contentReviewLikes = ReviewLikeRepository(api)
+        val contentCommentLikes = CommentLikeRepository(api)
         lateinit var profile: OwnProfileViewModel
         val store = ViewModelStore()
         compose.runOnUiThread {
-            val auth = AuthRepository(AuthRemoteDataSource(FirebaseAuth.getInstance()), compose.activity.applicationContext)
-            profile = OwnProfileViewModel(auth,
-                StorageRepository(StorageRemoteDataSource(FirebaseStorage.getInstance()), auth),
-                ProfileContentUseCase(users, FollowRepository(api)), content, repositories,
-                SavedStateHandle(mapOf("deleteReviewId" to 42))).also { store.put("profile", it) }
-            compose.activity.setContent { DevicersAppTheme { OwnProfileView(viewModel = profile, deleteReviewId = 42) } }
+            val auth = AuthRepository(AuthRemoteDataSource(FirebaseAuth.getInstance()), compose.activity.applicationContext,
+                session)
+            profile = OwnProfileViewModel(StorageRepository(StorageRemoteDataSource(FirebaseStorage.getInstance()), auth), fixtureOwnProfileRepository(session, repositories, contentProducts, FollowRepository(api)), SavedStateHandle(mapOf("deleteReviewId" to 42)), session).also { store.put("profile", it) }
+            compose.activity.setContent { DevicersAppTheme { OwnProfileView(viewModel = profile) } }
         }
         try {
             val error = compose.activity.getString(R.string.review_delete_error)
@@ -147,4 +149,43 @@ private class DeletionApi : ReviewRemoteDataSource, UsersRemoteDataSource, Produ
     override suspend fun getReviewLikes() = emptyList<ReviewLikeDto>()
     override suspend fun getCommentLikes() = emptyList<CommentLikeDto>()
     override suspend fun getFollows() = emptyList<FollowDto>()
+}
+
+
+/** Proporciona una identidad explícita a las pruebas existentes sin acceder a Firestore. */
+private fun fixtureSession(): SessionRepository = kotlinx.coroutines.runBlocking {
+    val profile = DeletionApi().getUserById(1).toUserInfo().copy(firebaseUid = "fixture-uid")
+    val source = object : com.example.devicersapp.data.datasource.UserProfileRemoteDataSource {
+        override suspend fun getById(userId: Int) = profile.also { check(it.id == userId) }
+        override suspend fun findByFirebaseUid(firebaseUid: String) = profile
+        override suspend fun createIfMissing(firebaseUid: String, email: String, username: String, profileImageUrl: String?) = profile
+        override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?) = profile
+    }
+    SessionRepository(source).also { it.loadProfile("fixture-uid", profile.email, profile.username, profile.profileImageUrl) }
+}
+
+/** Adapta las fuentes de las pruebas existentes al contrato del perfil propio. */
+private fun fixtureOwnProfileRepository(
+    session: SessionRepository,
+    reviews: ReviewRepository,
+    products: ProductRepository,
+    follows: FollowRepository
+): OwnProfileRepository = OwnProfileRepository(session, object : com.example.devicersapp.data.datasource.OwnProfileRemoteDataSource {
+    override suspend fun getReviewsByUser(userId: Int) = reviews.getReviewsByUser(userId).getOrThrow().map {
+        it.copy(article = products.getProductById(it.articleId).getOrThrow())
+    }
+    override suspend fun getFollowCounts(userId: Int): Pair<Int, Int> {
+        val relations = follows.getFollows()
+        return relations.count { it.followedId == userId } to relations.count { it.followerId == userId }
+    }
+    override suspend fun deleteReview(reviewId: Int, userId: Int) {
+        check(reviews.getReviewById(reviewId).getOrThrow().userId == userId)
+        reviews.deleteReview(reviewId).getOrThrow()
+    }
+})
+
+
+/** Proporciona fotos explícitas a las pruebas existentes sin acceder a Firebase. */
+private val fixtureProfileImages = com.example.devicersapp.data.datasource.ProfileImagesRemoteDataSource { ids ->
+    ids.associateWith { id -> "https://example.com/firestore-avatar-$id.png" }
 }

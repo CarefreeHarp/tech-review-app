@@ -1,5 +1,8 @@
 package com.example.devicersapp.ui.screens.home.components
 
+
+import com.example.devicersapp.ui.session.LocalSessionState
+
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import android.text.format.DateUtils
@@ -57,7 +60,8 @@ fun FeedReviewItem(
     onViewMoreClick: () -> Unit = {},
     onCommentClick: () -> Unit = {},
     onSendClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
     val productImageModifier = Modifier
@@ -66,7 +70,6 @@ fun FeedReviewItem(
         .clickable(onClick = onProductClick)
     // El backend envía el nombre de un drawable local; si no lo reconoce, el valor se trata como URL.
     val productImageResId = localImageResIdFor(review.productImage)
-    val authorImageResId = localImageResIdFor(review.authorImage)
     // La antigüedad se calcula con el formato relativo del sistema, ya traducido al idioma del dispositivo.
     val timeAgo = DateUtils.getRelativeTimeSpanString(
         review.createdAtMillis,
@@ -101,15 +104,16 @@ fun FeedReviewItem(
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     ProfileAvatar(
-                        // Sin foto propia se usa el avatar por defecto, como en el resto de la app.
-                        avatarResId = authorImageResId ?: R.drawable.profile_avatar_00,
-                        imageUrl = review.authorImage.takeIf { authorImageResId == null },
+                        onProfileClick = onProfileClick,
+                        avatarResId = R.drawable.no_pfp_icon,
+                        userId = review.authorId,
+                        imageUrl = review.authorImage,
                         modifier = Modifier.size(34.dp)
                     )
                     Spacer(modifier = Modifier.width(9.dp))
                     Text(
-                        text = stringResource(R.string.home_feed_author_handle, review.authorUsername),
-                        modifier = Modifier.weight(1f),
+                        text = stringResource(R.string.home_feed_author_handle, LocalSessionState.current.userNameFor(review.authorId, review.authorUsername)),
+                        modifier = Modifier.weight(1f).clickable { onProfileClick(review.authorId.toString()) },
                         color = colors.textPrimary,
                         style = MaterialTheme.typography.titleSmall,
                         maxLines = 1,

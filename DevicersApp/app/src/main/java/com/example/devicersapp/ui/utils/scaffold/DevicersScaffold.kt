@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
  * @param onTopBarBackClick Acción solicitada por una barra superior con regreso interactivo.
  * @param onSignOutClick Acción solicitada al cerrar sesión.
  * @param content Contenido principal de la pantalla.
+ * @param topBarUserId Identificador del usuario mostrado en la barra de perfil.
  */
 @Composable
 fun DevicersScaffold(
@@ -51,10 +52,12 @@ fun DevicersScaffold(
     @StringRes topBarUserHandleResId: Int? = null,
     topBarUserHandle: String? = null,
     topBarProfileImageUrl: String? = null,
+    topBarUserId: String? = null,
     modifier: Modifier = Modifier,
     onNavigationItemClick: (String) -> Unit = {},
     onTopBarBackClick: () -> Unit = {},
     onSignOutClick: () -> Unit = {},
+    onProfileClick: (String) -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     val colors = LocalDevicersColors.current
@@ -96,8 +99,10 @@ fun DevicersScaffold(
                 // las pantallas solo soliciten su número.
                 when (topBarNumber) {
                     1 -> TopBar1(
+                        onProfileClick = onProfileClick,
                         userHandleResId = topBarUserHandleResId,
                         userHandle = topBarUserHandle,
+                        userId = topBarUserId,
                         onBackClick = onTopBarBackClick,
                         onSignOutClick = onSignOutClick
                     )
@@ -138,6 +143,7 @@ fun DevicersScaffold(
                     11 -> TitleTopBar(R.string.edit_review_title, onTopBarBackClick)
 
                     10 -> TopBar10(
+                        onProfileClick = onProfileClick,
                         profileImageUrl = topBarProfileImageUrl
                     )
                 }

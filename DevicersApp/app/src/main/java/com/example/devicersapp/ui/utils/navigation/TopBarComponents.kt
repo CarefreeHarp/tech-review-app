@@ -1,5 +1,9 @@
 package com.example.devicersapp.ui.utils.navigation
 
+import androidx.compose.foundation.clickable
+import com.example.devicersapp.ui.session.LocalSessionState
+import com.example.devicersapp.ui.session.asUserHandle
+
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -48,6 +52,7 @@ import com.example.devicersapp.ui.utils.profile.ProfileAvatar
  * @param onBackClick Acción solicitada al regresar desde el perfil.
  * @param onSignOutClick Acción solicitada al cerrar la sesión desde el menú.
  * @param modifier Modificador aplicado al contenedor de la barra.
+ * @param userId Identificador del usuario al que conduce el alias.
  */
 @Composable
 fun TopBar1(
@@ -55,7 +60,9 @@ fun TopBar1(
     userHandle: String? = null,
     onBackClick: () -> Unit = {},
     onSignOutClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    userId: String? = null,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
     var isMenuExpanded by remember { mutableStateOf(false) }
@@ -83,8 +90,8 @@ fun TopBar1(
                 ?: userHandleResId?.let { stringResource(it) }
             if (visibleUserHandle != null) {
                 Text(
-                    text = visibleUserHandle,
-                    modifier = Modifier.align(Alignment.Center),
+                    text = visibleUserHandle.asUserHandle(),
+                    modifier = Modifier.align(Alignment.Center).then(if (!userId.isNullOrBlank()) Modifier.clickable { onProfileClick(userId) } else Modifier),
                     style = MaterialTheme.typography.titleMedium,
                     color = colors.textPrimary
                 )
@@ -374,7 +381,8 @@ fun TopBar5(modifier: Modifier = Modifier) {
 @Composable
 fun TopBar10(
     profileImageUrl: String? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
     Column(modifier = modifier.fillMaxWidth()) {
@@ -401,8 +409,10 @@ fun TopBar10(
                 )
             }
             ProfileAvatar(
-                avatarResId = R.drawable.profile_avatar_00,
+                onProfileClick = onProfileClick,
+                avatarResId = R.drawable.no_pfp_icon,
                 imageUrl = profileImageUrl,
+                userId = LocalSessionState.current.userId,
                 modifier = Modifier.size(42.dp)
             )
         }

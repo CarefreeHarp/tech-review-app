@@ -1,13 +1,18 @@
 package com.example.devicersapp.ui.screens.home
 
-import com.example.devicersapp.domain.usecase.ReviewFeedUseCase
+import com.example.devicersapp.data.repository.BrandRepository
+import com.example.devicersapp.data.repository.CategoryRepository
+import com.example.devicersapp.data.repository.CommentRepository
 import com.example.devicersapp.data.repository.FollowRepository
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.ReviewLikeRepository
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.R
-import com.example.devicersapp.core.config.CURRENT_USER_ID
+import com.example.devicersapp.data.repository.SessionRepository
+import com.example.devicersapp.data.repository.UsersRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -21,8 +26,14 @@ import javax.inject.Inject
 /** Conserva y modifica el estado de la pantalla principal. */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val feedUseCase: ReviewFeedUseCase,
-    private val follows: FollowRepository
+    private val products: ProductRepository,
+    private val brands: BrandRepository,
+    private val categories: CategoryRepository,
+    private val comments: CommentRepository,
+    private val reviewLikes: ReviewLikeRepository,
+    private val follows: FollowRepository,
+    private val session: SessionRepository,
+    private val users: UsersRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeState())
@@ -40,9 +51,10 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
+                val currentUserId = session.requireCurrentProfile().id
                 val (feed, follows) = coroutineScope {
-                    val feed = async { feedUseCase.getFeedReviews().getOrThrow() }
-                    val follows = async { follows.getFollows().filter { it.followerId == CURRENT_USER_ID }.map { it.followedId }.toSet() }
+                    val feed = async { products.getFeedReviews(brands, categories, comments, reviewLikes, users).getOrThrow() }
+                    val follows = async { follows.getFollows().filter { it.followerId == currentUserId }.map { it.followedId }.toSet() }
                     feed.await() to follows.await()
                 }
                 _uiState.update { current ->

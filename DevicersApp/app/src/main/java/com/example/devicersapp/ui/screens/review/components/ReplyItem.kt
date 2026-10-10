@@ -1,5 +1,9 @@
 package com.example.devicersapp.ui.screens.review.components
 
+
+import androidx.compose.foundation.clickable
+import com.example.devicersapp.ui.session.LocalSessionState
+
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.layout.Arrangement
@@ -55,7 +59,8 @@ fun ReplyItem(
     modifier: Modifier = Modifier,
     passThroughLevels: Set<Int> = emptySet(),
     hasNestedReply: Boolean = false,
-    bottomSpacing: Dp = 0.dp
+    bottomSpacing: Dp = 0.dp,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
     val author = if (reply.authorName == null) LocalProfileProvider.getProfileById(reply.authorId) else null
@@ -83,8 +88,11 @@ fun ReplyItem(
             Spacer(Modifier.width(ReplyThreadIndent * reply.depth))
 
             ProfileAvatar(
-                avatarResId = author?.avatarResId ?: R.drawable.profile_avatar_00,
+                onProfileClick = onProfileClick,
+                avatarResId = author?.avatarResId ?: R.drawable.no_pfp_icon,
                 imageUrl = reply.authorImageUrl,
+                userId = reply.authorId.toIntOrNull(),
+                profileId = reply.authorId,
                 modifier = Modifier.size(ReplyAvatarSize)
             )
 
@@ -92,7 +100,11 @@ fun ReplyItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = reply.authorName ?: author?.let { stringResource(it.handleResId) }.orEmpty(),
+                    modifier = Modifier.clickable { onProfileClick(reply.authorId) },
+                    text = LocalSessionState.current.userNameFor(
+                        reply.authorId.toIntOrNull(),
+                        reply.authorName ?: author?.let { stringResource(it.handleResId) }.orEmpty()
+                    ),
                     style = CardHighlightText,
                     color = colors.textPrimary
                 )

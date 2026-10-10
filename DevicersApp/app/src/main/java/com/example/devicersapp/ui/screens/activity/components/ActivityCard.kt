@@ -1,5 +1,9 @@
 package com.example.devicersapp.ui.screens.activity.components
 
+
+import com.example.devicersapp.ui.session.LocalSessionState
+import com.example.devicersapp.data.dto.toProfileContent
+
 import android.content.res.Resources
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
@@ -49,6 +53,7 @@ private const val DAY_IN_MILLIS = 24 * HOUR_IN_MILLIS
  * @param onClick Acción solicitada al abrir el contenido relacionado con la notificación.
  * @param modifier Modificador aplicado a la tarjeta.
  * @param isHighlighted Indica si el evento se dibuja como tarjeta elevada en vez de sobre el fondo.
+ * @param profileImageUrl Foto vigente del autor consultada en Firestore por el ViewModel.
  */
 @Composable
 fun ActivityCard(
@@ -57,10 +62,17 @@ fun ActivityCard(
     onFollow: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isHighlighted: Boolean = false
+    isHighlighted: Boolean = false,
+    onProfileClick: (String) -> Unit = {},
+    profileImageUrl: String? = null
 ) {
     val colors = LocalDevicersColors.current
-    val actor = requireNotNull(LocalProfileProvider.getProfileById(activity.actorProfileId))
+    // El usuario de sesión puede no existir entre los perfiles de muestra de actividad.
+    val actor = if (LocalSessionState.current.isCurrentUser(activity.actorProfileId.toIntOrNull())) {
+        requireNotNull(LocalSessionState.current.profile).toProfileContent(0)
+    } else {
+        requireNotNull(LocalProfileProvider.getProfileById(activity.actorProfileId))
+    }
     val review = activity.targetReviewId?.let(LocalReviewProvider::findById)
     // El tiempo se deriva al renderizar para evitar guardar textos como "Hace 5 m" en los datos.
     val elapsedTime = formatElapsedTime(LocalContext.current.resources, activity.time)
@@ -83,7 +95,11 @@ fun ActivityCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         ActivityAvatar(
+            onProfileClick = onProfileClick,
             avatarResId = actor.avatarResId,
+            imageUrl = profileImageUrl,
+            userId = activity.actorProfileId.toIntOrNull(),
+            profileId = activity.actorProfileId,
             type = activity.type,
             ringColor = if (isHighlighted) colors.surface else colors.background
         )
@@ -92,7 +108,8 @@ fun ActivityCard(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(actor.handleResId),
+                modifier = Modifier.clickable { onProfileClick(activity.actorProfileId) },
+                text = LocalSessionState.current.userNameFor(activity.actorProfileId.toIntOrNull(), stringResource(actor.handleResId)),
                 style = MaterialTheme.typography.titleSmall,
                 color = colors.textPrimary
             )
@@ -174,9 +191,9 @@ fun ActivityCardPreview() {
             activity = ActivityContent(
                 id = "preview",
                 type = ActivityType.FOLLOW,
-                actorProfileId = "camila",
+                actorProfileId = "3",
                 actionResId = R.string.activity_action_followed,
-                targetProfileId = "camila",
+                targetProfileId = "3",
                 time = System.currentTimeMillis() - DAY_IN_MILLIS,
                 showFollowAction = true
             ),

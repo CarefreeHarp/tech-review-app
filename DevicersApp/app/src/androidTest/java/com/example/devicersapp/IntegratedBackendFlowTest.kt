@@ -1,8 +1,6 @@
 package com.example.devicersapp
 
-import com.example.devicersapp.domain.usecase.*
 
-import com.example.devicersapp.core.config.CURRENT_USER_ID
 
 import androidx.lifecycle.ViewModelStore
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -37,13 +35,15 @@ class IntegratedBackendFlowTest {
         val productSource = ProductRetrofitDataSourceImplementation(retrofit.create(ProductRetrofitService::class.java))
         val reviews = ReviewRepository(ReviewRetrofitDataSourceImplementation(retrofit.create(ReviewRetrofitService::class.java)))
         val products = ProductRepository(productSource)
-        val users = UsersRepository(UsersRetrofitDataSourceImplementation(retrofit.create(UsersRetrofitService::class.java)))
+        val users = UsersRepository(UsersRetrofitDataSourceImplementation(retrofit.create(UsersRetrofitService::class.java)), fixtureProfileImages)
         val follows = FollowRepository(FollowRetrofitDataSourceImplementation(retrofit.create(FollowRetrofitService::class.java)))
-        val content = ReviewContentUseCase(products, users,
-            CommentRepository(CommentRetrofitDataSourceImplementation(retrofit.create(CommentRetrofitService::class.java))),
-            ReviewLikeRepository(ReviewLikeRetrofitDataSourceImplementation(retrofit.create(ReviewLikeRetrofitService::class.java))),
-            CommentLikeRepository(CommentLikeRetrofitDataSourceImplementation(retrofit.create(CommentLikeRetrofitService::class.java))))
-        val originalIds = reviews.getReviewsByUser(CURRENT_USER_ID).getOrThrow().map { it.id }.toSet()
+        val contentProducts = products
+        val contentUsers = users
+        val contentComments = CommentRepository(CommentRetrofitDataSourceImplementation(retrofit.create(CommentRetrofitService::class.java)))
+        val contentReviewLikes = ReviewLikeRepository(ReviewLikeRetrofitDataSourceImplementation(retrofit.create(ReviewLikeRetrofitService::class.java)))
+        val contentCommentLikes = CommentLikeRepository(CommentLikeRetrofitDataSourceImplementation(retrofit.create(CommentLikeRetrofitService::class.java)))
+        val session = fixtureSession(users.getUserById(1).copy(firebaseUid = "fixture-uid"))
+        val originalIds = reviews.getReviewsByUser(session.requireCurrentProfile().id).getOrThrow().map { it.id }.toSet()
         val productId = products.getProducts().getOrThrow().first().id
         val marker = "Integration " + System.currentTimeMillis()
         var createdId: Int? = null
@@ -51,7 +51,7 @@ class IntegratedBackendFlowTest {
         try {
             withContext(Dispatchers.Main) {
                 withTimeout(30000) {
-                    val profile = ProfileViewModel(users, reviews, content, follows).also { store.put("profile", it) }
+                    val profile = ProfileViewModel(users, reviews, contentProducts, contentComments, contentReviewLikes, contentCommentLikes, follows, session).also { store.put("profile", it) }
                     profile.loadProfile("2")
                     val selected = profile.uiState.first { !it.loading }
                     assertNull(selected.error)
@@ -59,13 +59,13 @@ class IntegratedBackendFlowTest {
                     assertTrue(selected.reviews.isNotEmpty())
                     assertTrue(selected.reviews.all { it.authorId == "2" })
 
-                    val product = ProductViewModel(products, reviews, content).also { store.put("product", it) }
+                    val product = ProductViewModel(products, reviews, contentUsers, contentComments, contentReviewLikes, contentCommentLikes).also { store.put("product", it) }
                     product.loadProduct(productId)
                     val productState = product.uiState.first { !it.isLoading }
                     assertNull(productState.errorMessage)
                     assertEquals(productId, productState.product?.id)
 
-                    val rate = RateProductViewModel(products, reviews).also { store.put("rate", it) }
+                    val rate = RateProductViewModel(products, reviews, session).also { store.put("rate", it) }
                     rate.loadProduct(productState.product!!.id)
                     assertNull(rate.uiState.first { !it.loading }.error)
                     rate.onRatingChange(4)
@@ -76,17 +76,17 @@ class IntegratedBackendFlowTest {
                     assertNull(published.error)
                     assertTrue(published.published)
 
-                    val created = reviews.getReviewsByUser(CURRENT_USER_ID).getOrThrow().single { it.title == marker }
+                    val created = reviews.getReviewsByUser(session.requireCurrentProfile().id).getOrThrow().single { it.title == marker }
                     createdId = created.id
                     assertEquals(productId, created.articleId)
-                    val detail = ReviewViewModel(reviews, content).also { store.put("detail", it) }
+                    val detail = ReviewViewModel(reviews, contentProducts, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session).also { store.put("detail", it) }
                     detail.loadReview(created.id)
                     val detailState = detail.uiState.first { !it.loading }
                     assertNull(detailState.error)
                     assertEquals(productId, detailState.product?.id)
-                    assertEquals(CURRENT_USER_ID.toString(), detailState.review?.authorId)
+                    assertEquals(session.requireCurrentProfile().id.toString(), detailState.review?.authorId)
 
-                    val edit = EditReviewViewModel(reviews, products).also { store.put("edit", it) }
+                    val edit = EditReviewViewModel(reviews, products, session).also { store.put("edit", it) }
                     edit.loadReview(created.id)
                     assertTrue(edit.uiState.first { !it.loading }.canEdit)
                     edit.onExperienceChange("Edited " + marker)
@@ -104,10 +104,9 @@ class IntegratedBackendFlowTest {
                     assertTrue(detail.uiState.first { !it.loading }.canManage)
                     assertEquals(created.id, detail.requestDeletion())
                     val auth = AuthRepository(AuthRemoteDataSource(com.google.firebase.auth.FirebaseAuth.getInstance()),
-                        androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext)
-                    val ownProfile = OwnProfileViewModel(auth,
-                        StorageRepository(StorageRemoteDataSource(com.google.firebase.storage.FirebaseStorage.getInstance()), auth),
-                        ProfileContentUseCase(users, follows), content, reviews, androidx.lifecycle.SavedStateHandle())
+                        androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext,
+                        session)
+                    val ownProfile = OwnProfileViewModel(StorageRepository(StorageRemoteDataSource(com.google.firebase.storage.FirebaseStorage.getInstance()), auth), fixtureOwnProfileRepository(session, reviews, contentProducts, follows), androidx.lifecycle.SavedStateHandle(), session)
                         .also { store.put("own-profile", it) }
                     ownProfile.deleteReviewAndLoadProfile(created.id)
                     val deleted = ownProfile.uiState.first { !it.loading }
@@ -118,10 +117,48 @@ class IntegratedBackendFlowTest {
                     assertFalse(product.uiState.first { !it.isLoading }.reviews.any { it.id == created.id })
                 }
             }
-            assertEquals(originalIds, reviews.getReviewsByUser(CURRENT_USER_ID).getOrThrow().map { it.id }.toSet())
+            assertEquals(originalIds, reviews.getReviewsByUser(session.requireCurrentProfile().id).getOrThrow().map { it.id }.toSet())
         } finally {
             withContext(Dispatchers.Main) { store.clear() }
             createdId?.let { reviews.deleteReview(it).getOrThrow() }
         }
     }
+}
+
+
+/** Proporciona una identidad explícita a las pruebas existentes sin acceder a Firestore. */
+private fun fixtureSession(profile: com.example.devicersapp.ui.models.UserInfo): SessionRepository = kotlinx.coroutines.runBlocking {
+    val source = object : com.example.devicersapp.data.datasource.UserProfileRemoteDataSource {
+        override suspend fun getById(userId: Int) = profile.also { check(it.id == userId) }
+        override suspend fun findByFirebaseUid(firebaseUid: String) = profile
+        override suspend fun createIfMissing(firebaseUid: String, email: String, username: String, profileImageUrl: String?) = profile
+        override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?) = profile
+    }
+    SessionRepository(source).also { it.loadProfile("fixture-uid", profile.email, profile.username, profile.profileImageUrl) }
+}
+
+/** Adapta las fuentes de las pruebas existentes al contrato del perfil propio. */
+private fun fixtureOwnProfileRepository(
+    session: SessionRepository,
+    reviews: ReviewRepository,
+    products: ProductRepository,
+    follows: FollowRepository
+): OwnProfileRepository = OwnProfileRepository(session, object : com.example.devicersapp.data.datasource.OwnProfileRemoteDataSource {
+    override suspend fun getReviewsByUser(userId: Int) = reviews.getReviewsByUser(userId).getOrThrow().map {
+        it.copy(article = products.getProductById(it.articleId).getOrThrow())
+    }
+    override suspend fun getFollowCounts(userId: Int): Pair<Int, Int> {
+        val relations = follows.getFollows()
+        return relations.count { it.followedId == userId } to relations.count { it.followerId == userId }
+    }
+    override suspend fun deleteReview(reviewId: Int, userId: Int) {
+        check(reviews.getReviewById(reviewId).getOrThrow().userId == userId)
+        reviews.deleteReview(reviewId).getOrThrow()
+    }
+})
+
+
+/** Proporciona fotos explícitas a las pruebas existentes sin acceder a Firebase. */
+private val fixtureProfileImages = com.example.devicersapp.data.datasource.ProfileImagesRemoteDataSource { ids ->
+    ids.associateWith { id -> "https://example.com/firestore-avatar-$id.png" }
 }

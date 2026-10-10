@@ -24,13 +24,16 @@ class SplashViewModel @Inject constructor(
         checkUser()
     }
 
-    /** Espera tres segundos y publica la existencia de un usuario autenticado en Firebase. */
+    /** Restaura el perfil vinculado a Auth antes de permitir el acceso a la aplicación. */
     private fun checkUser() {
         viewModelScope.launch {
             // Mantiene la pantalla de bienvenida visible sin bloquear el hilo principal.
             delay(2000)
+            val restored = authRepository.restoreSession()
             _uiState.update { currentState ->
-                currentState.copy(isUserAuthenticated = authRepository.currentUser != null)
+                currentState.copy(
+                    isUserAuthenticated = restored.isSuccess && authRepository.currentProfile != null
+                )
             }
         }
     }

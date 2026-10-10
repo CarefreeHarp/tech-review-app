@@ -39,7 +39,8 @@ fun ReplyList(
     header: LazyListScope.() -> Unit = {},
     expandedReplies: Map<Int, Boolean> = emptyMap(),
     onViewAnswers: (Int) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
@@ -74,6 +75,7 @@ fun ReplyList(
             Column(modifier = Modifier.fillMaxWidth()) {
                 if (areAncestorsExpanded) {
                     ReplyItem(
+                        onProfileClick = onProfileClick,
                         reply = reply,
                         // Un ancestro expandido mantiene su línea hasta que alcance su control de ocultar.
                         passThroughLevels = passThroughLevels,

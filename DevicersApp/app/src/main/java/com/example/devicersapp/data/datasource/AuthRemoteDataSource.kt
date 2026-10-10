@@ -6,7 +6,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.auth
-import com.google.firebase.auth.userProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import androidx.core.net.toUri
@@ -28,13 +27,6 @@ class AuthRemoteDataSource @Inject constructor(
     /** Registra una cuenta con correo y contraseña y espera el resultado de Firebase. */
     suspend fun signUp(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password).await()
-    }
-
-    /** Actualiza el nombre público que Firebase asocia a la cuenta autenticada. */
-    suspend fun updateDisplayName(displayName: String) {
-        auth.currentUser?.updateProfile(
-            userProfileChangeRequest { this.displayName = displayName }
-        )?.await()
     }
 
     /** Cierra la sesión de la cuenta autenticada en el dispositivo. */

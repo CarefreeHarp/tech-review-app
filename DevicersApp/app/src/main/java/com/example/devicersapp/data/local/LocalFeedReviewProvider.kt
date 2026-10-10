@@ -12,7 +12,7 @@ object LocalFeedReviewProvider {
         sampleReview(
             reviewId = 1, productId = 1, productName = "Auriculares", productBrand = "Sony",
             productCategory = "Audio", productImage = "device_01", productAverage = 4.5f,
-            authorId = 2, authorUsername = "mariana.tech", authorImage = "profile_avatar_01",
+            authorId = 2, authorUsername = "prueba2", authorImage = "",
             rating = 5, title = "Excelente cancelación de ruido",
             body = "Los uso todos los días en el transporte público y aíslan muy bien el ruido. La batería dura más de una semana.",
             likes = 2, comments = 2
@@ -20,7 +20,7 @@ object LocalFeedReviewProvider {
         sampleReview(
             reviewId = 2, productId = 2, productName = "Teléfono", productBrand = "Samsung",
             productCategory = "Celulares", productImage = "device_00", productAverage = 4f,
-            authorId = 3, authorUsername = "camila.audio", authorImage = "profile_avatar_02",
+            authorId = 3, authorUsername = "prueba3", authorImage = "",
             rating = 4, title = null,
             body = "La cámara es muy buena de día, aunque de noche le cuesta un poco más enfocar.",
             likes = 1, comments = 0

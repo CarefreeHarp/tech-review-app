@@ -39,18 +39,15 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
  */
 @Composable
 fun OwnProfileView(
-    deleteReviewId: Int? = null,
     onEditProfileClick: () -> Unit = {},
     onReviewClick: (Int) -> Unit = {},
     onSavedReviewsClick: () -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: OwnProfileViewModel
+    viewModel: OwnProfileViewModel,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    // Refresca los datos al regresar de publicar, editar o consultar una reseña.
-    androidx.lifecycle.compose.LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-        if (deleteReviewId != null) viewModel.deleteReviewAndLoadProfile(deleteReviewId) else viewModel.loadProfile()
-    }
+
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
@@ -58,6 +55,7 @@ fun OwnProfileView(
     }
 
     OwnProfileViewContent(
+        onProfileClick = onProfileClick,
         state = uiState,
         onRetry = viewModel::loadProfile,
         onSavedClick = onSavedReviewsClick,
@@ -81,7 +79,8 @@ fun OwnProfileViewContent(
     onEditProfileClick: () -> Unit,
     onEditAvatarClick: () -> Unit,
     onRetry: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {}
 ) {
     if (state.loading) {
         OwnProfileSkeleton(onSavedClick = onSavedClick, modifier = modifier)
@@ -103,6 +102,7 @@ fun OwnProfileViewContent(
                 Spacer(modifier = Modifier.height(15.dp))
 
                 ProfileHeader(
+                    onProfileClick = onProfileClick,
                     profile = profile,
                     actionLabelResId = R.string.profile_edit,
                     displayName = state.displayName,

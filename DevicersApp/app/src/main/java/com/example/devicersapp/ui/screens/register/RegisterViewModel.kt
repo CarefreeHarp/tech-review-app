@@ -71,16 +71,11 @@ class RegisterViewModel @Inject constructor(
     suspend fun signUp(): Boolean {
         val signUpResult = authRepository.signUp(
             email = _uiState.value.email,
-            password = _uiState.value.password
+            password = _uiState.value.password,
+            username = _uiState.value.username.trim()
         )
         if (signUpResult.isFailure) {
             updateRegistrationError(signUpResult.exceptionOrNull())
-            return false
-        }
-
-        val updateNameResult = authRepository.updateDisplayName(_uiState.value.username.trim())
-        if (updateNameResult.isFailure) {
-            updateRegistrationError(updateNameResult.exceptionOrNull())
             return false
         }
 

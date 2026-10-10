@@ -76,3 +76,17 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 ## Technical scope
 
 The project will use MVVM architecture and patterns such as Repository and dependency injection. It includes a REST API with an SQL database, Firebase Authentication and Firestore, automated testing, and Firebase notifications.
+
+### Authentication and Firestore profiles
+
+Registration creates the Firebase Auth account and saves a flat profile in Firestore's `users` collection with its `firebase_uid`. The application keeps numeric user IDs to preserve the existing references. New IDs are consecutive numbers allocated through the `metadata/user_ids` counter (`last_id`). A transaction saves the next ID and its profile together, skips IDs already occupied by migrated users, and retries the UID lookup if another registration advances the counter. Failed registrations do not consume an ID; deleted IDs are not reused. Existing profiles are retrieved by `firebase_uid` and retain their IDs and data.
+
+Sign-in and startup restoration load the linked profile before entering Home. Accounts that previously existed only in Auth receive a profile on their next sign-in. `SessionRepository.currentProfile` exposes the shared profile through a `StateFlow`; `SessionState` includes the Firebase UID, numeric ID and profile. Signing out clears this state and invalidates pending profile loads. Usernames are stored and updated exclusively in Firestore, and the UI reads them from the linked profile. Auth continues to store its photo; photo changes made through `AuthRepository` also update Firestore. Passwords are never copied to Firestore.
+
+New profiles default to `is_active: true`. `createdAt` and `updatedAt` receive the same server timestamp in the creation transaction; later profile changes update only `updatedAt`.
+
+User-specific queries, review creation and ownership checks use the numeric ID of the current session profile. Navigation and avatars use the same identity; there is no fixed user ID or fallback to user 1. The own-profile identity comes from Firestore. Feature data sources that still use Retrofit continue to call the REST API with this session ID.
+
+OwnProfile refreshes `users/{session.userId}` directly from the Firestore server and validates the profile UID before updating the shared session. `OwnProfileRepository` loads its active review cards from the flat `reviews` documents and obtains follower/following counts from Firestore aggregations. These queries use the current session ID and do not call the REST backend. Review removal completed by OwnProfile checks ownership in a Firestore transaction and sets `is_active` to `false`.
+
+Every profile photo is rendered by the shared `ProfileAvatar` using Coil `AsyncImage`. Firestore's `users/{id}.profile_image_url` is the photo source for Home, public profiles, search results, review authors, comments, activity and the current session. `UsersRepository` replaces API photo values with Firestore values; author photos are fetched in batches of up to ten distinct IDs. Missing profiles and empty photos resolve to `no_pfp_icon`, while image-download failures display `pfp_error`. Firebase Auth photos and local drawable names are not used as display fallbacks.

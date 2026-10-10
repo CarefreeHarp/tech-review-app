@@ -3,7 +3,7 @@ package com.example.devicersapp.ui.screens.edit_review
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.R
-import com.example.devicersapp.core.config.CURRENT_USER_ID
+import com.example.devicersapp.data.repository.SessionRepository
 import com.example.devicersapp.data.dto.toProductContent
 import com.example.devicersapp.data.repository.ProductRepository
 import com.example.devicersapp.data.repository.ReviewRepository
@@ -21,11 +21,13 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class EditReviewViewModel @Inject constructor(
     private val reviews: ReviewRepository,
-    private val products: ProductRepository
+    private val products: ProductRepository,
+    private val session: SessionRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditReviewState())
     val uiState: StateFlow<EditReviewState> = _uiState
     private var loadJob: Job? = null
+    private var ownerId: Int? = null
 
     /** Comprueba el autor antes de exponer el formulario, también al abrir una ruta directa. */
     fun loadReview(reviewId: Int) {
@@ -35,8 +37,9 @@ class EditReviewViewModel @Inject constructor(
         _uiState.update { EditReviewState(loading = true) }
         loadJob = viewModelScope.launch {
             try {
+                val userId = session.requireCurrentProfile().id
                 val review = reviews.getReviewById(reviewId).getOrThrow()
-                if (review.userId != CURRENT_USER_ID) {
+                if (review.userId != userId || session.currentProfile.value?.id != userId) {
                     _uiState.update { EditReviewState(errorResId = R.string.edit_review_owner_error) }
                     return@launch
                 }
@@ -56,6 +59,8 @@ class EditReviewViewModel @Inject constructor(
                     advantage = experience.substring(advantageIndex + "\n\nVentajas: ".length)
                     experience = experience.substring(0, advantageIndex)
                 }
+                check(session.currentProfile.value?.id == userId)
+                ownerId = userId
                 _uiState.update {
                     EditReviewState(
                         reviewId = review.id,
@@ -85,6 +90,11 @@ class EditReviewViewModel @Inject constructor(
             _uiState.update { it.copy(errorResId = R.string.edit_review_validation_error) }
             return
         }
+        val userId = session.currentProfile.value?.id
+        if (userId == null || userId != ownerId) {
+            _uiState.update { it.copy(canEdit = false, errorResId = R.string.edit_review_owner_error) }
+            return
+        }
         _uiState.update { it.copy(saving = true, errorResId = null) }
         viewModelScope.launch {
             try {
@@ -93,6 +103,8 @@ class EditReviewViewModel @Inject constructor(
                     if (draft.advantage.isNotBlank()) append("\n\nVentajas: ${draft.advantage}")
                     if (draft.disadvantage.isNotBlank()) append("\n\nDesventajas: ${draft.disadvantage}")
                 }
+                val review = reviews.getReviewById(reviewId).getOrThrow()
+                require(review.userId == userId && session.currentProfile.value?.id == userId)
                 reviews.updateReview(reviewId, ReviewChanges(
                     rating = draft.rating, title = draft.title, body = body
                 )).getOrThrow()

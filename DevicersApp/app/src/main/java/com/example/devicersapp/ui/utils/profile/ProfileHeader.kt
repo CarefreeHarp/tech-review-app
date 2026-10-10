@@ -1,5 +1,8 @@
 package com.example.devicersapp.ui.utils.profile
 
+
+import com.example.devicersapp.ui.session.LocalSessionState
+
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.background
@@ -68,7 +71,8 @@ fun ProfileHeader(
     actionEnabled: Boolean = true,
     showBiography: Boolean = true,
     onActionClick: () -> Unit = {},
-    onEditAvatarClick: () -> Unit = {}
+    onEditAvatarClick: () -> Unit = {},
+    onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
 
@@ -78,7 +82,10 @@ fun ProfileHeader(
     ) {
         Box {
             ProfileAvatar(
+                onProfileClick = onProfileClick,
                 avatarResId = profile.avatarResId,
+                userId = profile.id.toIntOrNull(),
+                profileId = profile.id,
                 imageUrl = profileImageUrl ?: profile.imageUrl,
                 modifier = Modifier.size(84.dp)
             )
@@ -106,7 +113,11 @@ fun ProfileHeader(
 
         if (showDisplayName) {
             Text(
-                text = displayName.ifBlank { profile.username ?: stringResource(profile.handleResId) },
+                modifier = Modifier.clickable { onProfileClick(profile.id) },
+                text = LocalSessionState.current.userNameFor(
+                    profile.id.toIntOrNull(),
+                    displayName.ifBlank { profile.username ?: stringResource(profile.handleResId) }
+                ),
                 style = MaterialTheme.typography.titleMedium,
                 color = colors.textPrimary
             )
@@ -184,7 +195,7 @@ fun ProfileHeaderPreview() {
 /** Contiene datos de ejemplo para las vistas previas del perfil. */
 private val SampleProfileContent = ProfileContent(
     id = "preview_profile",
-    avatarResId = R.drawable.profile_avatar_00,
+    avatarResId = R.drawable.no_pfp_icon,
     handleResId = R.string.profile_handle,
     biographyResId = R.string.profile_biography,
     stats = listOf(

@@ -71,11 +71,12 @@
     <string name="auth_error_sign_up">No fue posible crear la cuenta. Inténtalo nuevamente.</string>
     <string name="auth_error_update_profile">No fue posible actualizar tu perfil. Inténtalo nuevamente.</string>
     <string name="auth_error_sign_out">No fue posible cerrar sesión. Inténtalo nuevamente.</string>
+    <string name="auth_error_profile_storage">No fue posible guardar o recuperar tu perfil. Revisa tu conexión e inténtalo nuevamente.</string>
 
     <!-- SEARCH -->
     <string name="home_tab_for_you">Para ti</string>
     <string name="home_tab_following">Siguiendo</string>
-    <string name="home_feed_author_handle">\@%1$s</string>
+    <string name="home_feed_author_handle">%1$s</string>
     <string name="home_feed_product_metadata">%1$s • %2$s</string>
     <string name="home_feed_product_average">%1$.1f</string>
     <string name="home_feed_loading">Cargando reseñas</string>
@@ -145,27 +146,27 @@
     <string name="profile_search_results_count">%1$d perfiles encontrados</string>
     <string name="profile_search_results_placeholder">Buscar Perfiles</string>
 
-    <string name="profile_result_first_handle">@mariana.tech</string>
+    <string name="profile_result_first_handle">@prueba1</string>
     <string name="profile_result_first_interests">Audio · Sony</string>
     <string name="profile_result_first_reviews">32 reseñas</string>
 
-    <string name="profile_result_second_handle">@camila.audio</string>
+    <string name="profile_result_second_handle">@prueba2</string>
     <string name="profile_result_second_interests">Audio · Logitech</string>
     <string name="profile_result_second_reviews">18 reseñas</string>
 
-    <string name="profile_result_third_handle">@audio.fan</string>
+    <string name="profile_result_third_handle">@prueba3</string>
     <string name="profile_result_third_interests">Audio · Reseñas</string>
     <string name="profile_result_third_reviews">46 reseñas</string>
 
-    <string name="profile_result_fourth_handle">@nora.mobile</string>
+    <string name="profile_result_fourth_handle">@prueba4</string>
     <string name="profile_result_fourth_interests">Celulares · Fotografía</string>
     <string name="profile_result_fourth_reviews">27 reseñas</string>
 
-    <string name="profile_result_fifth_handle">@diego.gadgets</string>
+    <string name="profile_result_fifth_handle">@prueba1</string>
     <string name="profile_result_fifth_interests">Computadores · Gaming</string>
     <string name="profile_result_fifth_reviews">41 reseñas</string>
 
-    <string name="profile_result_sixth_handle">@luna.digital</string>
+    <string name="profile_result_sixth_handle">@prueba1</string>
     <string name="profile_result_sixth_interests">Tablets · Productividad</string>
     <string name="profile_result_sixth_reviews">15 reseñas</string>
 
@@ -272,19 +273,19 @@
     <string name="feed_time_two_days">Hace 2 días</string>
 
     <!-- FEED USERS -->
-    <string name="feed_user_phone">@usuario</string>
-    <string name="feed_user_audio">@usuario.audio</string>
-    <string name="feed_user_computer">@byte.labs</string>
-    <string name="feed_user_four">@ana.tech</string>
-    <string name="feed_user_five">@carlos.audio</string>
-    <string name="feed_user_six">@sofia.devices</string>
-    <string name="feed_user_seven">@mateo.review</string>
-    <string name="feed_user_eight">@laura.music</string>
-    <string name="feed_user_nine">@juan_gadgets</string>
-    <string name="feed_user_ten">@valen.tech</string>
-    <string name="feed_user_eleven">@dani_audio</string>
-    <string name="feed_user_twelve">@camila.reseñas</string>
-    <string name="feed_user_thirteen">@nico.mobile</string>
+    <string name="feed_user_phone">@prueba1</string>
+    <string name="feed_user_audio">@prueba1</string>
+    <string name="feed_user_computer">@prueba1</string>
+    <string name="feed_user_four">@prueba1</string>
+    <string name="feed_user_five">@prueba1</string>
+    <string name="feed_user_six">@prueba1</string>
+    <string name="feed_user_seven">@prueba1</string>
+    <string name="feed_user_eight">@prueba1</string>
+    <string name="feed_user_nine">@prueba1</string>
+    <string name="feed_user_ten">@prueba1</string>
+    <string name="feed_user_eleven">@prueba1</string>
+    <string name="feed_user_twelve">@prueba1</string>
+    <string name="feed_user_thirteen">@prueba1</string>
 
     <!-- FEED PRODUCTS -->
     <string name="feed_product_phone">Teléfono</string>
@@ -382,33 +383,33 @@
 
     <!-- Product Reviews -->
 
-    <string name="review_card_username">@usuario</string>
+    <string name="review_card_username">@prueba2</string>
 
     <string name="review_card_text">
         La calidad de sonido es excelente y la cancelación de ruido supera mis expectativas. Los he usado durante jornadas completas de trabajo y siguen siendo muy cómodos.
     </string>
 
-    <string name="product_review_author_two">@ana.tech</string>
+    <string name="product_review_author_two">@prueba3</string>
     <string name="product_review_text_two">
         Los materiales se sienten premium y el estuche carga bastante rápido. La única mejora que me gustaría ver es una aplicación con más opciones de ecualización.
     </string>
 
-    <string name="product_review_author_three">@carlos.audio</string>
+    <string name="product_review_author_three">@prueba4</string>
     <string name="product_review_text_three">
         Después de un mes de uso la batería continúa ofreciendo cerca de 30 horas en total con el estuche. La conexión Bluetooth nunca se ha desconectado inesperadamente.
     </string>
 
-    <string name="product_review_author_four">@laura.music</string>
+    <string name="product_review_author_four">@prueba1</string>
     <string name="product_review_text_four">
         Son ideales para estudiar en la universidad. Aíslan muy bien el ruido exterior y los micrófonos ofrecen una voz clara durante videollamadas y reuniones.
     </string>
 
-    <string name="product_review_author_five">@juan_gadgets</string>
+    <string name="product_review_author_five">@prueba2</string>
     <string name="product_review_text_five">
         Los graves tienen buena presencia sin opacar las voces. Escucho música de distintos géneros y el balance de audio me parece bastante natural para este precio.
     </string>
 
-    <string name="product_review_author_six">@valen.tech</string>
+    <string name="product_review_author_six">@prueba3</string>
     <string name="product_review_text_six">
         Una de las mejores compras que he hecho este año. Son cómodos, ligeros y la carga rápida permite obtener varias horas de reproducción en muy pocos minutos.
     </string>
@@ -417,7 +418,7 @@
     <!-- PROFILE -->
     <!-- ========================= -->
 
-    <string name="profile_handle">@usuario</string>
+    <string name="profile_handle">@prueba1</string>
 
     <string name="profile_biography">
         Entusiasta de la tecnología. Comparto reseñas claras y honestas para ayudarte a elegir mejor.
@@ -449,21 +450,21 @@
     <!-- PERFIL: RESEÑAS GUARDADAS -->
     <string name="profile_saved_image">Producto guardado</string>
 
-    <string name="profile_saved_first_author">@mariana.tech</string>
+    <string name="profile_saved_first_author">@prueba1</string>
     <string name="profile_saved_first_product">Auriculares</string>
     <string name="profile_saved_first_average">4.8</string>
     <string name="profile_saved_first_text">
         Sonido cálido y un aislamiento excelente.
     </string>
 
-    <string name="profile_saved_second_author">@dani.reviews</string>
+    <string name="profile_saved_second_author">@prueba1</string>
     <string name="profile_saved_second_product">Watch Series 10</string>
     <string name="profile_saved_second_average">4.5</string>
     <string name="profile_saved_second_text">
         Tan cómodo que se puede llevar puesto todo el día.
     </string>
 
-    <string name="profile_saved_third_author">@juan_gadgets</string>
+    <string name="profile_saved_third_author">@prueba1</string>
     <string name="profile_saved_third_product">Galaxy S24</string>
     <string name="profile_saved_third_average">4.6</string>
     <string name="profile_saved_third_text">
@@ -496,7 +497,7 @@
     <string name="review_product_name">Auriculares</string>
     <string name="review_product_brand">Marca</string>
 
-    <string name="review_author">@usuario</string>
+    <string name="review_author">@prueba1</string>
     <string name="review_time">Hace 2 días</string>
     <string name="review_product_average">4.7</string>
 
@@ -504,7 +505,7 @@
         Después de utilizar estos audífonos durante varias semanas puedo decir que ofrecen una experiencia sobresaliente. La cancelación activa de ruido reduce muy bien el sonido del entorno, la batería dura varios días con un uso moderado y la calidad de construcción transmite mucha confianza. Definitivamente son una excelente opción para estudiar, trabajar o viajar.
     </string>
 
-    <string name="review_reply_placeholder">Responder a @usuario</string>
+    <string name="review_reply_placeholder">Responder a @prueba1</string>
     <string name="review_replies">Respuestas (%1$d)</string>
     <string name="review_reply_action">Responder</string>
     <string name="review_reply_view_answers_count">respuestas (%1$d)</string>
@@ -512,17 +513,17 @@
 
     <!-- Reply Authors -->
 
-    <string name="review_reply_author_one">@usuario.audio</string>
-    <string name="review_reply_author_two">@usuario.reviews</string>
-    <string name="review_reply_author_three">@ana.tech</string>
-    <string name="review_reply_author_four">@carlos.audio</string>
-    <string name="review_reply_author_five">@sofia.devices</string>
-    <string name="review_reply_author_six">@mateo.review</string>
-    <string name="review_reply_author_seven">@laura.music</string>
-    <string name="review_reply_author_eight">@juan_gadgets</string>
-    <string name="review_reply_author_nine">@valen.tech</string>
-    <string name="review_reply_author_ten">@dani_audio</string>
-    <string name="review_reply_author_eleven">@lina.sound</string>
+    <string name="review_reply_author_one">@prueba1</string>
+    <string name="review_reply_author_two">@prueba2</string>
+    <string name="review_reply_author_three">@prueba3</string>
+    <string name="review_reply_author_four">@prueba4</string>
+    <string name="review_reply_author_five">@prueba1</string>
+    <string name="review_reply_author_six">@prueba2</string>
+    <string name="review_reply_author_seven">@prueba3</string>
+    <string name="review_reply_author_eight">@prueba4</string>
+    <string name="review_reply_author_nine">@prueba1</string>
+    <string name="review_reply_author_ten">@prueba2</string>
+    <string name="review_reply_author_eleven">@prueba3</string>
 
     <!-- Reply Times -->
 
@@ -608,10 +609,10 @@
     <string name="activity_group_yesterday">AYER</string>
     <string name="activity_group_earlier">ANTERIORES</string>
 
-    <string name="activity_author_camila">@camila.vargas</string>
-    <string name="activity_author_david">@davidtechea</string>
-    <string name="activity_author_mateo">@mateo.dev</string>
-    <string name="activity_author_lina">@lina.labs</string>
+    <string name="activity_author_camila">@prueba1</string>
+    <string name="activity_author_david">@prueba1</string>
+    <string name="activity_author_mateo">@prueba1</string>
+    <string name="activity_author_lina">@prueba1</string>
 
     <string name="activity_action_liked_review">Le gustó tu reseña</string>
     <string name="activity_action_replied_comment">Respondió a tu comentario</string>
@@ -747,7 +748,7 @@
     <string name="create_review_product_ten_image">Imagen de micrófono</string>
 
     <string name="sign_out">Cerrar sesión</string>
-    <string name="remote_review_reply_to">Responder a @%1$s</string>
+    <string name="remote_review_reply_to">Responder a %1$s</string>
     <string name="remote_review_count">%1$d reseñas</string>
     <string name="remote_product_load_error">No fue posible cargar el producto y sus reseñas.</string>
     <string name="own_profile_load_error">No pudimos cargar tu perfil y tus reseñas. Intenta nuevamente.</string>

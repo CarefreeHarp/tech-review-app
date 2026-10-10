@@ -1,5 +1,9 @@
 package com.example.devicersapp.ui.screens.product.components
 
+
+import androidx.compose.foundation.clickable
+import com.example.devicersapp.ui.session.LocalSessionState
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,7 +38,8 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
 fun ReviewCard(
     review: ReviewInfo,
     onViewMoreClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
 
@@ -62,7 +67,8 @@ fun ReviewCard(
             ) {
 
                 Text(
-                    text = requireNotNull(review.user).username,
+                    modifier = Modifier.clickable { onProfileClick(review.userId.toString()) },
+                    text = LocalSessionState.current.userNameFor(review.userId, requireNotNull(review.user).username),
                     style = CardHighlightText,
                     color = colors.textPrimary
                 )

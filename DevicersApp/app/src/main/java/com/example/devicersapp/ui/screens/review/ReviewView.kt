@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.review
 
+import com.example.devicersapp.ui.session.LocalSessionState
+
 import com.example.devicersapp.ui.screens.review.components.ReviewSkeleton
 
 import androidx.compose.foundation.background
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,16 +47,8 @@ fun ReviewView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    androidx.compose.runtime.DisposableEffect(lifecycleOwner, reviewId, localReview) {
-        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
-            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                if (localReview) viewModel.loadLocalReview(reviewId) else viewModel.loadReview(reviewId)
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
+    LaunchedEffect(reviewId, localReview) {
         if (localReview) viewModel.loadLocalReview(reviewId) else viewModel.loadReview(reviewId)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     uiState.error?.let { error ->
@@ -112,6 +107,7 @@ fun ReviewViewContent(
     val review = state.review ?: return
     Box(modifier = modifier) {
         ReplyList(
+            onProfileClick = onAuthorClick,
             replies = state.replies,
             header = {
                 item {
@@ -138,7 +134,7 @@ fun ReviewViewContent(
                                 )
                             }
                         },
-                        onAuthorClick = if (state.isLocal) null else ({ onAuthorClick(review.authorId) })
+                        onProfileClick = onAuthorClick
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -158,7 +154,7 @@ fun ReviewViewContent(
         )
 
         ReplyComposer(
-            placeholder = if (state.isLocal) null else stringResource(R.string.remote_review_reply_to, review.authorName.orEmpty()),
+            placeholder = if (state.isLocal) null else stringResource(R.string.remote_review_reply_to, LocalSessionState.current.userNameFor(review.authorId.toIntOrNull(), review.authorName.orEmpty())),
             value = state.replyText,
             onValueChange = onReplyTextChange,
             onSendClick = onSendReply,

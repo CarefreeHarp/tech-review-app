@@ -9,7 +9,7 @@ import com.example.devicersapp.data.repository.UsersRepository
 import com.example.devicersapp.data.dto.toSearchContent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.example.devicersapp.core.config.CURRENT_USER_ID
+import com.example.devicersapp.data.repository.SessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -17,7 +17,11 @@ import javax.inject.Inject
 
 /** Conserva la consulta y los seguimientos visibles en los resultados de perfiles. */
 @HiltViewModel
-class ProfileSearchResultsViewModel @Inject constructor(private val users: UsersRepository, private val follows: FollowRepository) : ViewModel() {
+class ProfileSearchResultsViewModel @Inject constructor(
+    private val users: UsersRepository,
+    private val follows: FollowRepository,
+    private val session: SessionRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileSearchResultsState())
     val uiState: StateFlow<ProfileSearchResultsState> = _uiState
@@ -32,8 +36,9 @@ class ProfileSearchResultsViewModel @Inject constructor(private val users: Users
         _uiState.update { it.copy(loading = true, error = null) }
         viewModelScope.launch {
             try {
-                val results = users.getUsers(excludeUserId = CURRENT_USER_ID).filter { it.isActive }.map { it.toSearchContent() }
-                val followedIds = follows.getFollows().filter { it.followerId == CURRENT_USER_ID }.map { it.followedId.toString() }.toSet()
+                val currentUserId = session.requireCurrentProfile().id
+                val results = users.getUsers(excludeUserId = currentUserId).filter { it.isActive }.map { it.toSearchContent() }
+                val followedIds = follows.getFollows().filter { it.followerId == currentUserId }.map { it.followedId.toString() }.toSet()
                 _uiState.update { it.copy(results = results, followedProfileIds = followedIds, loading = false) }
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { _uiState.update { it.copy(loading = false, error = "No se pudieron cargar los usuarios.") } }

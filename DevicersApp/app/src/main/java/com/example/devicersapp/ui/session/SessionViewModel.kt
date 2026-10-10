@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,19 +25,20 @@ class SessionViewModel @Inject constructor(
         observeCurrentProfile()
     }
 
-    /** Observa la cuenta autenticada para mantener actualizado el alias de la barra superior. */
+    /** Combina la cuenta de Auth con su perfil de Firestore y comparte ambos identificadores. */
     private fun observeCurrentProfile() {
         viewModelScope.launch {
-            authRepository.currentUserState.collectLatest { user ->
-                val displayName = user?.displayName?.trim().orEmpty()
+            combine(authRepository.currentUserState, authRepository.currentProfileState) { user, profile ->
+                user to profile?.takeIf { it.firebaseUid == user?.uid }
+            }.collectLatest { (user, profile) ->
+                val username = profile?.username.orEmpty()
                 _uiState.update {
                     it.copy(
-                        currentProfileHandle = displayName
-                            .removePrefix("@")
-                            .takeIf { name -> name.isNotBlank() }
-                            ?.let { name -> "@$name" }
-                            .orEmpty(),
-                        profileImageUrl = user?.photoUrl?.toString()
+                        currentProfileHandle = username.asUserHandle(),
+                        profileImageUrl = profile?.profileImageUrl,
+                        firebaseUid = user?.uid,
+                        userId = profile?.id,
+                        profile = profile
                     )
                 }
             }

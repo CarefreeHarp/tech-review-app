@@ -1,5 +1,8 @@
 package com.example.devicersapp.ui.screens.review.components
 
+
+import com.example.devicersapp.ui.session.LocalSessionState
+
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.clickable
@@ -41,7 +44,7 @@ import com.example.devicersapp.ui.utils.review.ReviewActionsRow
  * @param actions Acciones del autor alineadas al extremo derecho de su misma fila.
  */
 @Composable
-fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onAuthorClick: (() -> Unit)? = null, actions: @Composable () -> Unit = {}) {
+fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onProfileClick: (String) -> Unit = {}, actions: @Composable () -> Unit = {}) {
     val colors = LocalDevicersColors.current
     val author = if (review.authorName == null) LocalProfileProvider.getProfileById(review.authorId) else null
 
@@ -49,19 +52,26 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onAuthorC
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Row(
                 modifier = Modifier.weight(1f).then(
-                    if (onAuthorClick != null) Modifier.clickable(onClick = onAuthorClick) else Modifier
+                    Modifier.clickable { onProfileClick(review.authorId) }
                 ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ProfileAvatar(
-                    avatarResId = author?.avatarResId ?: R.drawable.profile_avatar_00,
+                    onProfileClick = onProfileClick,
+                    avatarResId = author?.avatarResId ?: R.drawable.no_pfp_icon,
                     imageUrl = review.authorImageUrl,
+                    userId = review.authorId.toIntOrNull(),
+                    profileId = review.authorId,
                     modifier = Modifier.size(48.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = review.authorName ?: author?.let { stringResource(it.handleResId) }.orEmpty(),
+                        modifier = Modifier.clickable { onProfileClick(review.authorId) },
+                        text = LocalSessionState.current.userNameFor(
+                            review.authorId.toIntOrNull(),
+                            review.authorName ?: author?.let { stringResource(it.handleResId) }.orEmpty()
+                        ),
                         style = MaterialTheme.typography.titleSmall,
                         color = colors.textPrimary
                     )
@@ -79,7 +89,7 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onAuthorC
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(modifier = if (onAuthorClick != null) Modifier.clickable(onClick = onAuthorClick) else Modifier, verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.clickable { onProfileClick(review.authorId) }, verticalAlignment = Alignment.CenterVertically) {
             RatingStars(rating = review.rating, style = RatingStarsLargeText)
             // El promedio del producto acompaña a la calificación entera que dio el autor.
             review.productAverageResId?.let { averageResId ->

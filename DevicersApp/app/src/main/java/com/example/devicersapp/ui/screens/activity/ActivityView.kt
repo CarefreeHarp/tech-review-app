@@ -35,6 +35,7 @@ fun ActivityView(
     val uiState by viewModel.uiState.collectAsState()
 
     ActivityViewContent(
+        onProfileClick = onProfileClick,
         state = uiState,
         onFollow = viewModel::followActivity,
         onActivityClick = { activity ->
@@ -66,7 +67,8 @@ fun ActivityViewContent(
     state: ActivityState,
     onFollow: (String) -> Unit,
     onActivityClick: (ActivityContent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
     LazyColumn(
@@ -84,7 +86,9 @@ fun ActivityViewContent(
             ) { activity ->
                 // Cada actividad es un ítem independiente para que LazyColumn la componga bajo demanda.
                 ActivityCard(
+                    onProfileClick = onProfileClick,
                     activity = activity,
+                    profileImageUrl = state.profileImages[activity.actorProfileId.toIntOrNull()],
                     isFollowed = activity.id in state.followedActivityIds,
                     onFollow = { onFollow(activity.id) },
                     onClick = { onActivityClick(activity) },

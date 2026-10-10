@@ -53,11 +53,13 @@ fun HomeView(
     onCommentClick: (Int) -> Unit = {},
     onSendClick: (FeedReviewContent) -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     HomeViewContent(
+        onProfileClick = onProfileClick,
         state = uiState,
         onForYouClick = viewModel::onForYouClick,
         onFollowingClick = viewModel::onFollowingClick,
@@ -85,7 +87,8 @@ fun HomeViewContent(
     onReviewClick: (Int) -> Unit,
     onCommentClick: (Int) -> Unit,
     onSendClick: (FeedReviewContent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
 
@@ -141,6 +144,7 @@ fun HomeViewContent(
                         key = { _, review -> review.reviewId }
                     ) { index, review ->
                         FeedReviewItem(
+                            onProfileClick = onProfileClick,
                             review = review,
                             onProductClick = {
                                 onProductClick(review.productId)

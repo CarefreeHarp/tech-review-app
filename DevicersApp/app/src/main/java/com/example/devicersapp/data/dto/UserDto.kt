@@ -41,7 +41,7 @@ fun UserInfo.toProfileContent(
 ) =
     ProfileContent(
         id = id.toString(),
-        avatarResId = R.drawable.profile_avatar_00,
+        avatarResId = R.drawable.no_pfp_icon,
         handleResId = R.string.profile_handle,
         biographyResId = R.string.profile_biography,
         username = username,
@@ -67,7 +67,7 @@ fun UserInfo.toProfileContent(
 fun UserInfo.toSearchContent() =
     ProfileSearchResultContent(
         id = id.toString(),
-        avatarResId = R.drawable.profile_avatar_00,
+        avatarResId = R.drawable.no_pfp_icon,
         handleResId = R.string.profile_handle,
         interestsResId = R.string.profile_biography,
         reviewCountResId = R.string.profile_reviews_count,

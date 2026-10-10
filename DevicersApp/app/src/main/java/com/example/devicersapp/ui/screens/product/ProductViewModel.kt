@@ -1,12 +1,15 @@
 package com.example.devicersapp.ui.screens.product
 
-import com.example.devicersapp.domain.usecase.ReviewContentUseCase
+import com.example.devicersapp.data.repository.CommentLikeRepository
+import com.example.devicersapp.data.repository.CommentRepository
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.ReviewLikeRepository
+import com.example.devicersapp.data.repository.ReviewRepository
+import com.example.devicersapp.data.repository.UsersRepository
 
 import com.example.devicersapp.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.devicersapp.data.repository.ProductRepository
-import com.example.devicersapp.data.repository.ReviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -21,7 +24,10 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val reviewRepository: ReviewRepository,
-    private val reviewContent: ReviewContentUseCase
+    private val users: UsersRepository,
+    private val comments: CommentRepository,
+    private val reviewLikes: ReviewLikeRepository,
+    private val commentLikes: CommentLikeRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductState())
     val uiState: StateFlow<ProductState> = _uiState
@@ -36,7 +42,7 @@ class ProductViewModel @Inject constructor(
                 val product = productRepository.getProductById(productId).getOrThrow()
                 val records = reviewRepository.getReviewsByProduct(productId).getOrThrow()
                     .filter { it.articleId == productId && it.isActive }
-                val reviews = reviewContent.getReviewContents(records)
+                val reviews = productRepository.getReviewContents(records, users, comments, reviewLikes, commentLikes)
                 _uiState.update { ProductState(product = product, reviews = reviews) }
             } catch (e: CancellationException) {
                 throw e

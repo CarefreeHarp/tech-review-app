@@ -14,7 +14,7 @@ package com.example.devicersapp.ui.models
  * @param productAverage Promedio de las calificaciones activas del artículo.
  * @param authorId Identificador del autor de la reseña.
  * @param authorUsername Nombre de usuario del autor, sin el prefijo `@`.
- * @param authorImage Foto del autor: nombre de un drawable local o URL remota.
+ * @param authorImage URL de la foto del autor obtenida desde Firestore.
  * @param rating Calificación entera que el autor otorgó al artículo.
  * @param title Título opcional de la reseña.
  * @param body Cuerpo de la reseña.

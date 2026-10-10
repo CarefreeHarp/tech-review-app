@@ -39,21 +39,17 @@ fun ProfileView(
     onFollowClick: () -> Unit = {},
     onReviewClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel
+    viewModel: ProfileViewModel,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    androidx.compose.runtime.DisposableEffect(lifecycleOwner, profileId) {
-        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
-            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) viewModel.loadProfile(profileId)
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
+    LaunchedEffect(profileId) {
         viewModel.loadProfile(profileId)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     ProfileViewContent(
+        onProfileClick = onProfileClick,
             state = uiState,
             onRetry = { viewModel.loadProfile(profileId) },
             onFollowClick = onFollowClick,
@@ -71,7 +67,8 @@ fun ProfileViewContent(
     onFollowClick: () -> Unit,
     onReviewClick: (Int) -> Unit,
     onRetry: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {}
 ) {
     if (state.loading) { ProfileSkeleton(modifier); return }
     state.error?.let { error ->
@@ -92,6 +89,7 @@ fun ProfileViewContent(
             Column {
                 Spacer(modifier = Modifier.height(15.dp))
                 ProfileHeader(
+                    onProfileClick = onProfileClick,
                     profile = profile,
                     actionLabelResId = if (state.isFollowed) R.string.activity_following else R.string.profile_follow,
                     actionEnabled = false,

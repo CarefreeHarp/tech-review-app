@@ -1,13 +1,17 @@
 package com.example.devicersapp.ui.screens.review
 
-import com.example.devicersapp.domain.usecase.ReviewContentUseCase
+import com.example.devicersapp.data.repository.CommentLikeRepository
+import com.example.devicersapp.data.repository.CommentRepository
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.ReviewLikeRepository
+import com.example.devicersapp.data.repository.ReviewRepository
+import com.example.devicersapp.data.repository.UsersRepository
 
-import com.example.devicersapp.core.config.CURRENT_USER_ID
+import com.example.devicersapp.data.repository.SessionRepository
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import com.example.devicersapp.data.repository.ReviewRepository
 import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.data.dto.toReviewContent
 import com.example.devicersapp.data.dto.toProductContent
@@ -22,7 +26,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
     private val reviews: ReviewRepository,
-    private val reviewContent: ReviewContentUseCase
+    private val products: ProductRepository,
+    private val users: UsersRepository,
+    private val comments: CommentRepository,
+    private val reviewLikes: ReviewLikeRepository,
+    private val commentLikes: CommentLikeRepository,
+    private val session: SessionRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReviewState())
@@ -37,13 +46,13 @@ class ReviewViewModel @Inject constructor(
         _uiState.update { ReviewState(loading = true) }
         loadJob = viewModelScope.launch {
             try {
-                val review = reviewContent.getReviewContents(listOf(reviews.getReviewById(reviewId).getOrThrow())).single()
+                val review = products.getReviewContents(listOf(reviews.getReviewById(reviewId).getOrThrow()), users, comments, reviewLikes, commentLikes).single()
                 val content = review.toReviewContent()
                 _uiState.update {
                     ReviewState(
                         product = requireNotNull(review.article).toProductContent(),
                         review = content,
-                        canManage = review.userId == CURRENT_USER_ID,
+                        canManage = review.userId == session.requireCurrentProfile().id,
                         replies = content.comments
                     )
                 }
@@ -69,14 +78,14 @@ class ReviewViewModel @Inject constructor(
 
     /** Expone el menú únicamente para la reseña remota de la sesión actual. */
     fun setActionsMenuExpanded(expanded: Boolean) {
-        _uiState.update { it.copy(actionsMenuExpanded = expanded && it.canManage && !it.deletionRequested) }
+        _uiState.update { it.copy(actionsMenuExpanded = expanded && it.canManage && it.review?.authorId == session.currentProfile.value?.id?.toString() && !it.deletionRequested) }
     }
 
     /** Autoriza la salida inmediata al perfil, que se encargará de completar la eliminación. */
     fun requestDeletion(): Int? {
         val current = _uiState.value
         val review = current.review ?: return null
-        if (!current.canManage || current.isLocal || review.authorId != CURRENT_USER_ID.toString() ||
+        if (!current.canManage || current.isLocal || review.authorId != session.currentProfile.value?.id?.toString() ||
             current.deletionRequested) return null
         _uiState.update { it.copy(deletionRequested = true, actionsMenuExpanded = false) }
         return review.id

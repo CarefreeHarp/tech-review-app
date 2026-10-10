@@ -3,7 +3,6 @@ package com.example.devicersapp.remote
 import com.example.devicersapp.data.datasource.*
 import com.example.devicersapp.data.dto.*
 import com.example.devicersapp.data.repository.*
-import com.example.devicersapp.domain.usecase.*
 import com.example.devicersapp.ui.screens.profile.ProfileViewModel
 import com.example.devicersapp.ui.screens.rate_product.RateProductViewModel
 import com.example.devicersapp.ui.screens.edit_review.EditReviewViewModel
@@ -16,13 +15,29 @@ import org.junit.Assert.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RemoteFlowsTest {
+
+    /** Proporciona una identidad explícita a las pruebas existentes sin acceder a Firestore. */
+    private fun fixtureSession(): SessionRepository = kotlinx.coroutines.runBlocking {
+        val profile = user(1).toUserInfo().copy(firebaseUid = "fixture-uid")
+        val source = object : com.example.devicersapp.data.datasource.UserProfileRemoteDataSource {
+            override suspend fun getById(userId: Int) = profile.also { check(it.id == userId) }
+            override suspend fun findByFirebaseUid(firebaseUid: String) = profile
+            override suspend fun createIfMissing(firebaseUid: String, email: String, username: String, profileImageUrl: String?) = profile
+            override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?) = profile
+        }
+        SessionRepository(source).also { it.loadProfile("fixture-uid", profile.email, profile.username, profile.profileImageUrl) }
+    }
+
+    private val session = fixtureSession()
     private val dispatcher = StandardTestDispatcher()
     private val source = FakeReviews()
     private val products = ProductRepository(FakeProducts())
     private val repository = ReviewRepository(source)
-    private val content = ReviewContentUseCase(products, UsersRepository(FakeUsers()),
-        CommentRepository(source), ReviewLikeRepository(source), CommentLikeRepository(source))
-    private val saved = SavedReviewsUseCase(ReviewBookmarkRepository(source), repository, content)
+    private val contentUsers = UsersRepository(FakeUsers(), fixtureProfileImages)
+    private val contentComments = CommentRepository(source)
+    private val contentReviewLikes = ReviewLikeRepository(source)
+    private val contentCommentLikes = CommentLikeRepository(source)
+    private val saved = ReviewBookmarkRepository(source)
     private val follows = FollowRepository(FakeUsers())
 
     @Before
@@ -43,7 +58,7 @@ class RemoteFlowsTest {
         source.likes = listOf(ReviewLikeDto(1, 1, 10), ReviewLikeDto(2, 3, 10))
         source.comments = listOf(CommentDto(20, 10, 1, null, "Saved review comment", true, "", ""))
         source.commentLikes = listOf(CommentLikeDto(1, 2, 20))
-        val saved = saved.getSavedReviews(1).getOrThrow().map { it.toReviewContent() }
+        val saved = saved.getSavedReviews(1, repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes).getOrThrow().map { it.toReviewContent() }
         assertEquals(listOf(10), saved.map { it.id })
         assertEquals("user2", saved.single().authorName)
         assertEquals("Phone", saved.single().productName)
@@ -60,9 +75,12 @@ class RemoteFlowsTest {
         }
         val catalog = ProductRepository(remote)
         assertTrue(catalog.getProducts().getOrThrow().isEmpty())
-        val detail = ReviewContentUseCase(catalog, UsersRepository(FakeUsers()),
-            CommentRepository(source), ReviewLikeRepository(source), CommentLikeRepository(source))
-        val content = detail.getReviewContents(listOf(review(10, 2).toReviewInfo())).single()
+        val detailProducts = catalog
+        val detailUsers = UsersRepository(FakeUsers(), fixtureProfileImages)
+        val detailComments = CommentRepository(source)
+        val detailReviewLikes = ReviewLikeRepository(source)
+        val detailCommentLikes = CommentLikeRepository(source)
+        val content = detailProducts.getReviewContents(listOf(review(10, 2).toReviewInfo()), detailUsers, detailComments, detailReviewLikes, detailCommentLikes).single()
         assertEquals("Phone", content.article?.name)
         assertEquals(false, content.article?.isActive)
     }
@@ -71,14 +89,14 @@ class RemoteFlowsTest {
     @Test
     fun savedReviewsPropagateFailuresAndMissingReferences() = runTest(dispatcher) {
         source.failBookmarks = true
-        assertTrue(saved.getSavedReviews(1).isFailure)
+        assertTrue(saved.getSavedReviews(1, repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes).isFailure)
         source.failBookmarks = false
-        assertTrue(saved.getSavedReviews(1).getOrThrow().isEmpty())
+        assertTrue(saved.getSavedReviews(1, repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes).getOrThrow().isEmpty())
         source.bookmarks = listOf(ReviewBookmarkDto(1, 999))
-        assertTrue(saved.getSavedReviews(1).isFailure)
+        assertTrue(saved.getSavedReviews(1, repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes).isFailure)
         source.records = listOf(review(999, 2))
         source.failCommentLikes = true
-        assertTrue(saved.getSavedReviews(1).isFailure)
+        assertTrue(saved.getSavedReviews(1, repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes).isFailure)
     }
 
     /** Las estadísticas separan seguidores de seguidos y admiten ceros realmente consultados. */
@@ -90,12 +108,13 @@ class RemoteFlowsTest {
             override suspend fun getUserById(userId: Int) = user(userId)
             override suspend fun getFollows() = relations
         }
-        val users = ProfileContentUseCase(UsersRepository(remote), FollowRepository(remote))
-        val profile = users.getProfileContent(1, 2)
+        val users = UsersRepository(remote, fixtureProfileImages)
+        val usersFollows = FollowRepository(remote)
+        val profile = users.getProfileContent(1, 2, usersFollows)
         assertEquals("Biography", profile.biography)
         assertEquals(listOf("2", "2", "1"), profile.stats.map { it.number })
         relations = emptyList()
-        assertEquals(listOf("0", "0", "0"), users.getProfileContent(1, 0).stats.map { it.number })
+        assertEquals(listOf("0", "0", "0"), users.getProfileContent(1, 0, usersFollows).stats.map { it.number })
     }
 
     /** Si falla la consulta de seguidores, el perfil no sustituye sus conteos por ceros. */
@@ -106,13 +125,13 @@ class RemoteFlowsTest {
             override suspend fun getUserById(userId: Int) = user(userId)
             override suspend fun getFollows(): List<FollowDto> = error("Offline")
         }
-        assertTrue(runCatching { ProfileContentUseCase(UsersRepository(remote), FollowRepository(remote)).getProfileContent(1, 2) }.isFailure)
+        assertTrue(runCatching { UsersRepository(remote, fixtureProfileImages).getProfileContent(1, 2, FollowRepository(remote)) }.isFailure)
     }
 
     @Test
     fun profileOnlyShowsSelectedUsersReviews() =
         runTest(dispatcher) {
-            val vm = ProfileViewModel(UsersRepository(FakeUsers()), repository, content, follows)
+            val vm = ProfileViewModel(UsersRepository(FakeUsers(), fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, follows, session)
             source.records = listOf(review(1, 2), review(2, 1))
             vm.loadProfile("2")
             advanceUntilIdle()
@@ -126,10 +145,7 @@ class RemoteFlowsTest {
         runTest(dispatcher) {
             source.records = listOf(review(10, 2))
             val vm =
-                com.example.devicersapp.ui.screens.review.ReviewViewModel(
-                    repository,
-                    content,
-                )
+                com.example.devicersapp.ui.screens.review.ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
             vm.loadReview(10)
             advanceUntilIdle()
             assertEquals("user2", vm.uiState.value.review?.authorName)
@@ -155,9 +171,7 @@ class RemoteFlowsTest {
             CommentLikeDto(1, 1, 1), CommentLikeDto(2, 2, 1),
             CommentLikeDto(3, 3, 2), CommentLikeDto(4, 1, 4)
         )
-        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(
-            repository, content
-        )
+        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
         vm.loadReview(10)
         advanceUntilIdle()
         val state = vm.uiState.value
@@ -174,9 +188,7 @@ class RemoteFlowsTest {
     fun detailDoesNotReportZeroWhenInteractionsFail() = runTest(dispatcher) {
         source.records = listOf(review(10, 2))
         source.failInteractions = true
-        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(
-            repository, content
-        )
+        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
         vm.loadReview(10)
         advanceUntilIdle()
         assertNotNull(vm.uiState.value.error)
@@ -188,9 +200,7 @@ class RemoteFlowsTest {
     fun detailReportsAnErrorWhenCommentLikesFail() = runTest(dispatcher) {
         source.records = listOf(review(10, 2))
         source.failCommentLikes = true
-        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(
-            repository, content
-        )
+        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
         vm.loadReview(10)
         advanceUntilIdle()
         assertNotNull(vm.uiState.value.error)
@@ -214,10 +224,7 @@ class RemoteFlowsTest {
             override suspend fun getUserById(userId: Int) = user(userId)
             override suspend fun getFollows() = listOf(FollowDto(1, 2), FollowDto(2, 3))
         }
-        val vm = com.example.devicersapp.ui.screens.home.HomeViewModel(
-            ReviewFeedUseCase(ProductRepository(catalog), BrandRepository(catalog), CategoryRepository(catalog),
-                CommentRepository(source), ReviewLikeRepository(source)), FollowRepository(users)
-        )
+        val vm = com.example.devicersapp.ui.screens.home.HomeViewModel(ProductRepository(catalog), BrandRepository(catalog), CategoryRepository(catalog), CommentRepository(source), ReviewLikeRepository(source), FollowRepository(users), session, UsersRepository(users, fixtureProfileImages))
         advanceUntilIdle()
         assertNull(vm.uiState.value.errorMessageResId)
         assertEquals(listOf(10, 11), vm.uiState.value.feedReviews.map { it.reviewId })
@@ -235,9 +242,7 @@ class RemoteFlowsTest {
             CommentDto(2, 10, 2, 3, "Cycle A", true, "", ""),
             CommentDto(3, 10, 2, 2, "Cycle B", true, "", "")
         )
-        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(
-            repository, content
-        )
+        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
         vm.loadReview(10)
         advanceUntilIdle()
         assertEquals(3, vm.uiState.value.replies.size)
@@ -247,7 +252,7 @@ class RemoteFlowsTest {
     @Test
     fun productQueriesAuthorsAndReportsReviewFailureInsteadOfEmptyRatings() = runTest(dispatcher) {
         source.records = listOf(review(10, 2))
-        val vm = com.example.devicersapp.ui.screens.product.ProductViewModel(products, repository, content)
+        val vm = com.example.devicersapp.ui.screens.product.ProductViewModel(products, repository, contentUsers, contentComments, contentReviewLikes, contentCommentLikes)
         vm.loadProduct(7)
         advanceUntilIdle()
         assertEquals("user2", vm.uiState.value.reviews.single().user?.username)
@@ -281,12 +286,12 @@ class RemoteFlowsTest {
         source.records = listOf(review(10, 2))
         source.likes = listOf(ReviewLikeDto(1, 1, 10))
         source.comments = listOf(CommentDto(20, 10, 1, null, "API comment", true, "", ""))
-        val profile = ProfileViewModel(UsersRepository(FakeUsers()), repository, content, follows)
+        val profile = ProfileViewModel(UsersRepository(FakeUsers(), fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, follows, session)
         profile.loadProfile("2")
         advanceUntilIdle()
         assertEquals(1, profile.uiState.value.reviews.single().likes)
         assertEquals("API comment", profile.uiState.value.reviews.single().comments.single().body)
-        val managed = ReviewViewModel(repository, content)
+        val managed = ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
         managed.loadReview(10)
         advanceUntilIdle()
         assertEquals(1, managed.uiState.value.review?.likes)
@@ -303,7 +308,7 @@ class RemoteFlowsTest {
             override suspend fun getUserById(userId: Int) = user(userId)
             override suspend fun getFollows() = listOf(FollowDto(1, 2), FollowDto(9, 1))
         }
-        val vm = com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsViewModel(UsersRepository(remote), FollowRepository(remote))
+        val vm = com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsViewModel(UsersRepository(remote, fixtureProfileImages), FollowRepository(remote), session)
         advanceUntilIdle()
         assertEquals(setOf("2"), vm.uiState.value.followedProfileIds)
         vm.onFollow("3")
@@ -314,7 +319,7 @@ class RemoteFlowsTest {
     @Test
     fun invalidProfileDoesNotFallBackToLocalUser() =
         runTest(dispatcher) {
-            val vm = ProfileViewModel(UsersRepository(FakeUsers()), repository, content, follows)
+            val vm = ProfileViewModel(UsersRepository(FakeUsers(), fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, follows, session)
             vm.loadProfile("local_user")
             assertNull(vm.uiState.value.profile)
             assertNotNull(vm.uiState.value.error)
@@ -334,7 +339,7 @@ class RemoteFlowsTest {
                         return user(userId)
                     }
                 }
-            val vm = ProfileViewModel(UsersRepository(users), repository, content, FollowRepository(users))
+            val vm = ProfileViewModel(UsersRepository(users, fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, FollowRepository(users), session)
             vm.loadProfile("1")
             runCurrent()
             vm.loadProfile("2")
@@ -344,9 +349,9 @@ class RemoteFlowsTest {
         }
 
     @Test
-    fun createValidatesAndUsesBackendProductAndFixedUser() =
+    fun createValidatesAndUsesBackendProductAndSessionUser() =
         runTest(dispatcher) {
-            val vm = RateProductViewModel(products, repository)
+            val vm = RateProductViewModel(products, repository, session)
             vm.loadProduct(7)
             advanceUntilIdle()
             vm.publish()
@@ -367,7 +372,7 @@ class RemoteFlowsTest {
     @Test
     fun failedPublishKeepsDraftAndAllowsRetry() =
         runTest(dispatcher) {
-            val vm = RateProductViewModel(products, repository)
+            val vm = RateProductViewModel(products, repository, session)
             vm.loadProduct(7)
             advanceUntilIdle()
             vm.onRatingChange(3)
@@ -389,7 +394,7 @@ class RemoteFlowsTest {
     fun editPreloadsFieldsAndOnlyUpdatesContentOfOwnReview() = runTest(dispatcher) {
         val body = "Experience\n\nVentajas: Comfort\n\nDesventajas: Price"
         source.records = listOf(review(10, 1).copy(body = body), review(20, 2))
-        val vm = EditReviewViewModel(repository, products)
+        val vm = EditReviewViewModel(repository, products, session)
         vm.loadReview(10)
         advanceUntilIdle()
         assertTrue(vm.uiState.value.canEdit)
@@ -418,13 +423,13 @@ class RemoteFlowsTest {
     @Test
     fun otherAuthorsCannotBeEditedOrDeletedAndHaveNoActionsMenu() = runTest(dispatcher) {
         source.records = listOf(review(20, 2))
-        val edit = EditReviewViewModel(repository, products)
+        val edit = EditReviewViewModel(repository, products, session)
         edit.loadReview(20)
         advanceUntilIdle()
         assertFalse(edit.uiState.value.canEdit)
         assertEquals(R.string.edit_review_owner_error, edit.uiState.value.errorResId)
         edit.save()
-        val detail = ReviewViewModel(repository, content)
+        val detail = ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
         detail.loadReview(20)
         advanceUntilIdle()
         assertFalse(detail.uiState.value.canManage)
@@ -439,7 +444,7 @@ class RemoteFlowsTest {
     @Test
     fun ownReviewImmediatelyRequestsProfileNavigationWithoutStartingDeleteInDetail() = runTest(dispatcher) {
         source.records = listOf(review(10, 1))
-        val detail = ReviewViewModel(repository, content)
+        val detail = ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
         detail.loadReview(10)
         advanceUntilIdle()
         detail.setActionsMenuExpanded(true)
@@ -453,7 +458,7 @@ class RemoteFlowsTest {
     @Test
     fun failedEditRetainsFormUntilRetrySucceeds() = runTest(dispatcher) {
         source.records = listOf(review(10, 1))
-        val edit = EditReviewViewModel(repository, products)
+        val edit = EditReviewViewModel(repository, products, session)
         edit.loadReview(10)
         advanceUntilIdle()
         edit.onExperienceChange("Keep me")
@@ -474,7 +479,7 @@ class RemoteFlowsTest {
     fun editingLongReviewsDoesNotTruncateTheirBodyOrDuplicateSections() = runTest(dispatcher) {
         val body = "Long experience ".repeat(80) + "\n\nVentajas: Works\n\nDesventajas: Heavy"
         source.records = listOf(review(10, 1).copy(body = body))
-        val edit = EditReviewViewModel(repository, products)
+        val edit = EditReviewViewModel(repository, products, session)
         edit.loadReview(10)
         advanceUntilIdle()
         edit.save()
@@ -485,7 +490,7 @@ class RemoteFlowsTest {
     @Test
     fun editValidationAndLoadFailureDoNotSendUpdates() = runTest(dispatcher) {
         source.records = listOf(review(10, 1))
-        val edit = EditReviewViewModel(repository, products)
+        val edit = EditReviewViewModel(repository, products, session)
         edit.loadReview(999)
         advanceUntilIdle()
         assertEquals(R.string.edit_review_load_error, edit.uiState.value.errorResId)
@@ -596,4 +601,10 @@ private class FakeReviews : ReviewRemoteDataSource, CommentRemoteDataSource, Rev
         deleted = reviewId
         records = records.filter { it.id != reviewId }
     }
+}
+
+
+/** Proporciona fotos explícitas a las pruebas existentes sin acceder a Firebase. */
+private val fixtureProfileImages = com.example.devicersapp.data.datasource.ProfileImagesRemoteDataSource { ids ->
+    ids.associateWith { id -> "https://example.com/firestore-avatar-$id.png" }
 }

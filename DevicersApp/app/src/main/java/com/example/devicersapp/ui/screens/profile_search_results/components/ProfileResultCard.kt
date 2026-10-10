@@ -1,5 +1,8 @@
 package com.example.devicersapp.ui.screens.profile_search_results.components
 
+
+import com.example.devicersapp.ui.session.LocalSessionState
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -65,8 +68,11 @@ fun ProfileResultCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         ProfileAvatar(
+            onProfileClick = { onProfileClick() },
             avatarResId = result.avatarResId,
             imageUrl = result.imageUrl,
+            userId = result.id.toIntOrNull(),
+            profileId = result.id,
             modifier = Modifier.size(52.dp)
         )
 
@@ -74,7 +80,8 @@ fun ProfileResultCard(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = result.username ?: stringResource(result.handleResId),
+                modifier = Modifier.clickable(onClick = onProfileClick),
+                text = LocalSessionState.current.userNameFor(result.id.toIntOrNull(), result.username ?: stringResource(result.handleResId)),
                 color = colors.textPrimary,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
@@ -131,7 +138,7 @@ fun ProfileResultCardPreview() {
         ProfileResultCard(
             result = ProfileSearchResultContent(
                 id = "preview",
-                avatarResId = R.drawable.profile_avatar_01,
+                avatarResId = R.drawable.no_pfp_icon,
                 handleResId = R.string.profile_result_first_handle,
                 interestsResId = R.string.profile_result_first_interests,
                 reviewCountResId = R.string.profile_result_first_reviews

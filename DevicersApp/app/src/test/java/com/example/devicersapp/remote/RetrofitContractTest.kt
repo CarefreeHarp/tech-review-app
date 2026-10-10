@@ -3,7 +3,6 @@ package com.example.devicersapp.remote
 import com.example.devicersapp.data.datasource.services.*
 import com.example.devicersapp.data.dto.*
 import com.example.devicersapp.data.repository.*
-import com.example.devicersapp.domain.usecase.*
 import com.example.devicersapp.data.datasource.implementations.*
 import com.example.devicersapp.ui.models.ReviewDraft
 import com.example.devicersapp.ui.models.ReviewChanges
@@ -26,10 +25,17 @@ class RetrofitContractTest {
     private lateinit var repository: ReviewRepository
     private lateinit var products: ProductRepository
     private lateinit var profiles: UsersRepository
-    private lateinit var content: ReviewContentUseCase
-    private lateinit var feed: ReviewFeedUseCase
-    private lateinit var saved: SavedReviewsUseCase
-    private lateinit var profileContent: ProfileContentUseCase
+
+    private lateinit var contentComments: CommentRepository
+    private lateinit var contentReviewLikes: ReviewLikeRepository
+    private lateinit var contentCommentLikes: CommentLikeRepository
+
+    private lateinit var feedBrands: BrandRepository
+    private lateinit var feedCategories: CategoryRepository
+
+    private lateinit var saved: ReviewBookmarkRepository
+
+    private lateinit var profileContentFollows: FollowRepository
     private val json =
         """{"id":9,"user_id":1,"article_id":7,"rating":4,"body":"Test","is_active":true,"createdAt":"","updatedAt":""}"""
 
@@ -46,19 +52,22 @@ class RetrofitContractTest {
         val productSource = ProductRetrofitDataSourceImplementation(retrofit.create(ProductRetrofitService::class.java))
         repository = ReviewRepository(ReviewRetrofitDataSourceImplementation(reviews))
         products = ProductRepository(productSource)
-        profiles = UsersRepository(UsersRetrofitDataSourceImplementation(users))
+        profiles = UsersRepository(UsersRetrofitDataSourceImplementation(users), fixtureProfileImages)
         val comments = CommentRepository(CommentRetrofitDataSourceImplementation(retrofit.create(CommentRetrofitService::class.java)))
         val reviewLikes = ReviewLikeRepository(ReviewLikeRetrofitDataSourceImplementation(retrofit.create(ReviewLikeRetrofitService::class.java)))
         val commentLikes = CommentLikeRepository(CommentLikeRetrofitDataSourceImplementation(retrofit.create(CommentLikeRetrofitService::class.java)))
-        content = ReviewContentUseCase(products, profiles, comments, reviewLikes, commentLikes)
-        feed = ReviewFeedUseCase(products,
-            BrandRepository(BrandRetrofitDataSourceImplementation(retrofit.create(BrandRetrofitService::class.java))),
-            CategoryRepository(CategoryRetrofitDataSourceImplementation(retrofit.create(CategoryRetrofitService::class.java))),
-            comments, reviewLikes)
-        saved = SavedReviewsUseCase(ReviewBookmarkRepository(ReviewBookmarkRetrofitDataSourceImplementation(
-            retrofit.create(ReviewBookmarkRetrofitService::class.java))), repository, content)
-        profileContent = ProfileContentUseCase(profiles, FollowRepository(FollowRetrofitDataSourceImplementation(
-            retrofit.create(FollowRetrofitService::class.java))))
+
+        contentComments = comments
+        contentReviewLikes = reviewLikes
+        contentCommentLikes = commentLikes
+
+        feedBrands = BrandRepository(BrandRetrofitDataSourceImplementation(retrofit.create(BrandRetrofitService::class.java)))
+        feedCategories = CategoryRepository(CategoryRetrofitDataSourceImplementation(retrofit.create(CategoryRetrofitService::class.java)))
+        saved = ReviewBookmarkRepository(ReviewBookmarkRetrofitDataSourceImplementation(
+            retrofit.create(ReviewBookmarkRetrofitService::class.java)))
+
+        profileContentFollows = FollowRepository(FollowRetrofitDataSourceImplementation(
+            retrofit.create(FollowRetrofitService::class.java)))
     }
 
     @After
@@ -145,7 +154,7 @@ class RetrofitContractTest {
 
         server.enqueue(MockResponse().setBody(userJson))
         val profile = profiles.getUserById(2)
-        assertEquals("https://example.com/avatar.png", profile.profileImageUrl)
+        assertEquals("https://example.com/firestore-avatar-2.png", profile.profileImageUrl)
         assertEquals("2026-10-04T10:00:00Z", profile.notificationsLastViewedAt)
         assertTrue(profile.isActive)
         assertTrue(profile.reviews.isEmpty())
@@ -171,10 +180,11 @@ class RetrofitContractTest {
                 return MockResponse().setBody(body)
             }
         }
-        val card = feed.getFeedReviews().getOrThrow().single()
+        val card = products.getFeedReviews(feedBrands, feedCategories, contentComments, contentReviewLikes, profiles).getOrThrow().single()
         assertEquals("Brand", card.productBrand)
         assertEquals("Audio", card.productCategory)
         assertEquals("ana", card.authorUsername)
+        assertEquals("https://example.com/firestore-avatar-2.png", card.authorImage)
         assertEquals(2, card.likes)
         assertEquals(1, card.comments)
         assertEquals(4f, card.productAverage)
@@ -199,13 +209,15 @@ class RetrofitContractTest {
             }
         }
         val raw = repository.getReviewById(9).getOrThrow()
-        val content = content.getReviewContents(listOf(raw)).single().toReviewContent()
+        val content = products.getReviewContents(listOf(raw), profiles, contentComments, contentReviewLikes, contentCommentLikes).single().toReviewContent()
         assertEquals("API product", content.productName)
         assertEquals("device_09", content.productImageUrl)
         assertEquals("author", content.authorName)
+        assertEquals("https://example.com/firestore-avatar-1.png", content.authorImageUrl)
         assertEquals(1, content.likes)
         assertEquals(listOf("Comment from API", "Reply from API"), content.comments.map { it.body })
         assertEquals(listOf("commenter", "author"), content.comments.map { it.authorName })
+        assertEquals(listOf("https://example.com/firestore-avatar-2.png", "https://example.com/firestore-avatar-1.png"), content.comments.map { it.authorImageUrl })
         assertEquals(listOf(0, 1), content.comments.map { it.depth })
         assertEquals(listOf(2, 1), content.comments.map { it.likes })
         val paths = (1..6).map { server.takeRequest().path }.toSet()
@@ -228,7 +240,7 @@ class RetrofitContractTest {
                 return MockResponse().setBody(body)
             }
         }
-        val saved = saved.getSavedReviews(1).getOrThrow().single().toReviewContent()
+        val saved = saved.getSavedReviews(1, repository, products, profiles, contentComments, contentReviewLikes, contentCommentLikes).getOrThrow().single().toReviewContent()
         assertEquals(9, saved.id)
         assertEquals("Saved product", saved.productName)
         assertEquals("author", saved.authorName)
@@ -252,7 +264,7 @@ class RetrofitContractTest {
                 return MockResponse().setBody(body)
             }
         }
-        val profile = profileContent.getProfileContent(1, 2)
+        val profile = profiles.getProfileContent(1, 2, profileContentFollows)
         assertEquals("Remote biography", profile.biography)
         assertEquals("backend-user", profile.username)
         assertEquals(listOf("2", "2", "1"), profile.stats.map { it.number })
@@ -274,4 +286,10 @@ class RetrofitContractTest {
         assertFalse(body.has("rating"))
     }
 
+}
+
+
+/** Proporciona fotos explícitas a las pruebas existentes sin acceder a Firebase. */
+private val fixtureProfileImages = com.example.devicersapp.data.datasource.ProfileImagesRemoteDataSource { ids ->
+    ids.associateWith { id -> "https://example.com/firestore-avatar-$id.png" }
 }

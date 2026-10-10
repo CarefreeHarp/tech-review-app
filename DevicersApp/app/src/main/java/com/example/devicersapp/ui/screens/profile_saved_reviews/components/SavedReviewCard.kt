@@ -1,5 +1,8 @@
 package com.example.devicersapp.ui.screens.profile_saved_reviews.components
 
+
+import com.example.devicersapp.ui.session.LocalSessionState
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -45,7 +48,8 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
 fun SavedReviewCard(
     review: ReviewContent,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
     val imageShape = RoundedCornerShape(12.dp)
@@ -97,7 +101,8 @@ fun SavedReviewCard(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = review.authorName.orEmpty(),
+            modifier = Modifier.clickable { onProfileClick(review.authorId) },
+            text = LocalSessionState.current.userNameFor(review.authorId.toIntOrNull(), review.authorName.orEmpty()),
             color = colors.textPrimary,
             style = MaterialTheme.typography.bodySmall,
             maxLines = 1,

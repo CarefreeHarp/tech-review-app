@@ -10,9 +10,10 @@ import com.example.devicersapp.ui.models.SavedReviewContent
 object LocalProfileProvider {
 
     val profile = ProfileContent(
-        id = "own_profile",
-        avatarResId = R.drawable.profile_avatar_00,
+        id = "1",
+        avatarResId = R.drawable.no_pfp_icon,
         handleResId = R.string.profile_handle,
+        username = "prueba1",
         biographyResId = R.string.profile_biography,
         stats = listOf(
             ProfileStatContent(R.string.profile_reviews_count, R.string.profile_reviews),
@@ -35,46 +36,32 @@ object LocalProfileProvider {
     /** Lista de todos los perfiles públicos disponibles para la búsqueda local. */
     val profiles = listOf(
         ProfileSearchResultContent(
-            id = "mariana",
-            avatarResId = R.drawable.profile_avatar_01,
+            id = "1", avatarResId = R.drawable.no_pfp_icon,
             handleResId = R.string.profile_result_first_handle,
             interestsResId = R.string.profile_result_first_interests,
-            reviewCountResId = R.string.profile_result_first_reviews
+            reviewCountResId = R.string.profile_result_first_reviews,
+            username = "prueba1", imageUrl = null
         ),
         ProfileSearchResultContent(
-            id = "camila",
-            avatarResId = R.drawable.profile_avatar_02,
+            id = "2", avatarResId = R.drawable.no_pfp_icon,
             handleResId = R.string.profile_result_second_handle,
             interestsResId = R.string.profile_result_second_interests,
-            reviewCountResId = R.string.profile_result_second_reviews
+            reviewCountResId = R.string.profile_result_second_reviews,
+            username = "prueba2", imageUrl = null
         ),
         ProfileSearchResultContent(
-            id = "audio_fan",
-            avatarResId = R.drawable.profile_avatar_03,
+            id = "3", avatarResId = R.drawable.no_pfp_icon,
             handleResId = R.string.profile_result_third_handle,
             interestsResId = R.string.profile_result_third_interests,
-            reviewCountResId = R.string.profile_result_third_reviews
+            reviewCountResId = R.string.profile_result_third_reviews,
+            username = "prueba3", imageUrl = null
         ),
         ProfileSearchResultContent(
-            id = "nora_mobile",
-            avatarResId = R.drawable.profile_avatar_04,
+            id = "4", avatarResId = R.drawable.no_pfp_icon,
             handleResId = R.string.profile_result_fourth_handle,
             interestsResId = R.string.profile_result_fourth_interests,
-            reviewCountResId = R.string.profile_result_fourth_reviews
-        ),
-        ProfileSearchResultContent(
-            id = "diego_gadgets",
-            avatarResId = R.drawable.profile_avatar_05,
-            handleResId = R.string.profile_result_fifth_handle,
-            interestsResId = R.string.profile_result_fifth_interests,
-            reviewCountResId = R.string.profile_result_fifth_reviews
-        ),
-        ProfileSearchResultContent(
-            id = "luna_digital",
-            avatarResId = R.drawable.profile_avatar_01,
-            handleResId = R.string.profile_result_sixth_handle,
-            interestsResId = R.string.profile_result_sixth_interests,
-            reviewCountResId = R.string.profile_result_sixth_reviews
+            reviewCountResId = R.string.profile_result_fourth_reviews,
+            username = "prueba4", imageUrl = null
         )
     )
 
@@ -88,45 +75,13 @@ object LocalProfileProvider {
             id = searchResult.id,
             avatarResId = searchResult.avatarResId,
             handleResId = searchResult.handleResId,
+            username = searchResult.username,
             biographyResId = profile.biographyResId,
             stats = profile.stats
         )
     }
 
-    /**
-     * Perfiles referenciados por reseñas y comentarios. Centralizar aquí sus avatares evita
-     * duplicar información de usuario dentro de las conversaciones.
-     */
-    private val conversationProfiles = listOf(
-        conversationProfile("reply_one", R.drawable.profile_avatar_02, R.string.review_reply_author_one),
-        conversationProfile("reply_two", R.drawable.profile_avatar_00, R.string.review_reply_author_two),
-        conversationProfile("reply_three", R.drawable.profile_avatar_01, R.string.review_reply_author_three),
-        conversationProfile("reply_four", R.drawable.profile_avatar_03, R.string.review_reply_author_four),
-        conversationProfile("reply_five", R.drawable.profile_avatar_04, R.string.review_reply_author_five),
-        conversationProfile("reply_six", R.drawable.profile_avatar_05, R.string.review_reply_author_six),
-        conversationProfile("reply_seven", R.drawable.profile_avatar_00, R.string.review_reply_author_seven),
-        conversationProfile("reply_eight", R.drawable.profile_avatar_01, R.string.review_reply_author_eight),
-        conversationProfile("reply_nine", R.drawable.profile_avatar_02, R.string.review_reply_author_nine),
-        conversationProfile("reply_ten", R.drawable.profile_avatar_03, R.string.review_reply_author_ten),
-        conversationProfile("reply_eleven", R.drawable.profile_avatar_04, R.string.review_reply_author_eleven)
-    )
-
-    /** Devuelve un perfil desde el identificador que almacenan las reseñas y los comentarios. */
+    /** Devuelve uno de los cuatro perfiles de muestra por su ID numérico. */
     fun getProfileById(profileId: String): ProfileContent? =
-        if (profile.id == profileId) profile
-        else conversationProfiles.find { it.id == profileId }
-            ?: getPublicProfileById(profileId)
-
-    /** Construye perfiles de conversación con datos compartidos que no son visibles en el hilo. */
-    private fun conversationProfile(
-        id: String,
-        avatarResId: Int,
-        handleResId: Int
-    ) = ProfileContent(
-        id = id,
-        avatarResId = avatarResId,
-        handleResId = handleResId,
-        biographyResId = profile.biographyResId,
-        stats = profile.stats
-    )
+        if (profile.id == profileId) profile else getPublicProfileById(profileId)
 }

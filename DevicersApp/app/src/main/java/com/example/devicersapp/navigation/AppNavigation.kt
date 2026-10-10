@@ -1,10 +1,14 @@
 package com.example.devicersapp.navigation
 
+import androidx.compose.runtime.CompositionLocalProvider
+import com.example.devicersapp.ui.session.LocalSessionState
+
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -136,7 +140,10 @@ fun AppNavigation(
 
     // La barra pública observa el mismo ViewModel, vinculado a la entrada del perfil.
     val publicProfileHandle = backStackEntry
-        ?.takeIf { it.destination.route == "${AppDestination.Profile.route}/{profileId}" }
+        ?.takeIf {
+            it.destination.route == "${AppDestination.Profile.route}/{profileId}" &&
+                !sessionState.isCurrentUser(it.arguments?.getString("profileId")?.toIntOrNull())
+        }
         ?.let { entry ->
             val profileViewModel: ProfileViewModel = hiltViewModel(entry)
             val profileState by profileViewModel.uiState.collectAsState()
@@ -150,467 +157,501 @@ fun AppNavigation(
             ?.getString("profileId")
     )
 
-    DevicersScaffold(
-        selectedItem = configuration.selectedItem,
-        showBottomBar = configuration.showBottomBar,
-        showDrawer = configuration.showDrawer,
-        topBarNumber = configuration.topBarNumber,
-        topBarUserHandleResId = configuration.topBarUserHandleResId,
-        topBarUserHandle = publicProfileHandle ?: sessionState.currentProfileHandle.takeIf {
-            backStackEntry?.destination?.route == AppDestination.OwnProfile.routeWithDeletionArgument ||
-                backStackEntry?.destination?.route == AppDestination.ProfileSavedReviews.route
-        },
-        topBarProfileImageUrl = sessionState.profileImageUrl,
-        modifier = modifier,
-        onNavigationItemClick = { route ->
-            navController.navigateToDestination(route)
-        },
-        onTopBarBackClick = {
-            navController.popBackStack()
-        },
-        onSignOutClick = {
-            sessionViewModel.signOut()
-            navController.navigate(AppDestination.Login.route) {
-                popUpTo(0) {
-                    inclusive = true
-                }
-                launchSingleTop = true
-            }
+    val onProfileClick: (String) -> Unit = { profileId ->
+        val ownProfile = sessionState.isCurrentUser(profileId.toIntOrNull())
+        val currentEntry = navController.currentBackStackEntry
+        val alreadyVisible = if (ownProfile) {
+            currentEntry?.destination?.route == AppDestination.OwnProfile.routeWithDeletionArgument
+        } else {
+            currentEntry?.destination?.route == "${AppDestination.Profile.route}/{profileId}" &&
+                currentEntry.arguments?.getString("profileId") == profileId
         }
-    ) { innerPadding ->
+        if (!alreadyVisible) {
+            val route = if (ownProfile) AppDestination.OwnProfile.route
+                else AppDestination.Profile.createRoute(profileId)
+            navController.navigate(route) { launchSingleTop = true }
+        }
+    }
 
-        NavHost(
-            navController = navController,
-            startDestination = startDestination,
-            modifier = Modifier.padding(
-                top = innerPadding.calculateTopPadding()
-            ),
-            enterTransition = {
-                slideInHorizontally { it }
+    CompositionLocalProvider(LocalSessionState provides sessionState) {
+        DevicersScaffold(
+            onProfileClick = onProfileClick,
+            selectedItem = configuration.selectedItem,
+            showBottomBar = configuration.showBottomBar,
+            showDrawer = configuration.showDrawer,
+            topBarNumber = configuration.topBarNumber,
+            topBarUserHandleResId = configuration.topBarUserHandleResId,
+            topBarUserHandle = publicProfileHandle ?: sessionState.currentProfileHandle.takeIf {
+                backStackEntry?.destination?.route == AppDestination.OwnProfile.routeWithDeletionArgument ||
+                    backStackEntry?.destination?.route == AppDestination.ProfileSavedReviews.route
             },
-            exitTransition = {
-                slideOutHorizontally { -it }
+            topBarProfileImageUrl = sessionState.profileImageUrl,
+            topBarUserId = when (backStackEntry?.destination?.route) {
+                "${AppDestination.Profile.route}/{profileId}" -> backStackEntry?.arguments?.getString("profileId")
+                AppDestination.OwnProfile.routeWithDeletionArgument,
+                AppDestination.ProfileSavedReviews.route -> sessionState.userId?.toString()
+                else -> null
             },
-            popEnterTransition = {
-                slideInHorizontally { -it }
+            modifier = modifier,
+            onNavigationItemClick = { route ->
+                navController.navigateToDestination(route)
             },
-            popExitTransition = {
-                slideOutHorizontally { it }
-            }
-        ) {
-
-            // ==================== RUTAS SIN PARÁMETROS ====================
-            composable(route = AppDestination.Splash.route) {
-                val splashViewModel: SplashViewModel = hiltViewModel()
-
-                SplashView(
-                    onUserAuthenticated = {
-                        navController.navigate(AppDestination.Home.route) {
-                            popUpTo(AppDestination.Splash.route) { inclusive = true }
-                        }
-                    },
-                    onUserUnauthenticated = {
-                        navController.navigate(AppDestination.Login.route) {
-                            popUpTo(AppDestination.Splash.route) { inclusive = true }
-                        }
-                    },
-                    viewModel = splashViewModel
-                )
-            }
-            composable(route = AppDestination.Login.route) {
-                val accessViewModel: AccessViewModel = hiltViewModel()
-
-                AccessView(
-                    onSignInClick = {
-                        navController.navigate(AppDestination.Home.route) {
-                            popUpTo(AppDestination.Login.route) { inclusive = true }
-                        }
-                    },
-                    onCreateAccountClick = {
-                        navController.navigate(AppDestination.Register.route)
-                    },
-                    viewModel = accessViewModel
-                )
-            }
-            composable(route = AppDestination.Home.route) {
-                val homeViewModel: HomeViewModel = hiltViewModel()
-
-                HomeView(
-                    viewModel = homeViewModel,
-                    onProductClick = { productId ->
-                        navController.navigate(
-                            AppDestination.Product.createRoute(productId)
-                        )
-                    },
-                    onReviewClick = { reviewId ->
-                        navController.navigate(
-                            AppDestination.Review.createRoute(reviewId)
-                        )
-                    },
-                    onCommentClick = { reviewId ->
-                        navController.navigate(
-                            AppDestination.Review.createRoute(reviewId)
-                        )
-                    },
-                    onSendClick = {
-                        navController.navigate(
-                            AppDestination.SearchProfile.route
-                        )
+            onTopBarBackClick = {
+                navController.popBackStack()
+            },
+            onSignOutClick = {
+                sessionViewModel.signOut()
+                navController.navigate(AppDestination.Login.route) {
+                    popUpTo(0) {
+                        inclusive = true
                     }
-                )
-            }
-            composable(route = AppDestination.SearchProduct.route) {
-                val searchProductViewModel: SearchProductViewModel = hiltViewModel()
-
-                SearchProductView(
-                    viewModel = searchProductViewModel,
-
-                    onApplyFilters = { filters ->
-
-                        navController.navigate(
-                            AppDestination.FoundProducts.createRoute(
-                                productName = filters.productName,
-                                category = filters.selectedCategory,
-                                minimumRating = filters.minimumRating,
-                                sortBy = filters.sortBy
-                            )
-                        )
-                    },
-
-                    onUsersClick = {
-                        navController.navigate(
-                            AppDestination.SearchProfile.route
-                        )
-                    }
-                )
-            }
-            composable(route = AppDestination.CreateReview.route) {
-                val createReviewViewModel: CreateReviewViewModel = hiltViewModel()
-
-                CreateReviewView(
-                    onProductClick = { product ->
-                        navController.navigate(
-                            AppDestination.RateProduct.createRoute(
-                                product.id
-                            )
-                        )
-                    },
-                    onRequestProductClick = {
-                        navController.navigate(
-                            AppDestination.RequestProduct.route
-                        )
-                    },
-                    viewModel = createReviewViewModel
-                )
-            }
-            composable(route = AppDestination.Activity.route) {
-                val activityViewModel: ActivityViewModel = hiltViewModel()
-
-                ActivityView(
-                    onReviewClick = { reviewId ->
-                        navController.navigate(AppDestination.Review.createLocalRoute(reviewId))
-                    },
-                    onProfileClick = { profileId ->
-                        navController.navigate(AppDestination.Profile.createRoute(profileId))
-                    },
-                    viewModel = activityViewModel
-                )
-            }
-            composable(
-                route = AppDestination.OwnProfile.routeWithDeletionArgument,
-                arguments = listOf(navArgument("deleteReviewId") { type = NavType.IntType; defaultValue = -1 })
-            ) { entry ->
-                val ownProfileViewModel: OwnProfileViewModel = hiltViewModel()
-
-                OwnProfileView(
-                    viewModel = ownProfileViewModel,
-                    deleteReviewId = entry.arguments?.getInt("deleteReviewId")?.takeIf { it > 0 },
-                    onReviewClick = { reviewId ->
-                        navController.navigate(
-                            AppDestination.Review.createRoute(reviewId)
-                        )
-                    },
-                    onSavedReviewsClick = {
-                        navController.navigate(
-                            AppDestination.ProfileSavedReviews.route
-                        )
-                    }
-                )
-            }
-            composable(route = AppDestination.Register.route) {
-                val registerViewModel: RegisterViewModel = hiltViewModel()
-
-                RegisterView(
-                    viewModel = registerViewModel,
-                    onCreateAccountClick = {
-                        navController.navigate(AppDestination.Home.route) {
-                            popUpTo(AppDestination.Login.route) {
-                                inclusive = true
-                            }
-                        }
-                    },
-                    onSignInClick = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-            composable(route = AppDestination.SearchProfile.route) {
-                val searchProfileViewModel: SearchProfileViewModel = hiltViewModel()
-
-                SearchProfileView(
-                    viewModel = searchProfileViewModel,
-                    onProductsClick = {
-                        navController.navigate(AppDestination.SearchProduct.route)
-                    },
-                    onApplyFilters = {
-                        navController.navigate(AppDestination.ProfileSearchResults.route)
-                    }
-                )
-            }
-            composable(
-                route = "${AppDestination.FoundProducts.route}" +
-                        "?productName={productName}" +
-                        "&category={category}" +
-                        "&minimumRating={minimumRating}" +
-                        "&sortBy={sortBy}",
-
-                arguments = listOf(
-
-                    navArgument("productName") {
-                        type = NavType.StringType
-                        defaultValue = ""
-                    },
-
-                    navArgument("category") {
-                        type = NavType.StringType
-                        defaultValue = "all"
-                    },
-
-                    navArgument("minimumRating") {
-                        type = NavType.FloatType
-                        defaultValue = 0f
-                    },
-
-                    navArgument("sortBy") {
-                        type = NavType.StringType
-                        defaultValue = "recent"
-                    }
-                )
-            ) { backStackEntry ->
-
-                val productName =
-                    backStackEntry.arguments?.getString("productName") ?: ""
-
-                val category =
-                    backStackEntry.arguments?.getString("category") ?: "all"
-
-                val minimumRating =
-                    backStackEntry.arguments?.getFloat("minimumRating") ?: 0f
-
-                val sortBy =
-                    backStackEntry.arguments?.getString("sortBy") ?: "recent"
-
-                val foundProductsViewModel: FoundProductsViewModel =
-                    hiltViewModel()
-
-                FoundProductsView(
-                    viewModel = foundProductsViewModel,
-                    productName = productName,
-                    category = category,
-                    minimumRating = minimumRating,
-                    sortBy = sortBy,
-
-                    onProductClick = { product ->
-
-                        Log.d(
-                            "FoundProducts",
-                            "Producto seleccionado -> id=${product.id}, name=${product.name}"
-                        )
-
-                        navController.navigate(
-                            AppDestination.Product.createRoute(
-                                product.id
-                            )
-                        )
-                    }
-                )
-            }
-            composable(route = AppDestination.ProfileSearchResults.route) {
-                val profileSearchResultsViewModel: ProfileSearchResultsViewModel = hiltViewModel()
-
-                ProfileSearchResultsView(
-                    viewModel = profileSearchResultsViewModel,
-                    onProfileClick = { profileId ->
-                        navController.navigate(
-                            AppDestination.Profile.createRoute(profileId)
-                        )
-                    }
-                )
-            }
-
-            composable(route = AppDestination.ProfileSavedReviews.route) {
-                val profileSavedReviewsViewModel: ProfileSavedReviewsViewModel = hiltViewModel()
-
-                ProfileSavedReviewsView(
-                    viewModel = profileSavedReviewsViewModel,
-                    onReviewClick = { reviewId ->
-                        navController.navigate(
-                            AppDestination.Review.createRoute(reviewId)
-                        )
-                    },
-                    onReviewsClick = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-
-            composable(route = AppDestination.RequestProduct.route) {
-                val requestProductViewModel: RequestProductViewModel = hiltViewModel()
-
-                RequestProductView(
-                    viewModel = requestProductViewModel
-                )
-            }
-
-            // ==================== RUTAS CON PARÁMETROS ====================
-            composable(route = "${AppDestination.Product.route}/{productId}", arguments = listOf(
-                    navArgument("productId") {
-                        type = NavType.IntType
-                    }
-                )
-            ) { backStackEntry ->
-
-                val productId = backStackEntry.arguments?.getInt("productId")
-
-                if (productId != null) {
-                    val productViewModel: ProductViewModel = hiltViewModel()
-                    ProductView(
-                        viewModel = productViewModel,
-                        productId = productId,
-                        onRateClick = { id ->
-                            navController.navigate(AppDestination.RateProduct.createRoute(id))
-                        },
-                        onViewMoreClick = { reviewId -> navController.navigate(
-                                AppDestination.Review.createRoute(reviewId)
-                        )
-                        }
-                    )
-                } else {
-                    Text(text = stringResource(R.string.product_not_found))
+                    launchSingleTop = true
                 }
             }
-            composable(
-                route = "${AppDestination.RateProduct.route}/{productId}",
-                arguments = listOf(
-                    navArgument("productId") {
-                        type = NavType.IntType
-                    }
-                )
-            ) { backStackEntry ->
+        ) { innerPadding ->
 
-                val productId =
-                    backStackEntry.arguments?.getInt("productId")
-
-                if (productId != null) {
-                    val rateProductViewModel: RateProductViewModel = hiltViewModel()
-
-                    RateProductView(
-                        productId = productId,
-                        viewModel = rateProductViewModel,
-                        onChooseProduct = { navController.navigate(AppDestination.CreateReview.route) },
-                        onPublishClick = {
-                            navController.navigate(AppDestination.OwnProfile.route) {
-                                popUpTo("${AppDestination.RateProduct.route}/{productId}") { inclusive = true }
-                            }
-                        }
-                    )
+            NavHost(
+                navController = navController,
+                startDestination = startDestination,
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding()
+                ),
+                enterTransition = {
+                    slideInHorizontally { it }
+                },
+                exitTransition = {
+                    slideOutHorizontally { -it }
+                },
+                popEnterTransition = {
+                    slideInHorizontally { -it }
+                },
+                popExitTransition = {
+                    slideOutHorizontally { it }
                 }
-            }
-            composable(
-                route = "${AppDestination.EditReview.route}/{reviewId}",
-                arguments = listOf(navArgument("reviewId") { type = NavType.IntType })
-            ) { entry ->
-                val reviewId = requireNotNull(entry.arguments).getInt("reviewId")
-                val editReviewViewModel: EditReviewViewModel = hiltViewModel()
-                EditReviewView(
-                    reviewId = reviewId,
-                    viewModel = editReviewViewModel,
-                    onSaved = { navController.popBackStack() }
-                )
-            }
-            composable(
-                route = "${AppDestination.Review.route}/local/{reviewId}",
-                arguments = listOf(navArgument("reviewId") { type = NavType.IntType })
             ) {
-                val reviewId = it.arguments?.getInt("reviewId")
-                if (reviewId != null) {
-                    val reviewViewModel: ReviewViewModel = hiltViewModel()
-                    ReviewView(
-                        reviewId = reviewId,
-                        localReview = true,
-                        viewModel = reviewViewModel
-                    )
-                } else {
-                    Text(text = stringResource(R.string.review_not_found))
-                }
-            }
-            composable(
-                route = "${AppDestination.Review.route}/{reviewId}",
-                arguments = listOf(
-                    navArgument("reviewId") {
-                        type = NavType.IntType
-                    }
-                )
-            ) {
-                val reviewId = it.arguments?.getInt("reviewId")
 
-                if (reviewId != null) {
-                    val reviewViewModel: ReviewViewModel = hiltViewModel()
-                    ReviewView(
-                        reviewId = reviewId,
-                        viewModel = reviewViewModel,
-                        onEditClick = { id -> navController.navigate(AppDestination.EditReview.createRoute(id)) },
-                        onDeleteRequested = { id ->
-                            navController.navigate(AppDestination.OwnProfile.createDeletionRoute(id)) {
-                                popUpTo("${AppDestination.Review.route}/{reviewId}") { inclusive = true }
+                // ==================== RUTAS SIN PARÁMETROS ====================
+                composable(route = AppDestination.Splash.route) {
+                    val splashViewModel: SplashViewModel = hiltViewModel()
+
+                    SplashView(
+                        onUserAuthenticated = {
+                            navController.navigate(AppDestination.Home.route) {
+                                popUpTo(AppDestination.Splash.route) { inclusive = true }
                             }
                         },
-                        onAuthorClick = { id -> navController.navigate(AppDestination.Profile.createRoute(id)) },
-                        onProductClick = { id -> navController.navigate(AppDestination.Product.createRoute(id)) }
-                    )
-                } else {
-                    Text(
-                        text = stringResource(
-                            R.string.review_not_found
-                        )
+                        onUserUnauthenticated = {
+                            navController.navigate(AppDestination.Login.route) {
+                                popUpTo(AppDestination.Splash.route) { inclusive = true }
+                            }
+                        },
+                        viewModel = splashViewModel
                     )
                 }
-            }
-            composable(
-                route = "${AppDestination.Profile.route}/{profileId}",
-                arguments = listOf(
-                    navArgument("profileId") {
-                        type = NavType.StringType
-                    }
-                )
-            ) {
+                composable(route = AppDestination.Login.route) {
+                    val accessViewModel: AccessViewModel = hiltViewModel()
 
-                val profileId = it.arguments?.getString("profileId")
+                    AccessView(
+                        onSignInClick = {
+                            navController.navigate(AppDestination.Home.route) {
+                                popUpTo(AppDestination.Login.route) { inclusive = true }
+                            }
+                        },
+                        onCreateAccountClick = {
+                            navController.navigate(AppDestination.Register.route)
+                        },
+                        viewModel = accessViewModel
+                    )
+                }
+                composable(route = AppDestination.Home.route) {
+                    val homeViewModel: HomeViewModel = hiltViewModel()
 
-                if (profileId != null) {
-                    val profileViewModel: ProfileViewModel = hiltViewModel()
-
-                    ProfileView(
-                        viewModel = profileViewModel,
-                        profileId = profileId,
+                    HomeView(
+                        onProfileClick = onProfileClick,
+                        viewModel = homeViewModel,
+                        onProductClick = { productId ->
+                            navController.navigate(
+                                AppDestination.Product.createRoute(productId)
+                            )
+                        },
                         onReviewClick = { reviewId ->
                             navController.navigate(
                                 AppDestination.Review.createRoute(reviewId)
                             )
+                        },
+                        onCommentClick = { reviewId ->
+                            navController.navigate(
+                                AppDestination.Review.createRoute(reviewId)
+                            )
+                        },
+                        onSendClick = {
+                            navController.navigate(
+                                AppDestination.SearchProfile.route
+                            )
                         }
                     )
-                } else {
-                    Text(text = stringResource(R.string.profile_not_found))
+                }
+                composable(route = AppDestination.SearchProduct.route) {
+                    val searchProductViewModel: SearchProductViewModel = hiltViewModel()
+
+                    SearchProductView(
+                        viewModel = searchProductViewModel,
+
+                        onApplyFilters = { filters ->
+
+                            navController.navigate(
+                                AppDestination.FoundProducts.createRoute(
+                                    productName = filters.productName,
+                                    category = filters.selectedCategory,
+                                    minimumRating = filters.minimumRating,
+                                    sortBy = filters.sortBy
+                                )
+                            )
+                        },
+
+                        onUsersClick = {
+                            navController.navigate(
+                                AppDestination.SearchProfile.route
+                            )
+                        }
+                    )
+                }
+                composable(route = AppDestination.CreateReview.route) {
+                    val createReviewViewModel: CreateReviewViewModel = hiltViewModel()
+
+                    CreateReviewView(
+                        onProductClick = { product ->
+                            navController.navigate(
+                                AppDestination.RateProduct.createRoute(
+                                    product.id
+                                )
+                            )
+                        },
+                        onRequestProductClick = {
+                            navController.navigate(
+                                AppDestination.RequestProduct.route
+                            )
+                        },
+                        viewModel = createReviewViewModel
+                    )
+                }
+                composable(route = AppDestination.Activity.route) {
+                    val activityViewModel: ActivityViewModel = hiltViewModel()
+
+                    ActivityView(
+                        onReviewClick = { reviewId ->
+                            navController.navigate(AppDestination.Review.createLocalRoute(reviewId))
+                        },
+                        onProfileClick = onProfileClick,
+                        viewModel = activityViewModel
+                    )
+                }
+                composable(
+                    route = AppDestination.OwnProfile.routeWithDeletionArgument,
+                    arguments = listOf(navArgument("deleteReviewId") { type = NavType.IntType; defaultValue = -1 })
+                ) {
+                    val ownProfileViewModel: OwnProfileViewModel = hiltViewModel()
+
+                    OwnProfileView(
+                        onProfileClick = onProfileClick,
+                        viewModel = ownProfileViewModel,
+                        onReviewClick = { reviewId ->
+                            navController.navigate(
+                                AppDestination.Review.createRoute(reviewId)
+                            )
+                        },
+                        onSavedReviewsClick = {
+                            navController.navigate(
+                                AppDestination.ProfileSavedReviews.route
+                            )
+                        }
+                    )
+                }
+                composable(route = AppDestination.Register.route) {
+                    val registerViewModel: RegisterViewModel = hiltViewModel()
+
+                    RegisterView(
+                        viewModel = registerViewModel,
+                        onCreateAccountClick = {
+                            navController.navigate(AppDestination.Home.route) {
+                                popUpTo(AppDestination.Login.route) {
+                                    inclusive = true
+                                }
+                            }
+                        },
+                        onSignInClick = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+                composable(route = AppDestination.SearchProfile.route) {
+                    val searchProfileViewModel: SearchProfileViewModel = hiltViewModel()
+
+                    SearchProfileView(
+                        viewModel = searchProfileViewModel,
+                        onProductsClick = {
+                            navController.navigate(AppDestination.SearchProduct.route)
+                        },
+                        onApplyFilters = {
+                            navController.navigate(AppDestination.ProfileSearchResults.route)
+                        }
+                    )
+                }
+                composable(
+                    route = "${AppDestination.FoundProducts.route}" +
+                            "?productName={productName}" +
+                            "&category={category}" +
+                            "&minimumRating={minimumRating}" +
+                            "&sortBy={sortBy}",
+
+                    arguments = listOf(
+
+                        navArgument("productName") {
+                            type = NavType.StringType
+                            defaultValue = ""
+                        },
+
+                        navArgument("category") {
+                            type = NavType.StringType
+                            defaultValue = "all"
+                        },
+
+                        navArgument("minimumRating") {
+                            type = NavType.FloatType
+                            defaultValue = 0f
+                        },
+
+                        navArgument("sortBy") {
+                            type = NavType.StringType
+                            defaultValue = "recent"
+                        }
+                    )
+                ) { backStackEntry ->
+
+                    val productName =
+                        backStackEntry.arguments?.getString("productName") ?: ""
+
+                    val category =
+                        backStackEntry.arguments?.getString("category") ?: "all"
+
+                    val minimumRating =
+                        backStackEntry.arguments?.getFloat("minimumRating") ?: 0f
+
+                    val sortBy =
+                        backStackEntry.arguments?.getString("sortBy") ?: "recent"
+
+                    val foundProductsViewModel: FoundProductsViewModel =
+                        hiltViewModel()
+
+                    FoundProductsView(
+                        viewModel = foundProductsViewModel,
+                        productName = productName,
+                        category = category,
+                        minimumRating = minimumRating,
+                        sortBy = sortBy,
+
+                        onProductClick = { product ->
+
+                            Log.d(
+                                "FoundProducts",
+                                "Producto seleccionado -> id=${product.id}, name=${product.name}"
+                            )
+
+                            navController.navigate(
+                                AppDestination.Product.createRoute(
+                                    product.id
+                                )
+                            )
+                        }
+                    )
+                }
+                composable(route = AppDestination.ProfileSearchResults.route) {
+                    val profileSearchResultsViewModel: ProfileSearchResultsViewModel = hiltViewModel()
+
+                    ProfileSearchResultsView(
+                        viewModel = profileSearchResultsViewModel,
+                        onProfileClick = onProfileClick
+                    )
+                }
+
+                composable(route = AppDestination.ProfileSavedReviews.route) {
+                    val profileSavedReviewsViewModel: ProfileSavedReviewsViewModel = hiltViewModel()
+
+                    ProfileSavedReviewsView(
+                        onProfileClick = onProfileClick,
+                        viewModel = profileSavedReviewsViewModel,
+                        onReviewClick = { reviewId ->
+                            navController.navigate(
+                                AppDestination.Review.createRoute(reviewId)
+                            )
+                        },
+                        onReviewsClick = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+
+                composable(route = AppDestination.RequestProduct.route) {
+                    val requestProductViewModel: RequestProductViewModel = hiltViewModel()
+
+                    RequestProductView(
+                        viewModel = requestProductViewModel
+                    )
+                }
+
+                // ==================== RUTAS CON PARÁMETROS ====================
+                composable(route = "${AppDestination.Product.route}/{productId}", arguments = listOf(
+                        navArgument("productId") {
+                            type = NavType.IntType
+                        }
+                    )
+                ) { backStackEntry ->
+
+                    val productId = backStackEntry.arguments?.getInt("productId")
+
+                    if (productId != null) {
+                        val productViewModel: ProductViewModel = hiltViewModel()
+                        ProductView(
+                            onProfileClick = onProfileClick,
+                            viewModel = productViewModel,
+                            productId = productId,
+                            onRateClick = { id ->
+                                navController.navigate(AppDestination.RateProduct.createRoute(id))
+                            },
+                            onViewMoreClick = { reviewId -> navController.navigate(
+                                    AppDestination.Review.createRoute(reviewId)
+                            )
+                            }
+                        )
+                    } else {
+                        Text(text = stringResource(R.string.product_not_found))
+                    }
+                }
+                composable(
+                    route = "${AppDestination.RateProduct.route}/{productId}",
+                    arguments = listOf(
+                        navArgument("productId") {
+                            type = NavType.IntType
+                        }
+                    )
+                ) { backStackEntry ->
+
+                    val productId =
+                        backStackEntry.arguments?.getInt("productId")
+
+                    if (productId != null) {
+                        val rateProductViewModel: RateProductViewModel = hiltViewModel()
+
+                        RateProductView(
+                            productId = productId,
+                            viewModel = rateProductViewModel,
+                            onChooseProduct = { navController.navigate(AppDestination.CreateReview.route) },
+                            onPublishClick = {
+                                navController.navigate(AppDestination.OwnProfile.route) {
+                                    popUpTo("${AppDestination.RateProduct.route}/{productId}") { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+                }
+                composable(
+                    route = "${AppDestination.EditReview.route}/{reviewId}",
+                    arguments = listOf(navArgument("reviewId") { type = NavType.IntType })
+                ) { entry ->
+                    val reviewId = requireNotNull(entry.arguments).getInt("reviewId")
+                    val editReviewViewModel: EditReviewViewModel = hiltViewModel()
+                    EditReviewView(
+                        reviewId = reviewId,
+                        viewModel = editReviewViewModel,
+                        onSaved = { navController.popBackStack() }
+                    )
+                }
+                composable(
+                    route = "${AppDestination.Review.route}/local/{reviewId}",
+                    arguments = listOf(navArgument("reviewId") { type = NavType.IntType })
+                ) {
+                    val reviewId = it.arguments?.getInt("reviewId")
+                    if (reviewId != null) {
+                        val reviewViewModel: ReviewViewModel = hiltViewModel()
+                        ReviewView(
+                            onAuthorClick = onProfileClick,
+                            reviewId = reviewId,
+                            localReview = true,
+                            viewModel = reviewViewModel
+                        )
+                    } else {
+                        Text(text = stringResource(R.string.review_not_found))
+                    }
+                }
+                composable(
+                    route = "${AppDestination.Review.route}/{reviewId}",
+                    arguments = listOf(
+                        navArgument("reviewId") {
+                            type = NavType.IntType
+                        }
+                    )
+                ) {
+                    val reviewId = it.arguments?.getInt("reviewId")
+
+                    if (reviewId != null) {
+                        val reviewViewModel: ReviewViewModel = hiltViewModel()
+                        ReviewView(
+                            reviewId = reviewId,
+                            viewModel = reviewViewModel,
+                            onEditClick = { id -> navController.navigate(AppDestination.EditReview.createRoute(id)) },
+                            onDeleteRequested = { id ->
+                                navController.navigate(AppDestination.OwnProfile.createDeletionRoute(id)) {
+                                    popUpTo("${AppDestination.Review.route}/{reviewId}") { inclusive = true }
+                                }
+                            },
+                            onAuthorClick = onProfileClick,
+                            onProductClick = { id -> navController.navigate(AppDestination.Product.createRoute(id)) }
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(
+                                R.string.review_not_found
+                            )
+                        )
+                    }
+                }
+                composable(
+                    route = "${AppDestination.Profile.route}/{profileId}",
+                    arguments = listOf(
+                        navArgument("profileId") {
+                            type = NavType.StringType
+                        }
+                    )
+                ) {
+
+                    val profileId = it.arguments?.getString("profileId")
+
+                    if (sessionState.isCurrentUser(profileId?.toIntOrNull())) {
+                        // Sustituye el perfil público propio para no volver a él al pulsar Atrás.
+                        LaunchedEffect(profileId, sessionState.userId) {
+                            navController.navigate(AppDestination.OwnProfile.route) {
+                                popUpTo("${AppDestination.Profile.route}/{profileId}") {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    } else if (profileId != null) {
+                        val profileViewModel: ProfileViewModel = hiltViewModel()
+
+                        ProfileView(
+                            onProfileClick = onProfileClick,
+                            viewModel = profileViewModel,
+                            profileId = profileId,
+                            onReviewClick = { reviewId ->
+                                navController.navigate(
+                                    AppDestination.Review.createRoute(reviewId)
+                                )
+                            }
+                        )
+                    } else {
+                        Text(text = stringResource(R.string.profile_not_found))
+                    }
                 }
             }
         }

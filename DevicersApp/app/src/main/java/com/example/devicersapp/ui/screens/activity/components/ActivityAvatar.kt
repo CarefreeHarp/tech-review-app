@@ -30,14 +30,21 @@ import com.example.devicersapp.ui.utils.profile.ProfileAvatar
  * @param avatarResId Imagen de perfil del autor del evento.
  * @param type Tipo de evento que determina el color y el ícono de la insignia.
  * @param modifier Modificador aplicado al conjunto de avatar e insignia.
+ * @param profileId Identificador original del perfil al que conduce el avatar.
+ * @param userId Identificador del autor para resolver la foto de la sesión actual.
  * @param ringColor Color del anillo que separa la insignia de la superficie que hay detrás.
+ * @param imageUrl URL de la foto del autor obtenida desde Firestore.
  */
 @Composable
 fun ActivityAvatar(
     avatarResId: Int,
     type: ActivityType,
     modifier: Modifier = Modifier,
-    ringColor: Color? = null
+    ringColor: Color? = null,
+    userId: Int? = null,
+    profileId: String? = userId?.toString(),
+    onProfileClick: (String) -> Unit = {},
+    imageUrl: String? = null
 ) {
     val colors = LocalDevicersColors.current
 
@@ -59,7 +66,11 @@ fun ActivityAvatar(
 
     Box(modifier = modifier.size(62.dp)) {
         ProfileAvatar(
+            onProfileClick = onProfileClick,
             avatarResId = avatarResId,
+            imageUrl = imageUrl,
+            userId = userId,
+            profileId = profileId,
             modifier = Modifier
                 .size(52.dp)
                 .align(Alignment.TopStart)
@@ -90,7 +101,7 @@ fun ActivityAvatar(
 fun ActivityAvatarPreview() {
     DevicersAppTheme {
         ActivityAvatar(
-            avatarResId = R.drawable.profile_avatar_00,
+            avatarResId = R.drawable.no_pfp_icon,
             type = ActivityType.LIKE,
             modifier = Modifier.padding(16.dp)
         )

@@ -1,7 +1,5 @@
 package com.example.devicersapp.ui.screens.rate_product
 
-import com.example.devicersapp.core.config.CURRENT_USER_ID
-
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import com.example.devicersapp.data.repository.*
@@ -16,7 +14,11 @@ import javax.inject.Inject
 
 /** Conserva el producto calificado y el contenido que la persona escribe en su reseña. */
 @HiltViewModel
-class RateProductViewModel @Inject constructor(private val products: ProductRepository, private val reviews: ReviewRepository) : ViewModel() {
+class RateProductViewModel @Inject constructor(
+    private val products: ProductRepository,
+    private val reviews: ReviewRepository,
+    private val session: SessionRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RateProductState())
     val uiState: StateFlow<RateProductState> = _uiState
@@ -32,8 +34,9 @@ class RateProductViewModel @Inject constructor(private val products: ProductRepo
                 require(productId != null && productId > 0)
                 val product = products.getProductById(productId).getOrThrow().toProductContent()
                 _uiState.value = RateProductState(product = product)
-            } catch (e: CancellationException) { throw e }
-            catch (e: Exception) { _uiState.value = RateProductState(error = "No se pudo cargar el producto. Elige uno del catálogo actualizado.") }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) { _uiState.value = RateProductState(error = "No se pudo cargar el producto. Elige uno del catálogo actualizado.") }
         }
     }
 
@@ -48,15 +51,17 @@ class RateProductViewModel @Inject constructor(private val products: ProductRepo
         _uiState.update { it.copy(saving = true, error = null) }
         viewModelScope.launch {
             try {
+                val userId = session.requireCurrentProfile().id
                 val body = buildString {
                     append(draft.experience.trim())
                     if (draft.advantage.isNotBlank()) append("\n\nVentajas: ${draft.advantage.trim()}")
                     if (draft.disadvantage.isNotBlank()) append("\n\nDesventajas: ${draft.disadvantage.trim()}")
                 }
-                reviews.createReview(ReviewDraft(CURRENT_USER_ID, productId, draft.rating, body, draft.title.trim())).getOrThrow()
+                reviews.createReview(ReviewDraft(userId, productId, draft.rating, body, draft.title.trim())).getOrThrow()
                 _uiState.update { it.copy(saving = false, published = true) }
-            } catch (e: CancellationException) { throw e }
-            catch (e: Exception) { _uiState.update { it.copy(saving = false, error = "No se pudo publicar. Tu borrador se conserva; intenta de nuevo.") } }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) { _uiState.update { it.copy(saving = false, error = "No se pudo publicar. Tu borrador se conserva; intenta de nuevo.") } }
         }
     }
 

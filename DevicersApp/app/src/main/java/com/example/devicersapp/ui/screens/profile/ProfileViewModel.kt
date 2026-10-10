@@ -1,13 +1,16 @@
 package com.example.devicersapp.ui.screens.profile
 
-import com.example.devicersapp.domain.usecase.ReviewContentUseCase
+import com.example.devicersapp.data.repository.CommentLikeRepository
+import com.example.devicersapp.data.repository.CommentRepository
 import com.example.devicersapp.data.repository.FollowRepository
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.ReviewLikeRepository
+import com.example.devicersapp.data.repository.ReviewRepository
+import com.example.devicersapp.data.repository.UsersRepository
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.devicersapp.core.config.CURRENT_USER_ID
-import com.example.devicersapp.data.repository.ReviewRepository
-import com.example.devicersapp.data.repository.UsersRepository
+import com.example.devicersapp.data.repository.SessionRepository
 import com.example.devicersapp.data.dto.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,8 +23,12 @@ class ProfileViewModel
 constructor(
     private val users: UsersRepository,
     private val reviews: ReviewRepository,
-    private val reviewContent: ReviewContentUseCase,
-    private val follows: FollowRepository
+    private val products: ProductRepository,
+    private val comments: CommentRepository,
+    private val reviewLikes: ReviewLikeRepository,
+    private val commentLikes: CommentLikeRepository,
+    private val follows: FollowRepository,
+    private val session: SessionRepository
 ) :
     ViewModel() {
     private val state = MutableStateFlow(ProfileState())
@@ -39,10 +46,11 @@ constructor(
         loadJob =
             viewModelScope.launch {
                 try {
+                    val currentUserId = session.requireCurrentProfile().id
                     val user = users.getUserById(id)
                     val items = reviews.getReviewsByUser(id).getOrThrow().filter { it.userId == id }
-                    val contents = reviewContent.getReviewContents(items.filter { it.isActive })
-                    val isFollowed = follows.getFollows().any { it.followerId == CURRENT_USER_ID && it.followedId == id }
+                    val contents = products.getReviewContents(items.filter { it.isActive }, users, comments, reviewLikes, commentLikes)
+                    val isFollowed = follows.getFollows().any { it.followerId == currentUserId && it.followedId == id }
                     state.update {
                         ProfileState(
                             profile = user.toProfileContent(contents.size),

@@ -18,30 +18,30 @@ object LocalActivityProvider {
             id = "today",
             titleResId = R.string.activity_group_today,
             notifications = listOf(
-                reviewActivity("today-camila", ActivityType.LIKE, "camila", R.string.activity_action_liked_review, R.string.feed_product_audio, currentTimeMillis - 5 * MINUTE_IN_MILLIS),
-                reviewActivity("today-david", ActivityType.COMMENT, "mariana", R.string.activity_action_replied_comment, R.string.feed_product_phone, currentTimeMillis - HOUR_IN_MILLIS),
-                reviewActivity("today-mateo", ActivityType.LIKE, "audio_fan", R.string.activity_action_liked_review, R.string.feed_product_nine, currentTimeMillis - 2 * HOUR_IN_MILLIS),
-                followActivity("today-lina", "nora_mobile", currentTimeMillis - 3 * HOUR_IN_MILLIS),
-                reviewActivity("today-camila-keyboard", ActivityType.LIKE, "diego_gadgets", R.string.activity_action_liked_review, R.string.feed_product_five, currentTimeMillis - 4 * HOUR_IN_MILLIS),
-                reviewActivity("today-david-headphones", ActivityType.COMMENT, "luna_digital", R.string.activity_action_replied_comment, R.string.review_card_username, currentTimeMillis - 5 * HOUR_IN_MILLIS)
+                reviewActivity("today-camila", ActivityType.LIKE, "3", R.string.activity_action_liked_review, R.string.feed_product_audio, currentTimeMillis - 5 * MINUTE_IN_MILLIS),
+                reviewActivity("today-david", ActivityType.COMMENT, "2", R.string.activity_action_replied_comment, R.string.feed_product_phone, currentTimeMillis - HOUR_IN_MILLIS),
+                reviewActivity("today-mateo", ActivityType.LIKE, "4", R.string.activity_action_liked_review, R.string.feed_product_nine, currentTimeMillis - 2 * HOUR_IN_MILLIS),
+                followActivity("today-lina", "1", currentTimeMillis - 3 * HOUR_IN_MILLIS),
+                reviewActivity("today-camila-keyboard", ActivityType.LIKE, "2", R.string.activity_action_liked_review, R.string.feed_product_five, currentTimeMillis - 4 * HOUR_IN_MILLIS),
+                reviewActivity("today-david-headphones", ActivityType.COMMENT, "3", R.string.activity_action_replied_comment, R.string.review_card_username, currentTimeMillis - 5 * HOUR_IN_MILLIS)
             )
         ),
         ActivityGroupContent(
             id = "yesterday",
             titleResId = R.string.activity_group_yesterday,
             notifications = listOf(
-                followActivity("yesterday-lina", "camila", currentTimeMillis - DAY_IN_MILLIS),
-                reviewActivity("yesterday-david", ActivityType.LIKE, "mariana", R.string.activity_action_liked_review, R.string.feed_product_seven, currentTimeMillis - DAY_IN_MILLIS - HOUR_IN_MILLIS),
-                reviewActivity("yesterday-mateo", ActivityType.COMMENT, "audio_fan", R.string.activity_action_replied_comment, R.string.feed_product_computer, currentTimeMillis - DAY_IN_MILLIS - 2 * HOUR_IN_MILLIS)
+                followActivity("yesterday-lina", "3", currentTimeMillis - DAY_IN_MILLIS),
+                reviewActivity("yesterday-david", ActivityType.LIKE, "2", R.string.activity_action_liked_review, R.string.feed_product_seven, currentTimeMillis - DAY_IN_MILLIS - HOUR_IN_MILLIS),
+                reviewActivity("yesterday-mateo", ActivityType.COMMENT, "4", R.string.activity_action_replied_comment, R.string.feed_product_computer, currentTimeMillis - DAY_IN_MILLIS - 2 * HOUR_IN_MILLIS)
             )
         ),
         ActivityGroupContent(
             id = "earlier",
             titleResId = R.string.activity_group_earlier,
             notifications = listOf(
-                reviewActivity("earlier-camila", ActivityType.LIKE, "diego_gadgets", R.string.activity_action_liked_review, R.string.feed_product_eleven, currentTimeMillis - 2 * DAY_IN_MILLIS),
-                reviewActivity("earlier-lina-keyboard", ActivityType.COMMENT, "nora_mobile", R.string.activity_action_replied_comment, R.string.feed_product_ten, currentTimeMillis - 4 * DAY_IN_MILLIS),
-                followActivity("earlier-mateo-follow", "luna_digital", currentTimeMillis - 6 * DAY_IN_MILLIS)
+                reviewActivity("earlier-camila", ActivityType.LIKE, "2", R.string.activity_action_liked_review, R.string.feed_product_eleven, currentTimeMillis - 2 * DAY_IN_MILLIS),
+                reviewActivity("earlier-lina-keyboard", ActivityType.COMMENT, "1", R.string.activity_action_replied_comment, R.string.feed_product_ten, currentTimeMillis - 4 * DAY_IN_MILLIS),
+                followActivity("earlier-mateo-follow", "3", currentTimeMillis - 6 * DAY_IN_MILLIS)
             )
         )
         )

@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.screens.profile_saved_reviews
 
+import com.example.devicersapp.ui.session.LocalSessionState
+
 import com.example.devicersapp.ui.screens.profile_saved_reviews.components.ProfileSavedReviewsSkeleton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,15 +43,14 @@ fun ProfileSavedReviewsView(
     onReviewClick: (Int) -> Unit = {},
     onReviewsClick: () -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: ProfileSavedReviewsViewModel
+    viewModel: ProfileSavedReviewsViewModel,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    // Refresca los datos al regresar de publicar, editar o consultar una reseña.
-    androidx.lifecycle.compose.LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-        viewModel.loadSavedReviews()
-    }
+
 
     ProfileSavedReviewsViewContent(
+        onProfileClick = onProfileClick,
         state = uiState,
         onRetry = viewModel::loadSavedReviews,
         onReviewsClick = {
@@ -72,7 +73,8 @@ fun ProfileSavedReviewsViewContent(
     onSavedClick: () -> Unit,
     onReviewClick: (Int) -> Unit,
     onRetry: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {}
 ) {
     if (state.loading) {
         ProfileSavedReviewsSkeleton(onReviewsClick = onReviewsClick, modifier = modifier)
@@ -95,7 +97,8 @@ fun ProfileSavedReviewsViewContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
-                ProfileAvatar(avatarResId = profile.avatarResId, imageUrl = state.profileImageUrl, modifier = Modifier.size(84.dp))
+                ProfileAvatar(
+                    onProfileClick = onProfileClick,userId = LocalSessionState.current.userId, avatarResId = profile.avatarResId, imageUrl = state.profileImageUrl, modifier = Modifier.size(84.dp))
                 Spacer(modifier = Modifier.height(16.dp))
                 if (state.email.isNotBlank()) {
                     Text(
@@ -124,7 +127,8 @@ fun ProfileSavedReviewsViewContent(
             }
         }
         itemsIndexed(state.savedReviews) { _, savedReview ->
-            SavedReviewCard(review = savedReview, onClick = { onReviewClick(savedReview.id) })
+            SavedReviewCard(
+                onProfileClick = onProfileClick,review = savedReview, onClick = { onReviewClick(savedReview.id) })
         }
         item(span = { GridItemSpan(maxLineSpan) }) {
             Spacer(modifier = Modifier.height(110.dp))

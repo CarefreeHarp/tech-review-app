@@ -44,21 +44,17 @@ fun ProductView(
     onViewMoreClick: (Int) -> Unit = {},
     onRateClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    androidx.compose.runtime.DisposableEffect(lifecycleOwner, productId) {
-        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
-            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) viewModel.loadProduct(productId)
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
+    LaunchedEffect(productId) {
         viewModel.loadProduct(productId)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     ProductViewContent(
+        onProfileClick = onProfileClick,
         state = uiState,
         onRateClick = onRateClick,
         onViewMoreClick = onViewMoreClick,
@@ -82,7 +78,8 @@ fun ProductViewContent(
     onRateClick: (Int) -> Unit,
     onViewMoreClick: (Int) -> Unit,
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
 
@@ -254,6 +251,7 @@ fun ProductViewContent(
             ) { review ->
 
                 ReviewCard(
+                    onProfileClick = onProfileClick,
                     review = review,
                     onViewMoreClick = {
                         onViewMoreClick(review.id)
