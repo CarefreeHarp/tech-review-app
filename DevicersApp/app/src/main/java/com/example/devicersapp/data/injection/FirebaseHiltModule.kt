@@ -1,6 +1,8 @@
 package com.example.devicersapp.data.injection
 
 import com.google.firebase.Firebase
+import com.example.devicersapp.data.datasource.ArticleReviewsRemoteDataSource
+import com.example.devicersapp.data.datasource.implementations.ArticleReviewsFirestoreDataSourceImplementation
 import com.example.devicersapp.data.datasource.OwnProfileRemoteDataSource
 import com.example.devicersapp.data.datasource.implementations.OwnProfileFirestoreDataSourceImplementation
 import com.example.devicersapp.data.datasource.UserProfileRemoteDataSource
@@ -51,6 +53,12 @@ object FirebaseHiltModule {
     fun provideOwnProfileSource(
         implementation: OwnProfileFirestoreDataSourceImplementation
     ): OwnProfileRemoteDataSource = implementation
+
+    /** Conecta Home, Product y Review con Firestore sin cambiar los destinos de las demás pantallas. */
+    @Provides
+    fun provideArticleReviewsSource(
+        implementation: ArticleReviewsFirestoreDataSourceImplementation
+    ): ArticleReviewsRemoteDataSource = implementation
 
     @Provides
     @Singleton

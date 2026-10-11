@@ -1,18 +1,12 @@
 package com.example.devicersapp.ui.screens.home
 
-import com.example.devicersapp.data.repository.BrandRepository
-import com.example.devicersapp.data.repository.CategoryRepository
-import com.example.devicersapp.data.repository.CommentRepository
-import com.example.devicersapp.data.repository.FollowRepository
-import com.example.devicersapp.data.repository.ProductRepository
-import com.example.devicersapp.data.repository.ReviewLikeRepository
+import com.example.devicersapp.data.repository.ArticleReviewsRepository
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.R
 import com.example.devicersapp.data.repository.SessionRepository
-import com.example.devicersapp.data.repository.UsersRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -26,14 +20,8 @@ import javax.inject.Inject
 /** Conserva y modifica el estado de la pantalla principal. */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val products: ProductRepository,
-    private val brands: BrandRepository,
-    private val categories: CategoryRepository,
-    private val comments: CommentRepository,
-    private val reviewLikes: ReviewLikeRepository,
-    private val follows: FollowRepository,
-    private val session: SessionRepository,
-    private val users: UsersRepository
+    private val articleReviews: ArticleReviewsRepository,
+    private val session: SessionRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeState())
@@ -43,7 +31,7 @@ class HomeViewModel @Inject constructor(
         loadFeed()
     }
 
-    /** Carga desde el backend las reseñas del feed con su artículo, autor y conteos. */
+    /** Carga desde Firestore las reseñas del feed con su artículo, autor y conteos. */
     private fun loadFeed() {
         _uiState.update { currentState ->
             currentState.copy(isLoading = true, errorMessageResId = null)
@@ -53,8 +41,8 @@ class HomeViewModel @Inject constructor(
             try {
                 val currentUserId = session.requireCurrentProfile().id
                 val (feed, follows) = coroutineScope {
-                    val feed = async { products.getFeedReviews(brands, categories, comments, reviewLikes, users).getOrThrow() }
-                    val follows = async { follows.getFollows().filter { it.followerId == currentUserId }.map { it.followedId }.toSet() }
+                    val feed = async { articleReviews.getFeedReviews().getOrThrow() }
+                    val follows = async { articleReviews.getFollowedUserIds(currentUserId).getOrThrow() }
                     feed.await() to follows.await()
                 }
                 _uiState.update { current ->

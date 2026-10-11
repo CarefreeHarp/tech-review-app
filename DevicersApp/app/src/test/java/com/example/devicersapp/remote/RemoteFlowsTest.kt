@@ -7,6 +7,8 @@ import com.example.devicersapp.ui.screens.profile.ProfileViewModel
 import com.example.devicersapp.ui.screens.rate_product.RateProductViewModel
 import com.example.devicersapp.ui.screens.edit_review.EditReviewViewModel
 import com.example.devicersapp.ui.screens.review.ReviewViewModel
+import com.example.devicersapp.ui.models.ProductInfo
+import com.example.devicersapp.ui.models.ReviewInfo
 import com.example.devicersapp.R
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
@@ -39,6 +41,10 @@ class RemoteFlowsTest {
     private val contentCommentLikes = CommentLikeRepository(source)
     private val saved = ReviewBookmarkRepository(source)
     private val follows = FollowRepository(FakeUsers())
+    // Home, Product y Review leen el contrato de Firestore; el adaptador les entrega los mismos datos falsos.
+    private val articleReviews = ArticleReviewsRepository(
+        ApiArticleReviewsSource(products, repository, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, follows)
+    )
 
     @Before
     fun setup() {
@@ -145,7 +151,7 @@ class RemoteFlowsTest {
         runTest(dispatcher) {
             source.records = listOf(review(10, 2))
             val vm =
-                com.example.devicersapp.ui.screens.review.ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
+                com.example.devicersapp.ui.screens.review.ReviewViewModel(articleReviews, session)
             vm.loadReview(10)
             advanceUntilIdle()
             assertEquals("user2", vm.uiState.value.review?.authorName)
@@ -171,7 +177,7 @@ class RemoteFlowsTest {
             CommentLikeDto(1, 1, 1), CommentLikeDto(2, 2, 1),
             CommentLikeDto(3, 3, 2), CommentLikeDto(4, 1, 4)
         )
-        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
+        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(articleReviews, session)
         vm.loadReview(10)
         advanceUntilIdle()
         val state = vm.uiState.value
@@ -188,7 +194,7 @@ class RemoteFlowsTest {
     fun detailDoesNotReportZeroWhenInteractionsFail() = runTest(dispatcher) {
         source.records = listOf(review(10, 2))
         source.failInteractions = true
-        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
+        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(articleReviews, session)
         vm.loadReview(10)
         advanceUntilIdle()
         assertNotNull(vm.uiState.value.error)
@@ -200,7 +206,7 @@ class RemoteFlowsTest {
     fun detailReportsAnErrorWhenCommentLikesFail() = runTest(dispatcher) {
         source.records = listOf(review(10, 2))
         source.failCommentLikes = true
-        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
+        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(articleReviews, session)
         vm.loadReview(10)
         advanceUntilIdle()
         assertNotNull(vm.uiState.value.error)
@@ -224,7 +230,8 @@ class RemoteFlowsTest {
             override suspend fun getUserById(userId: Int) = user(userId)
             override suspend fun getFollows() = listOf(FollowDto(1, 2), FollowDto(2, 3))
         }
-        val vm = com.example.devicersapp.ui.screens.home.HomeViewModel(ProductRepository(catalog), BrandRepository(catalog), CategoryRepository(catalog), CommentRepository(source), ReviewLikeRepository(source), FollowRepository(users), session, UsersRepository(users, fixtureProfileImages))
+        val homeReviews = ArticleReviewsRepository(ApiArticleReviewsSource(ProductRepository(catalog), repository, UsersRepository(users, fixtureProfileImages), CommentRepository(source), ReviewLikeRepository(source), contentCommentLikes, FollowRepository(users)))
+        val vm = com.example.devicersapp.ui.screens.home.HomeViewModel(homeReviews, session)
         advanceUntilIdle()
         assertNull(vm.uiState.value.errorMessageResId)
         assertEquals(listOf(10, 11), vm.uiState.value.feedReviews.map { it.reviewId })
@@ -242,7 +249,7 @@ class RemoteFlowsTest {
             CommentDto(2, 10, 2, 3, "Cycle A", true, "", ""),
             CommentDto(3, 10, 2, 2, "Cycle B", true, "", "")
         )
-        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
+        val vm = com.example.devicersapp.ui.screens.review.ReviewViewModel(articleReviews, session)
         vm.loadReview(10)
         advanceUntilIdle()
         assertEquals(3, vm.uiState.value.replies.size)
@@ -252,7 +259,7 @@ class RemoteFlowsTest {
     @Test
     fun productQueriesAuthorsAndReportsReviewFailureInsteadOfEmptyRatings() = runTest(dispatcher) {
         source.records = listOf(review(10, 2))
-        val vm = com.example.devicersapp.ui.screens.product.ProductViewModel(products, repository, contentUsers, contentComments, contentReviewLikes, contentCommentLikes)
+        val vm = com.example.devicersapp.ui.screens.product.ProductViewModel(articleReviews)
         vm.loadProduct(7)
         advanceUntilIdle()
         assertEquals("user2", vm.uiState.value.reviews.single().user?.username)
@@ -291,7 +298,7 @@ class RemoteFlowsTest {
         advanceUntilIdle()
         assertEquals(1, profile.uiState.value.reviews.single().likes)
         assertEquals("API comment", profile.uiState.value.reviews.single().comments.single().body)
-        val managed = ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
+        val managed = ReviewViewModel(articleReviews, session)
         managed.loadReview(10)
         advanceUntilIdle()
         assertEquals(1, managed.uiState.value.review?.likes)
@@ -429,7 +436,7 @@ class RemoteFlowsTest {
         assertFalse(edit.uiState.value.canEdit)
         assertEquals(R.string.edit_review_owner_error, edit.uiState.value.errorResId)
         edit.save()
-        val detail = ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
+        val detail = ReviewViewModel(articleReviews, session)
         detail.loadReview(20)
         advanceUntilIdle()
         assertFalse(detail.uiState.value.canManage)
@@ -444,7 +451,7 @@ class RemoteFlowsTest {
     @Test
     fun ownReviewImmediatelyRequestsProfileNavigationWithoutStartingDeleteInDetail() = runTest(dispatcher) {
         source.records = listOf(review(10, 1))
-        val detail = ReviewViewModel(repository, products, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session)
+        val detail = ReviewViewModel(articleReviews, session)
         detail.loadReview(10)
         advanceUntilIdle()
         detail.setActionsMenuExpanded(true)
@@ -603,6 +610,65 @@ private class FakeReviews : ReviewRemoteDataSource, CommentRemoteDataSource, Rev
     }
 }
 
+/**
+ * Expone los repositorios de prueba mediante el contrato que Home, Product y Review leen desde Firestore.
+ *
+ * Cada reseña se arma con su artículo, su autor y su hilo, igual que en los documentos desnormalizados,
+ * para que las pruebas existentes conserven sus datos y comprobaciones.
+ */
+private class ApiArticleReviewsSource(
+    private val products: ProductRepository,
+    private val reviews: ReviewRepository,
+    private val users: UsersRepository,
+    private val comments: CommentRepository,
+    private val reviewLikes: ReviewLikeRepository,
+    private val commentLikes: CommentLikeRepository,
+    private val follows: FollowRepository
+) : ArticleReviewsRemoteDataSource {
+    override suspend fun getActiveReviews() = products.getProducts().getOrThrow().flatMap { product ->
+        product.reviews.filter { it.isActive }.map { document(it.copy(article = product)) }
+    }
+
+    override suspend fun getActiveReviewsByArticle(articleId: Int) =
+        reviews.getReviewsByProduct(articleId).getOrThrow().filter { it.isActive }.map { document(it) }
+
+    override suspend fun getReviewById(reviewId: Int) = document(reviews.getReviewById(reviewId).getOrThrow())
+
+    override suspend fun getArticleById(articleId: Int) = products.getProductById(articleId).getOrThrow().toDocument()
+
+    override suspend fun getReviewLikeCounts(reviewIds: Set<Int>) =
+        reviewLikes.getReviewLikes().filter { it.reviewId in reviewIds }.groupingBy { it.reviewId }.eachCount()
+
+    override suspend fun getCommentLikeCounts(commentIds: Set<Int>) =
+        commentLikes.getCommentLikes().filter { it.commentId in commentIds }.groupingBy { it.commentId }.eachCount()
+
+    override suspend fun getFollowedUserIds(followerId: Int) =
+        follows.getFollows().filter { it.followerId == followerId }.map { it.followedId }.toSet()
+
+    override suspend fun getUsers(userIds: Set<Int>) = userIds.associateWith { id ->
+        users.getUserById(id).let { UserSummaryDto(it.id, it.username, it.profileImageUrl) }
+    }
+
+    private suspend fun document(review: ReviewInfo) = ReviewDocumentDto(
+        id = review.id,
+        userId = review.userId,
+        rating = review.rating,
+        title = review.title,
+        body = review.body,
+        isActive = review.isActive,
+        createdAt = review.createdAt,
+        updatedAt = review.updatedAt,
+        userUsername = review.user?.username ?: users.getUserById(review.userId).username,
+        article = (review.article ?: products.getProductById(review.articleId).getOrThrow()).toDocument(),
+        comments = comments.getComments().filter { it.reviewId == review.id }.map {
+            CommentDocumentDto(it.id, it.userId, "", it.parentCommentId, it.body, it.isActive, it.createdAt)
+        }
+    )
+
+    private fun ProductInfo.toDocument() = ArticleDocumentDto(
+        id, name, model, description, imageUrl, brandId, "", categoryId, "", releaseDate, null, isActive, createdAt, updatedAt
+    )
+}
 
 /** Proporciona fotos explícitas a las pruebas existentes sin acceder a Firebase. */
 private val fixtureProfileImages = com.example.devicersapp.data.datasource.ProfileImagesRemoteDataSource { ids ->
