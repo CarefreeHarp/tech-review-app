@@ -1,12 +1,10 @@
 package com.example.devicersapp.ui.screens.profile_search_results
 
-import com.example.devicersapp.data.repository.FollowRepository
+import com.example.devicersapp.data.repository.DiscoveryRepository
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CancellationException
-import com.example.devicersapp.data.repository.UsersRepository
-import com.example.devicersapp.data.dto.toSearchContent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.data.repository.SessionRepository
@@ -18,8 +16,7 @@ import javax.inject.Inject
 /** Conserva la consulta y los seguimientos visibles en los resultados de perfiles. */
 @HiltViewModel
 class ProfileSearchResultsViewModel @Inject constructor(
-    private val users: UsersRepository,
-    private val follows: FollowRepository,
+    private val repository: DiscoveryRepository,
     private val session: SessionRepository
 ) : ViewModel() {
 
@@ -37,9 +34,9 @@ class ProfileSearchResultsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val currentUserId = session.requireCurrentProfile().id
-                val results = users.getUsers(excludeUserId = currentUserId).filter { it.isActive }.map { it.toSearchContent() }
-                val followedIds = follows.getFollows().filter { it.followerId == currentUserId }.map { it.followedId.toString() }.toSet()
-                _uiState.update { it.copy(results = results, followedProfileIds = followedIds, loading = false) }
+                val result = repository.getProfiles(currentUserId)
+                if (session.currentProfile.value?.id != currentUserId) return@launch
+                _uiState.update { it.copy(results = result.profiles, followedProfileIds = result.followedIds, loading = false) }
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { _uiState.update { it.copy(loading = false, error = "No se pudieron cargar los usuarios.") } }
         }
@@ -50,7 +47,7 @@ class ProfileSearchResultsViewModel @Inject constructor(
         _uiState.update { it.copy(searchText = searchText) }
     }
 
-    /** Renueva el estado consultado; el backend actual solo permite leer seguimientos. */
+    /** Renueva el estado consultado; esta pantalla solo permite leer seguimientos. */
     fun onFollow(profileId: String) {
         loadResults()
     }

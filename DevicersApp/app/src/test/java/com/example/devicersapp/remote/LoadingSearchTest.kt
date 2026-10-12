@@ -3,6 +3,7 @@ package com.example.devicersapp.remote
 import com.example.devicersapp.data.datasource.CategoryRemoteDataSource
 import com.example.devicersapp.data.datasource.ProductRemoteDataSource
 import com.example.devicersapp.data.dto.CategoryDto
+import com.example.devicersapp.data.dto.toProductInfo
 import com.example.devicersapp.data.dto.ProductDto
 import com.example.devicersapp.data.repository.CategoryRepository
 import com.example.devicersapp.data.repository.ProductRepository
@@ -53,7 +54,10 @@ class LoadingSearchTest {
     @Test
     fun foundProductsKeepLatestQueryAfterPendingResponse() = runTest(dispatcher) {
         val pending = CompletableDeferred<List<ProductDto>>()
-        val viewModel = FoundProductsViewModel(products(pending), categories())
+        val source = object : com.example.devicersapp.discovery.FakeDiscoverySource() {
+            override suspend fun getProducts() = pending.await().map { it.toProductInfo() }
+        }
+        val viewModel = FoundProductsViewModel(com.example.devicersapp.data.repository.DiscoveryRepository(source))
         viewModel.loadProducts("", "all", 0f, "recent")
         runCurrent()
         assertTrue(viewModel.uiState.value.isLoading)

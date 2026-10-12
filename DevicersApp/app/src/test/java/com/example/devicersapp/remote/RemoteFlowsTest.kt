@@ -300,15 +300,14 @@ class RemoteFlowsTest {
 
     @Test
     fun profileSearchLoadsBackendFollowingAndDoesNotSimulateNewFollows() = runTest(dispatcher) {
-        val remote = object : UsersRemoteDataSource, FollowRemoteDataSource {
-            override suspend fun getUsers(excludeUserId: Int?): List<UserDto> {
-                assertEquals(1, excludeUserId)
-                return listOf(user(2))
+        val remote = object : com.example.devicersapp.discovery.FakeDiscoverySource() {
+            override suspend fun getUsers() = listOf(user(1), user(2)).map { it.toUserInfo() }
+            override suspend fun getFollowedIds(userId: Int): Set<Int> {
+                assertEquals(1, userId)
+                return setOf(2)
             }
-            override suspend fun getUserById(userId: Int) = user(userId)
-            override suspend fun getFollows() = listOf(FollowDto(1, 2), FollowDto(9, 1))
         }
-        val vm = com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsViewModel(UsersRepository(remote, fixtureProfileImages), FollowRepository(remote), session)
+        val vm = com.example.devicersapp.ui.screens.profile_search_results.ProfileSearchResultsViewModel(DiscoveryRepository(remote), session)
         advanceUntilIdle()
         assertEquals(setOf("2"), vm.uiState.value.followedProfileIds)
         vm.onFollow("3")
