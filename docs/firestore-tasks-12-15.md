@@ -51,7 +51,7 @@ Las pruebas unitarias cubren filtros, categorías descendientes, reseñas inacti
 
 `DiscoveryUiTest` es una prueba de componente: muestra actores remotos y comprueba el ID emitido por el clic y el botón de reintento. **No certifica navegación.**
 
-`ActivityRemoteNavigationTest` usa MainActivity y AppNavigation de producción, pulsa una notificación y comprueba el cuerpo de su reseña real. Exige un ID que no exista en LocalReviewProvider. Se ejecuta en la combinación con `tasks/#5-6-7`, con `devicersTestStartDestination=activity` y los argumentos `discoveryRemoteReview=true`, `discoveryTestEmail` y `discoveryTestPassword`. Solo lee datos; no genera notificaciones ni modifica reseñas/perfiles.
+`ActivityRemoteNavigationTest` usa MainActivity y AppNavigation de producción, pulsa una notificación y comprueba el cuerpo de su reseña real. Exige un ID que no exista en LocalReviewProvider. Se ejecuta en la combinación con `tasks/#5-6-7`, con `devicersTestStartDestination=activity` y los argumentos `discoveryRemoteReview=true`, `discoveryTestEmail` y `discoveryTestPassword`. Solo lee datos; no genera notificaciones ni modifica reseñas/perfiles. Su EntryPoint de sesión vive en src/debug y no se incluye en release.
 
 `DiscoveryFirestoreFlowTest` es opt-in: recibe `discoveryTestEmail` y `discoveryTestPassword` como argumentos de instrumentación. Exige además `discoveryDisposableEnvironment=true` y debe ejecutarse exclusivamente en un entorno de prueba desechable con permisos de limpieza propios, no contra producción. Requiere una cuenta de prueba previamente provisionada y datos de prueba de catálogo/actividad. Usa una instancia Firebase separada; crea únicamente una solicitud con prefijo `discovery-test-`, verifica el reintento y elimina ese documento al terminar. No modifica perfiles, reseñas, seguimientos ni notificaciones.
 
@@ -70,5 +70,5 @@ La validación anterior de 48 unitarias cubre lógica con fuentes falsas y contr
 
 - Rama de tareas: assembleDebug, testDebugUnitTest y assembleDebugAndroidTest correctos; 48 unitarias sin fallos.
 - Combinación temporal con tasks/#5-6-7 en 31f6a8d: mismas compilaciones correctas y 48 unitarias sin fallos; sin merge a develop.
-- La nueva prueba de navegación compila, pero su ejecución no quedó aprobada: instrumentación informó Process crashed y el emulador registró bloqueos ANR de servicios Android. Pendiente ejecutar en un dispositivo estable.
+- Dos pruebas de componente aprobadas. Prueba de navegación integrada aprobada: abre una reseña de Firestore con ID ausente de LocalReviewProvider y verifica su cuerpo visible después de la carga y el desplazamiento. Solo lecturas; no se ejecutó la prueba de creación/limpieza contra producción.
 - Firebase Console, con la cuenta abierta, indicó proyecto inexistente o falta de permisos. No se pudieron obtener ni verificar las reglas desplegadas. No se confirma un fallo de permisos.

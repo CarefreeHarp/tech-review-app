@@ -32,7 +32,7 @@ class DiscoveryUiTest {
             }
         }
         compose.onNodeWithText("@Autora remota").assertIsDisplayed()
-        compose.onNodeWithText("Producto remoto", substring = true).performClick()
+        compose.onNodeWithText("Producto remoto", substring = true, useUnmergedTree = true).performClick()
         compose.runOnIdle { assertEquals(76543, selected) }
     }
 

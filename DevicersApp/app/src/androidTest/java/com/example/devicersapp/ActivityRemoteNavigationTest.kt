@@ -12,10 +12,7 @@ import com.example.devicersapp.data.repository.SessionRepository
 import com.example.devicersapp.ui.models.ActivityType
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import org.junit.Assert.*
@@ -26,12 +23,6 @@ import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.model.Statement
-
-@EntryPoint
-@InstallIn(SingletonComponent::class)
-interface ActivityNavigationSessionEntryPoint {
-    fun session(): SessionRepository
-}
 
 /** Ejecutar sobre la combinación con tasks/#5-6-7: grafo y destino reales, solo lecturas. */
 @RunWith(AndroidJUnit4::class)
@@ -84,12 +75,14 @@ class ActivityRemoteNavigationTest {
 
     @Test fun notificationOpensFirestoreReviewThroughProductionGraph() {
         compose.waitUntil(30_000) {
-            compose.onAllNodesWithText(productName, substring = true).fetchSemanticsNodes().isNotEmpty()
+            compose.onAllNodesWithText(productName, substring = true, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
         }
-        compose.onAllNodesWithText(productName, substring = true).onFirst().performScrollTo().performClick()
+        compose.onAllNodesWithText(productName, substring = true, useUnmergedTree = true).onFirst().performScrollTo().performClick()
         compose.waitUntil(30_000) {
-            compose.onAllNodesWithText(expectedBody).fetchSemanticsNodes().isNotEmpty()
+            compose.onAllNodesWithContentDescription("Cargando").fetchSemanticsNodes().isEmpty() &&
+                compose.onAllNodes(hasScrollToIndexAction()).fetchSemanticsNodes().isNotEmpty()
         }
+        compose.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(expectedBody))
         compose.onNodeWithText(expectedBody).assertIsDisplayed()
         compose.onNodeWithText("No se encontró la reseña.").assertDoesNotExist()
     }
