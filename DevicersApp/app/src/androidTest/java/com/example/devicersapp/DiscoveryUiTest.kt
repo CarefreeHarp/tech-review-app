@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 class DiscoveryUiTest {
     @get:Rule val compose = createComposeRule()
 
-    @Test fun activityRendersRemoteActorOutsideFixturesAndOpensRealReview() {
+    @Test fun activityRendersRemoteActorAndEmitsSelectedReviewId() {
         var selected: Int? = null
         val event = ActivityContent("remote-event", ActivityType.COMMENT, "98765",
             R.string.discovery_activity_commented, targetReviewId = 76543, time = System.currentTimeMillis())

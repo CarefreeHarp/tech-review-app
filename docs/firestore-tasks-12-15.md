@@ -32,14 +32,43 @@ El documento usa un UUID por intento. Reintentar sin editar conserva ese ID y no
 | status | texto | `pending` |
 | createdAt | Timestamp | Fecha del servidor |
 
-No se escribe en artículos ni se cargan imágenes. La transacción verifica el UID y estado activo del perfil. Las reglas de Firestore desplegadas deben permitir la creación al propietario; la comprobación en cliente no sustituye las reglas de acceso. Este cambio no modifica ni despliega reglas.
+No se escribe en artículos ni se cargan imágenes. La transacción verifica el UID y estado activo del perfil. La transacción necesita permisos de **get y create**, no solo create:
+
+- `get users/{user_id}` para comprobar que el perfil existe, está activo y su `firebase_uid` coincide con Auth.
+- `get product_requests/{requestId}` **también cuando el documento todavía no existe**. Una condición que consulta exclusivamente `resource.data.firebase_uid` no autoriza ese primer get. La política debe resolver explícitamente el caso ausente sin permitir leer documentos existentes de otros usuarios ni listar toda la colección.
+- `create product_requests/{requestId}` ligado al UID autenticado y al ID numérico del perfil activo. Debe validar el conjunto exacto de campos, sus tipos, nombre obligatorio, fecha opcional, `status == pending` y fecha del servidor. Rechazar UID/ID ajenos y campos adicionales.
+- La aplicación no requiere `list`, `update` ni `delete` de solicitudes. No ampliar esos permisos para facilitar pruebas o limpieza.
+
+Las comprobaciones del cliente no sustituyen controles de servidor. Este cambio no modifica ni despliega reglas. **No hay reglas versionadas ni se han obtenido las reglas desplegadas; su conformidad permanece pendiente.** La prueba histórica exitosa con una cuenta no demuestra aislamiento entre usuarios.
+
+Casos de reglas por ejecutar sobre el contenido desplegado: get ausente autenticado, creación válida, reintento con get propio, get/list de solicitudes ajenas, UID/ID falsos, perfil inactivo, campos indebidos, update/delete ajenos y acceso sin autenticación. Las lecturas de las otras seis colecciones también deben probarse con las consultas reales, porque las reglas no filtran resultados después de leerlos.
+
+Referencia oficial: [estructura y operaciones de reglas](https://firebase.google.com/docs/firestore/security/rules-structure) y [condiciones y consultas](https://firebase.google.com/docs/firestore/security/rules-conditions).
 
 ## Verificación
 
 Las pruebas unitarias cubren filtros, categorías descendientes, reseñas inactivas, búsquedas concurrentes, errores/reintentos, perfiles de sesión, destinos de actividad, validación y envío único de solicitudes. Solo se adaptan los casos de FoundProducts y ProfileSearchResults en las pruebas compartidas autorizadas.
 
-`DiscoveryUiTest` comprueba actores y reseñas que no existen en los fixtures locales y el botón de reintento.
+`DiscoveryUiTest` es una prueba de componente: muestra actores remotos y comprueba el ID emitido por el clic y el botón de reintento. **No certifica navegación.**
 
-`DiscoveryFirestoreFlowTest` es opt-in: recibe `discoveryTestEmail` y `discoveryTestPassword` como argumentos de instrumentación. Requiere una cuenta de prueba previamente provisionada y datos de prueba de catálogo/actividad. Usa una instancia Firebase separada; crea únicamente una solicitud con prefijo `discovery-test-`, verifica el reintento y elimina ese documento al terminar. No modifica perfiles, reseñas, seguimientos ni notificaciones.
+`ActivityRemoteNavigationTest` usa MainActivity y AppNavigation de producción, pulsa una notificación y comprueba el cuerpo de su reseña real. Exige un ID que no exista en LocalReviewProvider. Se ejecuta en la combinación con `tasks/#5-6-7`, con `devicersTestStartDestination=activity` y los argumentos `discoveryRemoteReview=true`, `discoveryTestEmail` y `discoveryTestPassword`. Solo lee datos; no genera notificaciones ni modifica reseñas/perfiles.
+
+`DiscoveryFirestoreFlowTest` es opt-in: recibe `discoveryTestEmail` y `discoveryTestPassword` como argumentos de instrumentación. Exige además `discoveryDisposableEnvironment=true` y debe ejecutarse exclusivamente en un entorno de prueba desechable con permisos de limpieza propios, no contra producción. Requiere una cuenta de prueba previamente provisionada y datos de prueba de catálogo/actividad. Usa una instancia Firebase separada; crea únicamente una solicitud con prefijo `discovery-test-`, verifica el reintento y elimina ese documento al terminar. No modifica perfiles, reseñas, seguimientos ni notificaciones.
 
 La rama base conserva las pantallas Product/Profile/Review de develop. Su migración pertenece a las otras tareas: los resultados nuevos navegan con los mismos IDs, y no sustituyen las implementaciones de esos destinos.
+
+
+## Dependencias y límites de validación
+
+Activity ahora usa `Review.createRoute` para IDs de notificaciones remotas. Conserva las rutas locales de otros flujos. La lectura Firestore del destino Review procede de la tarea 5–7; Profile sigue dependiendo de la tarea 4. Una combinación sin conflictos no demuestra por sí sola navegación funcional.
+
+La protección de solicitudes cubre doble clic y reintento del mismo intento mientras vive el ViewModel. No es deduplicación global después de muerte del proceso, nueva visita o edición.
+
+La validación anterior de 48 unitarias cubre lógica con fuentes falsas y contratos anteriores; no equivale a 48 pruebas de integración ni a pruebas de reglas desplegadas. Cada nueva ejecución debe registrar por separado compilación, unitarias, componentes, navegación integrada y reglas.
+
+### Ejecución tras la auditoría (11 de octubre de 2026)
+
+- Rama de tareas: assembleDebug, testDebugUnitTest y assembleDebugAndroidTest correctos; 48 unitarias sin fallos.
+- Combinación temporal con tasks/#5-6-7 en 31f6a8d: mismas compilaciones correctas y 48 unitarias sin fallos; sin merge a develop.
+- La nueva prueba de navegación compila, pero su ejecución no quedó aprobada: instrumentación informó Process crashed y el emulador registró bloqueos ANR de servicios Android. Pendiente ejecutar en un dispositivo estable.
+- Firebase Console, con la cuenta abierta, indicó proyecto inexistente o falta de permisos. No se pudieron obtener ni verificar las reglas desplegadas. No se confirma un fallo de permisos.

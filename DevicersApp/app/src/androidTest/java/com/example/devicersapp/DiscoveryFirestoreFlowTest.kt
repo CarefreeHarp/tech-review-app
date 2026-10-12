@@ -30,6 +30,8 @@ class DiscoveryFirestoreFlowTest {
         val email = args.getString("discoveryTestEmail")
         val password = args.getString("discoveryTestPassword")
         assumeTrue(!email.isNullOrBlank() && !password.isNullOrBlank())
+        // La limpieza no debe requerir permisos delete en usuarios de producción.
+        assumeTrue(args.getString("discoveryDisposableEnvironment") == "true")
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val app = FirebaseApp.initializeApp(context, FirebaseApp.getInstance().options, "discovery-${UUID.randomUUID()}")
         val auth = FirebaseAuth.getInstance(app)
