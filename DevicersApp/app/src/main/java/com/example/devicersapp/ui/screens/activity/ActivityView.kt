@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.stringResource
+import com.example.devicersapp.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
@@ -38,6 +42,7 @@ fun ActivityView(
         onProfileClick = onProfileClick,
         state = uiState,
         onFollow = viewModel::followActivity,
+        onRetry = viewModel::loadActivity,
         onActivityClick = { activity ->
             when (activity.type) {
                 ActivityType.LIKE,
@@ -68,7 +73,8 @@ fun ActivityViewContent(
     onFollow: (String) -> Unit,
     onActivityClick: (ActivityContent) -> Unit,
     modifier: Modifier = Modifier,
-    onProfileClick: (String) -> Unit = {}
+    onProfileClick: (String) -> Unit = {},
+    onRetry: () -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
     LazyColumn(
@@ -76,6 +82,16 @@ fun ActivityViewContent(
         contentPadding = PaddingValues(bottom = 110.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
+        item {
+            if (state.loading) Text(stringResource(R.string.discovery_activity_loading))
+            state.error?.let { error ->
+                Text(error)
+                TextButton(onClick = onRetry) { Text(stringResource(R.string.discovery_retry)) }
+            }
+            if (!state.loading && state.error == null && state.activityGroups.isEmpty()) {
+                Text(stringResource(R.string.discovery_activity_empty))
+            }
+        }
         state.activityGroups.forEachIndexed { groupIndex, group ->
             item(key = "${group.id}_header") {
                 ActivitySection(titleResId = group.titleResId)
@@ -89,6 +105,8 @@ fun ActivityViewContent(
                     onProfileClick = onProfileClick,
                     activity = activity,
                     profileImageUrl = state.profileImages[activity.actorProfileId.toIntOrNull()],
+                    actorName = state.actorNames[activity.actorProfileId.toIntOrNull()].orEmpty(),
+                    productName = state.productNames[activity.targetReviewId],
                     isFollowed = activity.id in state.followedActivityIds,
                     onFollow = { onFollow(activity.id) },
                     onClick = { onActivityClick(activity) },

@@ -1,0 +1,9 @@
+<resources>
+    <string name="discovery_activity_liked_comment">Le gustó tu comentario</string>
+    <string name="discovery_activity_commented">Comentó tu reseña</string>
+    <string name="discovery_activity_empty">No tienes actividad todavía.</string>
+    <string name="discovery_activity_loading">Cargando actividad…</string>
+    <string name="discovery_retry">Reintentar</string>
+    <string name="discovery_request_sending">Enviando…</string>
+    <string name="discovery_request_sent">Solicitud enviada.</string>
+</resources>

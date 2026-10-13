@@ -1,241 +1,75 @@
 package com.example.devicersapp.ui.screens.found_products
 
-import com.example.devicersapp.data.repository.CategoryRepository
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.devicersapp.data.repository.DiscoveryRepository
 import com.example.devicersapp.ui.models.ProductInfo
-import com.example.devicersapp.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.ConnectException
-import java.net.SocketTimeoutException
+import java.time.Instant
 import javax.inject.Inject
 
-/**
- * Conserva y modifica el estado de la pantalla de productos encontrados.
- */
 @HiltViewModel
-class FoundProductsViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
-    private val categoryRepository: CategoryRepository
-) : ViewModel() {
-
+class FoundProductsViewModel @Inject constructor(private val repository: DiscoveryRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(FoundProductsState())
-    val uiState: StateFlow<FoundProductsState> = _uiState
-
+    val uiState = _uiState.asStateFlow()
     private var products: List<ProductInfo> = emptyList()
+    private var loadJob: Job? = null
 
-//    init {
-//        loadProducts()
-//    }
-
-    /**
-     * Carga los productos disponibles desde el backend.
-     */
-    fun loadProducts(
-        productName: String,
-        category: String,
-        minimumRating: Float,
-        sortBy: String
-    ) {
-
-        viewModelScope.launch {
-
-            _uiState.update { currentState ->
-                currentState.copy(
-                    isLoading = true,
-                    searchText = productName,
-                    errorMessage = null
-                )
-            }
-
-            val result = productRepository.getProducts().mapCatching { products ->
-                products to categoryRepository.getCategories().getOrThrow()
-            }
-
-            if (result.isSuccess) {
-
-                val (allProducts, categories) = result.getOrThrow()
+    fun loadProducts(productName: String, category: String, minimumRating: Float, sortBy: String) {
+        loadJob?.cancel()
+        products = emptyList()
+        _uiState.update { it.copy(isLoading = true, searchText = productName, results = emptyList(), errorMessage = null) }
+        loadJob = viewModelScope.launch {
+            try {
+                val catalog = repository.getCatalog()
                 val requestedName = when (category) {
                     "cellphones" -> "Celulares"
                     "audio" -> "Audio"
                     "computers" -> "Computadores"
                     else -> category
                 }
-                val rootIds = categories.filter { it.name.equals(requestedName, ignoreCase = true) || it.id.toString() == category }.map { it.id }.toSet()
-                val parents = categories.associate { it.id to it.parentCategoryId }
-
-                var filteredProducts =
-                    allProducts.filter { product ->
-
-                        val matchesName =
-                            productName.isBlank() ||
-                                    product.name.contains(
-                                        productName,
-                                        ignoreCase = true
-                                    )
-
-                        var categoryId: Int? = product.categoryId
-                        val visited = mutableSetOf<Int>()
-                        var matchesCategory = category == "all"
-                        while (categoryId != null && visited.add(categoryId)) {
-                            if (categoryId in rootIds) matchesCategory = true
-                            categoryId = parents[categoryId]
-                        }
-
-                        val matchesRating =
-                            if (product.reviews.none { it.isActive }) {
-
-                                minimumRating <= 0f
-
-                            } else {
-
-                                val average =
-                                    product.reviews.filter { it.isActive }
-                                        .map { review ->
-                                            review.rating
-                                        }
-                                        .average()
-
-                                average >= minimumRating
-                            }
-
-                        matchesName &&
-                                matchesCategory &&
-                                matchesRating
+                val roots = catalog.categories.filter {
+                    it.name.equals(requestedName, true) || it.id.toString() == category
+                }.map { it.id }.toSet()
+                val parents = catalog.categories.associate { it.id to it.parentCategoryId }
+                val filtered = catalog.products.filter { product ->
+                    var id: Int? = product.categoryId
+                    val visited = mutableSetOf<Int>()
+                    var matches = category == "all"
+                    while (id != null && visited.add(id)) {
+                        if (id in roots) matches = true
+                        id = parents[id]
                     }
-
-                filteredProducts =
-                    when (sortBy) {
-
-                        "recent" ->
-                            filteredProducts.sortedByDescending {
-                                it.createdAt
-                            }
-
-                        else ->
-                            filteredProducts
-                    }
-
-                products = filteredProducts
-
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        // Aplica la consulta que pudo cambiar mientras la petición estaba pendiente.
-                        results = filterProducts(currentState.searchText),
-                        isLoading = false,
-                        errorMessage = null
-                    )
+                    matches && average(product) >= minimumRating
                 }
-
-            } else {
-
-                val exception =
-                    result.exceptionOrNull()
-
-                val message =
-                    when (exception) {
-
-                        is ConnectException ->
-                            "No fue posible conectarse con el servidor."
-
-                        is SocketTimeoutException ->
-                            "El servidor está tardando demasiado en responder."
-
-                        else ->
-                            "Ocurrió un error al cargar los productos."
-                    }
-
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        isLoading = false,
-                        errorMessage = message
-                    )
+                products = when (sortBy) {
+                    "recent" -> filtered.sortedByDescending { runCatching { Instant.parse(it.createdAt).toEpochMilli() }.getOrDefault(0L) }
+                    "rated" -> filtered.sortedByDescending(::average)
+                    else -> filtered
                 }
+                _uiState.update { it.copy(results = filterProducts(it.searchText), isLoading = false) }
+            } catch (e: CancellationException) { throw e }
+            catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, errorMessage = "No se pudieron cargar los productos. Intenta nuevamente.") }
             }
         }
     }
 
-//    fun loadProducts() {
-//
-//        viewModelScope.launch {
-//
-//            _uiState.update { currentState ->
-//                currentState.copy(
-//                    isLoading = true,
-//                    errorMessage = null
-//                )
-//            }
-//
-//            val result = productRepository.getProducts()
-//
-//            if (result.isSuccess) {
-//
-//                products = result.getOrNull() ?: emptyList()
-//
-//                _uiState.update { currentState ->
-//                    currentState.copy(
-//                        results = products,
-//                        isLoading = false,
-//                        errorMessage = null
-//                    )
-//                }
-//
-//            } else {
-//
-//                val exception = result.exceptionOrNull()
-//
-//                val message = when (exception) {
-//
-//                    is ConnectException ->
-//                        "No fue posible conectarse con el servidor."
-//
-//                    is SocketTimeoutException ->
-//                        "El servidor está tardando demasiado en responder."
-//
-//                    else ->
-//                        "Ocurrió un error al cargar los productos."
-//                }
-//
-//                _uiState.update { currentState ->
-//                    currentState.copy(
-//                        isLoading = false,
-//                        errorMessage = message
-//                    )
-//                }
-//            }
-//        }
-//    }
-
-    /**
-     * Actualiza el texto escrito y filtra los productos.
-     */
     fun onSearchTextChange(searchText: String) {
-
-        val filteredProducts = filterProducts(searchText)
-
-        _uiState.update { currentState ->
-            currentState.copy(
-                searchText = searchText,
-                results = filteredProducts
-            )
-        }
+        _uiState.update { it.copy(searchText = searchText, results = filterProducts(searchText)) }
     }
 
-    /** Filtra el catálogo ya consultado con el texto vigente, incluso tras una carga pendiente. */
-    private fun filterProducts(searchText: String): List<ProductInfo> {
-        return if (searchText.isBlank()) {
-            products
-        } else {
-            products.filter { product ->
-                product.name.contains(searchText, ignoreCase = true) ||
-                    product.model?.contains(searchText, ignoreCase = true) == true ||
-                    product.description?.contains(searchText, ignoreCase = true) == true
-            }
-        }
+    private fun filterProducts(text: String): List<ProductInfo> = products.filter { product ->
+        val query = text.trim()
+        query.isEmpty() || listOfNotNull(product.name, product.model, product.description).any { it.contains(query, true) }
     }
+
+    private fun average(product: ProductInfo): Double = product.reviews.filter { it.isActive }
+        .map { it.rating }.average().takeIf { it.isFinite() } ?: 0.0
 }
