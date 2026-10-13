@@ -58,12 +58,12 @@ object AppModule {
         return ProductRetrofitDataSourceImplementation(service)
     }
 
-    /** Asocia el contrato de reseñas con su implementación basada en Retrofit. */
-    @Singleton
-    @Provides
-    fun providesReviewRemoteDataSource(service: ReviewRetrofitService): ReviewRemoteDataSource {
-        return ReviewRetrofitDataSourceImplementation(service)
-    }
+//    /** Asocia el contrato de reseñas con su implementación basada en Retrofit. */
+//    @Singleton
+//    @Provides
+//    fun providesReviewRemoteDataSource(service: ReviewRetrofitService): ReviewRemoteDataSource {
+//        return ReviewRetrofitDataSourceImplementation(service)
+//    }
 
     /** Construye el datasource de usuarios con su servicio Retrofit. */
     @Singleton

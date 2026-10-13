@@ -17,6 +17,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.example.devicersapp.data.datasource.ReviewRemoteDataSource
+import com.example.devicersapp.data.datasource.implementations.ReviewFirestoreDataSourceImplementation
 
 /** Provee las dependencias de Firebase que viven durante toda la aplicación. */
 @Module
@@ -55,4 +57,9 @@ object FirebaseHiltModule {
     @Provides
     @Singleton
     fun storage(): FirebaseStorage = Firebase.storage
+
+    @Provides
+    fun provideReviewSource(
+        implementation: ReviewFirestoreDataSourceImplementation
+    ): ReviewRemoteDataSource = implementation
 }
