@@ -1,11 +1,6 @@
 package com.example.devicersapp.ui.screens.product
 
-import com.example.devicersapp.data.repository.CommentLikeRepository
-import com.example.devicersapp.data.repository.CommentRepository
-import com.example.devicersapp.data.repository.ProductRepository
-import com.example.devicersapp.data.repository.ReviewLikeRepository
-import com.example.devicersapp.data.repository.ReviewRepository
-import com.example.devicersapp.data.repository.UsersRepository
+import com.example.devicersapp.data.repository.ArticleReviewsRepository
 
 import com.example.devicersapp.R
 import androidx.lifecycle.ViewModel
@@ -19,15 +14,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/** Consulta el producto y todas las reseñas visibles con sus autores y datos asociados. */
+/** Consulta en Firestore el producto y todas sus reseñas visibles con sus autores. */
 @HiltViewModel
 class ProductViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
-    private val reviewRepository: ReviewRepository,
-    private val users: UsersRepository,
-    private val comments: CommentRepository,
-    private val reviewLikes: ReviewLikeRepository,
-    private val commentLikes: CommentLikeRepository
+    private val articleReviews: ArticleReviewsRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductState())
     val uiState: StateFlow<ProductState> = _uiState
@@ -39,10 +29,7 @@ class ProductViewModel @Inject constructor(
         _uiState.update { ProductState(isLoading = true) }
         loadJob = viewModelScope.launch {
             try {
-                val product = productRepository.getProductById(productId).getOrThrow()
-                val records = reviewRepository.getReviewsByProduct(productId).getOrThrow()
-                    .filter { it.articleId == productId && it.isActive }
-                val reviews = productRepository.getReviewContents(records, users, comments, reviewLikes, commentLikes)
+                val (product, reviews) = articleReviews.getProductDetail(productId).getOrThrow()
                 _uiState.update { ProductState(product = product, reviews = reviews) }
             } catch (e: CancellationException) {
                 throw e

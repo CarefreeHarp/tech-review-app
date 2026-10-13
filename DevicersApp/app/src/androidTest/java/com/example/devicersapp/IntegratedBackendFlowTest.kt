@@ -13,6 +13,13 @@ import com.example.devicersapp.ui.screens.rate_product.RateProductViewModel
 import com.example.devicersapp.ui.screens.review.ReviewViewModel
 import com.example.devicersapp.ui.screens.edit_review.EditReviewViewModel
 import com.example.devicersapp.ui.screens.own_profile.OwnProfileViewModel
+import com.example.devicersapp.data.datasource.ArticleReviewsRemoteDataSource
+import com.example.devicersapp.data.dto.ArticleDocumentDto
+import com.example.devicersapp.data.dto.CommentDocumentDto
+import com.example.devicersapp.data.dto.ReviewDocumentDto
+import com.example.devicersapp.data.dto.UserSummaryDto
+import com.example.devicersapp.ui.models.ProductInfo
+import com.example.devicersapp.ui.models.ReviewInfo
 import com.example.devicersapp.data.datasource.AuthRemoteDataSource
 import com.example.devicersapp.data.datasource.StorageRemoteDataSource
 import kotlinx.coroutines.*
@@ -43,6 +50,7 @@ class IntegratedBackendFlowTest {
         val contentReviewLikes = ReviewLikeRepository(ReviewLikeRetrofitDataSourceImplementation(retrofit.create(ReviewLikeRetrofitService::class.java)))
         val contentCommentLikes = CommentLikeRepository(CommentLikeRetrofitDataSourceImplementation(retrofit.create(CommentLikeRetrofitService::class.java)))
         val session = fixtureSession(users.getUserById(1).copy(firebaseUid = "fixture-uid"))
+        val articleReviews = fixtureArticleReviewsRepository(products, reviews, users, contentComments, contentReviewLikes, contentCommentLikes, follows)
         val originalIds = reviews.getReviewsByUser(session.requireCurrentProfile().id).getOrThrow().map { it.id }.toSet()
         val productId = products.getProducts().getOrThrow().first().id
         val marker = "Integration " + System.currentTimeMillis()
@@ -59,7 +67,7 @@ class IntegratedBackendFlowTest {
                     assertTrue(selected.reviews.isNotEmpty())
                     assertTrue(selected.reviews.all { it.authorId == "2" })
 
-                    val product = ProductViewModel(products, reviews, contentUsers, contentComments, contentReviewLikes, contentCommentLikes).also { store.put("product", it) }
+                    val product = ProductViewModel(articleReviews).also { store.put("product", it) }
                     product.loadProduct(productId)
                     val productState = product.uiState.first { !it.isLoading }
                     assertNull(productState.errorMessage)
@@ -79,7 +87,7 @@ class IntegratedBackendFlowTest {
                     val created = reviews.getReviewsByUser(session.requireCurrentProfile().id).getOrThrow().single { it.title == marker }
                     createdId = created.id
                     assertEquals(productId, created.articleId)
-                    val detail = ReviewViewModel(reviews, contentProducts, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session).also { store.put("detail", it) }
+                    val detail = ReviewViewModel(articleReviews, session).also { store.put("detail", it) }
                     detail.loadReview(created.id)
                     val detailState = detail.uiState.first { !it.loading }
                     assertNull(detailState.error)
@@ -155,6 +163,66 @@ private fun fixtureOwnProfileRepository(
         check(reviews.getReviewById(reviewId).getOrThrow().userId == userId)
         reviews.deleteReview(reviewId).getOrThrow()
     }
+})
+
+/**
+ * Adapta las fuentes de la API al contrato que Home, Product y Review leen desde Firestore.
+ *
+ * Cada reseña se arma con su artículo, su autor y su hilo, igual que en los documentos desnormalizados,
+ * para que este flujo siga comprobando los mismos IDs del backend.
+ */
+private fun fixtureArticleReviewsRepository(
+    products: ProductRepository,
+    reviews: ReviewRepository,
+    users: UsersRepository,
+    comments: CommentRepository,
+    reviewLikes: ReviewLikeRepository,
+    commentLikes: CommentLikeRepository,
+    follows: FollowRepository
+): ArticleReviewsRepository = ArticleReviewsRepository(object : ArticleReviewsRemoteDataSource {
+    override suspend fun getActiveReviews() = products.getProducts().getOrThrow().flatMap { product ->
+        product.reviews.filter { it.isActive }.map { document(it.copy(article = product)) }
+    }
+
+    override suspend fun getActiveReviewsByArticle(articleId: Int) =
+        reviews.getReviewsByProduct(articleId).getOrThrow().filter { it.isActive }.map { document(it) }
+
+    override suspend fun getReviewById(reviewId: Int) = document(reviews.getReviewById(reviewId).getOrThrow())
+
+    override suspend fun getArticleById(articleId: Int) = products.getProductById(articleId).getOrThrow().toDocument()
+
+    override suspend fun getReviewLikeCounts(reviewIds: Set<Int>) =
+        reviewLikes.getReviewLikes().filter { it.reviewId in reviewIds }.groupingBy { it.reviewId }.eachCount()
+
+    override suspend fun getCommentLikeCounts(commentIds: Set<Int>) =
+        commentLikes.getCommentLikes().filter { it.commentId in commentIds }.groupingBy { it.commentId }.eachCount()
+
+    override suspend fun getFollowedUserIds(followerId: Int) =
+        follows.getFollows().filter { it.followerId == followerId }.map { it.followedId }.toSet()
+
+    override suspend fun getUsers(userIds: Set<Int>) = userIds.associateWith { id ->
+        users.getUserById(id).let { UserSummaryDto(it.id, it.username, it.profileImageUrl) }
+    }
+
+    private suspend fun document(review: ReviewInfo) = ReviewDocumentDto(
+        id = review.id,
+        userId = review.userId,
+        rating = review.rating,
+        title = review.title,
+        body = review.body,
+        isActive = review.isActive,
+        createdAt = review.createdAt,
+        updatedAt = review.updatedAt,
+        userUsername = review.user?.username ?: users.getUserById(review.userId).username,
+        article = (review.article ?: products.getProductById(review.articleId).getOrThrow()).toDocument(),
+        comments = comments.getComments().filter { it.reviewId == review.id }.map {
+            CommentDocumentDto(it.id, it.userId, "", it.parentCommentId, it.body, it.isActive, it.createdAt)
+        }
+    )
+
+    private fun ProductInfo.toDocument() = ArticleDocumentDto(
+        id, name, model, description, imageUrl, brandId, "", categoryId, "", releaseDate, null, isActive, createdAt, updatedAt
+    )
 })
 
 

@@ -1,11 +1,6 @@
 package com.example.devicersapp.ui.screens.review
 
-import com.example.devicersapp.data.repository.CommentLikeRepository
-import com.example.devicersapp.data.repository.CommentRepository
-import com.example.devicersapp.data.repository.ProductRepository
-import com.example.devicersapp.data.repository.ReviewLikeRepository
-import com.example.devicersapp.data.repository.ReviewRepository
-import com.example.devicersapp.data.repository.UsersRepository
+import com.example.devicersapp.data.repository.ArticleReviewsRepository
 
 import com.example.devicersapp.data.repository.SessionRepository
 import androidx.lifecycle.viewModelScope
@@ -25,12 +20,7 @@ import javax.inject.Inject
 /** Obtiene y conserva el contenido y las acciones del detalle de una reseña. */
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
-    private val reviews: ReviewRepository,
-    private val products: ProductRepository,
-    private val users: UsersRepository,
-    private val comments: CommentRepository,
-    private val reviewLikes: ReviewLikeRepository,
-    private val commentLikes: CommentLikeRepository,
+    private val articleReviews: ArticleReviewsRepository,
     private val session: SessionRepository
 ) : ViewModel() {
 
@@ -46,7 +36,7 @@ class ReviewViewModel @Inject constructor(
         _uiState.update { ReviewState(loading = true) }
         loadJob = viewModelScope.launch {
             try {
-                val review = products.getReviewContents(listOf(reviews.getReviewById(reviewId).getOrThrow()), users, comments, reviewLikes, commentLikes).single()
+                val review = articleReviews.getReviewDetail(reviewId).getOrThrow()
                 val content = review.toReviewContent()
                 _uiState.update {
                     ReviewState(

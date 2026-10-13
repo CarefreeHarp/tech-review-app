@@ -14,6 +14,8 @@ import com.example.devicersapp.ui.screens.own_profile.OwnProfileView
 import com.example.devicersapp.ui.screens.own_profile.OwnProfileViewModel
 import com.example.devicersapp.ui.screens.review.ReviewView
 import com.example.devicersapp.ui.screens.review.ReviewViewModel
+import com.example.devicersapp.ui.models.ProductInfo
+import com.example.devicersapp.ui.models.ReviewInfo
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
@@ -43,7 +45,8 @@ class OwnProfileDeletionUiTest {
         val detailStore = ViewModelStore()
         val profile = mutableStateOf<OwnProfileViewModel?>(null)
         compose.runOnUiThread {
-            val detail = ReviewViewModel(repositories, contentProducts, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session).also { detailStore.put("detail", it) }
+            val articleReviews = fixtureArticleReviewsRepository(contentProducts, repositories, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, FollowRepository(api))
+            val detail = ReviewViewModel(articleReviews, session).also { detailStore.put("detail", it) }
             compose.activity.setContent {
                 DevicersAppTheme {
                     val ownProfile = profile.value
@@ -182,6 +185,65 @@ private fun fixtureOwnProfileRepository(
         check(reviews.getReviewById(reviewId).getOrThrow().userId == userId)
         reviews.deleteReview(reviewId).getOrThrow()
     }
+})
+
+/**
+ * Adapta las fuentes de las pruebas existentes al contrato que Review lee desde Firestore.
+ *
+ * Cada reseña se arma con su artículo, su autor y su hilo, igual que en los documentos desnormalizados.
+ */
+private fun fixtureArticleReviewsRepository(
+    products: ProductRepository,
+    reviews: ReviewRepository,
+    users: UsersRepository,
+    comments: CommentRepository,
+    reviewLikes: ReviewLikeRepository,
+    commentLikes: CommentLikeRepository,
+    follows: FollowRepository
+): ArticleReviewsRepository = ArticleReviewsRepository(object : ArticleReviewsRemoteDataSource {
+    override suspend fun getActiveReviews() = products.getProducts().getOrThrow().flatMap { product ->
+        product.reviews.filter { it.isActive }.map { document(it.copy(article = product)) }
+    }
+
+    override suspend fun getActiveReviewsByArticle(articleId: Int) =
+        reviews.getReviewsByProduct(articleId).getOrThrow().filter { it.isActive }.map { document(it) }
+
+    override suspend fun getReviewById(reviewId: Int) = document(reviews.getReviewById(reviewId).getOrThrow())
+
+    override suspend fun getArticleById(articleId: Int) = products.getProductById(articleId).getOrThrow().toDocument()
+
+    override suspend fun getReviewLikeCounts(reviewIds: Set<Int>) =
+        reviewLikes.getReviewLikes().filter { it.reviewId in reviewIds }.groupingBy { it.reviewId }.eachCount()
+
+    override suspend fun getCommentLikeCounts(commentIds: Set<Int>) =
+        commentLikes.getCommentLikes().filter { it.commentId in commentIds }.groupingBy { it.commentId }.eachCount()
+
+    override suspend fun getFollowedUserIds(followerId: Int) =
+        follows.getFollows().filter { it.followerId == followerId }.map { it.followedId }.toSet()
+
+    override suspend fun getUsers(userIds: Set<Int>) = userIds.associateWith { id ->
+        users.getUserById(id).let { UserSummaryDto(it.id, it.username, it.profileImageUrl) }
+    }
+
+    private suspend fun document(review: ReviewInfo) = ReviewDocumentDto(
+        id = review.id,
+        userId = review.userId,
+        rating = review.rating,
+        title = review.title,
+        body = review.body,
+        isActive = review.isActive,
+        createdAt = review.createdAt,
+        updatedAt = review.updatedAt,
+        userUsername = review.user?.username ?: users.getUserById(review.userId).username,
+        article = (review.article ?: products.getProductById(review.articleId).getOrThrow()).toDocument(),
+        comments = comments.getComments().filter { it.reviewId == review.id }.map {
+            CommentDocumentDto(it.id, it.userId, "", it.parentCommentId, it.body, it.isActive, it.createdAt)
+        }
+    )
+
+    private fun ProductInfo.toDocument() = ArticleDocumentDto(
+        id, name, model, description, imageUrl, brandId, "", categoryId, "", releaseDate, null, isActive, createdAt, updatedAt
+    )
 })
 
 
