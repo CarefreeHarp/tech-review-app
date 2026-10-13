@@ -2,7 +2,6 @@ package com.example.devicersapp.ui.screens.activity.components
 
 
 import com.example.devicersapp.ui.session.LocalSessionState
-import com.example.devicersapp.data.dto.toProfileContent
 
 import android.content.res.Resources
 import com.example.devicersapp.ui.theme.LocalDevicersColors
@@ -33,8 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProfileProvider
-import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ActivityContent
 import com.example.devicersapp.ui.models.ActivityType
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -64,16 +61,11 @@ fun ActivityCard(
     modifier: Modifier = Modifier,
     isHighlighted: Boolean = false,
     onProfileClick: (String) -> Unit = {},
-    profileImageUrl: String? = null
+    profileImageUrl: String? = null,
+    actorName: String = "",
+    productName: String? = null
 ) {
     val colors = LocalDevicersColors.current
-    // El usuario de sesión puede no existir entre los perfiles de muestra de actividad.
-    val actor = if (LocalSessionState.current.isCurrentUser(activity.actorProfileId.toIntOrNull())) {
-        requireNotNull(LocalSessionState.current.profile).toProfileContent(0)
-    } else {
-        requireNotNull(LocalProfileProvider.getProfileById(activity.actorProfileId))
-    }
-    val review = activity.targetReviewId?.let(LocalReviewProvider::findById)
     // El tiempo se deriva al renderizar para evitar guardar textos como "Hace 5 m" en los datos.
     val elapsedTime = formatElapsedTime(LocalContext.current.resources, activity.time)
 
@@ -96,7 +88,7 @@ fun ActivityCard(
     ) {
         ActivityAvatar(
             onProfileClick = onProfileClick,
-            avatarResId = actor.avatarResId,
+            avatarResId = R.drawable.no_pfp_icon,
             imageUrl = profileImageUrl,
             userId = activity.actorProfileId.toIntOrNull(),
             profileId = activity.actorProfileId,
@@ -109,7 +101,7 @@ fun ActivityCard(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 modifier = Modifier.clickable { onProfileClick(activity.actorProfileId) },
-                text = LocalSessionState.current.userNameFor(activity.actorProfileId.toIntOrNull(), stringResource(actor.handleResId)),
+                text = LocalSessionState.current.userNameFor(activity.actorProfileId.toIntOrNull(), actorName),
                 style = MaterialTheme.typography.titleSmall,
                 color = colors.textPrimary
             )
@@ -122,8 +114,8 @@ fun ActivityCard(
             Spacer(modifier = Modifier.height(5.dp))
             // El detalle y la antigüedad comparten una sola línea de metadata.
             Text(
-                text = review
-                    ?.let { stringResource(R.string.activity_detail_format, stringResource(it.productNameResId).trim(), elapsedTime) }
+                text = productName?.takeIf { it.isNotBlank() }
+                    ?.let { stringResource(R.string.activity_detail_format, it, elapsedTime) }
                     ?: stringResource(R.string.activity_time_ago, elapsedTime),
                 style = MaterialTheme.typography.bodySmall,
                 color = colors.textSecondary
@@ -134,6 +126,7 @@ fun ActivityCard(
             Spacer(modifier = Modifier.width(12.dp))
             Button(
                 onClick = onFollow,
+                enabled = false,
                 modifier = Modifier.height(42.dp),
                 shape = RoundedCornerShape(percent = 50),
                 colors = ButtonDefaults.buttonColors(

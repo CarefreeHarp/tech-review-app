@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.ui.screens.request_product.components.ProductPhotoUploader
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
@@ -51,7 +50,7 @@ fun RequestProductView(
         onBrandChange = viewModel::onBrandChange,
         onReleaseDateChange = viewModel::onReleaseDateChange,
         onUploadPhoto = onUploadPhoto,
-        onSendRequest = onSendRequest,
+        onSendRequest = { viewModel.submit(onSendRequest) },
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -150,11 +149,9 @@ fun RequestProductViewContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
-        FilterLabel(R.string.request_product_photo, color = colors.textPrimary)
-        Spacer(modifier = Modifier.height(7.dp))
-        ProductPhotoUploader(onUploadClick = onUploadPhoto)
 
+        state.error?.let { Text(it, color = colors.error) }
+        if (state.submitted) Text(stringResource(R.string.discovery_request_sent), color = colors.textPrimary)
         Spacer(modifier = Modifier.height(26.dp))
         Box(
             modifier = Modifier
@@ -169,7 +166,7 @@ fun RequestProductViewContent(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(R.string.request_product_send),
+                text = stringResource(if (state.submitting) R.string.discovery_request_sending else R.string.request_product_send),
                 color = if (state.canSendRequest) colors.textOnPrimary else colors.textSecondary,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold

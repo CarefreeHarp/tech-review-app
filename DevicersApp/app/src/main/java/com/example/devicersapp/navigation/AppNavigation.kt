@@ -340,7 +340,7 @@ fun AppNavigation(
 
                     ActivityView(
                         onReviewClick = { reviewId ->
-                            navController.navigate(AppDestination.Review.createLocalRoute(reviewId))
+                            navController.navigate(AppDestination.Review.createRoute(reviewId))
                         },
                         onProfileClick = onProfileClick,
                         viewModel = activityViewModel
