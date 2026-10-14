@@ -51,26 +51,26 @@ object AppModule {
         return retrofit.create(ReviewRetrofitService::class.java)
     }
 
-    /** Asocia el contrato de artículos con su implementación basada en Retrofit. */
-    @Singleton
-    @Provides
-    fun providesProductRemoteDataSource(service: ProductRetrofitService): ProductRemoteDataSource {
-        return ProductRetrofitDataSourceImplementation(service)
-    }
+//    /** Asocia el contrato de artículos con su implementación basada en Retrofit. */
+//    @Singleton
+//    @Provides
+//    fun providesProductRemoteDataSource(service: ProductRetrofitService): ProductRemoteDataSource {
+//        return ProductRetrofitDataSourceImplementation(service)
+//    }
 
-    /** Asocia el contrato de reseñas con su implementación basada en Retrofit. */
-    @Singleton
-    @Provides
-    fun providesReviewRemoteDataSource(service: ReviewRetrofitService): ReviewRemoteDataSource {
-        return ReviewRetrofitDataSourceImplementation(service)
-    }
+//    /** Asocia el contrato de reseñas con su implementación basada en Retrofit. */
+//    @Singleton
+//    @Provides
+//    fun providesReviewRemoteDataSource(service: ReviewRetrofitService): ReviewRemoteDataSource {
+//        return ReviewRetrofitDataSourceImplementation(service)
+//    }
 
-    /** Construye el datasource de usuarios con su servicio Retrofit. */
-    @Singleton
-    @Provides
-    fun providesUsersRemoteDataSource(service: UsersRetrofitService): UsersRemoteDataSource {
-        return UsersRetrofitDataSourceImplementation(service)
-    }
+//    /** Construye el datasource de usuarios con su servicio Retrofit. */
+//    @Singleton
+//    @Provides
+//    fun providesUsersRemoteDataSource(service: UsersRetrofitService): UsersRemoteDataSource {
+//        return UsersRetrofitDataSourceImplementation(service)
+//    }
 
     /** Construye el datasource de seguidores con su servicio Retrofit. */
     @Singleton
@@ -79,33 +79,33 @@ object AppModule {
         return FollowRetrofitDataSourceImplementation(service)
     }
 
-    /** Construye el datasource de comentarios con su servicio Retrofit. */
-    @Singleton
-    @Provides
-    fun providesCommentRemoteDataSource(service: CommentRetrofitService): CommentRemoteDataSource {
-        return CommentRetrofitDataSourceImplementation(service)
-    }
+//    /** Construye el datasource de comentarios con su servicio Retrofit. */
+//    @Singleton
+//    @Provides
+//    fun providesCommentRemoteDataSource(service: CommentRetrofitService): CommentRemoteDataSource {
+//        return CommentRetrofitDataSourceImplementation(service)
+//    }
 
-    /** Construye el datasource de likes de reseñas con su servicio Retrofit. */
-    @Singleton
-    @Provides
-    fun providesReviewLikeRemoteDataSource(service: ReviewLikeRetrofitService): ReviewLikeRemoteDataSource {
-        return ReviewLikeRetrofitDataSourceImplementation(service)
-    }
+//    /** Construye el datasource de likes de reseñas con su servicio Retrofit. */
+//    @Singleton
+//    @Provides
+//    fun providesReviewLikeRemoteDataSource(service: ReviewLikeRetrofitService): ReviewLikeRemoteDataSource {
+//        return ReviewLikeRetrofitDataSourceImplementation(service)
+//    }
 
-    /** Construye el datasource de likes de comentarios con su servicio Retrofit. */
-    @Singleton
-    @Provides
-    fun providesCommentLikeRemoteDataSource(service: CommentLikeRetrofitService): CommentLikeRemoteDataSource {
-        return CommentLikeRetrofitDataSourceImplementation(service)
-    }
+//    /** Construye el datasource de likes de comentarios con su servicio Retrofit. */
+//    @Singleton
+//    @Provides
+//    fun providesCommentLikeRemoteDataSource(service: CommentLikeRetrofitService): CommentLikeRemoteDataSource {
+//        return CommentLikeRetrofitDataSourceImplementation(service)
+//    }
 
-    /** Construye el datasource de reseñas guardadas con su servicio Retrofit. */
-    @Singleton
-    @Provides
-    fun providesReviewBookmarkRemoteDataSource(service: ReviewBookmarkRetrofitService): ReviewBookmarkRemoteDataSource {
-        return ReviewBookmarkRetrofitDataSourceImplementation(service)
-    }
+//    /** Construye el datasource de reseñas guardadas con su servicio Retrofit. */
+//    @Singleton
+//    @Provides
+//    fun providesReviewBookmarkRemoteDataSource(service: ReviewBookmarkRetrofitService): ReviewBookmarkRemoteDataSource {
+//        return ReviewBookmarkRetrofitDataSourceImplementation(service)
+//    }
 
     /** Construye el datasource de marcas con su servicio Retrofit. */
     @Singleton

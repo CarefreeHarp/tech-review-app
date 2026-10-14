@@ -12,7 +12,10 @@ class ReviewRetrofitDataSourceImplementation @Inject constructor(
     private val service: ReviewRetrofitService
 ) : ReviewRemoteDataSource {
 
-    override suspend fun getReviews(): List<ReviewDto> = service.getReviews()
+    override suspend fun getReviews(): List<ReviewDto> {
+        println("AAAAAA RETROFIT REVIEWS")
+        return service.getReviews()
+    }
 
     override suspend fun getReviewById(reviewId: Int): ReviewDto =
         service.getReviewById(reviewId)
