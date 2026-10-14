@@ -13,6 +13,13 @@ import com.example.devicersapp.ui.screens.rate_product.RateProductViewModel
 import com.example.devicersapp.ui.screens.review.ReviewViewModel
 import com.example.devicersapp.ui.screens.edit_review.EditReviewViewModel
 import com.example.devicersapp.ui.screens.own_profile.OwnProfileViewModel
+import com.example.devicersapp.data.datasource.ArticleReviewsRemoteDataSource
+import com.example.devicersapp.data.dto.ArticleDocumentDto
+import com.example.devicersapp.data.dto.CommentDocumentDto
+import com.example.devicersapp.data.dto.ReviewDocumentDto
+import com.example.devicersapp.data.dto.UserSummaryDto
+import com.example.devicersapp.ui.models.ProductInfo
+import com.example.devicersapp.ui.models.ReviewInfo
 import com.example.devicersapp.data.datasource.AuthRemoteDataSource
 import com.example.devicersapp.data.datasource.StorageRemoteDataSource
 import kotlinx.coroutines.*
@@ -43,6 +50,7 @@ class IntegratedBackendFlowTest {
         val contentReviewLikes = ReviewLikeRepository(ReviewLikeRetrofitDataSourceImplementation(retrofit.create(ReviewLikeRetrofitService::class.java)))
         val contentCommentLikes = CommentLikeRepository(CommentLikeRetrofitDataSourceImplementation(retrofit.create(CommentLikeRetrofitService::class.java)))
         val session = fixtureSession(users.getUserById(1).copy(firebaseUid = "fixture-uid"))
+        val articleReviews = fixtureArticleReviewsRepository(products, reviews, users, contentComments, contentReviewLikes, contentCommentLikes, follows)
         val originalIds = reviews.getReviewsByUser(session.requireCurrentProfile().id).getOrThrow().map { it.id }.toSet()
         val productId = products.getProducts().getOrThrow().first().id
         val marker = "Integration " + System.currentTimeMillis()
@@ -51,7 +59,7 @@ class IntegratedBackendFlowTest {
         try {
             withContext(Dispatchers.Main) {
                 withTimeout(30000) {
-                    val profile = ProfileViewModel(users, reviews, contentProducts, contentComments, contentReviewLikes, contentCommentLikes, follows, session).also { store.put("profile", it) }
+                    val profile = ProfileViewModel(fixturePublicProfiles(users, reviews, contentProducts, contentComments, contentReviewLikes, contentCommentLikes, follows), session).also { store.put("profile", it) }
                     profile.loadProfile("2")
                     val selected = profile.uiState.first { !it.loading }
                     assertNull(selected.error)
@@ -59,7 +67,7 @@ class IntegratedBackendFlowTest {
                     assertTrue(selected.reviews.isNotEmpty())
                     assertTrue(selected.reviews.all { it.authorId == "2" })
 
-                    val product = ProductViewModel(products, reviews, contentUsers, contentComments, contentReviewLikes, contentCommentLikes).also { store.put("product", it) }
+                    val product = ProductViewModel(articleReviews).also { store.put("product", it) }
                     product.loadProduct(productId)
                     val productState = product.uiState.first { !it.isLoading }
                     assertNull(productState.errorMessage)
@@ -79,7 +87,7 @@ class IntegratedBackendFlowTest {
                     val created = reviews.getReviewsByUser(session.requireCurrentProfile().id).getOrThrow().single { it.title == marker }
                     createdId = created.id
                     assertEquals(productId, created.articleId)
-                    val detail = ReviewViewModel(reviews, contentProducts, contentUsers, contentComments, contentReviewLikes, contentCommentLikes, session).also { store.put("detail", it) }
+                    val detail = ReviewViewModel(articleReviews, session).also { store.put("detail", it) }
                     detail.loadReview(created.id)
                     val detailState = detail.uiState.first { !it.loading }
                     assertNull(detailState.error)
@@ -106,7 +114,7 @@ class IntegratedBackendFlowTest {
                     val auth = AuthRepository(AuthRemoteDataSource(com.google.firebase.auth.FirebaseAuth.getInstance()),
                         androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext,
                         session)
-                    val ownProfile = OwnProfileViewModel(StorageRepository(StorageRemoteDataSource(com.google.firebase.storage.FirebaseStorage.getInstance()), auth), fixtureOwnProfileRepository(session, reviews, contentProducts, follows), androidx.lifecycle.SavedStateHandle(), session)
+                    val ownProfile = OwnProfileViewModel(fixtureOwnProfileRepository(session, reviews, contentProducts, follows), androidx.lifecycle.SavedStateHandle(), session)
                         .also { store.put("own-profile", it) }
                     ownProfile.deleteReviewAndLoadProfile(created.id)
                     val deleted = ownProfile.uiState.first { !it.loading }
@@ -132,7 +140,7 @@ private fun fixtureSession(profile: com.example.devicersapp.ui.models.UserInfo):
         override suspend fun getById(userId: Int) = profile.also { check(it.id == userId) }
         override suspend fun findByFirebaseUid(firebaseUid: String) = profile
         override suspend fun createIfMissing(firebaseUid: String, email: String, username: String, profileImageUrl: String?) = profile
-        override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?) = profile
+        override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?, biography: String?) = profile
     }
     SessionRepository(source).also { it.loadProfile("fixture-uid", profile.email, profile.username, profile.profileImageUrl) }
 }
@@ -157,8 +165,89 @@ private fun fixtureOwnProfileRepository(
     }
 })
 
+/**
+ * Adapta las fuentes de la API al contrato que Home, Product y Review leen desde Firestore.
+ *
+ * Cada reseña se arma con su artículo, su autor y su hilo, igual que en los documentos desnormalizados,
+ * para que este flujo siga comprobando los mismos IDs del backend.
+ */
+private fun fixtureArticleReviewsRepository(
+    products: ProductRepository,
+    reviews: ReviewRepository,
+    users: UsersRepository,
+    comments: CommentRepository,
+    reviewLikes: ReviewLikeRepository,
+    commentLikes: CommentLikeRepository,
+    follows: FollowRepository
+): ArticleReviewsRepository = ArticleReviewsRepository(object : ArticleReviewsRemoteDataSource {
+    override suspend fun getActiveReviews() = products.getProducts().getOrThrow().flatMap { product ->
+        product.reviews.filter { it.isActive }.map { document(it.copy(article = product)) }
+    }
+
+    override suspend fun getActiveReviewsByArticle(articleId: Int) =
+        reviews.getReviewsByProduct(articleId).getOrThrow().filter { it.isActive }.map { document(it) }
+
+    override suspend fun getReviewById(reviewId: Int) = document(reviews.getReviewById(reviewId).getOrThrow())
+
+    override suspend fun getArticleById(articleId: Int) = products.getProductById(articleId).getOrThrow().toDocument()
+
+    override suspend fun getReviewLikeCounts(reviewIds: Set<Int>) =
+        reviewLikes.getReviewLikes().filter { it.reviewId in reviewIds }.groupingBy { it.reviewId }.eachCount()
+
+    override suspend fun getCommentLikeCounts(commentIds: Set<Int>) =
+        commentLikes.getCommentLikes().filter { it.commentId in commentIds }.groupingBy { it.commentId }.eachCount()
+
+    override suspend fun getFollowedUserIds(followerId: Int) =
+        follows.getFollows().filter { it.followerId == followerId }.map { it.followedId }.toSet()
+
+    override suspend fun getUsers(userIds: Set<Int>) = userIds.associateWith { id ->
+        users.getUserById(id).let { UserSummaryDto(it.id, it.username, it.profileImageUrl) }
+    }
+
+    private suspend fun document(review: ReviewInfo) = ReviewDocumentDto(
+        id = review.id,
+        userId = review.userId,
+        rating = review.rating,
+        title = review.title,
+        body = review.body,
+        isActive = review.isActive,
+        createdAt = review.createdAt,
+        updatedAt = review.updatedAt,
+        userUsername = review.user?.username ?: users.getUserById(review.userId).username,
+        article = (review.article ?: products.getProductById(review.articleId).getOrThrow()).toDocument(),
+        comments = comments.getComments().filter { it.reviewId == review.id }.map {
+            CommentDocumentDto(it.id, it.userId, "", it.parentCommentId, it.body, it.isActive, it.createdAt)
+        }
+    )
+
+    private fun ProductInfo.toDocument() = ArticleDocumentDto(
+        id, name, model, description, imageUrl, brandId, "", categoryId, "", releaseDate, null, isActive, createdAt, updatedAt
+    )
+})
+
 
 /** Proporciona fotos explícitas a las pruebas existentes sin acceder a Firebase. */
 private val fixtureProfileImages = com.example.devicersapp.data.datasource.ProfileImagesRemoteDataSource { ids ->
     ids.associateWith { id -> "https://example.com/firestore-avatar-$id.png" }
 }
+
+/** Adapta los datos existentes al contrato del perfil migrado sin introducir red en las unitarias. */
+private fun fixturePublicProfiles(
+    users: UsersRepository,
+    reviews: ReviewRepository,
+    products: ProductRepository,
+    comments: CommentRepository,
+    likes: ReviewLikeRepository,
+    commentLikes: CommentLikeRepository,
+    follows: FollowRepository
+) = ProfileRepository(object : com.example.devicersapp.data.datasource.ProfileRemoteDataSource {
+    override suspend fun getUser(userId: Int) = users.getUserById(userId)
+    override suspend fun getReviews(userId: Int) = products.getReviewContents(
+        reviews.getReviewsByUser(userId).getOrThrow(), users, comments, likes, commentLikes)
+    override suspend fun getFollowCounts(userId: Int): Pair<Int, Int> {
+        val relations = follows.getFollows()
+        return relations.count { it.followedId == userId } to relations.count { it.followerId == userId }
+    }
+    override suspend fun isFollowing(followerId: Int, followedId: Int) =
+        follows.getFollows().any { it.followerId == followerId && it.followedId == followedId }
+})

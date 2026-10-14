@@ -1,7 +1,5 @@
 package com.example.devicersapp.ui.screens.own_profile
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import com.example.devicersapp.ui.screens.own_profile.components.OwnProfileSkeleton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +12,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.runtime.remember
+import com.example.devicersapp.data.local.ProfilePreviewProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.Text
@@ -25,8 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProfileProvider
-import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileHeader
@@ -39,29 +37,26 @@ import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
  */
 @Composable
 fun OwnProfileView(
-    onEditProfileClick: () -> Unit = {},
     onReviewClick: (Int) -> Unit = {},
     onSavedReviewsClick: () -> Unit = {},
+    onEditProfileClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: OwnProfileViewModel,
-    onProfileClick: (String) -> Unit = {}
+    onProfileClick: (String) -> Unit = {},
+    onFollowersClick: (String) -> Unit = {},
+    onFollowingClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val imagePicker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let(viewModel::uploadImageToFirebase)
-    }
-
     OwnProfileViewContent(
         onProfileClick = onProfileClick,
+        onFollowersClick = onFollowersClick,
+        onFollowingClick = onFollowingClick,
         state = uiState,
         onRetry = viewModel::loadProfile,
         onSavedClick = onSavedReviewsClick,
-        onReviewClick = onReviewClick,
         onEditProfileClick = onEditProfileClick,
-        onEditAvatarClick = { imagePicker.launch("image/*") },
+        onReviewClick = onReviewClick,
         modifier = modifier
             .fillMaxSize()
             .background(LocalDevicersColors.current.background)
@@ -76,11 +71,12 @@ fun OwnProfileViewContent(
     state: OwnProfileState,
     onSavedClick: () -> Unit,
     onReviewClick: (Int) -> Unit,
-    onEditProfileClick: () -> Unit,
-    onEditAvatarClick: () -> Unit,
+    onEditProfileClick: () -> Unit = {},
     onRetry: () -> Unit = {},
     modifier: Modifier = Modifier,
-    onProfileClick: (String) -> Unit = {}
+    onProfileClick: (String) -> Unit = {},
+    onFollowersClick: (String) -> Unit = {},
+    onFollowingClick: (String) -> Unit = {}
 ) {
     if (state.loading) {
         OwnProfileSkeleton(onSavedClick = onSavedClick, modifier = modifier)
@@ -103,15 +99,15 @@ fun OwnProfileViewContent(
 
                 ProfileHeader(
                     onProfileClick = onProfileClick,
+                    onFollowersClick = onFollowersClick,
+                    onFollowingClick = onFollowingClick,
                     profile = profile,
                     actionLabelResId = R.string.profile_edit,
                     displayName = state.displayName,
                     email = state.email,
                     profileImageUrl = state.profileImageUrl,
-                    showEditBadge = true,
-                    showDisplayName = false,
                     onActionClick = onEditProfileClick,
-                    onEditAvatarClick = onEditAvatarClick
+                    showDisplayName = false
                 )
             }
         }
@@ -153,58 +149,36 @@ fun OwnProfileViewContent(
     }
 }
 
-/** Muestra una vista previa del perfil propio en el tema claro. */
+/** Previsualiza la vista raíz con un perfil local y sin conexión a Firebase. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun OwnProfileViewPreview() {
+    val username = stringResource(R.string.username_placeholder)
+    val biography = stringResource(R.string.profile_biography)
+    val email = stringResource(R.string.email_placeholder)
+    val provider = remember { ProfilePreviewProvider(username, biography, email) }
+    val viewModel = remember { OwnProfileViewModel(provider.ownProfile, androidx.lifecycle.SavedStateHandle(), provider.session) }
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(
-            selectedItem = "profile",
-            showBottomBar = true,
-            topBarNumber = 1,
-            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
-        ) { innerPadding ->
-            OwnProfileViewContent(
-                modifier = Modifier.padding(
-                    top = innerPadding.calculateTopPadding()
-                ),
-                state = OwnProfileState(
-                    profile = LocalProfileProvider.profile,
-                    reviews = LocalReviewProvider.reviewsForProfile(LocalProfileProvider.profile.id)
-                ),
-                onSavedClick = {},
-                onReviewClick = {},
-                onEditProfileClick = {},
-                onEditAvatarClick = {}
-            )
+        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
+            topBarUserHandle = username) { padding ->
+            OwnProfileView(viewModel = viewModel, modifier = Modifier.padding(padding))
         }
     }
 }
 
-/** Muestra una vista previa del perfil propio en el tema oscuro. */
+/** Previsualiza la vista raíz con un perfil local y sin conexión a Firebase. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun OwnProfileViewDarkPreview() {
+    val username = stringResource(R.string.username_placeholder)
+    val biography = stringResource(R.string.profile_biography)
+    val email = stringResource(R.string.email_placeholder)
+    val provider = remember { ProfilePreviewProvider(username, biography, email) }
+    val viewModel = remember { OwnProfileViewModel(provider.ownProfile, androidx.lifecycle.SavedStateHandle(), provider.session) }
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(
-            selectedItem = "profile",
-            showBottomBar = true,
-            topBarNumber = 1,
-            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
-        ) { innerPadding ->
-            OwnProfileViewContent(
-                modifier = Modifier.padding(
-                    top = innerPadding.calculateTopPadding()
-                ),
-                state = OwnProfileState(
-                    profile = LocalProfileProvider.profile,
-                    reviews = LocalReviewProvider.reviewsForProfile(LocalProfileProvider.profile.id)
-                ),
-                onSavedClick = {},
-                onReviewClick = {},
-                onEditProfileClick = {},
-                onEditAvatarClick = {}
-            )
+        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
+            topBarUserHandle = username) { padding ->
+            OwnProfileView(viewModel = viewModel, modifier = Modifier.padding(padding))
         }
     }
 }

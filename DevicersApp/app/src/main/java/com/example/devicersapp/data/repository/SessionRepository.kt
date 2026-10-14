@@ -47,12 +47,12 @@ class SessionRepository @Inject constructor(
         return refreshed
     }
 
-    /** Mantiene el perfil compartido al cambiar el nombre o la foto de la cuenta. */
-    suspend fun updateProfile(username: String? = null, profileImageUrl: String? = null) {
+    /** Mantiene el perfil compartido al cambiar el nombre, la biografía o la foto. */
+    suspend fun updateProfile(username: String? = null, profileImageUrl: String? = null, biography: String? = null) {
         val profile = checkNotNull(_currentProfile.value) { "No se ha recuperado el perfil." }
         val uid = checkNotNull(profile.firebaseUid)
         val expectedRevision = revision
-        val updated = profiles.updateProfile(profile.id, uid, username, profileImageUrl)
+        val updated = profiles.updateProfile(profile.id, uid, username, profileImageUrl, biography)
         check(updated.id == profile.id) { "La actualización cambió el ID del usuario." }
         publish(updated, uid, expectedRevision)
     }

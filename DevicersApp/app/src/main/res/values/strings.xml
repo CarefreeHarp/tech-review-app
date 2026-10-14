@@ -768,4 +768,19 @@
     <string name="edit_review_save_error">No pudimos guardar los cambios. Tu borrador se conserva; intenta nuevamente.</string>
     <string name="screen_loading">Cargando</string>
     <string name="rate_product_choose_product">Elegir producto</string>
+    <string name="edit_profile_biography">Biografía</string>
+    <string name="edit_profile_cancel">Cancelar</string>
+    <string name="edit_profile_load_error">No pudimos cargar tu perfil. Intenta nuevamente.</string>
+    <string name="edit_profile_save_error">No pudimos guardar tu perfil. Tus cambios se conservan; intenta nuevamente.</string>
+    <string name="edit_profile_username_required">Escribe un nombre de usuario.</string>
+    <string name="profile_invalid_id">Perfil no válido. Selecciona un usuario.</string>
+    <string name="public_profile_load_error">No pudimos cargar este perfil. Intenta nuevamente.</string>
+    <string name="public_profile_empty_reviews">Este usuario todavía no ha publicado reseñas.</string>
+    <string name="profile_options">Opciones del perfil</string>
+    <string name="follow_list_title">Seguimientos</string>
+    <string name="follow_list_load_error">No pudimos cargar la lista. Intenta nuevamente.</string>
+    <string name="follow_list_empty">No hay usuarios para mostrar en esta sección.</string>
+    <string name="user_preferences_title">Preferencias</string>
+    <string name="user_preferences_empty">aun no hay nada por aquí :))</string>
+    <string name="follow_list_truncated_biography">%1$s...</string>
 </resources>

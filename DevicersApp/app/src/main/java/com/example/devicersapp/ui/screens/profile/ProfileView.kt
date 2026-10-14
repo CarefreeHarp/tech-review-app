@@ -13,18 +13,17 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.runtime.remember
+import com.example.devicersapp.data.local.ProfilePreviewProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProfileProvider
-import com.example.devicersapp.data.local.LocalReviewProvider
-import com.example.devicersapp.ui.models.ProfileContent
-import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileHeader
@@ -40,7 +39,9 @@ fun ProfileView(
     onReviewClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel,
-    onProfileClick: (String) -> Unit = {}
+    onProfileClick: (String) -> Unit = {},
+    onFollowersClick: (String) -> Unit = {},
+    onFollowingClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -50,13 +51,15 @@ fun ProfileView(
 
     ProfileViewContent(
         onProfileClick = onProfileClick,
-            state = uiState,
-            onRetry = { viewModel.loadProfile(profileId) },
-            onFollowClick = onFollowClick,
-            onReviewClick = onReviewClick,
-            modifier = modifier
-                .fillMaxSize()
-                .background(LocalDevicersColors.current.background)
+        onFollowersClick = onFollowersClick,
+        onFollowingClick = onFollowingClick,
+        state = uiState,
+        onRetry = { viewModel.loadProfile(profileId) },
+        onFollowClick = onFollowClick,
+        onReviewClick = onReviewClick,
+        modifier = modifier
+            .fillMaxSize()
+            .background(LocalDevicersColors.current.background)
     )
 }
 
@@ -68,13 +71,15 @@ fun ProfileViewContent(
     onReviewClick: (Int) -> Unit,
     onRetry: () -> Unit = {},
     modifier: Modifier = Modifier,
-    onProfileClick: (String) -> Unit = {}
+    onProfileClick: (String) -> Unit = {},
+    onFollowersClick: (String) -> Unit = {},
+    onFollowingClick: (String) -> Unit = {}
 ) {
     if (state.loading) { ProfileSkeleton(modifier); return }
     state.error?.let { error ->
         Column(modifier.padding(20.dp)) {
-            androidx.compose.material3.Text(error)
-            androidx.compose.material3.TextButton(onClick = onRetry) { androidx.compose.material3.Text("Reintentar") }
+            androidx.compose.material3.Text(stringResource(error), color = LocalDevicersColors.current.textPrimary)
+            androidx.compose.material3.TextButton(onClick = onRetry) { androidx.compose.material3.Text(stringResource(R.string.home_feed_retry), color = LocalDevicersColors.current.primaryText) }
         }
         return
     }
@@ -90,9 +95,12 @@ fun ProfileViewContent(
                 Spacer(modifier = Modifier.height(15.dp))
                 ProfileHeader(
                     onProfileClick = onProfileClick,
+                    onFollowersClick = onFollowersClick,
+                    onFollowingClick = onFollowingClick,
                     profile = profile,
                     actionLabelResId = if (state.isFollowed) R.string.activity_following else R.string.profile_follow,
-                    actionEnabled = false,
+                    // Conserva el efecto visual de pulsación sin realizar escrituras.
+                    actionEnabled = true,
                     onActionClick = onFollowClick
                 )
             }
@@ -106,7 +114,8 @@ fun ProfileViewContent(
             )
         }
         if (state.reviews.isEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
-            androidx.compose.material3.Text("Este usuario todavía no ha publicado reseñas.")
+            androidx.compose.material3.Text(stringResource(R.string.public_profile_empty_reviews),
+                color = LocalDevicersColors.current.textSecondary, style = androidx.compose.material3.MaterialTheme.typography.bodyMedium)
         }
         itemsIndexed(state.reviews) { _, review ->
             ProfileProductCard(review = review, onClick = { onReviewClick(review.id) })
@@ -117,50 +126,36 @@ fun ProfileViewContent(
     }
 }
 
-/** Muestra el detalle de perfil en tema claro. */
+/** Previsualiza la vista raíz con un perfil local y sin conexión a Firebase. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun ProfileViewPreview() {
+    val username = stringResource(R.string.username_placeholder)
+    val biography = stringResource(R.string.profile_biography)
+    val email = stringResource(R.string.email_placeholder)
+    val provider = remember { ProfilePreviewProvider(username, biography, email) }
+    val viewModel = remember { ProfileViewModel(provider.publicProfile, provider.session) }
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(
-            selectedItem = "profile",
-            showBottomBar = true,
-            topBarNumber = 1,
-            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
-        ) { innerPadding ->
-            ProfileViewContent(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                state = ProfileState(
-                    profile = LocalProfileProvider.profile,
-                    reviews = LocalReviewProvider.reviewsForProfile(LocalProfileProvider.profile.id)
-                ),
-                onFollowClick = {},
-                onReviewClick = {}
-            )
+        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
+            topBarUserHandle = username) { padding ->
+            ProfileView(profileId = "1", viewModel = viewModel, modifier = Modifier.padding(padding))
         }
     }
 }
 
-/** Muestra el detalle de perfil en tema oscuro. */
+/** Previsualiza la vista raíz con un perfil local y sin conexión a Firebase. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun ProfileViewDarkPreview() {
+    val username = stringResource(R.string.username_placeholder)
+    val biography = stringResource(R.string.profile_biography)
+    val email = stringResource(R.string.email_placeholder)
+    val provider = remember { ProfilePreviewProvider(username, biography, email) }
+    val viewModel = remember { ProfileViewModel(provider.publicProfile, provider.session) }
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(
-            selectedItem = "profile",
-            showBottomBar = true,
-            topBarNumber = 1,
-            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
-        ) { innerPadding ->
-            ProfileViewContent(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                state = ProfileState(
-                    profile = LocalProfileProvider.profile,
-                    reviews = LocalReviewProvider.reviewsForProfile(LocalProfileProvider.profile.id)
-                ),
-                onFollowClick = {},
-                onReviewClick = {}
-            )
+        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
+            topBarUserHandle = username) { padding ->
+            ProfileView(profileId = "1", viewModel = viewModel, modifier = Modifier.padding(padding))
         }
     }
 }

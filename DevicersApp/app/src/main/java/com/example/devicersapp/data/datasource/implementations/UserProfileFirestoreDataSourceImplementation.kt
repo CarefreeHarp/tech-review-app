@@ -98,7 +98,8 @@ class UserProfileFirestoreDataSourceImplementation @Inject constructor(
         userId: Int,
         firebaseUid: String,
         username: String?,
-        profileImageUrl: String?
+        profileImageUrl: String?,
+        biography: String?
     ): UserInfo {
         val reference = users.document(userId.toString())
         firestore.runTransaction { transaction ->
@@ -108,6 +109,7 @@ class UserProfileFirestoreDataSourceImplementation @Inject constructor(
             }
             val changes = mutableMapOf<String, Any>("updatedAt" to FieldValue.serverTimestamp())
             username?.let { changes["username"] = it.trim() }
+            biography?.let { changes["biography"] = it.trim() }
             profileImageUrl?.let { changes["profile_image_url"] = it }
             transaction.update(reference, changes)
         }.await()
@@ -120,7 +122,7 @@ class UserProfileFirestoreDataSourceImplementation @Inject constructor(
         check(numericId in 1..Int.MAX_VALUE.toLong()) { "El ID del perfil no es válido." }
         return UserInfo(
             id = numericId.toInt(),
-            firebaseUid = checkNotNull(getString("firebase_uid")),
+            firebaseUid = getString("firebase_uid"),
             email = getString("email").orEmpty(),
             username = getString("username").orEmpty(),
             biography = getString("biography"),

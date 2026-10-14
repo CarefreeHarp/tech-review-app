@@ -5,6 +5,7 @@ import com.example.devicersapp.ui.session.LocalSessionState
 
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +21,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel as viewModel
+import com.example.devicersapp.ui.models.FollowListSection
+import com.example.devicersapp.ui.screens.follow_list.FollowListView
+import com.example.devicersapp.ui.screens.follow_list.FollowListViewModel
+import com.example.devicersapp.ui.screens.user_preferences.UserPreferencesView
+import com.example.devicersapp.ui.screens.user_preferences.UserPreferencesViewModel
 import com.example.devicersapp.R
+import com.example.devicersapp.ui.screens.edit_profile.EditProfileView
+import com.example.devicersapp.ui.screens.edit_profile.EditProfileViewModel
 import com.example.devicersapp.ui.screens.access.AccessView
 import com.example.devicersapp.ui.screens.access.AccessViewModel
 import com.example.devicersapp.ui.screens.activity.ActivityView
@@ -105,6 +114,12 @@ sealed class AppDestination(val route: String) {
             return "rateProduct/$productId"
         }
     }
+    data object FollowList : AppDestination("follow-list") {
+        val routeWithArguments = "$route/{profileId}?section={section}"
+        fun createRoute(profileId: Int, section: FollowListSection) = "$route/$profileId?section=${section.name}"
+    }
+    data object UserPreferences : AppDestination("user_preferences")
+    data object EditProfile : AppDestination("edit-profile")
     data object EditReview : AppDestination("edit_review") {
         fun createRoute(reviewId: Int) = "$route/$reviewId"
     }
@@ -173,6 +188,12 @@ fun AppNavigation(
         }
     }
 
+    val onFollowListClick: (String, FollowListSection) -> Unit = { profileId, section ->
+        profileId.toIntOrNull()?.takeIf { it > 0 }?.let { id ->
+            navController.navigate(AppDestination.FollowList.createRoute(id, section))
+        }
+    }
+
     CompositionLocalProvider(LocalSessionState provides sessionState) {
         DevicersScaffold(
             onProfileClick = onProfileClick,
@@ -199,6 +220,23 @@ fun AppNavigation(
             onTopBarBackClick = {
                 navController.popBackStack()
             },
+            onEditProfileClick = if (
+                backStackEntry?.destination?.route == AppDestination.OwnProfile.routeWithDeletionArgument &&
+                sessionState.userId != null
+            ) {
+                { navController.navigate(AppDestination.EditProfile.route) }
+            } else null,
+            onSavedReviewsClick = if (
+                backStackEntry?.destination?.route == AppDestination.OwnProfile.routeWithDeletionArgument &&
+                sessionState.userId != null
+            ) {
+                { navController.navigate(AppDestination.ProfileSavedReviews.route) }
+            } else null,
+            onUserPreferencesClick = if (
+                backStackEntry?.destination?.route == AppDestination.OwnProfile.routeWithDeletionArgument
+            ) {
+                { navController.navigate(AppDestination.UserPreferences.route) }
+            } else null,
             onSignOutClick = {
                 sessionViewModel.signOut()
                 navController.navigate(AppDestination.Login.route) {
@@ -340,7 +378,7 @@ fun AppNavigation(
 
                     ActivityView(
                         onReviewClick = { reviewId ->
-                            navController.navigate(AppDestination.Review.createLocalRoute(reviewId))
+                            navController.navigate(AppDestination.Review.createRoute(reviewId))
                         },
                         onProfileClick = onProfileClick,
                         viewModel = activityViewModel
@@ -353,6 +391,9 @@ fun AppNavigation(
                     val ownProfileViewModel: OwnProfileViewModel = hiltViewModel()
 
                     OwnProfileView(
+                        onFollowersClick = { id -> onFollowListClick(id, FollowListSection.FOLLOWERS) },
+                        onFollowingClick = { id -> onFollowListClick(id, FollowListSection.FOLLOWING) },
+                        onEditProfileClick = { navController.navigate(AppDestination.EditProfile.route) },
                         onProfileClick = onProfileClick,
                         viewModel = ownProfileViewModel,
                         onReviewClick = { reviewId ->
@@ -365,6 +406,38 @@ fun AppNavigation(
                                 AppDestination.ProfileSavedReviews.route
                             )
                         }
+                    )
+                }
+                composable(
+                    route = AppDestination.FollowList.routeWithArguments,
+                    arguments = listOf(
+                        navArgument("profileId") { type = NavType.IntType },
+                        navArgument("section") { type = NavType.StringType; defaultValue = FollowListSection.FOLLOWERS.name }
+                    )
+                ) { entry ->
+                    val profileId = requireNotNull(entry.arguments).getInt("profileId")
+                    val initialSection = runCatching {
+                        FollowListSection.valueOf(requireNotNull(entry.arguments?.getString("section")))
+                    }.getOrDefault(FollowListSection.FOLLOWERS)
+                    val followListViewModel = viewModel<FollowListViewModel>()
+                    FollowListView(profileId = profileId, initialSection = initialSection,
+                        viewModel = followListViewModel, onProfileClick = onProfileClick)
+                }
+                composable(route = AppDestination.UserPreferences.route) {
+                    val userPreferencesViewModel = viewModel<UserPreferencesViewModel>()
+                    UserPreferencesView(
+                        viewModel = userPreferencesViewModel,
+                        onBackClick = { navController.popBackStack() },
+                        // El NavHost ya aplica el espacio superior del Scaffold compartido.
+                        modifier = Modifier.consumeWindowInsets(innerPadding)
+                    )
+                }
+                composable(route = AppDestination.EditProfile.route) {
+                    val editProfileViewModel: EditProfileViewModel = hiltViewModel()
+                    EditProfileView(
+                        viewModel = editProfileViewModel,
+                        onSaved = { navController.popBackStack() },
+                        onCancel = { navController.popBackStack() }
                     )
                 }
                 composable(route = AppDestination.Register.route) {
@@ -640,6 +713,8 @@ fun AppNavigation(
                         val profileViewModel: ProfileViewModel = hiltViewModel()
 
                         ProfileView(
+                            onFollowersClick = { id -> onFollowListClick(id, FollowListSection.FOLLOWERS) },
+                            onFollowingClick = { id -> onFollowListClick(id, FollowListSection.FOLLOWING) },
                             onProfileClick = onProfileClick,
                             viewModel = profileViewModel,
                             profileId = profileId,

@@ -1,6 +1,14 @@
 package com.example.devicersapp.data.injection
 
+import com.example.devicersapp.data.datasource.FollowListRemoteDataSource
+import com.example.devicersapp.data.datasource.implementations.FollowListFirestoreDataSource
+import com.example.devicersapp.data.datasource.ProfileRemoteDataSource
+import com.example.devicersapp.data.datasource.implementations.ProfileFirestoreDataSource
+import com.example.devicersapp.data.repository.EditProfileRepository
+import com.example.devicersapp.data.repository.FirebaseEditProfileRepository
 import com.google.firebase.Firebase
+import com.example.devicersapp.data.datasource.ArticleReviewsRemoteDataSource
+import com.example.devicersapp.data.datasource.implementations.ArticleReviewsFirestoreDataSourceImplementation
 import com.example.devicersapp.data.datasource.OwnProfileRemoteDataSource
 import com.example.devicersapp.data.datasource.implementations.OwnProfileFirestoreDataSourceImplementation
 import com.example.devicersapp.data.datasource.UserProfileRemoteDataSource
@@ -51,6 +59,24 @@ object FirebaseHiltModule {
     fun provideOwnProfileSource(
         implementation: OwnProfileFirestoreDataSourceImplementation
     ): OwnProfileRemoteDataSource = implementation
+
+    /** Conecta Home, Product y Review con Firestore sin cambiar los destinos de las demás pantallas. */
+    @Provides
+    fun provideArticleReviewsSource(
+        implementation: ArticleReviewsFirestoreDataSourceImplementation
+    ): ArticleReviewsRemoteDataSource = implementation
+
+    /** Conecta el perfil público únicamente con consultas de Firestore. */
+    @Provides
+    fun providePublicProfiles(implementation: ProfileFirestoreDataSource): ProfileRemoteDataSource = implementation
+
+    /** Entrega la edición del perfil de sesión respaldada por Firebase. */
+    @Provides
+    fun provideProfileEditor(implementation: FirebaseEditProfileRepository): EditProfileRepository = implementation
+
+    /** Provee exclusivamente Firestore a la lista de seguidores y seguidos. */
+    @Provides
+    fun provideFollowList(implementation: FollowListFirestoreDataSource): FollowListRemoteDataSource = implementation
 
     @Provides
     @Singleton

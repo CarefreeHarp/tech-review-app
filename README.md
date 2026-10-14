@@ -85,8 +85,20 @@ Sign-in and startup restoration load the linked profile before entering Home. Ac
 
 New profiles default to `is_active: true`. `createdAt` and `updatedAt` receive the same server timestamp in the creation transaction; later profile changes update only `updatedAt`.
 
-User-specific queries, review creation and ownership checks use the numeric ID of the current session profile. Navigation and avatars use the same identity; there is no fixed user ID or fallback to user 1. The own-profile identity comes from Firestore. Feature data sources that still use Retrofit continue to call the REST API with this session ID.
+User-specific queries, review creation and ownership checks use the numeric ID of the current session profile. Navigation and avatars use the same identity; there is no fixed user ID or fallback to user 1. The own-profile identity comes from Firestore. Public Profile also reads the user, active review cards, follower/following counts, and following relationship directly from Firestore. Feature data sources outside these profile screens that still use Retrofit continue to call the REST API with this session ID.
 
 OwnProfile refreshes `users/{session.userId}` directly from the Firestore server and validates the profile UID before updating the shared session. `OwnProfileRepository` loads its active review cards from the flat `reviews` documents and obtains follower/following counts from Firestore aggregations. These queries use the current session ID and do not call the REST backend. Review removal completed by OwnProfile checks ownership in a Firestore transaction and sets `is_active` to `false`.
 
 Every profile photo is rendered by the shared `ProfileAvatar` using Coil `AsyncImage`. Firestore's `users/{id}.profile_image_url` is the photo source for Home, public profiles, search results, review authors, comments, activity and the current session. `UsersRepository` replaces API photo values with Firestore values; author photos are fetched in batches of up to ten distinct IDs. Missing profiles and empty photos resolve to `no_pfp_icon`, while image-download failures display `pfp_error`. Firebase Auth photos and local drawable names are not used as display fallbacks.
+
+### Profile editing
+
+The session numeric ID determines whether a profile opens OwnProfile or public Profile. OwnProfile exposes Edit profile in the same header position as the public profile Follow button. Its top-right options button opens a sidebar from the right with Edit profile, Saved reviews and Sign out. Editing and saved reviews each have two entry points. The photo pencil appears only inside EditProfile.
+
+EditProfile uses the session profile without receiving a user ID through navigation. It loads username, biography, email and photo from Firestore; username and biography are editable, while email remains read-only. Selecting a photo only updates the local draft. Save uploads a selected photo to Firebase Storage and updates the profile fields and photo URL in Firestore, then refreshes the shared session so returning to OwnProfile shows the changes. Cancel does not write the draft. Save failures retain the draft. This editor does not block or replace repeated save requests.
+
+### Follow lists and preferences
+
+Followers and Following metrics in both public Profile and OwnProfile open FollowList with the displayed profile numeric ID and the selected section. The screen reads matching relations from Firestore follows, fetches related active users in batches, and renders a LazyColumn. Its highlighted tabs switch the query for the same profile. The public Follow button provides enabled press feedback without writing a follow relationship.
+
+The OwnProfile sidebar also opens UserPreferences. This screen displays the Preferences header with back navigation, a divider, and a placeholder message. It has no preference controls, user arguments, session dependency or remote data source.

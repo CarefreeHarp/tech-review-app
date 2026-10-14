@@ -8,5 +8,8 @@ data class RequestProductState(
     val releaseDate: String = "",
     val isReleaseDateValid: Boolean = true,
     val showReleaseDateError: Boolean = false,
-    val canSendRequest: Boolean = false
+    val canSendRequest: Boolean = false,
+    val submitting: Boolean = false,
+    val submitted: Boolean = false,
+    val error: String? = null
 )

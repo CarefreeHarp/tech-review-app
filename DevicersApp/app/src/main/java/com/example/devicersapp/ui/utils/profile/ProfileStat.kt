@@ -1,5 +1,7 @@
 package com.example.devicersapp.ui.utils.profile
 
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -22,14 +24,16 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
  *
  * @param stat Valor y etiqueta de la estadística.
  * @param modifier Modificador aplicado a la estadística.
+ * @param onClick Acción opcional para abrir la lista correspondiente.
  */
 @Composable
 fun ProfileStat(
     stat: ProfileStatContent,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.then(onClick?.let { Modifier.clickable(role = Role.Button, onClick = it) } ?: Modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // El número va en negrita porque es el dato que se compara entre perfiles.
