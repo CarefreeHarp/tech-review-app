@@ -17,17 +17,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -50,7 +46,7 @@ import com.example.devicersapp.ui.utils.profile.ProfileAvatar
  * @param userHandleResId Recurso usado como alias de respaldo para perfiles locales.
  * @param userHandle Alias dinámico del perfil autenticado que tiene prioridad sobre el recurso local.
  * @param onBackClick Acción solicitada al regresar desde el perfil.
- * @param onSignOutClick Acción solicitada al cerrar la sesión desde el menú.
+ * @param onOptionsClick Solicita abrir la barra lateral del perfil.
  * @param modifier Modificador aplicado al contenedor de la barra.
  * @param userId Identificador del usuario al que conduce el alias.
  */
@@ -59,16 +55,16 @@ fun TopBar1(
     @StringRes userHandleResId: Int? = null,
     userHandle: String? = null,
     onBackClick: () -> Unit = {},
-    onSignOutClick: () -> Unit = {},
+    onOptionsClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     userId: String? = null,
     onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
-    var isMenuExpanded by remember { mutableStateOf(false) }
-    Column() {
+    val optionsDescription = stringResource(R.string.profile_options)
+    Column(modifier = modifier) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
                 .statusBarsPadding()
@@ -100,7 +96,8 @@ fun TopBar1(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
             ) {
-                IconButton(onClick = { isMenuExpanded = true }) {
+                IconButton(onClick = onOptionsClick,
+                    modifier = Modifier.semantics { contentDescription = optionsDescription }) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         repeat(3) { index ->
                             Box(
@@ -114,20 +111,7 @@ fun TopBar1(
                         }
                     }
                 }
-                DropdownMenu(
-                    expanded = isMenuExpanded,
-                    onDismissRequest = { isMenuExpanded = false },
-                    shape = RoundedCornerShape(0.dp),
-                    containerColor = colors.surface
-                ) {
-                    DropdownMenuItem(
-                        text = { Text(text = stringResource(R.string.sign_out)) },
-                        onClick = {
-                            isMenuExpanded = false
-                            onSignOutClick()
-                        }
-                    )
-                }
+
             }
         }
         HorizontalDivider(

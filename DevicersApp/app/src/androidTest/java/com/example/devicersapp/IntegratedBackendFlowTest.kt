@@ -59,7 +59,7 @@ class IntegratedBackendFlowTest {
         try {
             withContext(Dispatchers.Main) {
                 withTimeout(30000) {
-                    val profile = ProfileViewModel(users, reviews, contentProducts, contentComments, contentReviewLikes, contentCommentLikes, follows, session).also { store.put("profile", it) }
+                    val profile = ProfileViewModel(fixturePublicProfiles(users, reviews, contentProducts, contentComments, contentReviewLikes, contentCommentLikes, follows), session).also { store.put("profile", it) }
                     profile.loadProfile("2")
                     val selected = profile.uiState.first { !it.loading }
                     assertNull(selected.error)
@@ -114,7 +114,7 @@ class IntegratedBackendFlowTest {
                     val auth = AuthRepository(AuthRemoteDataSource(com.google.firebase.auth.FirebaseAuth.getInstance()),
                         androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext,
                         session)
-                    val ownProfile = OwnProfileViewModel(StorageRepository(StorageRemoteDataSource(com.google.firebase.storage.FirebaseStorage.getInstance()), auth), fixtureOwnProfileRepository(session, reviews, contentProducts, follows), androidx.lifecycle.SavedStateHandle(), session)
+                    val ownProfile = OwnProfileViewModel(fixtureOwnProfileRepository(session, reviews, contentProducts, follows), androidx.lifecycle.SavedStateHandle(), session)
                         .also { store.put("own-profile", it) }
                     ownProfile.deleteReviewAndLoadProfile(created.id)
                     val deleted = ownProfile.uiState.first { !it.loading }
@@ -140,7 +140,7 @@ private fun fixtureSession(profile: com.example.devicersapp.ui.models.UserInfo):
         override suspend fun getById(userId: Int) = profile.also { check(it.id == userId) }
         override suspend fun findByFirebaseUid(firebaseUid: String) = profile
         override suspend fun createIfMissing(firebaseUid: String, email: String, username: String, profileImageUrl: String?) = profile
-        override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?) = profile
+        override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?, biography: String?) = profile
     }
     SessionRepository(source).also { it.loadProfile("fixture-uid", profile.email, profile.username, profile.profileImageUrl) }
 }
@@ -230,3 +230,24 @@ private fun fixtureArticleReviewsRepository(
 private val fixtureProfileImages = com.example.devicersapp.data.datasource.ProfileImagesRemoteDataSource { ids ->
     ids.associateWith { id -> "https://example.com/firestore-avatar-$id.png" }
 }
+
+/** Adapta los datos existentes al contrato del perfil migrado sin introducir red en las unitarias. */
+private fun fixturePublicProfiles(
+    users: UsersRepository,
+    reviews: ReviewRepository,
+    products: ProductRepository,
+    comments: CommentRepository,
+    likes: ReviewLikeRepository,
+    commentLikes: CommentLikeRepository,
+    follows: FollowRepository
+) = ProfileRepository(object : com.example.devicersapp.data.datasource.ProfileRemoteDataSource {
+    override suspend fun getUser(userId: Int) = users.getUserById(userId)
+    override suspend fun getReviews(userId: Int) = products.getReviewContents(
+        reviews.getReviewsByUser(userId).getOrThrow(), users, comments, likes, commentLikes)
+    override suspend fun getFollowCounts(userId: Int): Pair<Int, Int> {
+        val relations = follows.getFollows()
+        return relations.count { it.followedId == userId } to relations.count { it.followerId == userId }
+    }
+    override suspend fun isFollowing(followerId: Int, followedId: Int) =
+        follows.getFollows().any { it.followerId == followerId && it.followedId == followedId }
+})

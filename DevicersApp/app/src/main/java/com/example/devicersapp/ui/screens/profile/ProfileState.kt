@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.screens.profile
 
-import android.net.Uri
+import androidx.annotation.StringRes
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.models.ReviewContent
 
@@ -9,6 +9,6 @@ data class ProfileState(
     val profile: ProfileContent? = null,
     val reviews: List<ReviewContent> = emptyList(),
     val loading: Boolean = false,
-    val error: String? = null,
+    @param:StringRes val error: Int? = null,
     val isFollowed: Boolean = false
 )

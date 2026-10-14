@@ -2,7 +2,8 @@ package com.example.devicersapp.ui.utils.tabs
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -88,7 +89,7 @@ fun SectionTab(
 ) {
     val colors = LocalDevicersColors.current
     Column(
-        modifier = modifier.clickable { onClick() },
+        modifier = modifier.selectable(selected = isSelected, role = Role.Tab, onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

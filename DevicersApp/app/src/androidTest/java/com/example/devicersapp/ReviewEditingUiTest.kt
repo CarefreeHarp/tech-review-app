@@ -124,7 +124,7 @@ class ReviewEditingUiTest {
         }
         render {
             OwnProfileViewContent(state = OwnProfileState(loading = true, deleting = true),
-                onSavedClick = {}, onReviewClick = {}, onEditProfileClick = {}, onEditAvatarClick = {})
+                onSavedClick = {}, onReviewClick = {})
         }
         render {
             EditReviewViewContent(state = EditReviewState(loading = true, canEdit = true),

@@ -128,7 +128,7 @@ class LoadingSkeletonUiTest {
                 DevicersAppTheme {
                     OwnProfileViewContent(state = OwnProfileState(loading = true),
                         onSavedClick = { savedClicks++ }, onReviewClick = {},
-                        onEditProfileClick = {}, onEditAvatarClick = {}, modifier = Modifier.fillMaxSize())
+                        modifier = Modifier.fillMaxSize())
                 }
             }
         }
@@ -205,7 +205,7 @@ class LoadingSkeletonUiTest {
             ProfileViewContent(ProfileState(loading = true), {}, {}, modifier = modifier)
         },
         LoadingScreen("own_profile", 1) { modifier ->
-            OwnProfileViewContent(OwnProfileState(loading = true), {}, {}, {}, {}, modifier = modifier)
+            OwnProfileViewContent(OwnProfileState(loading = true), {}, {}, modifier = modifier)
         },
         LoadingScreen("profile_saved_reviews", 1) { modifier ->
             ProfileSavedReviewsViewContent(ProfileSavedReviewsState(loading = true), {}, {}, {}, modifier = modifier)

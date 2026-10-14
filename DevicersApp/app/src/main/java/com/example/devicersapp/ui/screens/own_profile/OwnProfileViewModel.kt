@@ -1,9 +1,7 @@
 package com.example.devicersapp.ui.screens.own_profile
 
 import com.example.devicersapp.data.repository.SessionRepository
-import com.example.devicersapp.data.repository.StorageRepository
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -15,13 +13,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /** Consulta el perfil en Firestore mediante el ID de la sesión actual. */
 @HiltViewModel
 class OwnProfileViewModel @Inject constructor(
-    private val storageRepository: StorageRepository,
     private val ownProfileRepository: OwnProfileRepository,
     private val savedStateHandle: SavedStateHandle,
     private val session: SessionRepository
@@ -33,6 +32,19 @@ class OwnProfileViewModel @Inject constructor(
     init {
         val deleteReviewId = savedStateHandle.get<Int>("deleteReviewId")?.takeIf { it > 0 }
         if (deleteReviewId != null) deleteReviewAndLoadProfile(deleteReviewId) else loadProfile()
+        viewModelScope.launch {
+            // La edición publica el perfil actualizado; se refleja al volver sin reiniciar la pantalla.
+            session.currentProfile.drop(1).filterNotNull().collect { profile ->
+                _uiState.update { current ->
+                    if (current.userId != profile.id.toString()) current else current.copy(
+                        displayName = profile.username, email = profile.email, profileImageUrl = profile.profileImageUrl,
+                        profile = current.profile?.copy(username = profile.username,
+                            biography = profile.biography.orEmpty(), imageUrl = profile.profileImageUrl),
+                        reviews = current.reviews.map { it.copy(authorName = profile.username, authorImageUrl = profile.profileImageUrl) }
+                    )
+                }
+            }
+        }
     }
 
     /** Refresca las reseñas creadas, la biografía y los conteos del usuario de la sesión actual. */
@@ -109,13 +121,4 @@ class OwnProfileViewModel @Inject constructor(
         }
     }
 
-    /** Sube la imagen seleccionada a Firebase Storage y actualiza su URL al completarse. */
-    fun uploadImageToFirebase(uri: Uri) {
-        viewModelScope.launch {
-            val result = storageRepository.uploadProfileImage(uri)
-            if (result.isSuccess) {
-                _uiState.update { it.copy(profileImageUrl = result.getOrNull()) }
-            }
-        }
-    }
 }

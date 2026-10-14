@@ -209,7 +209,7 @@ class DiscoveryFlowsTest {
             override suspend fun getById(userId: Int) = profile
             override suspend fun findByFirebaseUid(firebaseUid: String) = profile
             override suspend fun createIfMissing(firebaseUid: String, email: String, username: String, profileImageUrl: String?) = profile
-            override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?) = profile
+            override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?, biography: String?) = profile
         }
         return SessionRepository(source).also { it.loadProfile("uid-1", "", "user1", null) }
     }

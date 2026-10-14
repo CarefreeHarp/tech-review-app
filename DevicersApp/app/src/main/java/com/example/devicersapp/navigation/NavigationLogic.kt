@@ -113,6 +113,15 @@ object NavigationLogic {
                 topBarNumber = 2
             )
 
+        AppDestination.FollowList.routeWithArguments ->
+            NavigationUiConfiguration(topBarNumber = 13)
+
+        AppDestination.UserPreferences.route ->
+            NavigationUiConfiguration()
+
+        AppDestination.EditProfile.route ->
+            NavigationUiConfiguration(topBarNumber = 12)
+
         "${AppDestination.EditReview.route}/{reviewId}" ->
             NavigationUiConfiguration(topBarNumber = 11)
 

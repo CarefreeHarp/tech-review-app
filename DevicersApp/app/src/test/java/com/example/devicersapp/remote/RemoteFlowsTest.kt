@@ -25,7 +25,7 @@ class RemoteFlowsTest {
             override suspend fun getById(userId: Int) = profile.also { check(it.id == userId) }
             override suspend fun findByFirebaseUid(firebaseUid: String) = profile
             override suspend fun createIfMissing(firebaseUid: String, email: String, username: String, profileImageUrl: String?) = profile
-            override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?) = profile
+            override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?, biography: String?) = profile
         }
         SessionRepository(source).also { it.loadProfile("fixture-uid", profile.email, profile.username, profile.profileImageUrl) }
     }
@@ -137,7 +137,7 @@ class RemoteFlowsTest {
     @Test
     fun profileOnlyShowsSelectedUsersReviews() =
         runTest(dispatcher) {
-            val vm = ProfileViewModel(UsersRepository(FakeUsers(), fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, follows, session)
+            val vm = ProfileViewModel(fixturePublicProfiles(UsersRepository(FakeUsers(), fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, follows), session)
             source.records = listOf(review(1, 2), review(2, 1))
             vm.loadProfile("2")
             advanceUntilIdle()
@@ -293,7 +293,7 @@ class RemoteFlowsTest {
         source.records = listOf(review(10, 2))
         source.likes = listOf(ReviewLikeDto(1, 1, 10))
         source.comments = listOf(CommentDto(20, 10, 1, null, "API comment", true, "", ""))
-        val profile = ProfileViewModel(UsersRepository(FakeUsers(), fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, follows, session)
+        val profile = ProfileViewModel(fixturePublicProfiles(UsersRepository(FakeUsers(), fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, follows), session)
         profile.loadProfile("2")
         advanceUntilIdle()
         assertEquals(1, profile.uiState.value.reviews.single().likes)
@@ -325,7 +325,7 @@ class RemoteFlowsTest {
     @Test
     fun invalidProfileDoesNotFallBackToLocalUser() =
         runTest(dispatcher) {
-            val vm = ProfileViewModel(UsersRepository(FakeUsers(), fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, follows, session)
+            val vm = ProfileViewModel(fixturePublicProfiles(UsersRepository(FakeUsers(), fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, follows), session)
             vm.loadProfile("local_user")
             assertNull(vm.uiState.value.profile)
             assertNotNull(vm.uiState.value.error)
@@ -345,7 +345,7 @@ class RemoteFlowsTest {
                         return user(userId)
                     }
                 }
-            val vm = ProfileViewModel(UsersRepository(users, fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, FollowRepository(users), session)
+            val vm = ProfileViewModel(fixturePublicProfiles(UsersRepository(users, fixtureProfileImages), repository, products, contentComments, contentReviewLikes, contentCommentLikes, FollowRepository(users)), session)
             vm.loadProfile("1")
             runCurrent()
             vm.loadProfile("2")
@@ -673,3 +673,24 @@ private class ApiArticleReviewsSource(
 private val fixtureProfileImages = com.example.devicersapp.data.datasource.ProfileImagesRemoteDataSource { ids ->
     ids.associateWith { id -> "https://example.com/firestore-avatar-$id.png" }
 }
+
+/** Adapta los datos existentes al contrato del perfil migrado sin introducir red en las unitarias. */
+private fun fixturePublicProfiles(
+    users: UsersRepository,
+    reviews: ReviewRepository,
+    products: ProductRepository,
+    comments: CommentRepository,
+    likes: ReviewLikeRepository,
+    commentLikes: CommentLikeRepository,
+    follows: FollowRepository
+) = ProfileRepository(object : ProfileRemoteDataSource {
+    override suspend fun getUser(userId: Int) = users.getUserById(userId)
+    override suspend fun getReviews(userId: Int) = products.getReviewContents(
+        reviews.getReviewsByUser(userId).getOrThrow(), users, comments, likes, commentLikes)
+    override suspend fun getFollowCounts(userId: Int): Pair<Int, Int> {
+        val relations = follows.getFollows()
+        return relations.count { it.followedId == userId } to relations.count { it.followerId == userId }
+    }
+    override suspend fun isFollowing(followerId: Int, followedId: Int) =
+        follows.getFollows().any { it.followerId == followerId && it.followedId == followedId }
+})

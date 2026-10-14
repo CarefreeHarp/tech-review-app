@@ -55,7 +55,7 @@ class OwnProfileDeletionUiTest {
                             val auth = AuthRepository(AuthRemoteDataSource(FirebaseAuth.getInstance()),
                                 compose.activity.applicationContext,
                                 session)
-                            profile.value = OwnProfileViewModel(StorageRepository(StorageRemoteDataSource(FirebaseStorage.getInstance()), auth), fixtureOwnProfileRepository(session, repositories, contentProducts, FollowRepository(api)), SavedStateHandle(mapOf("deleteReviewId" to id)), session)
+                            profile.value = OwnProfileViewModel(fixtureOwnProfileRepository(session, repositories, contentProducts, FollowRepository(api)), SavedStateHandle(mapOf("deleteReviewId" to id)), session)
                                 .also { store.put("profile", it) }
                             detailStore.clear()
                         })
@@ -108,7 +108,7 @@ class OwnProfileDeletionUiTest {
         compose.runOnUiThread {
             val auth = AuthRepository(AuthRemoteDataSource(FirebaseAuth.getInstance()), compose.activity.applicationContext,
                 session)
-            profile = OwnProfileViewModel(StorageRepository(StorageRemoteDataSource(FirebaseStorage.getInstance()), auth), fixtureOwnProfileRepository(session, repositories, contentProducts, FollowRepository(api)), SavedStateHandle(mapOf("deleteReviewId" to 42)), session).also { store.put("profile", it) }
+            profile = OwnProfileViewModel(fixtureOwnProfileRepository(session, repositories, contentProducts, FollowRepository(api)), SavedStateHandle(mapOf("deleteReviewId" to 42)), session).also { store.put("profile", it) }
             compose.activity.setContent { DevicersAppTheme { OwnProfileView(viewModel = profile) } }
         }
         try {
@@ -162,7 +162,7 @@ private fun fixtureSession(): SessionRepository = kotlinx.coroutines.runBlocking
         override suspend fun getById(userId: Int) = profile.also { check(it.id == userId) }
         override suspend fun findByFirebaseUid(firebaseUid: String) = profile
         override suspend fun createIfMissing(firebaseUid: String, email: String, username: String, profileImageUrl: String?) = profile
-        override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?) = profile
+        override suspend fun updateProfile(userId: Int, firebaseUid: String, username: String?, profileImageUrl: String?, biography: String?) = profile
     }
     SessionRepository(source).also { it.loadProfile("fixture-uid", profile.email, profile.username, profile.profileImageUrl) }
 }

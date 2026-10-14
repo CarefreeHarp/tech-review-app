@@ -18,11 +18,12 @@ interface UserProfileRemoteDataSource {
         profileImageUrl: String?
     ): UserInfo
 
-    /** Actualiza únicamente el nombre o la imagen del propietario indicado. */
+    /** Actualiza los campos editables del perfil del propietario indicado. */
     suspend fun updateProfile(
         userId: Int,
         firebaseUid: String,
         username: String? = null,
-        profileImageUrl: String? = null
+        profileImageUrl: String? = null,
+        biography: String? = null
     ): UserInfo
 }

@@ -1,5 +1,10 @@
 package com.example.devicersapp.ui.utils.scaffold
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import com.example.devicersapp.ui.utils.profile.ProfileOptionsContent
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,6 +45,9 @@ import kotlinx.coroutines.launch
  * @param onNavigationItemClick Acción solicitada al seleccionar un elemento de navegación.
  * @param onTopBarBackClick Acción solicitada por una barra superior con regreso interactivo.
  * @param onSignOutClick Acción solicitada al cerrar sesión.
+ * @param onEditProfileClick Edición habilitada por navegación solo para el perfil de sesión.
+ * @param onSavedReviewsClick Abre los guardados desde la barra lateral del perfil propio.
+ * @param onUserPreferencesClick Abre la pantalla independiente de preferencias.
  * @param content Contenido principal de la pantalla.
  * @param topBarUserId Identificador del usuario mostrado en la barra de perfil.
  */
@@ -57,6 +65,9 @@ fun DevicersScaffold(
     onNavigationItemClick: (String) -> Unit = {},
     onTopBarBackClick: () -> Unit = {},
     onSignOutClick: () -> Unit = {},
+    onEditProfileClick: (() -> Unit)? = null,
+    onSavedReviewsClick: (() -> Unit)? = null,
+    onUserPreferencesClick: (() -> Unit)? = null,
     onProfileClick: (String) -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
@@ -68,96 +79,134 @@ fun DevicersScaffold(
 
     val coroutineScope = rememberCoroutineScope()
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        gesturesEnabled = showDrawer,
-        drawerContent = {
-            DevicersDrawerContent(
-                selectedItem = selectedItem,
-                onItemClick = { route ->
-                    coroutineScope.launch {
-                        drawerState.close()
-                    }
-
-                    onNavigationItemClick(route)
-                },
-                onSignOutClick = {
-                    coroutineScope.launch {
-                        drawerState.close()
-                    }
-
-                    onSignOutClick()
-                }
-            )
-        }
-    ) {
-        Scaffold(
+    val profileDrawerState = rememberDrawerState(DrawerValue.Closed)
+    val layoutDirection = LocalLayoutDirection.current
+    BackHandler(enabled = profileDrawerState.isOpen) {
+        coroutineScope.launch { profileDrawerState.close() }
+    }
+    // La inversión se limita al contenedor del panel para abrirlo desde la derecha.
+    // El contenido de la aplicación conserva su dirección y su menú principal izquierdo.
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        ModalNavigationDrawer(
+            drawerState = profileDrawerState,
             modifier = modifier.fillMaxSize(),
-            containerColor = colors.background,
-            topBar = {
-                // Centraliza las variantes de encabezado para que
-                // las pantallas solo soliciten su número.
-                when (topBarNumber) {
-                    1 -> TopBar1(
-                        onProfileClick = onProfileClick,
-                        userHandleResId = topBarUserHandleResId,
-                        userHandle = topBarUserHandle,
-                        userId = topBarUserId,
-                        onBackClick = onTopBarBackClick,
-                        onSignOutClick = onSignOutClick
-                    )
-
-                    2 -> TopBar2(
-                        onBackClick = onTopBarBackClick
-                    )
-
-                    3 -> TopBar3(
-                        onBackClick = onTopBarBackClick
-                    )
-
-                    4 -> TopBar4(
-                        onBackClick = onTopBarBackClick
-                    )
-
-                    5 -> TopBar5()
-
-                    6 -> TopBar6(
-                        onBackClick = onTopBarBackClick
-                    )
-
-                    7 -> TitleTopBar(
-                        R.string.profile_search_results_title,
-                        onTopBarBackClick
-                    )
-
-                    8 -> TitleTopBar(
-                        R.string.found_products_title,
-                        onTopBarBackClick
-                    )
-
-                    9 -> TitleTopBar(
-                        R.string.request_product_title,
-                        onTopBarBackClick
-                    )
-
-                    11 -> TitleTopBar(R.string.edit_review_title, onTopBarBackClick)
-
-                    10 -> TopBar10(
-                        onProfileClick = onProfileClick,
-                        profileImageUrl = topBarProfileImageUrl
+            gesturesEnabled = profileDrawerState.isOpen,
+            scrimColor = colors.textPrimary.copy(alpha = 0.32f),
+            drawerContent = {
+                CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                    ProfileOptionsContent(
+                        onSignOutClick = { coroutineScope.launch { profileDrawerState.close(); onSignOutClick() } },
+                        onEditProfileClick = onEditProfileClick?.let { edit ->
+                            { coroutineScope.launch { profileDrawerState.close(); edit() }; Unit }
+                        },
+                        onSavedReviewsClick = onSavedReviewsClick?.let { saved ->
+                            { coroutineScope.launch { profileDrawerState.close(); saved() }; Unit }
+                        },
+                        onUserPreferencesClick = onUserPreferencesClick?.let { preferences ->
+                            { coroutineScope.launch { profileDrawerState.close(); preferences() }; Unit }
+                        }
                     )
                 }
-            },
-            bottomBar = {
-                if (showBottomBar) {
-                    BottomNavigationBar(
-                        selectedItem = selectedItem,
-                        onItemClick = onNavigationItemClick
+            }
+        ) {
+            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                ModalNavigationDrawer(
+                    drawerState = drawerState,
+                    gesturesEnabled = showDrawer,
+                    drawerContent = {
+                        DevicersDrawerContent(
+                            selectedItem = selectedItem,
+                            onItemClick = { route ->
+                                coroutineScope.launch {
+                                    drawerState.close()
+                                }
+
+                                onNavigationItemClick(route)
+                            },
+                            onSignOutClick = {
+                                coroutineScope.launch {
+                                    drawerState.close()
+                                }
+
+                                onSignOutClick()
+                            }
+                        )
+                    }
+                ) {
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        containerColor = colors.background,
+                        topBar = {
+                            // Centraliza las variantes de encabezado para que
+                            // las pantallas solo soliciten su número.
+                            when (topBarNumber) {
+                                1 -> TopBar1(
+                                    onProfileClick = onProfileClick,
+                                    userHandleResId = topBarUserHandleResId,
+                                    userHandle = topBarUserHandle,
+                                    userId = topBarUserId,
+                                    onBackClick = onTopBarBackClick,
+                                    onOptionsClick = { coroutineScope.launch { profileDrawerState.open() } }
+                                )
+
+                                2 -> TopBar2(
+                                    onBackClick = onTopBarBackClick
+                                )
+
+                                3 -> TopBar3(
+                                    onBackClick = onTopBarBackClick
+                                )
+
+                                4 -> TopBar4(
+                                    onBackClick = onTopBarBackClick
+                                )
+
+                                5 -> TopBar5()
+
+                                6 -> TopBar6(
+                                    onBackClick = onTopBarBackClick
+                                )
+
+                                7 -> TitleTopBar(
+                                    R.string.profile_search_results_title,
+                                    onTopBarBackClick
+                                )
+
+                                8 -> TitleTopBar(
+                                    R.string.found_products_title,
+                                    onTopBarBackClick
+                                )
+
+                                9 -> TitleTopBar(
+                                    R.string.request_product_title,
+                                    onTopBarBackClick
+                                )
+
+                                13 -> TitleTopBar(R.string.follow_list_title, onTopBarBackClick)
+
+                                12 -> TitleTopBar(R.string.profile_edit, onTopBarBackClick)
+
+                                11 -> TitleTopBar(R.string.edit_review_title, onTopBarBackClick)
+
+                                10 -> TopBar10(
+                                    onProfileClick = onProfileClick,
+                                    profileImageUrl = topBarProfileImageUrl
+                                )
+                            }
+                        },
+                        bottomBar = {
+                            if (showBottomBar) {
+                                BottomNavigationBar(
+                                    selectedItem = selectedItem,
+                                    onItemClick = onNavigationItemClick
+                                )
+                            }
+                        },
+                        content = content
                     )
                 }
-            },
-            content = content
-        )
+            }
+        }
     }
 }
 
