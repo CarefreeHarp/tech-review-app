@@ -19,6 +19,8 @@ class ReviewFirestoreDataSourceImplementation @Inject constructor(
     private val reviews = firestore.collection("reviews")
 
     override suspend fun getReviews(): List<ReviewDto> {
+        println("AAAAAA FIRESTORE REVIEWS")
+
         return reviews
             .get(Source.SERVER)
             .await()
@@ -78,7 +80,13 @@ class ReviewFirestoreDataSourceImplementation @Inject constructor(
         request: CreateReviewRequestDto
     ): ReviewDto {
 
-        val newDocument = reviews.document()
+        require(request.rating in 1..5) {
+            "La calificación debe estar entre 1 y 5"
+        }
+
+        require(request.body.isNotBlank()) {
+            "La reseña no puede estar vacía"
+        }
 
         val user = firestore
             .collection("users")
@@ -86,41 +94,81 @@ class ReviewFirestoreDataSourceImplementation @Inject constructor(
             .get(Source.SERVER)
             .await()
 
+        require(user.exists()) {
+            "No se encontró el usuario"
+        }
+
         val article = firestore
             .collection("articles")
             .document(request.articleId.toString())
             .get(Source.SERVER)
             .await()
 
-        val now = com.google.firebase.Timestamp.now()
+        require(article.exists()) {
+            "No se encontró el artículo"
+        }
 
-        val data = mapOf(
-            "id" to newDocument.id.toInt(),
-            "user_id" to request.userId,
-            "article_id" to request.articleId,
-            "rating" to request.rating,
-            "title" to request.title,
-            "body" to request.body,
-            "is_active" to true,
-            "createdAt" to now,
-            "updatedAt" to now,
-
-            "user_username" to user.getString("username"),
-
-            "article_name" to article.getString("name"),
-            "article_model" to article.getString("model"),
-            "article_description" to article.getString("description"),
-            "article_image_url" to article.getString("image_url"),
-            "article_brand_id" to article.getLong("brand_id"),
-            "article_category_id" to article.getLong("category_id")
-        )
-
-        newDocument.set(data).await()
-
-        return newDocument
+        val maxExistingId = reviews
             .get(Source.SERVER)
             .await()
-            .toReviewDto()
+            .documents
+            .mapNotNull { it.id.toIntOrNull() }
+            .maxOrNull() ?: 0
+
+        val counterRef = firestore
+            .collection("counters")
+            .document("reviews")
+
+        val newReviewId = firestore.runTransaction { transaction ->
+
+            val counter = transaction.get(counterRef)
+
+            val nextId = maxOf(
+                maxExistingId + 1,
+                counter.getLong("next_id")?.toInt() ?: 1
+            )
+
+            val now = com.google.firebase.Timestamp.now()
+
+            val data = mapOf(
+                "id" to nextId,
+                "user_id" to request.userId,
+                "article_id" to request.articleId,
+                "rating" to request.rating,
+                "title" to request.title,
+                "body" to request.body,
+                "is_active" to true,
+                "createdAt" to now,
+                "updatedAt" to now,
+
+                "user_username" to user.getString("username"),
+
+                "article_name" to article.getString("name"),
+                "article_model" to article.getString("model"),
+                "article_description" to article.getString("description"),
+                "article_image_url" to article.getString("image_url"),
+                "article_brand_id" to article.getLong("brand_id"),
+                "article_brand_name" to article.getString("brand_name"),
+                "article_category_id" to article.getLong("category_id"),
+                "article_category_name" to article.getString("category_name"),
+                "article_specifications" to article.get("specifications"),
+                "article_release_date" to article.get("release_date")
+            )
+
+            transaction.set(
+                reviews.document(nextId.toString()),
+                data
+            )
+
+            transaction.set(
+                counterRef,
+                mapOf("next_id" to nextId + 1)
+            )
+
+            nextId
+        }.await()
+
+        return getReviewById(newReviewId)
     }
 
     override suspend fun updateReview(

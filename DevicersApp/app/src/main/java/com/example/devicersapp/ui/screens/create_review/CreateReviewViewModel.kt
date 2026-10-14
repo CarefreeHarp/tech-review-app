@@ -1,12 +1,10 @@
-package com.example.devicersapp.ui.screens.create_review
 
-import com.example.devicersapp.data.repository.CategoryRepository
+package com.example.devicersapp.ui.screens.create_review
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.ui.models.ProductInfo
 import com.example.devicersapp.R
-import com.example.devicersapp.data.dto.toCategoryContent
 import com.example.devicersapp.ui.models.ProductCategoryContent
 import com.example.devicersapp.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +21,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class CreateReviewViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
-    private val categoryRepository: CategoryRepository
+    private val productRepository: ProductRepository
 ) : ViewModel() {
 
     private val _uiState =
@@ -51,23 +48,26 @@ class CreateReviewViewModel @Inject constructor(
                 )
             }
 
-            val result = productRepository.getProducts().mapCatching { products ->
-                products to categoryRepository.getCategories().getOrThrow()
-            }
+            val result = productRepository.getProducts()
 
             if (result.isSuccess) {
 
-                val (products, categories) = result.getOrThrow()
+                val products = result.getOrThrow()
 
                 _uiState.update { currentState ->
                     val loadedState = currentState.copy(
-                        categories = listOf(ProductCategoryContent("all", R.string.all)) + categories.map { it.toCategoryContent() },
+                        categories = listOf(
+                            ProductCategoryContent("all", R.string.all)
+                        ),
                         products = products,
                         isLoading = false,
                         errorMessage = null
                     )
+
                     // La búsqueda sigue disponible durante la carga; conserva la consulta más reciente.
-                    loadedState.copy(filteredProducts = filterProducts(loadedState))
+                    loadedState.copy(
+                        filteredProducts = filterProducts(loadedState)
+                    )
                 }
 
             } else {
@@ -144,12 +144,18 @@ class CreateReviewViewModel @Inject constructor(
 
         return state.products.filter { product ->
 
-            val parents = state.categories.associate { it.id to it.parentCategoryId }
+            val parents = state.categories.associate {
+                it.id to it.parentCategoryId
+            }
+
             var categoryId: String? = product.categoryId.toString()
             val visited = mutableSetOf<String>()
             var matchesCategory = state.selectedCategoryId == "all"
+
             while (categoryId != null && visited.add(categoryId)) {
-                if (categoryId == state.selectedCategoryId) matchesCategory = true
+                if (categoryId == state.selectedCategoryId) {
+                    matchesCategory = true
+                }
                 categoryId = parents[categoryId]
             }
 
