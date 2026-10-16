@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.ui.utils.images.localImageResIdFor
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
@@ -88,7 +87,7 @@ fun ProfileProductCard(
 fun ProfileProductCardPreview() {
     DevicersAppTheme {
         ProfileProductCard(
-            review = LocalReviewProvider.reviews.first(),
+            review = com.example.devicersapp.ui.models.ReviewContent(authorId = "1", productNameResId = R.string.product_title, productImageResId = R.drawable.no_pfp_icon, productMetadataResId = R.string.product_brand_label, rating = 4, textResId = R.string.review_reply_text_two, likes = 0),
             modifier = Modifier.padding(16.dp)
         )
     }

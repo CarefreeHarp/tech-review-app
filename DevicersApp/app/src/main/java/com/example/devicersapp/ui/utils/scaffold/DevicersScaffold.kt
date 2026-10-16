@@ -190,7 +190,8 @@ fun DevicersScaffold(
 
                                 10 -> TopBar10(
                                     onProfileClick = onProfileClick,
-                                    profileImageUrl = topBarProfileImageUrl
+                                    profileImageUrl = topBarProfileImageUrl,
+                                    profileId = topBarUserId
                                 )
                             }
                         },

@@ -1,8 +1,8 @@
 package com.example.devicersapp.ui.utils.profile
 
 
-import com.example.devicersapp.ui.session.LocalSessionState
 
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.clickable
@@ -27,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.ui.models.ProfileContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 
@@ -89,10 +88,7 @@ fun ProfileHeader(
         if (showDisplayName) {
             Text(
                 modifier = Modifier.clickable { onProfileClick(profile.id) },
-                text = LocalSessionState.current.userNameFor(
-                    profile.id.toIntOrNull(),
-                    displayName.ifBlank { profile.username ?: stringResource(profile.handleResId) }
-                ),
+                text = (displayName.ifBlank { profile.username ?: stringResource(profile.handleResId) }).asUserHandle(),
                 style = MaterialTheme.typography.titleMedium,
                 color = colors.textPrimary
             )
@@ -166,7 +162,7 @@ fun ProfileHeader(
 fun ProfileHeaderPreview() {
     DevicersAppTheme {
         ProfileHeader(
-            profile = LocalProfileProvider.profile,
+            profile = com.example.devicersapp.ui.models.ProfileContent(id = "1", avatarResId = R.drawable.no_pfp_icon, handleResId = R.string.profile_handle, biographyResId = R.string.profile_biography, stats = emptyList()),
             actionLabelResId = R.string.profile_follow,
             actionEnabled = true,
             modifier = Modifier.padding(20.dp)

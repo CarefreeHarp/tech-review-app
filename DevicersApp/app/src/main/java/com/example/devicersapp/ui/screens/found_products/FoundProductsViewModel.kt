@@ -2,7 +2,10 @@ package com.example.devicersapp.ui.screens.found_products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.devicersapp.data.repository.DiscoveryRepository
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.CategoryRepository
+import com.example.devicersapp.data.repository.ReviewRepository
+import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProductInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -15,7 +18,11 @@ import java.time.Instant
 import javax.inject.Inject
 
 @HiltViewModel
-class FoundProductsViewModel @Inject constructor(private val repository: DiscoveryRepository) : ViewModel() {
+class FoundProductsViewModel @Inject constructor(
+    private val productRepository: ProductRepository,
+    private val categoryRepository: CategoryRepository,
+    private val reviewRepository: ReviewRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow(FoundProductsState())
     val uiState = _uiState.asStateFlow()
     private var products: List<ProductInfo> = emptyList()
@@ -27,18 +34,20 @@ class FoundProductsViewModel @Inject constructor(private val repository: Discove
         _uiState.update { it.copy(isLoading = true, searchText = productName, results = emptyList(), errorMessage = null) }
         loadJob = viewModelScope.launch {
             try {
-                val catalog = repository.getCatalog()
+                val categories = categoryRepository.getCategories()
+                val reviews = reviewRepository.getReviews().getOrThrow().filter { it.isActive }.groupBy { it.articleId }
+                val catalogProducts = productRepository.getProducts().getOrThrow().map { it.copy(reviews = reviews[it.id].orEmpty()) }
                 val requestedName = when (category) {
                     "cellphones" -> "Celulares"
                     "audio" -> "Audio"
                     "computers" -> "Computadores"
                     else -> category
                 }
-                val roots = catalog.categories.filter {
+                val roots = categories.filter {
                     it.name.equals(requestedName, true) || it.id.toString() == category
                 }.map { it.id }.toSet()
-                val parents = catalog.categories.associate { it.id to it.parentCategoryId }
-                val filtered = catalog.products.filter { product ->
+                val parents = categories.associate { it.id to it.parentCategoryId }
+                val filtered = catalogProducts.filter { product ->
                     var id: Int? = product.categoryId
                     val visited = mutableSetOf<Int>()
                     var matches = category == "all"
@@ -56,7 +65,7 @@ class FoundProductsViewModel @Inject constructor(private val repository: Discove
                 _uiState.update { it.copy(results = filterProducts(it.searchText), isLoading = false) }
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = "No se pudieron cargar los productos. Intenta nuevamente.") }
+                _uiState.update { it.copy(isLoading = false, errorMessage = R.string.catalog_load_error) }
             }
         }
     }

@@ -25,7 +25,7 @@ data class ProfileStatContent(
 /**
  * Representa una reseña que el perfil guardó para leer más adelante.
  *
- * @param reviewId Identificador de una reseña existente. Sus datos se consultan en el provider de reseñas.
+ * @param reviewId Identificador de una reseña existente. Sus datos se consultan mediante el repositorio de reseñas.
  */
 data class SavedReviewContent(
     val reviewId: Int

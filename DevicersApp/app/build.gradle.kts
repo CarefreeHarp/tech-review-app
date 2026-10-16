@@ -22,17 +22,12 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField(
             "String",
             "DEVICERS_API_BASE_URL",
             "\"${providers.gradleProperty("devicersApiBaseUrl").orElse("http://10.0.2.2:3000/").get()}\""
         )
-        buildConfigField(
-            "String",
-            "DEVICERS_TEST_START_DESTINATION",
-            "\"${providers.gradleProperty("devicersTestStartDestination").orElse("splash").get()}\""
-        )
+
     }
 
     buildTypes {
@@ -87,13 +82,5 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.okhttp.mockwebserver)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

@@ -10,4 +10,7 @@ data class CommentInfo(
     val isActive: Boolean,
     val createdAt: String,
     val updatedAt: String,
+    val userUsername: String? = null,
+    val userProfileImageUrl: String? = null,
+    val likesCount: Int = 0,
 )

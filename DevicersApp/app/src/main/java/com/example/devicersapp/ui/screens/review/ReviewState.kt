@@ -7,7 +7,7 @@ import com.example.devicersapp.ui.models.ReviewContent
 /** Representa el estado visible del detalle de una reseña. */
 data class ReviewState(
     val loading: Boolean = false,
-    val error: String? = null,
+    val error: Int? = null,
     val product: ProductContent? = null,
     val review: ReviewContent? = null,
     val isLocal: Boolean = false,

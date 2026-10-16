@@ -13,8 +13,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.runtime.remember
-import com.example.devicersapp.data.local.ProfilePreviewProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -126,36 +124,28 @@ fun ProfileViewContent(
     }
 }
 
-/** Previsualiza la vista raíz con un perfil local y sin conexión a Firebase. */
+/** Previsualiza el contenido sin autenticar usuarios ni consultar servicios remotos. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun ProfileViewPreview() {
     val username = stringResource(R.string.username_placeholder)
-    val biography = stringResource(R.string.profile_biography)
-    val email = stringResource(R.string.email_placeholder)
-    val provider = remember { ProfilePreviewProvider(username, biography, email) }
-    val viewModel = remember { ProfileViewModel(provider.publicProfile, provider.session) }
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
             topBarUserHandle = username) { padding ->
-            ProfileView(profileId = "1", viewModel = viewModel, modifier = Modifier.padding(padding))
+            ProfileViewContent(state = ProfileState(loading = true), onFollowClick = {}, onReviewClick = {}, modifier = Modifier.padding(padding))
         }
     }
 }
 
-/** Previsualiza la vista raíz con un perfil local y sin conexión a Firebase. */
+/** Previsualiza el contenido sin autenticar usuarios ni consultar servicios remotos. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun ProfileViewDarkPreview() {
     val username = stringResource(R.string.username_placeholder)
-    val biography = stringResource(R.string.profile_biography)
-    val email = stringResource(R.string.email_placeholder)
-    val provider = remember { ProfilePreviewProvider(username, biography, email) }
-    val viewModel = remember { ProfileViewModel(provider.publicProfile, provider.session) }
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
             topBarUserHandle = username) { padding ->
-            ProfileView(profileId = "1", viewModel = viewModel, modifier = Modifier.padding(padding))
+            ProfileViewContent(state = ProfileState(loading = true), onFollowClick = {}, onReviewClick = {}, modifier = Modifier.padding(padding))
         }
     }
 }

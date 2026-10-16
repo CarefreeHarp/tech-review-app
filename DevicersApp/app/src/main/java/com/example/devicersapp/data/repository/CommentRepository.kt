@@ -1,11 +1,39 @@
 package com.example.devicersapp.data.repository
+import com.example.devicersapp.data.datasource.*
+import com.example.devicersapp.ui.models.*
 
-import com.example.devicersapp.data.datasource.CommentRemoteDataSource
-import com.example.devicersapp.data.dto.toCommentInfo
-import com.example.devicersapp.ui.models.CommentInfo
-import javax.inject.Inject
-
-/** Consulta comentarios y traduce sus DTOs al modelo del front. */
-class CommentRepository @Inject constructor(private val source: CommentRemoteDataSource) {
-    suspend fun getComments(): List<CommentInfo> = source.getComments().map { it.toCommentInfo() }
+import java.time.Instant
+/** Arma los hilos y resuelve las fotos ausentes sin modificar la copia persistida del comentario. */
+class CommentRepository(
+    private val source: CommentRemoteDataSource,
+    private val users: UserRemoteDataSource
+) {
+    suspend fun getComments(reviewId: Int? = null): List<CommentInfo> = source.getComments(reviewId)
+    /** Las respuestas huérfanas quedan en la raíz y los ciclos no repiten comentarios. */
+    suspend fun getThread(reviewId: Int): List<CommentThreadItem> {
+        val comments = getComments(reviewId).filter { it.isActive }
+            .sortedWith(compareBy({ Instant.parse(it.createdAt) }, { it.id }))
+        // Un mismo autor puede comentar varias veces: se resuelve cada ID solo una vez por carga.
+        val missingPhotoUserIds = comments.filter { it.userProfileImageUrl.isNullOrBlank() }
+            .map { it.userId }.toSet()
+        val authors = if (missingPhotoUserIds.isEmpty()) emptyMap() else users.getByIds(missingPhotoUserIds)
+        val children = comments.groupBy { it.parentCommentId }
+        val ids = comments.map { it.id }.toSet()
+        val visited = mutableSetOf<Int>()
+        val thread = mutableListOf<CommentThreadItem>()
+        fun append(comment: CommentInfo, depth: Int) {
+            if (!visited.add(comment.id)) return
+            thread += CommentThreadItem(
+                comment = comment,
+                depth = depth,
+                likes = 0,
+                authorImageUrl = comment.userProfileImageUrl?.takeIf { it.isNotBlank() }
+                    ?: authors[comment.userId]?.profileImageUrl
+            )
+            children[comment.id].orEmpty().forEach { append(it, depth + 1) }
+        }
+        comments.filter { it.parentCommentId !in ids }.forEach { append(it, 0) }
+        comments.forEach { append(it, 0) }
+        return thread
+    }
 }

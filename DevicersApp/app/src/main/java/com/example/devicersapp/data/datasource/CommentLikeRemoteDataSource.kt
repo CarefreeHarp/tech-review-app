@@ -1,8 +1,6 @@
 package com.example.devicersapp.data.datasource
-
-import com.example.devicersapp.data.dto.CommentLikeDto
-
-/** Contrato remoto exclusivo de likes de comentarios; propaga los errores de consulta. */
+import com.example.devicersapp.ui.models.*
+/** Operaciones de likes de comentarios; devuelve modelos comunes y propaga los errores de la fuente seleccionada. */
 interface CommentLikeRemoteDataSource {
-    suspend fun getCommentLikes(): List<CommentLikeDto>
+    suspend fun getCommentLikes(reviewId: Int? = null, commentId: Int? = null): List<CommentLikeInfo>
 }

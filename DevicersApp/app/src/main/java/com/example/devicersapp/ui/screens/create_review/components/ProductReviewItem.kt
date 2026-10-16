@@ -113,16 +113,3 @@ fun ProductReviewItem(
         }
     }
 }
-
-///** Muestra una vista previa de un producto seleccionable para reseñar. */
-//@Composable
-//@Preview(showBackground = true)
-//fun ProductReviewItemPreview() {
-//    DevicersAppTheme {
-//        ProductReviewItem(
-//            product = LocalProductProvider.products.first(),
-//            onRateClick = {},
-//            modifier = Modifier.padding(horizontal = 20.dp)
-//        )
-//    }
-//}

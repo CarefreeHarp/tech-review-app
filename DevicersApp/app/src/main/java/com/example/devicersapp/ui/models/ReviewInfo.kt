@@ -14,5 +14,6 @@ data class ReviewInfo(
     val user: UserInfo? = null,
     val article: ProductInfo? = null,
     val likes: Int? = null,
+    val commentsCount: Int = 0,
     val comments: List<ReplyContent>? = null,
 )

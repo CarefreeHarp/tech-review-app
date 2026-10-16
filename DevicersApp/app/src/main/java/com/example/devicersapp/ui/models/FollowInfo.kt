@@ -1,4 +1,3 @@
 package com.example.devicersapp.ui.models
-
-/** Relación de seguimiento consultada en el backend. */
-data class FollowInfo(val followerId: Int, val followedId: Int)
+/** Relación dirigida; follows y followers son las dos vistas del mismo vínculo. */
+data class FollowInfo(val followerId: Int, val followedId: Int, val createdAt: String?)

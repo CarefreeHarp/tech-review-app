@@ -1,8 +1,7 @@
 package com.example.devicersapp.ui.utils.navigation
 
 import androidx.compose.foundation.clickable
-import com.example.devicersapp.ui.session.LocalSessionState
-import com.example.devicersapp.ui.session.asUserHandle
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -365,6 +364,7 @@ fun TopBar5(modifier: Modifier = Modifier) {
 @Composable
 fun TopBar10(
     profileImageUrl: String? = null,
+    profileId: String? = null,
     modifier: Modifier = Modifier,
     onProfileClick: (String) -> Unit = {}
 ) {
@@ -396,7 +396,7 @@ fun TopBar10(
                 onProfileClick = onProfileClick,
                 avatarResId = R.drawable.no_pfp_icon,
                 imageUrl = profileImageUrl,
-                userId = LocalSessionState.current.userId,
+                profileId = profileId,
                 modifier = Modifier.size(42.dp)
             )
         }

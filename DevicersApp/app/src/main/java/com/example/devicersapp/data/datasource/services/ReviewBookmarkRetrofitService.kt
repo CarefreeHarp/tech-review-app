@@ -1,10 +1,9 @@
 package com.example.devicersapp.data.datasource.services
-
-import com.example.devicersapp.data.dto.ReviewBookmarkDto
-import retrofit2.http.GET
-
-/** Declara únicamente los endpoints de reseñas guardadas. */
+import com.example.devicersapp.data.dto.ResponseDTO.retrofit.*
+import com.example.devicersapp.data.dto.ResponseDTO.shared.*
+import com.example.devicersapp.data.dto.RequestDTO.retrofit.*
+import retrofit2.http.*
+/** Endpoints existentes de reseñas guardadas; los cuerpos y respuestas permanecen en la frontera HTTP. */
 interface ReviewBookmarkRetrofitService {
-    @GET("review-bookmarks")
-    suspend fun getReviewBookmarks(): List<ReviewBookmarkDto>
+    @GET("review-bookmarks") suspend fun getReviewBookmarks(): List<ReviewBookmarkRetrofitDto>
 }

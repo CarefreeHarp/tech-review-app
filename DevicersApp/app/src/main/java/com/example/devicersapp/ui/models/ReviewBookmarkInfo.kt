@@ -1,4 +1,3 @@
 package com.example.devicersapp.ui.models
-
-/** Relación entre un usuario del backend y una reseña que guardó. */
-data class ReviewBookmarkInfo(val userId: Int, val reviewId: Int)
+/** Guardado identificado por usuario y reseña, conservando su fecha original. */
+data class ReviewBookmarkInfo(val userId: Int, val reviewId: Int, val createdAt: String?)

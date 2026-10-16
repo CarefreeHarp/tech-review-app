@@ -15,7 +15,7 @@ import androidx.annotation.StringRes
  * @param comments Comentarios publicados directamente en esta reseña.
  * @param timeAgoResId Antigüedad de la publicación, cuando la pantalla la muestra.
  * @param productAverageResId Promedio del producto, cuando la pantalla lo muestra junto a las estrellas.
- * @param id Identificador estable usado por las rutas y los providers de reseñas.
+ * @param id Identificador estable usado por las rutas y los repositorios de reseñas.
  */
 data class ReviewContent(
     val authorId: String,

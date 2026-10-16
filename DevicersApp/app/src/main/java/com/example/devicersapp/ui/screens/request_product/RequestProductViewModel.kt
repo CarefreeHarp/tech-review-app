@@ -1,8 +1,10 @@
 package com.example.devicersapp.ui.screens.request_product
 
 import androidx.lifecycle.viewModelScope
-import com.example.devicersapp.data.repository.ProductRequestsRepository
-import com.example.devicersapp.data.datasource.ProductSuggestion
+import com.example.devicersapp.data.repository.ProductRequestRepository
+import com.example.devicersapp.data.repository.UserRepository
+import com.example.devicersapp.R
+import com.example.devicersapp.ui.models.ProductSuggestion
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -17,25 +19,25 @@ import javax.inject.Inject
 
 /** Gestiona la validación y las acciones de presentación de la solicitud de producto. */
 @HiltViewModel
-class RequestProductViewModel @Inject constructor(private val repository: ProductRequestsRepository) : ViewModel() {
+class RequestProductViewModel @Inject constructor(private val repository: ProductRequestRepository, private val users: UserRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RequestProductState())
     val uiState: StateFlow<RequestProductState> = _uiState
 
     private var requestId = UUID.randomUUID().toString()
 
-    /** Confirma en Firestore antes de comunicar éxito o ejecutar la navegación. */
+    /** Confirma en la fuente seleccionada antes de comunicar éxito o ejecutar la navegación. */
     fun submit(onSuccess: () -> Unit = {}) {
         val state = _uiState.value
         if (!state.canSendRequest || state.submitting || state.submitted) return
         _uiState.update { it.copy(submitting = true, canSendRequest = false, error = null) }
         viewModelScope.launch {
             try {
-                repository.submit(requestId, ProductSuggestion(state.productName, state.category, state.brand, state.releaseDate))
+                repository.submit(requestId, users.getAuthenticatedUser().id, ProductSuggestion(state.productName, state.category, state.brand, state.releaseDate))
                 _uiState.update { it.copy(submitting = false, submitted = true, canSendRequest = false) }
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) {
-                _uiState.update { it.copy(submitting = false, error = "No se pudo enviar la solicitud. Intenta nuevamente.").withValidation() }
+                _uiState.update { it.copy(submitting = false, error = R.string.product_request_send_error).withValidation() }
                 return@launch
             }
             onSuccess()

@@ -26,7 +26,6 @@ import com.example.devicersapp.ui.screens.activity.components.ActivityCard
 import com.example.devicersapp.ui.screens.activity.components.ActivitySection
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
-import com.example.devicersapp.data.local.LocalActivityProvider
 
 /** Configura la pantalla de actividad y observa su estado desde el ViewModel. */
 @Composable
@@ -41,7 +40,7 @@ fun ActivityView(
     ActivityViewContent(
         onProfileClick = onProfileClick,
         state = uiState,
-        onFollow = viewModel::followActivity,
+        onFollow = {},
         onRetry = viewModel::loadActivity,
         onActivityClick = { activity ->
             when (activity.type) {
@@ -85,7 +84,7 @@ fun ActivityViewContent(
         item {
             if (state.loading) Text(stringResource(R.string.discovery_activity_loading))
             state.error?.let { error ->
-                Text(error)
+                Text(stringResource(error))
                 TextButton(onClick = onRetry) { Text(stringResource(R.string.discovery_retry)) }
             }
             if (!state.loading && state.error == null && state.activityGroups.isEmpty()) {
@@ -107,7 +106,7 @@ fun ActivityViewContent(
                     profileImageUrl = state.profileImages[activity.actorProfileId.toIntOrNull()],
                     actorName = state.actorNames[activity.actorProfileId.toIntOrNull()].orEmpty(),
                     productName = state.productNames[activity.targetReviewId],
-                    isFollowed = activity.id in state.followedActivityIds,
+                    isFollowed = false,
                     onFollow = { onFollow(activity.id) },
                     onClick = { onActivityClick(activity) },
                     isHighlighted = groupIndex == 0
@@ -129,9 +128,7 @@ fun ActivityScreenPreview() {
         ) { innerPadding ->
             ActivityViewContent(
                 state = ActivityState(
-                    activityGroups = LocalActivityProvider.activityGroups(
-                        currentTimeMillis = System.currentTimeMillis()
-                    )
+                    activityGroups = emptyList()
                 ),
                 onFollow = {},
                 onActivityClick = {},
@@ -158,9 +155,7 @@ fun ActivityScreenDarkPreview() {
         ) { innerPadding ->
             ActivityViewContent(
                 state = ActivityState(
-                    activityGroups = LocalActivityProvider.activityGroups(
-                        currentTimeMillis = System.currentTimeMillis()
-                    )
+                    activityGroups = emptyList()
                 ),
                 onFollow = {},
                 onActivityClick = {},

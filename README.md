@@ -4,6 +4,8 @@ Android technology-review application created for the Mobile Computing course at
 
 The application is envisioned as a small social network where people can discover technology products, rate them, and share reviews with the community.
 
+Backend REST repository: [tech-review-app-backend](https://github.com/CarefreeHarp/tech-review-app-backend).
+
 ## Design
 
 ### Interface prototype
@@ -53,11 +55,21 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 ![Devicers object-oriented class diagram](ReadMeAssets/ClassDiagram.svg)
 
-### Entity-relationship diagram
+### Express / PostgreSQL relational database
 
-> The diagram is an SVG vector image. Download it or open it directly in a browser to zoom in and inspect the relationships without losing quality.
+The REST backend stores related entities in PostgreSQL tables. The diagram below describes its relational schema.
 
-![Devicers entity-relationship diagram](ReadMeAssets/DBdiagram.svg)
+![Express and PostgreSQL relational database diagram](ReadMeAssets/DBdiagram.svg)
+
+### Firebase / Cloud Firestore database
+
+Firestore stores the main entities as collections and growing relationships as subcollections. Solid green arrows indicate subcollections; dotted arrows indicate references by ID.
+
+![Cloud Firestore database diagram](ReadMeAssets/FirestoreDBdiagram.svg)
+
+`counters/next_id` groups the next numeric IDs in `next_user_id` and `next_review_id`. Reviews keep `likes_count` and `comments_count`; articles keep `stores_count`. Users keep `followers_count`, `follows_count` and `review_bookmarks_count`, and comments keep `likes_count`. These fields count direct documents in each subcollection.
+
+Both diagrams are SVG vector images. Open either image directly to zoom in without losing quality.
 
 ## Functional requirements
 
@@ -75,30 +87,34 @@ The Devicers interface prototype is available on <a href="https://www.figma.com/
 
 ## Technical scope
 
-The project will use MVVM architecture and patterns such as Repository and dependency injection. It includes a REST API with an SQL database, Firebase Authentication and Firestore, automated testing, and Firebase notifications.
+The application uses MVVM, repositories and Hilt dependency injection. General data comes from either Cloud Firestore or the Express REST API backed by SQL. Firebase Authentication and Storage are shared by both modes.
 
-### Authentication and Firestore profiles
+### Authentication and profiles
 
-Registration creates the Firebase Auth account and saves a flat profile in Firestore's `users` collection with its `firebase_uid`. The application keeps numeric user IDs to preserve the existing references. New IDs are consecutive numbers allocated through the `metadata/user_ids` counter (`last_id`). A transaction saves the next ID and its profile together, skips IDs already occupied by migrated users, and retries the UID lookup if another registration advances the counter. Failed registrations do not consume an ID; deleted IDs are not reused. Existing profiles are retrieved by `firebase_uid` and retain their IDs and data.
+Firebase Authentication owns the session in both backend modes. `Utils.getCurrentUser()` and `Utils.getCurrentUserId()` read the authenticated account directly; Splash routes to Home when it exists. Screens resolve the Firebase UID to the numeric database user ID through `UserRepository.getAuthenticatedUser()`. There is no SessionState, SessionViewModel or SessionRepository.
 
-Sign-in and startup restoration load the linked profile before entering Home. Accounts that previously existed only in Auth receive a profile on their next sign-in. `SessionRepository.currentProfile` exposes the shared profile through a `StateFlow`; `SessionState` includes the Firebase UID, numeric ID and profile. Signing out clears this state and invalidates pending profile loads. Usernames are stored and updated exclusively in Firestore, and the UI reads them from the linked profile. Auth continues to store its photo; photo changes made through `AuthRepository` also update Firestore. Passwords are never copied to Firestore.
+Registration validates the username, email and passwords before creating the Auth account, then creates its profile through the selected data source. Firestore allocates numeric IDs transactionally through `counters/next_id.next_user_id`; Express uses the SQL sequence. Passwords remain exclusively in Auth. Profiles are not automatically copied between Firestore and SQL when switching implementations.
 
-New profiles default to `is_active: true`. `createdAt` and `updatedAt` receive the same server timestamp in the creation transaction; later profile changes update only `updatedAt`.
+User-specific reads, review creation and ownership checks use the numeric database ID. Opening that user's profile routes to OwnProfile; another user's ID routes to public Profile. Both obtain profile information and active reviews from the selected repositories. Review removal is logical (`is_active = false`) in both modes.
 
-User-specific queries, review creation and ownership checks use the numeric ID of the current session profile. Navigation and avatars use the same identity; there is no fixed user ID or fallback to user 1. The own-profile identity comes from Firestore. Public Profile also reads the user, active review cards, follower/following counts, and following relationship directly from Firestore. Feature data sources outside these profile screens that still use Retrofit continue to call the REST API with this session ID.
-
-OwnProfile refreshes `users/{session.userId}` directly from the Firestore server and validates the profile UID before updating the shared session. `OwnProfileRepository` loads its active review cards from the flat `reviews` documents and obtains follower/following counts from Firestore aggregations. These queries use the current session ID and do not call the REST backend. Review removal completed by OwnProfile checks ownership in a Firestore transaction and sets `is_active` to `false`.
-
-Every profile photo is rendered by the shared `ProfileAvatar` using Coil `AsyncImage`. Firestore's `users/{id}.profile_image_url` is the photo source for Home, public profiles, search results, review authors, comments, activity and the current session. `UsersRepository` replaces API photo values with Firestore values; author photos are fetched in batches of up to ten distinct IDs. Missing profiles and empty photos resolve to `no_pfp_icon`, while image-download failures display `pfp_error`. Firebase Auth photos and local drawable names are not used as display fallbacks.
+Every profile photo uses the shared `ProfileAvatar` and the selected database's `profile_image_url`. Comments preserve their stored author photo; when it is absent, their unique author IDs are resolved through the selected user data source. Missing photos use `no_pfp_icon`; failed downloads use `pfp_error`.
 
 ### Profile editing
 
-The session numeric ID determines whether a profile opens OwnProfile or public Profile. OwnProfile exposes Edit profile in the same header position as the public profile Follow button. Its top-right options button opens a sidebar from the right with Edit profile, Saved reviews and Sign out. Editing and saved reviews each have two entry points. The photo pencil appears only inside EditProfile.
+OwnProfile exposes Edit profile in the header position occupied by Follow on public profiles. Its right sidebar provides Edit profile, Saved reviews, Preferences and Sign out. Editing and saved reviews each have two entry points. The photo pencil appears only in EditProfile.
 
-EditProfile uses the session profile without receiving a user ID through navigation. It loads username, biography, email and photo from Firestore; username and biography are editable, while email remains read-only. Selecting a photo only updates the local draft. Save uploads a selected photo to Firebase Storage and updates the profile fields and photo URL in Firestore, then refreshes the shared session so returning to OwnProfile shows the changes. Cancel does not write the draft. Save failures retain the draft. This editor does not block or replace repeated save requests.
+EditProfile receives no user ID from navigation: it resolves the authenticated account through `UserRepository`. Username and biography are editable; email is read-only. Cancel discards the draft. Saving writes profile fields through Firestore or Express; selecting a new photo first uploads it to Firebase Storage and then saves its URL. Upload failures retain the draft and report an error. Auth and Storage remain Firebase services in Retrofit mode.
 
 ### Follow lists and preferences
 
-Followers and Following metrics in both public Profile and OwnProfile open FollowList with the displayed profile numeric ID and the selected section. The screen reads matching relations from Firestore follows, fetches related active users in batches, and renders a LazyColumn. Its highlighted tabs switch the query for the same profile. The public Follow button provides enabled press feedback without writing a follow relationship.
+Followers and Following metrics open FollowList with the displayed profile ID and selected tab. The selected tab is highlighted, but relation queries and actions are intentionally disconnected. FollowList, Home's Following tab and Activity's notifications stay empty. Like and Follow controls retain their presentation without database actions. Existing saved reviews can still be read; the bookmark button does not create new saved records.
 
-The OwnProfile sidebar also opens UserPreferences. This screen displays the Preferences header with back navigation, a divider, and a placeholder message. It has no preference controls, user arguments, session dependency or remote data source.
+UserPreferences displays its header, back navigation, divider and placeholder message. It has no preference controls, user arguments or remote data source. Posting comments and the other unfinished placeholder actions have not been enabled by this refactor.
+
+## Refactor de datos: Firestore y Express
+
+La selección global se configura en [`BackendConfig.kt`](DevicersApp/app/src/main/java/com/example/devicersapp/data/config/BackendConfig.kt), cambiando `USE_FIRESTORE`: `true` para Firestore y `false` para Retrofit. Después de cambiarlo, vuelve a compilar y ejecutar. Consulta la [arquitectura, contraste de entidades y adaptación de UI](docs/DataLayerRefactor.md).
+
+La UI está adaptada a los repositorios y modelos agrupados, y el APK compila con Firestore y Retrofit. Likes y seguimientos conservan sus pantallas y controles visuales, pero no ejecutan consultas ni escrituras. Activity conserva su diseño sin cargar notificaciones; la pestaña Siguiendo y FollowList permanecen vacías.
+
+La autenticación usa directamente la sesión mantenida por Firebase Auth mediante `Utils.getCurrentUser()` y `getCurrentUserId()`. Auth y Storage siguen en Firebase al elegir Retrofit. Se retiraron SessionState, SessionViewModel y SessionRepository; cada pantalla consulta su perfil cuando lo necesita.

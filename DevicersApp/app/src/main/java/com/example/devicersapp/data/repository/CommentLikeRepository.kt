@@ -1,11 +1,8 @@
 package com.example.devicersapp.data.repository
+import com.example.devicersapp.data.datasource.*
+import com.example.devicersapp.ui.models.*
 
-import com.example.devicersapp.data.datasource.CommentLikeRemoteDataSource
-import com.example.devicersapp.data.dto.toCommentLikeInfo
-import com.example.devicersapp.ui.models.CommentLikeInfo
-import javax.inject.Inject
-
-/** Consulta likes de comentarios y traduce sus DTOs al modelo del front. */
-class CommentLikeRepository @Inject constructor(private val source: CommentLikeRemoteDataSource) {
-    suspend fun getCommentLikes(): List<CommentLikeInfo> = source.getCommentLikes().map { it.toCommentLikeInfo() }
+/** Operaciones de likes de comentarios independientes de la tecnología de persistencia. */
+class CommentLikeRepository(private val source: CommentLikeRemoteDataSource) {
+    suspend fun getCommentLikes(reviewId: Int? = null, commentId: Int? = null): List<CommentLikeInfo> = source.getCommentLikes(reviewId, commentId)
 }

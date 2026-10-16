@@ -1,8 +1,8 @@
 package com.example.devicersapp.ui.screens.product.components
 
 
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 import androidx.compose.foundation.clickable
-import com.example.devicersapp.ui.session.LocalSessionState
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -68,7 +68,7 @@ fun ReviewCard(
 
                 Text(
                     modifier = Modifier.clickable { onProfileClick(review.userId.toString()) },
-                    text = LocalSessionState.current.userNameFor(review.userId, requireNotNull(review.user).username),
+                    text = (requireNotNull(review.user).username).asUserHandle(),
                     style = CardHighlightText,
                     color = colors.textPrimary
                 )

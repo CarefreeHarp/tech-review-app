@@ -1,8 +1,8 @@
 package com.example.devicersapp.ui.screens.profile_saved_reviews.components
 
 
-import com.example.devicersapp.ui.session.LocalSessionState
 
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.utils.images.localImageResIdFor
-import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
@@ -102,7 +101,7 @@ fun SavedReviewCard(
 
         Text(
             modifier = Modifier.clickable { onProfileClick(review.authorId) },
-            text = LocalSessionState.current.userNameFor(review.authorId.toIntOrNull(), review.authorName.orEmpty()),
+            text = (review.authorName.orEmpty()).asUserHandle(),
             color = colors.textPrimary,
             style = MaterialTheme.typography.bodySmall,
             maxLines = 1,
@@ -121,7 +120,7 @@ fun SavedReviewCard(
 fun SavedReviewCardPreview() {
     DevicersAppTheme {
         SavedReviewCard(
-            review = LocalReviewProvider.reviews.first().copy(
+            review = com.example.devicersapp.ui.models.ReviewContent(authorId = "1", productNameResId = R.string.product_title, productImageResId = R.drawable.no_pfp_icon, productMetadataResId = R.string.product_brand_label, rating = 4, textResId = R.string.review_reply_text_two, likes = 0).copy(
                 productName = stringResource(R.string.profile_saved_first_product),
                 authorName = stringResource(R.string.profile_saved_first_author)
             ),

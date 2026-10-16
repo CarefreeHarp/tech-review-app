@@ -8,6 +8,7 @@ data class RegisterState(
     val confirmationPassword: String = "",
     val isPasswordVisible: Boolean = false,
     val showValidationWarning: Boolean = false,
+    val isUsernameValid: Boolean = false,
     val isEmailValid: Boolean = false,
     val isPasswordValid: Boolean = false,
     val isConfirmationPasswordValid: Boolean = false,

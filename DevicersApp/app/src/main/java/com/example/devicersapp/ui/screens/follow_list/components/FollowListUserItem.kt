@@ -1,5 +1,6 @@
 package com.example.devicersapp.ui.screens.follow_list.components
 
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,9 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.FollowListPreviewProvider
 import com.example.devicersapp.ui.models.FollowListUser
-import com.example.devicersapp.ui.session.LocalSessionState
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
@@ -39,7 +38,7 @@ fun FollowListUserItem(
         ProfileAvatar(avatarResId = R.drawable.no_pfp_icon, imageUrl = user.imageUrl,
             userId = user.id, modifier = Modifier.size(48.dp))
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(LocalSessionState.current.userNameFor(user.id, user.username),
+            Text((user.username).asUserHandle(),
                 style = MaterialTheme.typography.titleSmall, color = colors.textPrimary)
             if (user.biography.isNotBlank()) {
                 Text(
@@ -57,6 +56,5 @@ fun FollowListUserItem(
 @Preview(showBackground = true)
 @Composable
 fun FollowListUserItemPreview() {
-    val provider = FollowListPreviewProvider(stringResource(R.string.username_placeholder), stringResource(R.string.profile_biography))
-    DevicersAppTheme { FollowListUserItem(provider.user) }
+    DevicersAppTheme { FollowListUserItem(FollowListUser(id = 1, username = stringResource(R.string.username_placeholder), biography = stringResource(R.string.profile_biography), imageUrl = null)) }
 }

@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.screens.edit_review.components.EditReviewStatus
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
@@ -109,7 +108,7 @@ fun EditReviewViewPreview() {
     DevicersAppTheme {
         DevicersScaffold(topBarNumber = 11) { padding ->
             EditReviewViewContent(
-                state = EditReviewState(product = LocalProductProvider.product, canEdit = true,
+                state = EditReviewState(product = com.example.devicersapp.ui.models.ProductContent(R.string.product_title, R.string.product_brand_label, R.drawable.no_pfp_icon, R.string.review_product_image), canEdit = true,
                     rating = 4, title = stringResource(R.string.edit_review_title),
                     experience = stringResource(R.string.edit_review_description)),
                 onRetry = {}, onRatingChange = {}, onTitleChange = {},

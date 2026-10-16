@@ -1,7 +1,7 @@
 package com.example.devicersapp.ui.screens.review
 
-import com.example.devicersapp.ui.session.LocalSessionState
 
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 import com.example.devicersapp.ui.screens.review.components.ReviewSkeleton
 
 import androidx.compose.foundation.background
@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import androidx.compose.ui.res.stringResource
-import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.screens.review.components.ReplyComposer
 import com.example.devicersapp.ui.screens.review.components.ReplyList
 import com.example.devicersapp.ui.screens.review.components.ReviewActionsMenu
@@ -51,17 +50,9 @@ fun ReviewView(
         if (localReview) viewModel.loadLocalReview(reviewId) else viewModel.loadReview(reviewId)
     }
 
-    uiState.error?.let { error ->
-        androidx.compose.foundation.layout.Column {
-            androidx.compose.material3.Text(error)
-            androidx.compose.material3.TextButton(onClick = {
-                if (localReview) viewModel.loadLocalReview(reviewId) else viewModel.loadReview(reviewId)
-            }) { androidx.compose.material3.Text(stringResource(R.string.home_feed_retry)) }
-        }
-        return
-    }
     ReviewViewContent(
             state = uiState,
+            onRetry = { viewModel.loadReview(reviewId) },
             onEditClick = { id ->
                 if (uiState.canManage && !uiState.deletionRequested) {
                     viewModel.setActionsMenuExpanded(false)
@@ -100,8 +91,18 @@ fun ReviewViewContent(
     onProductClick: (Int) -> Unit,
     onSendReply: () -> Unit,
     onViewAnswers: (Int) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRetry: () -> Unit = {}
 ) {
+    state.error?.let { error ->
+        androidx.compose.foundation.layout.Column(modifier) {
+            androidx.compose.material3.Text(stringResource(error))
+            androidx.compose.material3.TextButton(onClick = onRetry) {
+                androidx.compose.material3.Text(stringResource(R.string.home_feed_retry))
+            }
+        }
+        return
+    }
     if (state.loading) { ReviewSkeleton(modifier); return }
     val product = state.product ?: return
     val review = state.review ?: return
@@ -154,7 +155,7 @@ fun ReviewViewContent(
         )
 
         ReplyComposer(
-            placeholder = if (state.isLocal) null else stringResource(R.string.remote_review_reply_to, LocalSessionState.current.userNameFor(review.authorId.toIntOrNull(), review.authorName.orEmpty())),
+            placeholder = if (state.isLocal) null else stringResource(R.string.remote_review_reply_to, (review.authorName.orEmpty()).asUserHandle()),
             value = state.replyText,
             onValueChange = onReplyTextChange,
             onSendClick = onSendReply,
@@ -169,8 +170,8 @@ fun ReviewViewContent(
 @Composable
 @Preview(showBackground = true, heightDp = 1000)
 fun ReviewViewPreview() {
-    val review = LocalReviewProvider.productReviews.first()
-    val product = LocalReviewProvider.findProductByReviewId(review.id)
+    val review = com.example.devicersapp.ui.models.ReviewContent(authorId = "1", productNameResId = R.string.product_title, productImageResId = R.drawable.no_pfp_icon, productMetadataResId = R.string.product_brand_label, rating = 4, textResId = R.string.review_reply_text_two, likes = 0)
+    val product = com.example.devicersapp.ui.models.ProductContent(R.string.product_title, R.string.product_brand_label, R.drawable.no_pfp_icon, R.string.review_product_image)
 
     if (product != null) {
         DevicersAppTheme(darkTheme = false) {
@@ -200,8 +201,8 @@ fun ReviewViewPreview() {
 @Composable
 @Preview(showBackground = true, heightDp = 1000)
 fun ReviewViewDarkPreview() {
-    val review = LocalReviewProvider.productReviews.first()
-    val product = LocalReviewProvider.findProductByReviewId(review.id)
+    val review = com.example.devicersapp.ui.models.ReviewContent(authorId = "1", productNameResId = R.string.product_title, productImageResId = R.drawable.no_pfp_icon, productMetadataResId = R.string.product_brand_label, rating = 4, textResId = R.string.review_reply_text_two, likes = 0)
+    val product = com.example.devicersapp.ui.models.ProductContent(R.string.product_title, R.string.product_brand_label, R.drawable.no_pfp_icon, R.string.review_product_image)
 
     if (product != null) {
         DevicersAppTheme(darkTheme = true) {

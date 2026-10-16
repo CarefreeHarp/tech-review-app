@@ -1,0 +1,69 @@
+---
+title: Firestore Database
+config:
+  theme: base
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+    curve: basis
+    nodeSpacing: 45
+    rankSpacing: 70
+    padding: 22
+    wrappingWidth: 600
+  themeCSS: |
+    .nodeLabel, .label, .schema-label { text-align: left !important; }
+    .schema-label { line-height: 1.65; }
+    .schema-title { font-family: DejaVu Sans, sans-serif; font-size: 19px; font-weight: 700; color: #17375e; border-bottom: 2px solid #bccde1; padding-bottom: 10px; margin-bottom: 10px; white-space: nowrap; }
+    .schema-attributes { font-family: DejaVu Sans Mono, monospace; font-size: 16px; color: #263d5d; white-space: nowrap; }
+    .subcoll .schema-title { color: #116c62; border-color: #a7d6ca; }
+    .node rect { rx: 10px; ry: 10px; }
+    .edgePath path, .flowchart-link { fill: none !important; stroke-width: 1.7px; }
+    .edgeLabel { background-color: #f5f8fc; }
+    .legend.node { transform: translate(210px, 100px) !important; }
+    .legend .schema-title { font-size: 17px; padding-bottom: 7px; margin-bottom: 7px; }
+    .legend .schema-attributes { font-size: 14px; }
+---
+flowchart TB
+    LEGEND["<div class='schema-label'><div class='schema-title'>Legend</div><div class='schema-attributes'><span style='color:#15803d'>Solid green: subcollection</span><br/>Dotted: reference by ID</div></div>"]
+    USERS["<div class='schema-label'><div class='schema-title'>users / {userId}</div><div class='schema-attributes'>att: id<br/>att: firebase_uid<br/>att: email<br/>att: username<br/>att: biography<br/>att: profile_image_url<br/>att: notifications_last_viewed_at<br/>att: followers_count<br/>att: follows_count<br/>att: review_bookmarks_count<br/>att: is_active<br/>att: created_at<br/>att: updated_at</div></div>"]
+    ARTICLES["<div class='schema-label'><div class='schema-title'>articles / {articleId}</div><div class='schema-attributes'>att: id<br/>att: category_id<br/>att: category_name<br/>att: brand_name<br/>att: name<br/>att: model<br/>att: description<br/>att: image_url<br/>att: release_date<br/>att: specifications (string)<br/>att: stores_count<br/>att: is_active<br/>att: created_at<br/>att: updated_at</div></div>"]
+    REVIEWS["<div class='schema-label'><div class='schema-title'>reviews / {reviewId}</div><div class='schema-attributes'>att: id<br/>att: user_id<br/>att: article_id<br/>att: rating<br/>att: title<br/>att: body<br/>att: likes_count<br/>att: comments_count<br/>att: is_active<br/>att: created_at<br/>att: updated_at</div></div>"]
+    CATEGORIES["<div class='schema-label'><div class='schema-title'>categories / {categoryId}</div><div class='schema-attributes'>att: id<br/>att: parent_category_id<br/>att: name<br/>att: description</div></div>"]
+    STORES["<div class='schema-label'><div class='schema-title'>stores / {storeId}</div><div class='schema-attributes'>att: id<br/>att: name<br/>att: website_url</div></div>"]
+    ARTICLE_STORES["<div class='schema-label'><div class='schema-title'>subcoll: stores / {storeId}</div><div class='schema-attributes'>att: store_id<br/>att: name<br/>att: website_url<br/>att: product_url</div></div>"]
+    FOLLOWERS["<div class='schema-label'><div class='schema-title'>subcoll: followers / {followerId}</div><div class='schema-attributes'>att: follower_id<br/>att: created_at</div></div>"]
+    FOLLOWS["<div class='schema-label'><div class='schema-title'>subcoll: follows / {followedId}</div><div class='schema-attributes'>att: followed_id<br/>att: created_at</div></div>"]
+    BOOKMARKS["<div class='schema-label'><div class='schema-title'>subcoll: review_bookmarks / {reviewId}</div><div class='schema-attributes'>att: review_id<br/>att: created_at</div></div>"]
+    NOTIFICATIONS["<div class='schema-label'><div class='schema-title'>notifications / {notificationId}</div><div class='schema-attributes'>att: id<br/>att: user_id<br/>att: actor_user_id<br/>att: type<br/>att: review_id<br/>att: comment_id<br/>att: is_read<br/>att: created_at</div></div>"]
+    PRODUCT_REQUESTS["<div class='schema-label'><div class='schema-title'>product_requests / {requestId}</div><div class='schema-attributes'>att: user_id<br/>att: product_name<br/>att: image_url<br/>att: category<br/>att: brand<br/>att: release_date<br/>att: status<br/>att: createdAt</div></div>"]
+    COUNTERS["<div class='schema-label'><div class='schema-title'>counters / next_id</div><div class='schema-attributes'>att: next_user_id<br/>att: next_review_id</div></div>"]
+    REVIEW_LIKES["<div class='schema-label'><div class='schema-title'>subcoll: likes / {userId}</div><div class='schema-attributes'>att: user_id<br/>att: created_at</div></div>"]
+    COMMENTS["<div class='schema-label'><div class='schema-title'>subcoll: comments / {commentId}</div><div class='schema-attributes'>att: id<br/>att: user_id<br/>att: user_username<br/>att: user_profile_image_url<br/>att: parent_comment_id<br/>att: body<br/>att: likes_count<br/>att: is_active<br/>att: created_at<br/>att: updated_at</div></div>"]
+    COMMENT_LIKES["<div class='schema-label'><div class='schema-title'>subcoll: likes / {userId}</div><div class='schema-attributes'>att: user_id<br/>att: created_at</div></div>"]
+
+    USERS --> FOLLOWERS
+    USERS --> FOLLOWS
+    USERS --> BOOKMARKS
+    ARTICLES --> ARTICLE_STORES
+    REVIEWS --> REVIEW_LIKES
+    REVIEWS --> COMMENTS
+    COMMENTS --> COMMENT_LIKES
+
+    ARTICLES -. category_id .-> CATEGORIES
+    ARTICLE_STORES -. store_id .-> STORES
+    REVIEWS -. user_id .-> USERS
+    REVIEWS -. article_id .-> ARTICLES
+    NOTIFICATIONS -. "user_id / actor_user_id" .-> USERS
+    NOTIFICATIONS -. review_id .-> REVIEWS
+    NOTIFICATIONS -. comment_id .-> COMMENTS
+    PRODUCT_REQUESTS -. user_id .-> USERS
+
+    classDef collection fill:#ffffff,stroke:#203e64,color:#263d5d,stroke-width:2px;
+    classDef subcoll fill:#edf8f5,stroke:#117a73,color:#17453f,stroke-width:2px;
+    class USERS,ARTICLES,REVIEWS,CATEGORIES,STORES,NOTIFICATIONS,PRODUCT_REQUESTS,COUNTERS collection;
+    class FOLLOWERS,FOLLOWS,BOOKMARKS,ARTICLE_STORES,REVIEW_LIKES,COMMENTS,COMMENT_LIKES subcoll;
+
+    classDef legend fill:#ffffff,stroke:#b8c8db,color:#263d5d,stroke-width:1px;
+    class LEGEND legend;
+
+    linkStyle 0,1,2,3,4,5,6 stroke:#15803d,stroke-width:2.4px;

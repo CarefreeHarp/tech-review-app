@@ -13,5 +13,5 @@ data class CreateReviewState(
     val searchText: String = "",
     val selectedCategoryId: String = "all",
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    @param:androidx.annotation.StringRes val errorMessage: Int? = null
 )

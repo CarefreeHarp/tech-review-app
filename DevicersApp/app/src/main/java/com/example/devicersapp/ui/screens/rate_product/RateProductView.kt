@@ -21,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.utils.review_form.RateableProductCard
 import com.example.devicersapp.ui.utils.review_form.RatingSelector
 import com.example.devicersapp.ui.utils.review_form.ReviewForm
@@ -95,7 +94,7 @@ fun RateProductViewContent(
     if (state.loading) { RateProductSkeleton(modifier); return }
     if (state.product == null) {
         Column(modifier = modifier.padding(20.dp)) {
-            state.error?.let { Text(it, color = LocalDevicersColors.current.error) }
+            state.error?.let { Text(stringResource(it), color = LocalDevicersColors.current.error) }
             TextButton(onClick = onChooseProduct) { Text(stringResource(R.string.rate_product_choose_product)) }
             TextButton(onClick = onRetry) { Text(stringResource(R.string.home_feed_retry)) }
         }
@@ -111,7 +110,7 @@ fun RateProductViewContent(
     ) {
 
         item {
-            state.error?.let { androidx.compose.material3.Text(it, color = LocalDevicersColors.current.error) }
+            state.error?.let { androidx.compose.material3.Text(stringResource(it), color = LocalDevicersColors.current.error) }
             Spacer(modifier = Modifier.height(20.dp))
         }
 
@@ -164,7 +163,7 @@ fun RateProductViewPreview() {
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(topBarNumber = 2) { innerPadding ->
             RateProductViewContent(
-                state = RateProductState(product = LocalProductProvider.product),
+                state = RateProductState(product = com.example.devicersapp.ui.models.ProductContent(R.string.product_title, R.string.product_brand_label, R.drawable.no_pfp_icon, R.string.review_product_image)),
                 onRatingChange = {},
                 onTitleChange = {},
                 onExperienceChange = {},
@@ -188,7 +187,7 @@ fun RateProductViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(topBarNumber = 2) { innerPadding ->
             RateProductViewContent(
-                state = RateProductState(product = LocalProductProvider.product),
+                state = RateProductState(product = com.example.devicersapp.ui.models.ProductContent(R.string.product_title, R.string.product_brand_label, R.drawable.no_pfp_icon, R.string.review_product_image)),
                 onRatingChange = {},
                 onTitleChange = {},
                 onExperienceChange = {},

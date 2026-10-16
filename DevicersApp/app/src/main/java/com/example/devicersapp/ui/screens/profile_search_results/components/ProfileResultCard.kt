@@ -1,8 +1,8 @@
 package com.example.devicersapp.ui.screens.profile_search_results.components
 
 
-import com.example.devicersapp.ui.session.LocalSessionState
 
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -81,7 +81,7 @@ fun ProfileResultCard(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 modifier = Modifier.clickable(onClick = onProfileClick),
-                text = LocalSessionState.current.userNameFor(result.id.toIntOrNull(), result.username ?: stringResource(result.handleResId)),
+                text = (result.username ?: stringResource(result.handleResId)).asUserHandle(),
                 color = colors.textPrimary,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,

@@ -783,4 +783,13 @@
     <string name="user_preferences_title">Preferencias</string>
     <string name="user_preferences_empty">aun no hay nada por aquí :))</string>
     <string name="follow_list_truncated_biography">%1$s...</string>
+    <string name="activity_load_error">No se pudo cargar la actividad.</string>
+    <string name="profile_search_load_error">No se pudieron cargar los usuarios.</string>
+    <string name="review_load_error">No se pudo cargar la reseña. Intenta nuevamente.</string>
+    <string name="catalog_load_error">No se pudieron cargar los productos. Intenta nuevamente.</string>
+    <string name="product_request_send_error">No se pudo enviar la solicitud. Intenta nuevamente.</string>
+    <string name="catalog_connection_error">No fue posible conectarse con el servidor.</string>
+    <string name="catalog_timeout_error">El servidor está tardando demasiado en responder.</string>
+    <string name="rate_product_load_error">No se pudo cargar el producto. Elige uno del catálogo actualizado.</string>
+    <string name="rate_product_publish_error">No se pudo publicar. Tu borrador se conserva; intenta de nuevo.</string>
 </resources>

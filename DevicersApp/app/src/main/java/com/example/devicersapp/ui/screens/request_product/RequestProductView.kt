@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
@@ -31,6 +29,7 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.ui.utils.search.LaunchDateField
 import com.example.devicersapp.ui.utils.search.FilterLabel
 
 /** Renderiza la solicitud de producto y conecta sus eventos con el estado del ViewModel. */
@@ -131,14 +130,10 @@ fun RequestProductViewContent(
         Spacer(modifier = Modifier.height(18.dp))
         FilterLabel(R.string.launch_date, color = colors.textPrimary)
         Spacer(modifier = Modifier.height(7.dp))
-        SearchBar(
+        LaunchDateField(
+            launchDate = state.releaseDate,
             placeholder = R.string.launch_date_placeholder,
-            backgroundColor = colors.surface,
-            showSearchIcon = false,
-            text = state.releaseDate,
-            // El ViewModel filtra las letras, incluso cuando el contenido llega por pegado de texto.
-            onTextChange = onReleaseDateChange,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            onLaunchDateChange = onReleaseDateChange
         )
         if (state.showReleaseDateError) {
             Text(
@@ -150,7 +145,7 @@ fun RequestProductViewContent(
         }
 
 
-        state.error?.let { Text(it, color = colors.error) }
+        state.error?.let { Text(stringResource(it), color = colors.error) }
         if (state.submitted) Text(stringResource(R.string.discovery_request_sent), color = colors.textPrimary)
         Spacer(modifier = Modifier.height(26.dp))
         Box(

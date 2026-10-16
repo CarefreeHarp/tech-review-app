@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.devicersapp.data.local.LocalProductProvider
 import com.example.devicersapp.ui.models.ProductCategoryContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.navigation.FilterChip
@@ -52,7 +51,7 @@ fun CategoryChipRow(
 fun CategoryChipRowPreview() {
     DevicersAppTheme {
         CategoryChipRow(
-            categories = LocalProductProvider.categories,
+            categories = emptyList(),
             selectedCategoryId = "all",
             onCategoryChange = {}
         )

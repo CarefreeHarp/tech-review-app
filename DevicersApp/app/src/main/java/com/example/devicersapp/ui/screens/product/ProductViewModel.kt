@@ -1,6 +1,8 @@
 package com.example.devicersapp.ui.screens.product
 
-import com.example.devicersapp.data.repository.ArticleReviewsRepository
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.ReviewRepository
+import com.example.devicersapp.data.repository.UserRepository
 
 import com.example.devicersapp.R
 import androidx.lifecycle.ViewModel
@@ -14,10 +16,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/** Consulta en Firestore el producto y todas sus reseñas visibles con sus autores. */
+/** Consulta en la fuente seleccionada el producto y todas sus reseñas visibles con sus autores. */
 @HiltViewModel
 class ProductViewModel @Inject constructor(
-    private val articleReviews: ArticleReviewsRepository
+    private val products: ProductRepository,
+    private val reviewRepository: ReviewRepository,
+    private val users: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductState())
     val uiState: StateFlow<ProductState> = _uiState
@@ -29,7 +33,11 @@ class ProductViewModel @Inject constructor(
         _uiState.update { ProductState(isLoading = true) }
         loadJob = viewModelScope.launch {
             try {
-                val (product, reviews) = articleReviews.getProductDetail(productId).getOrThrow()
+                val product = products.getProductById(productId).getOrThrow()
+                val records = reviewRepository.getReviewsByProduct(productId).getOrThrow().filter { it.isActive }
+                val authors = users.getByIds(records.map { it.userId }.toSet())
+                val reviews = records.map { it.copy(article = product, user = checkNotNull(authors[it.userId])) }
+                    .sortedByDescending { java.time.Instant.parse(it.createdAt) }
                 _uiState.update { ProductState(product = product, reviews = reviews) }
             } catch (e: CancellationException) {
                 throw e

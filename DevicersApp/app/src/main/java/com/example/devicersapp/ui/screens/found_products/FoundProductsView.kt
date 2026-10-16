@@ -111,7 +111,7 @@ fun FoundProductsViewContent(
             )
 
             Text(
-                text = state.errorMessage,
+                text = stringResource(state.errorMessage),
                 color = colors.textSecondary,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -203,49 +203,3 @@ fun FoundProductsViewContent(
         }
     }
 }
-
-
-
-///** Muestra una vista previa de los productos encontrados en el tema claro. */
-//@Composable
-//@Preview(showBackground = true, heightDp = 900)
-//fun FoundProductsViewPreview() {
-//    DevicersAppTheme(darkTheme = false) {
-//        DevicersScaffold(
-//            selectedItem = "search",
-//            showBottomBar = true,
-//            topBarNumber = 8
-//        ) { innerPadding ->
-//            FoundProductsViewContent(
-//                modifier = Modifier.padding(
-//                    top = innerPadding.calculateTopPadding()
-//                ),
-//                state = FoundProductsState(results = LocalProductProvider.products),
-//                onSearchTextChange = {},
-//                onProductClick = {}
-//            )
-//        }
-//    }
-//}
-//
-///** Muestra una vista previa de los productos encontrados en el tema oscuro. */
-//@Composable
-//@Preview(showBackground = true, heightDp = 900)
-//fun FoundProductsViewDarkPreview() {
-//    DevicersAppTheme(darkTheme = true) {
-//        DevicersScaffold(
-//            selectedItem = "search",
-//            showBottomBar = true,
-//            topBarNumber = 8
-//        ) { innerPadding ->
-//            FoundProductsViewContent(
-//                modifier = Modifier.padding(
-//                    top = innerPadding.calculateTopPadding()
-//                ),
-//                state = FoundProductsState(results = LocalProductProvider.products),
-//                onSearchTextChange = {},
-//                onProductClick = {}
-//            )
-//        }
-//    }
-//}

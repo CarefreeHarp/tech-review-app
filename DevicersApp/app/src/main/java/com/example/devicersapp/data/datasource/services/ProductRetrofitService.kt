@@ -1,14 +1,10 @@
 package com.example.devicersapp.data.datasource.services
-
-import com.example.devicersapp.data.dto.ProductDto
-import retrofit2.http.GET
-import retrofit2.http.Path
-
-/** Endpoints de product del backend; las respuestas HTTP fallidas lanzan HttpException. */
+import com.example.devicersapp.data.dto.ResponseDTO.retrofit.*
+import com.example.devicersapp.data.dto.ResponseDTO.shared.*
+import com.example.devicersapp.data.dto.RequestDTO.retrofit.*
+import retrofit2.http.*
+/** Endpoints existentes de artículos; los cuerpos y respuestas permanecen en la frontera HTTP. */
 interface ProductRetrofitService {
-    @GET("articles")
-    suspend fun getProducts(): List<ProductDto>
-
-    @GET("articles/{productId}")
-    suspend fun getProductById(@Path("productId") productId: Int): ProductDto
+    @GET("articles") suspend fun getProducts(): List<ProductRetrofitDto>
+    @GET("articles/{id}") suspend fun getProductById(@Path("id") id: Int): ProductRetrofitDto
 }

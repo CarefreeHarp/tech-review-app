@@ -19,9 +19,10 @@ import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 
 /**
- * Muestra los requisitos incumplidos del correo o de la contraseña antes de crear una cuenta.
+ * Muestra los requisitos incumplidos del formulario antes de crear una cuenta.
  *
  * @param isEmailValid Indica si el correo tiene un formato válido.
+ * @param isUsernameValid Indica si se escribió un nombre de usuario.
  * @param isPasswordValid Indica si la contraseña cumple los requisitos definidos.
  * @param isConfirmationPasswordValid Indica si la confirmación coincide con la contraseña.
  * @param errorMessage Mensaje de error retornado por Firebase al intentar registrar la cuenta.
@@ -32,6 +33,7 @@ fun RegisterValidationWarning(
     isEmailValid: Boolean,
     isPasswordValid: Boolean,
     isConfirmationPasswordValid: Boolean,
+    isUsernameValid: Boolean = true,
     errorMessage: String? = null,
     modifier: Modifier = Modifier
 ) {
@@ -52,6 +54,13 @@ fun RegisterValidationWarning(
         // Cada requisito incumplido necesita aire para leerse como una línea independiente.
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
+        if (!isUsernameValid) {
+            Text(
+                text = stringResource(R.string.edit_profile_username_required),
+                style = MaterialTheme.typography.bodySmall,
+                color = LocalDevicersColors.current.error
+            )
+        }
         if (!isEmailValid) {
             Text(
                 text = stringResource(R.string.register_validation_email),

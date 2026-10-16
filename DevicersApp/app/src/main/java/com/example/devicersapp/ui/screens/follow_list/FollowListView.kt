@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.FollowListPreviewProvider
 import com.example.devicersapp.ui.models.FollowListSection
 import com.example.devicersapp.ui.screens.follow_list.components.FollowListUserItem
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -42,7 +41,7 @@ fun FollowListView(
 ) {
     val state by viewModel.uiState.collectAsState()
     LaunchedEffect(profileId, initialSection) { viewModel.loadProfile(profileId, initialSection) }
-    FollowListViewContent(state = state, onSectionChange = viewModel::selectSection, onRetry = viewModel::retry,
+    FollowListViewContent(state = state, onSectionChange = viewModel::selectSection, onRetry = {},
         onProfileClick = onProfileClick,
         modifier = modifier.fillMaxSize().background(LocalDevicersColors.current.background))
 }
@@ -82,9 +81,7 @@ fun FollowListViewContent(
 @Preview(showBackground = true, heightDp = 900)
 @Composable
 fun FollowListViewPreview() {
-    val username = stringResource(R.string.username_placeholder)
-    val biography = stringResource(R.string.profile_biography)
-    val viewModel = remember { FollowListViewModel(FollowListPreviewProvider(username, biography).repository) }
+    val viewModel = remember { FollowListViewModel() }
     DevicersAppTheme {
         DevicersScaffold(topBarNumber = 13) { padding ->
             FollowListView(1, FollowListSection.FOLLOWERS, viewModel, Modifier.padding(padding))

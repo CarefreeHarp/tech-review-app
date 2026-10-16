@@ -1,0 +1,73 @@
+package com.example.devicersapp.data.datasource.implementations.firestore
+import com.example.devicersapp.data.datasource.*
+import com.example.devicersapp.ui.models.*
+import com.example.devicersapp.data.dto.ResponseDTO.firestore.*
+import com.example.devicersapp.data.dto.ResponseDTO.shared.*
+import com.example.devicersapp.data.dto.RequestDTO.firestore.*
+import com.google.firebase.firestore.*
+import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+
+/** Implementa las operaciones de reseñas con las rutas y campos de Firestore v9. */
+class ReviewRemoteDataSourceFirestoreImplementation @Inject constructor(
+    private val firestore: FirebaseFirestore
+) : ReviewRemoteDataSource {
+    private val reviews get() = firestore.collection("reviews")
+    override suspend fun getReviews(): List<ReviewInfo> =
+        reviews.get(Source.SERVER).await().documents.map { it.toReviewFirestoreDto().toReviewInfo() }
+    override suspend fun getReviewById(reviewId: Int): ReviewInfo {
+        require(reviewId > 0)
+        return reviews.document(reviewId.toString()).get(Source.SERVER).await().also { snapshot ->
+            if (!snapshot.exists()) throw NoSuchElementException("No existe ${snapshot.reference.path}")
+        }.toReviewFirestoreDto().toReviewInfo()
+    }
+    override suspend fun getReviewsByUser(userId: Int): List<ReviewInfo> =
+        reviews.whereEqualTo("user_id", userId).get(Source.SERVER).await().documents.map { it.toReviewFirestoreDto().toReviewInfo() }
+    override suspend fun getReviewsByProduct(productId: Int): List<ReviewInfo> =
+        reviews.whereEqualTo("article_id", productId).get(Source.SERVER).await().documents.map { it.toReviewFirestoreDto().toReviewInfo() }
+
+    override suspend fun createReview(draft: ReviewDraft): ReviewInfo {
+        require(draft.userId > 0 && draft.articleId > 0 && draft.rating in 1..5 && draft.body.isNotBlank())
+        val sequence = firestore.collection("counters").document("next_id")
+        val id = firestore.runTransaction { transaction ->
+            check(transaction.get(firestore.collection("users").document(draft.userId.toString())).exists())
+            check(transaction.get(firestore.collection("articles").document(draft.articleId.toString())).exists())
+            var next = transaction.get(sequence).integer("next_review_id")
+            check(next > 0)
+            while (transaction.get(reviews.document(next.toString())).exists()) {
+                check(next < Int.MAX_VALUE) { "Se agotaron los IDs de reseña." }
+                next++
+            }
+            transaction.set(reviews.document(next.toString()), draft.toCreateReviewFirestoreDto().fields(next))
+            // merge conserva la secuencia de usuarios en este mismo documento.
+            transaction.set(sequence, mapOf("next_review_id" to next.toLong() + 1), SetOptions.merge())
+            next
+        }.await()
+        return getReviewById(id)
+    }
+
+    override suspend fun updateReview(reviewId: Int, changes: ReviewChanges): ReviewInfo {
+        require(reviewId > 0)
+        changes.rating?.let { require(it in 1..5) }
+        changes.body?.let { require(it.isNotBlank()) }
+        val reference = reviews.document(reviewId.toString())
+        firestore.runTransaction { transaction ->
+            check(transaction.get(reference).exists()) { "No existe la reseña." }
+            changes.userId?.let {
+                require(it > 0)
+                check(transaction.get(firestore.collection("users").document(it.toString())).exists())
+            }
+            changes.articleId?.let {
+                require(it > 0)
+                check(transaction.get(firestore.collection("articles").document(it.toString())).exists())
+            }
+            transaction.update(reference, changes.toUpdateReviewFirestoreDto().fields())
+        }.await()
+        return getReviewById(reviewId)
+    }
+
+    /** Retirada lógica común a ambas implementaciones; conserva el hilo y sus relaciones. */
+    override suspend fun deleteReview(reviewId: Int) {
+        updateReview(reviewId, ReviewChanges(isActive = false))
+    }
+}

@@ -1,103 +1,64 @@
 package com.example.devicersapp.data.repository
+import com.example.devicersapp.data.datasource.*
+import com.example.devicersapp.ui.models.*
 
-import com.example.devicersapp.data.datasource.ReviewRemoteDataSource
-import com.example.devicersapp.data.dto.toReviewInfo
-import com.example.devicersapp.data.dto.toCreateReviewRequestDto
-import com.example.devicersapp.data.dto.toUpdateReviewRequestDto
-import com.example.devicersapp.ui.models.ReviewInfo
-import com.example.devicersapp.ui.models.ReviewDraft
-import com.example.devicersapp.ui.models.ReviewChanges
-import kotlinx.coroutines.CancellationException
-import javax.inject.Inject
-
-/** Consulta y administra reseñas; traduce únicamente los DTOs de esta entidad. */
-class ReviewRepository @Inject constructor(
-    private val reviewRemoteDataSource: ReviewRemoteDataSource
+import java.time.Instant
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+/** Centraliza reseñas, feed y detalle; las estrategias de transporte quedan dentro de los DataSources. */
+class ReviewRepository(
+    private val source: ReviewRemoteDataSource,
+    private val products: ProductRepository,
+    private val users: UserRemoteDataSource,
+    private val comments: CommentRepository
 ) {
-    suspend fun getReviews(): Result<List<ReviewInfo>> {
-        return try {
-            val reviews = reviewRemoteDataSource.getReviews().map { it.toReviewInfo() }
-            Result.success(reviews)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun getReviews(): Result<List<ReviewInfo>> = repositoryResult { source.getReviews() }
+    suspend fun getReviewById(reviewId: Int): Result<ReviewInfo> = repositoryResult { source.getReviewById(reviewId) }
+    suspend fun getReviewsByUser(userId: Int): Result<List<ReviewInfo>> = repositoryResult { source.getReviewsByUser(userId) }
+    suspend fun getReviewsByProduct(productId: Int): Result<List<ReviewInfo>> = repositoryResult { source.getReviewsByProduct(productId) }
+    suspend fun createReview(draft: ReviewDraft): Result<ReviewInfo> = repositoryResult { source.createReview(draft) }
+    suspend fun updateReview(reviewId: Int, changes: ReviewChanges): Result<ReviewInfo> = repositoryResult { source.updateReview(reviewId, changes) }
+    suspend fun deleteReview(reviewId: Int): Result<Unit> = repositoryResult { source.deleteReview(reviewId) }
+    /** Reúne artículo y autor para las tarjetas de un perfil con lecturas agrupadas. */
+    suspend fun getReviewSummariesByUser(userId: Int): List<ReviewInfo> = coroutineScope {
+        val records = source.getReviewsByUser(userId).filter { it.isActive }
+        if (records.isEmpty()) return@coroutineScope emptyList()
+        val articles = async { products.getProducts(includeInactive = true).getOrThrow().associateBy { it.id } }
+        val author = async { users.getById(userId) }
+        val catalog = articles.await()
+        val profile = author.await()
+        records.map { it.copy(article = checkNotNull(catalog[it.articleId]), user = profile) }
+            .sortedByDescending { Instant.parse(it.createdAt) }
     }
 
-    suspend fun getReviewById(reviewId: Int): Result<ReviewInfo> {
-        return try {
-            val review = reviewRemoteDataSource.getReviewById(reviewId).toReviewInfo()
-            Result.success(review)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Result.failure(e)
+    /** Resuelve las referencias requeridas por el detalle y conserva los contadores persistidos. */
+    suspend fun getReviewDetail(reviewId: Int): Result<ReviewDetailInfo> = repositoryResult {
+        val review = source.getReviewById(reviewId)
+        if (!review.isActive) throw NoSuchElementException("La reseña ya no está disponible.")
+        coroutineScope {
+            val article = async { products.getProductById(review.articleId).getOrThrow() }
+            val author = async { users.getById(review.userId) }
+            val thread = async { comments.getThread(review.id) }
+            ReviewDetailInfo(review, article.await(), author.await(), thread.await())
         }
     }
-
-    suspend fun getReviewsByUser(userId: Int): Result<List<ReviewInfo>> {
-        return try {
-            val reviews = reviewRemoteDataSource.getReviewsByUser(userId).map { it.toReviewInfo() }
-            Result.success(reviews)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Result.failure(e)
+    /** Obtiene tarjetas del feed con consultas agrupadas y promedios de reseñas activas. */
+    suspend fun getFeedReviews(): Result<List<FeedReviewContent>> = repositoryResult {
+        val reviews = source.getReviews().filter { it.isActive }
+        coroutineScope {
+            val articles = async { products.getProducts().getOrThrow().associateBy { it.id } }
+            val authors = async { users.getByIds(reviews.map { it.userId }.toSet()) }
+            val catalog = articles.await()
+            val profiles = authors.await()
+            val averages = reviews.groupBy { it.articleId }.mapValues { (_, records) -> records.map { it.rating }.average().toFloat() }
+            reviews.mapNotNull { review ->
+                val article = catalog[review.articleId] ?: return@mapNotNull null
+                val author = profiles[review.userId] ?: return@mapNotNull null
+                FeedReviewContent(review.id, article.id, article.name, article.brandName, article.categoryName,
+                    article.imageUrl, averages.getValue(article.id), author.id, author.username, author.profileImageUrl,
+                    review.rating, review.title, review.body, checkNotNull(review.likes), review.commentsCount,
+                    Instant.parse(review.createdAt).toEpochMilli())
+            }.sortedByDescending { it.createdAtMillis }
         }
     }
-
-    suspend fun getReviewsByProduct(productId: Int): Result<List<ReviewInfo>> {
-        return try {
-            val reviews = reviewRemoteDataSource.getReviewsByProduct(productId).map { it.toReviewInfo() }
-            Result.success(reviews)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun createReview(
-        request: ReviewDraft
-    ): Result<ReviewInfo> {
-        return try {
-            val review = reviewRemoteDataSource.createReview(request.toCreateReviewRequestDto()).toReviewInfo()
-            Result.success(review)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun updateReview(
-        reviewId: Int,
-        request: ReviewChanges
-    ): Result<ReviewInfo> {
-        return try {
-            val review = reviewRemoteDataSource.updateReview(
-                reviewId,
-                request.toUpdateReviewRequestDto()
-            ).toReviewInfo()
-
-            Result.success(review)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun deleteReview(reviewId: Int): Result<Unit> {
-        return try {
-            reviewRemoteDataSource.deleteReview(reviewId)
-            Result.success(Unit)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
 }

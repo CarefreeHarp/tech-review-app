@@ -13,5 +13,5 @@ data class RateProductState(
     val loading: Boolean = false,
     val saving: Boolean = false,
     val published: Boolean = false,
-    val error: String? = null
+    @param:androidx.annotation.StringRes val error: Int? = null
 )

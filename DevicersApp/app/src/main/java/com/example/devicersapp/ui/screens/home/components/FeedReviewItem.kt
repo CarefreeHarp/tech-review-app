@@ -1,8 +1,8 @@
 package com.example.devicersapp.ui.screens.home.components
 
 
-import com.example.devicersapp.ui.session.LocalSessionState
 
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import android.text.format.DateUtils
@@ -32,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalFeedReviewProvider
 import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.FeedReviewActionCountText
@@ -112,7 +111,7 @@ fun FeedReviewItem(
                     )
                     Spacer(modifier = Modifier.width(9.dp))
                     Text(
-                        text = stringResource(R.string.home_feed_author_handle, LocalSessionState.current.userNameFor(review.authorId, review.authorUsername)),
+                        text = stringResource(R.string.home_feed_author_handle, (review.authorUsername).asUserHandle()),
                         modifier = Modifier.weight(1f).clickable { onProfileClick(review.authorId.toString()) },
                         color = colors.textPrimary,
                         style = MaterialTheme.typography.titleSmall,
@@ -199,7 +198,7 @@ fun FeedReviewItem(
         Spacer(modifier = Modifier.height(14.dp))
 
         ReviewActionsRow(
-            likes = review.likes,
+            likes = 0,
             comments = review.comments,
             // El feed prioriza estas acciones con una escala 30 % superior a la del detalle.
             iconSize = 24.7.dp,
@@ -216,7 +215,7 @@ fun FeedReviewItem(
 fun FeedReviewItemPreview() {
     DevicersAppTheme {
         FeedReviewItem(
-            review = LocalFeedReviewProvider.reviews.first(),
+            review = com.example.devicersapp.ui.models.FeedReviewContent(1, 1, stringResource(R.string.product_title), stringResource(R.string.product_brand_label), "", null, 4f, 1, stringResource(R.string.username_placeholder), null, 4, null, stringResource(R.string.review_reply_text_two), 0, 0, 0L),
             modifier = Modifier.padding(16.dp)
         )
     }

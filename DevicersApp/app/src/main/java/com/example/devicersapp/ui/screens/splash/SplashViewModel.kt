@@ -2,7 +2,7 @@ package com.example.devicersapp.ui.screens.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.devicersapp.data.repository.AuthRepository
+import com.example.devicersapp.data.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,9 +13,7 @@ import javax.inject.Inject
 
 /** Comprueba si existe una sesión de Firebase antes de decidir el primer destino de la aplicación. */
 @HiltViewModel
-class SplashViewModel @Inject constructor(
-    private val authRepository: AuthRepository
-) : ViewModel() {
+class SplashViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(SplashState())
     val uiState: StateFlow<SplashState> = _uiState
@@ -24,15 +22,14 @@ class SplashViewModel @Inject constructor(
         checkUser()
     }
 
-    /** Restaura el perfil vinculado a Auth antes de permitir el acceso a la aplicación. */
+    /** Consulta la sesión persistida por Firebase sin cargar una sesión propia ni depender de la base de datos. */
     private fun checkUser() {
         viewModelScope.launch {
             // Mantiene la pantalla de bienvenida visible sin bloquear el hilo principal.
             delay(2000)
-            val restored = authRepository.restoreSession()
             _uiState.update { currentState ->
                 currentState.copy(
-                    isUserAuthenticated = restored.isSuccess && authRepository.currentProfile != null
+                    isUserAuthenticated = Utils.getCurrentUser() != null
                 )
             }
         }

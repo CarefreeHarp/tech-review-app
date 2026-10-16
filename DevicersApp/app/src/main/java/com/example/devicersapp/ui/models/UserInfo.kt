@@ -1,6 +1,6 @@
 package com.example.devicersapp.ui.models
 
-/** Datos de usuario independientes del contrato JSON del backend. */
+/** Datos comunes de usuario; las asociaciones se resuelven mediante los repositorios. */
 data class UserInfo(
     val id: Int,
     val email: String,
@@ -13,4 +13,7 @@ data class UserInfo(
     val createdAt: String,
     val updatedAt: String,
     val reviews: List<ReviewInfo> = emptyList(),
+    val followersCount: Int = 0,
+    val followsCount: Int = 0,
+    val reviewBookmarksCount: Int = 0,
 )

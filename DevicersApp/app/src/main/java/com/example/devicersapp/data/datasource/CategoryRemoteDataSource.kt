@@ -1,8 +1,6 @@
 package com.example.devicersapp.data.datasource
-
-import com.example.devicersapp.data.dto.CategoryDto
-
-/** Contrato remoto exclusivo de categorías; propaga los errores de consulta. */
+import com.example.devicersapp.ui.models.*
+/** Operaciones de categorías; devuelve modelos comunes y propaga los errores de la fuente seleccionada. */
 interface CategoryRemoteDataSource {
-    suspend fun getCategories(): List<CategoryDto>
+    suspend fun getCategories(): List<CategoryInfo>
 }

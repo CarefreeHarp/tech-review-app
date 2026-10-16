@@ -4,7 +4,10 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.R
-import com.example.devicersapp.data.repository.EditProfileRepository
+import com.example.devicersapp.data.repository.UserRepository
+import com.example.devicersapp.data.repository.AuthRepository
+import com.example.devicersapp.data.utils.Utils
+import com.example.devicersapp.ui.models.UserChanges
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,18 +18,21 @@ import javax.inject.Inject
 
 /** Carga el perfil de sesión y administra su borrador sin recibir IDs externos. */
 @HiltViewModel
-class EditProfileViewModel @Inject constructor(private val repository: EditProfileRepository) : ViewModel() {
+class EditProfileViewModel @Inject constructor(
+    private val users: UserRepository,
+    private val auth: AuthRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow(EditProfileState())
     val uiState = _uiState.asStateFlow()
 
     init { loadProfile() }
 
-    /** Precarga el formulario desde Firestore y permite reintentar una carga fallida. */
+    /** Precarga el formulario desde la fuente seleccionada y permite reintentar una carga fallida. */
     fun loadProfile() {
         _uiState.update { it.copy(loading = true, errorMessageResId = null) }
         viewModelScope.launch {
             try {
-                val profile = repository.getProfile()
+                val profile = users.getAuthenticatedUser()
                 _uiState.update {
                     EditProfileState(username = profile.username, biography = profile.biography.orEmpty(),
                         email = profile.email, profileImageUrl = profile.profileImageUrl, loading = false, loaded = true)
@@ -58,7 +64,10 @@ class EditProfileViewModel @Inject constructor(private val repository: EditProfi
         }
         viewModelScope.launch {
             try {
-                repository.saveProfile(draft.username, draft.biography, draft.selectedPhoto)
+                val current = users.getAuthenticatedUser()
+                val updated = users.saveProfile(current.id, Utils.getCurrentUserId(),
+                    UserChanges(username = draft.username.trim(), biography = draft.biography.trim()), draft.selectedPhoto)
+                if (draft.selectedPhoto != null) auth.updateProfileImage(checkNotNull(updated.profileImageUrl)).getOrThrow()
             } catch (exception: CancellationException) {
                 throw exception
             } catch (exception: Exception) {

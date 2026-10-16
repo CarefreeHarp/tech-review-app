@@ -1,8 +1,6 @@
 package com.example.devicersapp.data.datasource
-
-import com.example.devicersapp.data.dto.CommentDto
-
-/** Contrato remoto exclusivo de comentarios; propaga los errores de consulta. */
+import com.example.devicersapp.ui.models.*
+/** Operaciones de comentarios; devuelve modelos comunes y propaga los errores de la fuente seleccionada. */
 interface CommentRemoteDataSource {
-    suspend fun getComments(): List<CommentDto>
+    suspend fun getComments(reviewId: Int? = null): List<CommentInfo>
 }

@@ -7,6 +7,7 @@ import com.example.devicersapp.ui.models.ProductInfo
 import com.example.devicersapp.R
 import com.example.devicersapp.ui.models.ProductCategoryContent
 import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class CreateReviewViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
     private val _uiState =
@@ -48,17 +50,25 @@ class CreateReviewViewModel @Inject constructor(
                 )
             }
 
-            val result = productRepository.getProducts()
+            val result = try {
+                val products = productRepository.getProducts().getOrThrow()
+                val categories = categoryRepository.getCategories()
+                Result.success(products to categories)
+            } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled
+            } catch (error: Exception) { Result.failure(error) }
 
             if (result.isSuccess) {
 
-                val products = result.getOrThrow()
+                val (products, categoryRecords) = result.getOrThrow()
+                val categories = categoryRecords.map {
+                    ProductCategoryContent(it.id.toString(), R.string.all, it.name, it.parentCategoryId?.toString())
+                }
 
                 _uiState.update { currentState ->
                     val loadedState = currentState.copy(
                         categories = listOf(
                             ProductCategoryContent("all", R.string.all)
-                        ),
+                        ) + categories,
                         products = products,
                         isLoading = false,
                         errorMessage = null
@@ -78,13 +88,13 @@ class CreateReviewViewModel @Inject constructor(
                 val message = when (exception) {
 
                     is ConnectException ->
-                        "No fue posible conectarse con el servidor."
+                        R.string.catalog_connection_error
 
                     is SocketTimeoutException ->
-                        "El servidor está tardando demasiado en responder."
+                        R.string.catalog_timeout_error
 
                     else ->
-                        "No fue posible cargar los productos."
+                        R.string.catalog_load_error
                 }
 
                 _uiState.update { currentState ->

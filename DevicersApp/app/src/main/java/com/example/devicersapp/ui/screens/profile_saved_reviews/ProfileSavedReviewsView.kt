@@ -1,6 +1,5 @@
 package com.example.devicersapp.ui.screens.profile_saved_reviews
 
-import com.example.devicersapp.ui.session.LocalSessionState
 
 import com.example.devicersapp.ui.screens.profile_saved_reviews.components.ProfileSavedReviewsSkeleton
 import androidx.compose.foundation.background
@@ -28,8 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProfileProvider
-import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.screens.profile_saved_reviews.components.SavedReviewCard
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
@@ -98,7 +95,7 @@ fun ProfileSavedReviewsViewContent(
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
                 ProfileAvatar(
-                    onProfileClick = onProfileClick,userId = LocalSessionState.current.userId, avatarResId = profile.avatarResId, imageUrl = state.profileImageUrl, modifier = Modifier.size(84.dp))
+                    onProfileClick = onProfileClick,profileId = profile.id, avatarResId = profile.avatarResId, imageUrl = state.profileImageUrl, modifier = Modifier.size(84.dp))
                 Spacer(modifier = Modifier.height(16.dp))
                 if (state.email.isNotBlank()) {
                     Text(
@@ -145,15 +142,13 @@ fun ProfileSavedReviewsViewPreview() {
             selectedItem = "profile",
             showBottomBar = true,
             topBarNumber = 1,
-            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
+            topBarUserHandleResId = R.string.profile_handle
         ) { innerPadding ->
             ProfileSavedReviewsViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 state = ProfileSavedReviewsState(
-                    profile = LocalProfileProvider.profile,
-                    savedReviews = LocalProfileProvider.savedReviews.mapNotNull { savedReview ->
-                        LocalReviewProvider.findById(savedReview.reviewId)
-                    }
+                    profile = com.example.devicersapp.ui.models.ProfileContent(id = "1", avatarResId = R.drawable.no_pfp_icon, handleResId = R.string.profile_handle, biographyResId = R.string.profile_biography, stats = emptyList()),
+                    savedReviews = emptyList()
                 ),
                 onReviewsClick = {},
                 onSavedClick = {},
@@ -172,15 +167,13 @@ fun ProfileSavedReviewsViewDarkPreview() {
             selectedItem = "profile",
             showBottomBar = true,
             topBarNumber = 1,
-            topBarUserHandleResId = LocalProfileProvider.profile.handleResId
+            topBarUserHandleResId = R.string.profile_handle
         ) { innerPadding ->
             ProfileSavedReviewsViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 state = ProfileSavedReviewsState(
-                    profile = LocalProfileProvider.profile,
-                    savedReviews = LocalProfileProvider.savedReviews.mapNotNull { savedReview ->
-                        LocalReviewProvider.findById(savedReview.reviewId)
-                    }
+                    profile = com.example.devicersapp.ui.models.ProfileContent(id = "1", avatarResId = R.drawable.no_pfp_icon, handleResId = R.string.profile_handle, biographyResId = R.string.profile_biography, stats = emptyList()),
+                    savedReviews = emptyList()
                 ),
                 onReviewsClick = {},
                 onSavedClick = {},

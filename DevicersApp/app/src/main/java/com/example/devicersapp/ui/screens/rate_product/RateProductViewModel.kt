@@ -4,7 +4,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import com.example.devicersapp.data.repository.*
 import com.example.devicersapp.ui.models.ReviewDraft
-import com.example.devicersapp.data.dto.toProductContent
+import com.example.devicersapp.ui.models.toProductContent
+import com.example.devicersapp.R
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,7 @@ import javax.inject.Inject
 class RateProductViewModel @Inject constructor(
     private val products: ProductRepository,
     private val reviews: ReviewRepository,
-    private val session: SessionRepository
+    private val users: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RateProductState())
@@ -28,15 +29,15 @@ class RateProductViewModel @Inject constructor(
     fun loadProduct(productId: Int?) {
         if (_uiState.value.product?.id == productId) return
         loadJob?.cancel()
-        _uiState.value = RateProductState(loading = true)
+        _uiState.update { RateProductState(loading = true) }
         loadJob = viewModelScope.launch {
             try {
                 require(productId != null && productId > 0)
                 val product = products.getProductById(productId).getOrThrow().toProductContent()
-                _uiState.value = RateProductState(product = product)
+                _uiState.update { RateProductState(product = product) }
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: Exception) { _uiState.value = RateProductState(error = "No se pudo cargar el producto. Elige uno del catálogo actualizado.") }
+            } catch (e: Exception) { _uiState.update { RateProductState(error = R.string.rate_product_load_error) } }
         }
     }
 
@@ -46,12 +47,12 @@ class RateProductViewModel @Inject constructor(
         if (draft.saving || draft.published) return
         val productId = draft.product?.id ?: return
         if (draft.rating !in 1..5 || draft.experience.isBlank()) {
-            _uiState.update { it.copy(error = "Selecciona una calificación y escribe tu experiencia.") }; return
+            _uiState.update { it.copy(error = R.string.edit_review_validation_error) }; return
         }
         _uiState.update { it.copy(saving = true, error = null) }
         viewModelScope.launch {
             try {
-                val userId = session.requireCurrentProfile().id
+                val userId = users.getAuthenticatedUser().id
                 val body = buildString {
                     append(draft.experience.trim())
                     if (draft.advantage.isNotBlank()) append("\n\nVentajas: ${draft.advantage.trim()}")
@@ -61,7 +62,7 @@ class RateProductViewModel @Inject constructor(
                 _uiState.update { it.copy(saving = false, published = true) }
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: Exception) { _uiState.update { it.copy(saving = false, error = "No se pudo publicar. Tu borrador se conserva; intenta de nuevo.") } }
+            } catch (e: Exception) { _uiState.update { it.copy(saving = false, error = R.string.rate_product_publish_error) } }
         }
     }
 

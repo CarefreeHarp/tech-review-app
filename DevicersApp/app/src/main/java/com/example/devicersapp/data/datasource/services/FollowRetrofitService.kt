@@ -1,10 +1,9 @@
 package com.example.devicersapp.data.datasource.services
-
-import com.example.devicersapp.data.dto.FollowDto
-import retrofit2.http.GET
-
-/** Declara únicamente los endpoints de seguimientos. */
+import com.example.devicersapp.data.dto.ResponseDTO.retrofit.*
+import com.example.devicersapp.data.dto.ResponseDTO.shared.*
+import com.example.devicersapp.data.dto.RequestDTO.retrofit.*
+import retrofit2.http.*
+/** Endpoints existentes de seguimientos; los cuerpos y respuestas permanecen en la frontera HTTP. */
 interface FollowRetrofitService {
-    @GET("follows")
-    suspend fun getFollows(): List<FollowDto>
+    @GET("follows") suspend fun getFollows(): List<FollowRetrofitDto>
 }

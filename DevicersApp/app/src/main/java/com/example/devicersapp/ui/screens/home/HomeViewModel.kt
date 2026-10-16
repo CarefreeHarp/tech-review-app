@@ -1,15 +1,12 @@
 package com.example.devicersapp.ui.screens.home
 
-import com.example.devicersapp.data.repository.ArticleReviewsRepository
+import com.example.devicersapp.data.repository.ReviewRepository
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.devicersapp.R
-import com.example.devicersapp.data.repository.SessionRepository
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -20,8 +17,7 @@ import javax.inject.Inject
 /** Conserva y modifica el estado de la pantalla principal. */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val articleReviews: ArticleReviewsRepository,
-    private val session: SessionRepository
+    private val articleReviews: ReviewRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeState())
@@ -31,7 +27,7 @@ class HomeViewModel @Inject constructor(
         loadFeed()
     }
 
-    /** Carga desde Firestore las reseñas del feed con su artículo, autor y conteos. */
+    /** Carga desde la fuente seleccionada las reseñas del feed con su artículo, autor y conteos. */
     private fun loadFeed() {
         _uiState.update { currentState ->
             currentState.copy(isLoading = true, errorMessageResId = null)
@@ -39,17 +35,11 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val currentUserId = session.requireCurrentProfile().id
-                val (feed, follows) = coroutineScope {
-                    val feed = async { articleReviews.getFeedReviews().getOrThrow() }
-                    val follows = async { articleReviews.getFollowedUserIds(currentUserId).getOrThrow() }
-                    feed.await() to follows.await()
-                }
+                val feed = articleReviews.getFeedReviews().getOrThrow()
                 _uiState.update { current ->
                     current.copy(
                         allFeedReviews = feed,
-                        followedAuthorIds = follows,
-                        feedReviews = if (current.isForYouSelected) feed else feed.filter { it.authorId in follows },
+                        feedReviews = if (current.isForYouSelected) feed else emptyList(),
                         isLoading = false
                     )
                 }
@@ -76,12 +66,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /** Selecciona la sección "Siguiendo". */
+    /** Selecciona visualmente "Siguiendo" sin cargar reseñas de cuentas seguidas. */
     fun onFollowingClick() {
         _uiState.update { currentState ->
             currentState.copy(
                 isForYouSelected = false,
-                feedReviews = currentState.allFeedReviews.filter { it.authorId in currentState.followedAuthorIds }
+                feedReviews = emptyList()
             )
         }
     }

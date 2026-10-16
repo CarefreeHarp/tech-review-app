@@ -12,8 +12,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.runtime.remember
-import com.example.devicersapp.data.local.ProfilePreviewProvider
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.Lifecycle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.Text
@@ -47,6 +47,7 @@ fun OwnProfileView(
     onFollowingClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.onResume() }
 
     OwnProfileViewContent(
         onProfileClick = onProfileClick,
@@ -149,36 +150,28 @@ fun OwnProfileViewContent(
     }
 }
 
-/** Previsualiza la vista raíz con un perfil local y sin conexión a Firebase. */
+/** Previsualiza el contenido sin autenticar usuarios ni consultar servicios remotos. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun OwnProfileViewPreview() {
     val username = stringResource(R.string.username_placeholder)
-    val biography = stringResource(R.string.profile_biography)
-    val email = stringResource(R.string.email_placeholder)
-    val provider = remember { ProfilePreviewProvider(username, biography, email) }
-    val viewModel = remember { OwnProfileViewModel(provider.ownProfile, androidx.lifecycle.SavedStateHandle(), provider.session) }
     DevicersAppTheme(darkTheme = false) {
         DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
             topBarUserHandle = username) { padding ->
-            OwnProfileView(viewModel = viewModel, modifier = Modifier.padding(padding))
+            OwnProfileViewContent(state = OwnProfileState(loading = true), onSavedClick = {}, onReviewClick = {}, modifier = Modifier.padding(padding))
         }
     }
 }
 
-/** Previsualiza la vista raíz con un perfil local y sin conexión a Firebase. */
+/** Previsualiza el contenido sin autenticar usuarios ni consultar servicios remotos. */
 @Composable
 @Preview(showBackground = true, heightDp = 1100)
 fun OwnProfileViewDarkPreview() {
     val username = stringResource(R.string.username_placeholder)
-    val biography = stringResource(R.string.profile_biography)
-    val email = stringResource(R.string.email_placeholder)
-    val provider = remember { ProfilePreviewProvider(username, biography, email) }
-    val viewModel = remember { OwnProfileViewModel(provider.ownProfile, androidx.lifecycle.SavedStateHandle(), provider.session) }
     DevicersAppTheme(darkTheme = true) {
         DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
             topBarUserHandle = username) { padding ->
-            OwnProfileView(viewModel = viewModel, modifier = Modifier.padding(padding))
+            OwnProfileViewContent(state = OwnProfileState(loading = true), onSavedClick = {}, onReviewClick = {}, modifier = Modifier.padding(padding))
         }
     }
 }

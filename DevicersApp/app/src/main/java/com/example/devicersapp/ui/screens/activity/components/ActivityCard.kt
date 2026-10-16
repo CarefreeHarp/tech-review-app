@@ -1,8 +1,8 @@
 package com.example.devicersapp.ui.screens.activity.components
 
 
-import com.example.devicersapp.ui.session.LocalSessionState
 
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 import android.content.res.Resources
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
@@ -101,7 +101,7 @@ fun ActivityCard(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 modifier = Modifier.clickable { onProfileClick(activity.actorProfileId) },
-                text = LocalSessionState.current.userNameFor(activity.actorProfileId.toIntOrNull(), actorName),
+                text = (actorName).asUserHandle(),
                 style = MaterialTheme.typography.titleSmall,
                 color = colors.textPrimary
             )

@@ -11,5 +11,5 @@ data class RequestProductState(
     val canSendRequest: Boolean = false,
     val submitting: Boolean = false,
     val submitted: Boolean = false,
-    val error: String? = null
+    @param:androidx.annotation.StringRes val error: Int? = null
 )

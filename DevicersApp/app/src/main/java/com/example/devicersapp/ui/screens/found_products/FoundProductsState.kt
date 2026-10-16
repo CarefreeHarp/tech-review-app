@@ -9,5 +9,5 @@ data class FoundProductsState(
     val results: List<ProductInfo> = emptyList(),
     val searchText: String = "",
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    @param:androidx.annotation.StringRes val errorMessage: Int? = null
 )

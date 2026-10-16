@@ -16,6 +16,5 @@ data class HomeState(
     val isLoading: Boolean = false,
     @param:StringRes val errorMessageResId: Int? = null,
     val isForYouSelected: Boolean = true,
-    val allFeedReviews: List<FeedReviewContent> = emptyList(),
-    val followedAuthorIds: Set<Int> = emptySet()
+    val allFeedReviews: List<FeedReviewContent> = emptyList()
 )

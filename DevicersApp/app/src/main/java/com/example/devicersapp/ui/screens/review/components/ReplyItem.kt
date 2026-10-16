@@ -1,8 +1,8 @@
 package com.example.devicersapp.ui.screens.review.components
 
 
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 import androidx.compose.foundation.clickable
-import com.example.devicersapp.ui.session.LocalSessionState
 
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.ui.models.ReplyContent
 import com.example.devicersapp.ui.theme.CardHighlightText
 import com.example.devicersapp.ui.theme.CardMetadataText
@@ -63,7 +62,6 @@ fun ReplyItem(
     onProfileClick: (String) -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
-    val author = if (reply.authorName == null) LocalProfileProvider.getProfileById(reply.authorId) else null
 
     Box(
         // La altura intrínseca deja que el conector abarque exactamente lo que ocupa la respuesta.
@@ -89,7 +87,7 @@ fun ReplyItem(
 
             ProfileAvatar(
                 onProfileClick = onProfileClick,
-                avatarResId = author?.avatarResId ?: R.drawable.no_pfp_icon,
+                avatarResId = R.drawable.no_pfp_icon,
                 imageUrl = reply.authorImageUrl,
                 userId = reply.authorId.toIntOrNull(),
                 profileId = reply.authorId,
@@ -101,10 +99,7 @@ fun ReplyItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     modifier = Modifier.clickable { onProfileClick(reply.authorId) },
-                    text = LocalSessionState.current.userNameFor(
-                        reply.authorId.toIntOrNull(),
-                        reply.authorName ?: author?.let { stringResource(it.handleResId) }.orEmpty()
-                    ),
+                    text = reply.authorName.orEmpty().asUserHandle(),
                     style = CardHighlightText,
                     color = colors.textPrimary
                 )

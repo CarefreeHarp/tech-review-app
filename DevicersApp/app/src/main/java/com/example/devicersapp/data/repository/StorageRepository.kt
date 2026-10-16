@@ -15,7 +15,8 @@ import javax.inject.Singleton
 @Singleton
 class StorageRepository @Inject constructor(
     private val storage: StorageRemoteDataSource,
-    private val auth: AuthRepository
+    private val auth: AuthRepository,
+    private val users: UserRepository
 ) {
 
     /**
@@ -34,10 +35,10 @@ class StorageRepository @Inject constructor(
             val path = "profileImages/$userId.jpg"
             val url = storage.uploadImage(path, uri)
 
-            auth.updateProfileImage(url).fold(
-                onSuccess = { Result.success(url) },
-                onFailure = { exception -> Result.failure(exception) }
-            )
+            auth.updateProfileImage(url).getOrThrow()
+            val profile = users.getAuthenticatedUser()
+            users.updateProfile(profile.id, com.example.devicersapp.ui.models.UserChanges(profileImageUrl = url))
+            Result.success(url)
         } catch (e: StorageException) {
             Result.failure(
                 Exception(getStorageErrorMessage(e), e)

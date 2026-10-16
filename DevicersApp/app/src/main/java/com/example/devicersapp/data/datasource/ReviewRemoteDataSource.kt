@@ -1,16 +1,12 @@
 package com.example.devicersapp.data.datasource
-
-import com.example.devicersapp.data.dto.ReviewDto
-import com.example.devicersapp.data.dto.CreateReviewRequestDto
-import com.example.devicersapp.data.dto.UpdateReviewRequestDto
-
-/** Contrato remoto exclusivo de la entidad Review; propaga errores de consulta. */
+import com.example.devicersapp.ui.models.*
+/** Operaciones de reseñas; devuelve modelos comunes y propaga los errores de la fuente seleccionada. */
 interface ReviewRemoteDataSource {
-    suspend fun getReviews(): List<ReviewDto>
-    suspend fun getReviewById(reviewId: Int): ReviewDto
-    suspend fun getReviewsByUser(userId: Int): List<ReviewDto>
-    suspend fun getReviewsByProduct(productId: Int): List<ReviewDto>
-    suspend fun createReview(request: CreateReviewRequestDto): ReviewDto
-    suspend fun updateReview(reviewId: Int, request: UpdateReviewRequestDto): ReviewDto
-    suspend fun deleteReview(reviewId: Int): Unit
+    suspend fun getReviews(): List<ReviewInfo>
+    suspend fun getReviewById(reviewId: Int): ReviewInfo
+    suspend fun getReviewsByUser(userId: Int): List<ReviewInfo>
+    suspend fun getReviewsByProduct(productId: Int): List<ReviewInfo>
+    suspend fun createReview(draft: ReviewDraft): ReviewInfo
+    suspend fun updateReview(reviewId: Int, changes: ReviewChanges): ReviewInfo
+    suspend fun deleteReview(reviewId: Int)
 }

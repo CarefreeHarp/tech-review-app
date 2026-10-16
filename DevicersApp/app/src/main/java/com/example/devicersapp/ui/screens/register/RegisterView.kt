@@ -113,11 +113,12 @@ fun RegisterViewContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         if (state.showValidationWarning &&
-            (!state.isEmailValid || !state.isPasswordValid ||
+            (!state.isUsernameValid || !state.isEmailValid || !state.isPasswordValid ||
                 !state.isConfirmationPasswordValid ||
                 state.registrationErrorMessage != null)
         ) {
             RegisterValidationWarning(
+                isUsernameValid = state.isUsernameValid,
                 isEmailValid = state.isEmailValid,
                 isPasswordValid = state.isPasswordValid,
                 isConfirmationPasswordValid = state.isConfirmationPasswordValid,

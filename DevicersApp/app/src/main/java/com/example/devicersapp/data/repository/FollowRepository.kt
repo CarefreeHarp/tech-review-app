@@ -1,11 +1,15 @@
 package com.example.devicersapp.data.repository
+import com.example.devicersapp.data.datasource.*
+import com.example.devicersapp.ui.models.*
 
-import com.example.devicersapp.data.datasource.FollowRemoteDataSource
-import com.example.devicersapp.data.dto.toFollowInfo
-import com.example.devicersapp.ui.models.FollowInfo
-import javax.inject.Inject
-
-/** Consulta seguimientos y traduce sus DTOs al modelo del front. */
-class FollowRepository @Inject constructor(private val source: FollowRemoteDataSource) {
-    suspend fun getFollows(): List<FollowInfo> = source.getFollows().map { it.toFollowInfo() }
+/** Consulta la relación en ambos sentidos y resuelve las identidades públicas de las listas. */
+class FollowRepository(private val source: FollowRemoteDataSource, private val users: UserRemoteDataSource) {
+    suspend fun getFollowers(userId: Int): List<FollowInfo> = source.getFollowers(userId)
+    suspend fun getFollowing(userId: Int): List<FollowInfo> = source.getFollowing(userId)
+    suspend fun getFollowedUserIds(userId: Int): Set<Int> = getFollowing(userId).map { it.followedId }.toSet()
+    suspend fun getFollowerUsers(userId: Int): List<UserSummary> =
+        publicUsers(getFollowers(userId).map { it.followerId }.toSet())
+    suspend fun getFollowingUsers(userId: Int): List<UserSummary> = publicUsers(getFollowedUserIds(userId))
+    private suspend fun publicUsers(ids: Set<Int>): List<UserSummary> = users.getByIds(ids).values
+        .filter { it.isActive }.map { it.toUserSummary() }.sortedBy { it.username.lowercase() }
 }

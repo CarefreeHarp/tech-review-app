@@ -3,8 +3,8 @@ package com.example.devicersapp.ui.screens.edit_review
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.R
-import com.example.devicersapp.data.repository.SessionRepository
-import com.example.devicersapp.data.dto.toProductContent
+import com.example.devicersapp.data.repository.UserRepository
+import com.example.devicersapp.ui.models.toProductContent
 import com.example.devicersapp.data.repository.ProductRepository
 import com.example.devicersapp.data.repository.ReviewRepository
 import com.example.devicersapp.ui.models.ReviewChanges
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class EditReviewViewModel @Inject constructor(
     private val reviews: ReviewRepository,
     private val products: ProductRepository,
-    private val session: SessionRepository
+    private val users: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditReviewState())
     val uiState: StateFlow<EditReviewState> = _uiState
@@ -37,9 +37,9 @@ class EditReviewViewModel @Inject constructor(
         _uiState.update { EditReviewState(loading = true) }
         loadJob = viewModelScope.launch {
             try {
-                val userId = session.requireCurrentProfile().id
+                val userId = users.getAuthenticatedUser().id
                 val review = reviews.getReviewById(reviewId).getOrThrow()
-                if (review.userId != userId || session.currentProfile.value?.id != userId) {
+                if (review.userId != userId) {
                     _uiState.update { EditReviewState(errorResId = R.string.edit_review_owner_error) }
                     return@launch
                 }
@@ -59,7 +59,6 @@ class EditReviewViewModel @Inject constructor(
                     advantage = experience.substring(advantageIndex + "\n\nVentajas: ".length)
                     experience = experience.substring(0, advantageIndex)
                 }
-                check(session.currentProfile.value?.id == userId)
                 ownerId = userId
                 _uiState.update {
                     EditReviewState(
@@ -90,21 +89,18 @@ class EditReviewViewModel @Inject constructor(
             _uiState.update { it.copy(errorResId = R.string.edit_review_validation_error) }
             return
         }
-        val userId = session.currentProfile.value?.id
-        if (userId == null || userId != ownerId) {
-            _uiState.update { it.copy(canEdit = false, errorResId = R.string.edit_review_owner_error) }
-            return
-        }
         _uiState.update { it.copy(saving = true, errorResId = null) }
         viewModelScope.launch {
             try {
+                val userId = users.getAuthenticatedUser().id
+                require(userId == ownerId)
                 val body = buildString {
                     append(draft.experience)
                     if (draft.advantage.isNotBlank()) append("\n\nVentajas: ${draft.advantage}")
                     if (draft.disadvantage.isNotBlank()) append("\n\nDesventajas: ${draft.disadvantage}")
                 }
                 val review = reviews.getReviewById(reviewId).getOrThrow()
-                require(review.userId == userId && session.currentProfile.value?.id == userId)
+                require(review.userId == userId)
                 reviews.updateReview(reviewId, ReviewChanges(
                     rating = draft.rating, title = draft.title, body = body
                 )).getOrThrow()

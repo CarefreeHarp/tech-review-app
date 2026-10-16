@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProfileProvider
 import com.example.devicersapp.ui.models.ProfileSearchResultContent
 import com.example.devicersapp.ui.screens.profile_search_results.components.ProfileResultCard
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -41,7 +40,7 @@ fun ProfileSearchResultsView(
         state = uiState,
         onRetry = viewModel::loadResults,
         onSearchTextChange = viewModel::onSearchTextChange,
-        onFollow = viewModel::onFollow,
+        onFollow = {},
         onProfileClick = onProfileClick,
         modifier = modifier
             .fillMaxSize()
@@ -60,10 +59,10 @@ fun ProfileSearchResultsViewContent(
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
-    val results = state.results.filter { it.username?.contains(state.searchText, ignoreCase = true) ?: true }
+    val results = state.results
 
     Column(modifier = modifier.padding(horizontal = 20.dp)) {
-        state.error?.let { Text(it); androidx.compose.material3.TextButton(onClick = onRetry) { Text("Reintentar") } }
+        state.error?.let { Text(stringResource(it)); androidx.compose.material3.TextButton(onClick = onRetry) { Text(stringResource(R.string.discovery_retry)) } }
         Spacer(modifier = Modifier.height(28.dp))
         SearchBar(
             placeholder = R.string.profile_search_results_placeholder,
@@ -89,7 +88,7 @@ fun ProfileSearchResultsViewContent(
             items(results, key = { it.id }) { result ->
                 ProfileResultCard(
                     result = result,
-                    isFollowed = result.id in state.followedProfileIds,
+                    isFollowed = false,
                     followEnabled = false,
                     onFollow = { onFollow(result.id) },
                     onProfileClick = { onProfileClick(result.id) }
@@ -112,7 +111,7 @@ fun ProfileSearchResultsViewPreview() {
                 innerPadding ->
             ProfileSearchResultsViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                state = ProfileSearchResultsState(results = LocalProfileProvider.profiles),
+                state = ProfileSearchResultsState(results = emptyList()),
                 onSearchTextChange = {},
                 onFollow = {},
                 onProfileClick = {}
@@ -130,7 +129,7 @@ fun ProfileSearchResultsViewDarkPreview() {
                 innerPadding ->
             ProfileSearchResultsViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                state = ProfileSearchResultsState(results = LocalProfileProvider.profiles),
+                state = ProfileSearchResultsState(results = emptyList()),
                 onSearchTextChange = {},
                 onFollow = {},
                 onProfileClick = {}

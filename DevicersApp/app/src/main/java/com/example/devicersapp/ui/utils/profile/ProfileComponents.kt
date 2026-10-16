@@ -24,15 +24,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
 import coil3.compose.AsyncImage
-import com.example.devicersapp.ui.session.LocalSessionState
+
+/** Presenta un único prefijo @ sin mantener datos de autenticación ni estado global. */
+fun String.asUserHandle(): String {
+    val username = trim().trimStart('@').trim()
+    return if (username.isBlank()) "" else "@$username"
+}
 
 /**
  * Muestra una imagen de perfil circular y recortada para las entidades de usuario.
  *
  * @param avatarResId Recurso local mostrado mientras se carga una foto remota.
- * @param imageUrl URL obtenida del perfil de Firestore; no se resuelven nombres de drawables.
+ * @param imageUrl URL obtenida del perfil consultado; no se resuelven nombres de drawables.
  * @param modifier Modificador aplicado a la imagen de perfil.
- * @param userId Identificador del usuario; el usuario actual utiliza la foto de su sesión.
+ * @param userId Identificador del usuario al que conduce el avatar.
  * @param profileId Identificador del perfil al que conduce la foto, incluidos los perfiles locales.
  * @param onProfileClick Acción del padre al pulsar la foto; recibe el identificador del perfil.
  */
@@ -45,7 +50,7 @@ fun ProfileAvatar(
     profileId: String? = userId?.toString(),
     onProfileClick: ((String) -> Unit)? = null
 ) {
-    val resolvedImageUrl = LocalSessionState.current.userImageFor(userId, imageUrl)
+    val resolvedImageUrl = imageUrl
     val avatarModifier = modifier.clip(CircleShape).then(
         if (!profileId.isNullOrBlank() && onProfileClick != null) {
             Modifier.clickable { onProfileClick(profileId) }

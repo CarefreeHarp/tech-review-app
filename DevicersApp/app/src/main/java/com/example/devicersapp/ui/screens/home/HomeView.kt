@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalFeedReviewProvider
 import com.example.devicersapp.ui.models.FeedReviewContent
 import com.example.devicersapp.ui.screens.home.components.FeedReviewItem
 import com.example.devicersapp.ui.screens.home.components.HomeFeedErrorMessage
@@ -196,7 +195,7 @@ fun HomeViewPreview() {
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                state = HomeState(feedReviews = LocalFeedReviewProvider.reviews),
+                state = HomeState(feedReviews = emptyList()),
                 onForYouClick = {},
                 onFollowingClick = {},
                 onRetryClick = {},
@@ -223,7 +222,7 @@ fun HomeViewDarkPreview() {
                 modifier = Modifier.padding(
                     top = innerPadding.calculateTopPadding()
                 ),
-                state = HomeState(feedReviews = LocalFeedReviewProvider.reviews),
+                state = HomeState(feedReviews = emptyList()),
                 onForYouClick = {},
                 onFollowingClick = {},
                 onRetryClick = {},

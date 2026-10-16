@@ -1,0 +1,142 @@
+---
+title: Express / PostgreSQL Database
+---
+erDiagram
+    direction LR
+    users {
+        int id PK
+        text firebase_uid UK
+        text email UK
+        text username UK
+        text biography
+        text profile_image_url
+        timestamp notifications_last_viewed_at
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+    categories {
+        int id PK
+        int parent_category_id FK
+        text name
+        text description
+    }
+    brands {
+        int id PK
+        text name UK
+    }
+    stores {
+        int id PK
+        text name UK
+        text website_url
+    }
+    articles {
+        int id PK
+        int category_id FK
+        int brand_id FK
+        text name
+        text model
+        text description
+        text image_url
+        date release_date
+        json specifications
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+    reviews {
+        int id PK
+        int user_id FK
+        int article_id FK
+        int rating
+        text title
+        text body
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+    comments {
+        int id PK
+        int review_id FK
+        int user_id FK
+        int parent_comment_id FK
+        text user_username
+        text user_profile_image_url
+        text body
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+    review_likes {
+        int id PK
+        int user_id FK
+        int review_id FK
+        timestamp created_at
+    }
+    comment_likes {
+        int id PK
+        int user_id FK
+        int comment_id FK
+        timestamp created_at
+    }
+    follows {
+        int follower_id PK,FK
+        int followed_id PK,FK
+        timestamp created_at
+    }
+    article_stores {
+        int article_id PK,FK
+        int store_id PK,FK
+        text name
+        text website_url
+        text product_url
+    }
+    review_bookmarks {
+        int user_id PK,FK
+        int review_id PK,FK
+        timestamp created_at
+    }
+    notifications {
+        int id PK
+        int user_id FK
+        int actor_user_id FK
+        text type
+        int review_id FK
+        int comment_id FK
+        boolean is_read
+        timestamp created_at
+    }
+    product_requests {
+        text id PK
+        int user_id FK
+        text product_name
+        text image_url
+        text category
+        text brand
+        text release_date
+        text status
+        timestamp created_at
+    }
+    categories |o--o{ categories : "parent_category_id"
+    categories ||--o{ articles : "category_id"
+    brands ||--o{ articles : "brand_id"
+    users ||--o{ reviews : "user_id"
+    articles ||--o{ reviews : "article_id"
+    reviews ||--o{ comments : "review_id"
+    users ||--o{ comments : "user_id"
+    comments |o--o{ comments : "parent_comment_id"
+    users ||--o{ review_likes : "user_id"
+    reviews ||--o{ review_likes : "review_id"
+    users ||--o{ comment_likes : "user_id"
+    comments ||--o{ comment_likes : "comment_id"
+    users ||--o{ follows : "follower_id"
+    users ||--o{ follows : "followed_id"
+    articles ||--o{ article_stores : "article_id"
+    stores ||--o{ article_stores : "store_id"
+    users ||--o{ review_bookmarks : "user_id"
+    reviews ||--o{ review_bookmarks : "review_id"
+    users ||--o{ notifications : "user_id"
+    users ||--o{ notifications : "actor_user_id"
+    reviews |o--o{ notifications : "review_id"
+    comments |o--o{ notifications : "comment_id"
+    users ||--o{ product_requests : "user_id"

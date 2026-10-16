@@ -102,7 +102,7 @@ fun CreateReviewViewContent(
             )
 
             Text(
-                text = state.errorMessage,
+                text = stringResource(state.errorMessage),
                 color = colors.textSecondary,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -216,75 +216,3 @@ fun CreateReviewViewContent(
         }
     }
 }
-
-///** Muestra una vista previa de la creación de reseña en el tema claro. */
-//@Composable
-//@Preview(
-//    name = "Crear reseña claro",
-//    showBackground = true,
-//    heightDp = 1000
-//)
-//fun CreateReviewLightPreview() {
-//    DevicersAppTheme(darkTheme = false) {
-//        DevicersScaffold(
-//            selectedItem = "create",
-//            showBottomBar = true,
-//            topBarNumber = 3
-//        ) { innerPadding ->
-//            CreateReviewViewContent(
-//                state = CreateReviewState(
-//                    categories = LocalProductProvider.categories,
-//                    filteredProducts = LocalProductProvider.products
-//                ),
-//                onSearchTextChange = {},
-//                onCategoryChange = {},
-//                onProductClick = {},
-//                onRequestProductClick = {},
-//                modifier = Modifier
-//                    .padding(
-//                        top = innerPadding.calculateTopPadding()
-//                    )
-//                    .fillMaxSize()
-//                    .background(
-//                        LocalDevicersColors.current.background
-//                    )
-//            )
-//        }
-//    }
-//}
-//
-///** Muestra una vista previa de la creación de reseña en el tema oscuro. */
-//@Composable
-//@Preview(
-//    name = "Crear reseña oscuro",
-//    showBackground = true,
-//    heightDp = 1000
-//)
-//fun CreateReviewDarkPreview() {
-//    DevicersAppTheme(darkTheme = true) {
-//        DevicersScaffold(
-//            selectedItem = "create",
-//            showBottomBar = true,
-//            topBarNumber = 3
-//        ) { innerPadding ->
-//            CreateReviewViewContent(
-//                state = CreateReviewState(
-//                    categories = LocalProductProvider.categories,
-//                    filteredProducts = LocalProductProvider.products
-//                ),
-//                onSearchTextChange = {},
-//                onCategoryChange = {},
-//                onProductClick = {},
-//                onRequestProductClick = {},
-//                modifier = Modifier
-//                    .padding(
-//                        top = innerPadding.calculateTopPadding()
-//                    )
-//                    .fillMaxSize()
-//                    .background(
-//                        LocalDevicersColors.current.background
-//                    )
-//            )
-//        }
-//    }
-//}

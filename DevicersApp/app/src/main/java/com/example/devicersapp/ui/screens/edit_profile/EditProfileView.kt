@@ -20,14 +20,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.ProfilePreviewProvider
 import com.example.devicersapp.ui.screens.edit_profile.components.EditProfileField
 import com.example.devicersapp.ui.screens.edit_profile.components.EditProfilePhoto
 import com.example.devicersapp.ui.theme.DevicersAppTheme
@@ -96,17 +94,18 @@ fun EditProfileViewContent(
     }
 }
 
-/** Previsualiza la vista raíz con una fuente de datos local que no accede a Firebase. */
+/** Previsualiza el formulario sin crear cuentas ni conectarse a servicios remotos. */
 @Preview(showBackground = true, heightDp = 900)
 @Composable
 fun EditProfileViewPreview() {
     val username = stringResource(R.string.username_placeholder)
     val biography = stringResource(R.string.profile_biography)
     val email = stringResource(R.string.email_placeholder)
-    val viewModel = remember { EditProfileViewModel(ProfilePreviewProvider(username, biography, email).editor) }
     DevicersAppTheme {
         DevicersScaffold(topBarNumber = 12) { padding ->
-            EditProfileView(viewModel, onSaved = {}, onCancel = {}, modifier = Modifier.padding(padding))
+            EditProfileViewContent(state = EditProfileState(username = username, biography = biography, email = email, loading = false, loaded = true),
+                onUsernameChange = {}, onBiographyChange = {}, onChoosePhoto = {}, onSave = {},
+                onCancel = {}, onRetry = {}, modifier = Modifier.padding(padding))
         }
     }
 }

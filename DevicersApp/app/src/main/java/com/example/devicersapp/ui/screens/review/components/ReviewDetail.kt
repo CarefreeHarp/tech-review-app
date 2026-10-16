@@ -1,8 +1,8 @@
 package com.example.devicersapp.ui.screens.review.components
 
 
-import com.example.devicersapp.ui.session.LocalSessionState
 
+import com.example.devicersapp.ui.utils.profile.asUserHandle
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 
 import androidx.compose.foundation.clickable
@@ -23,8 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
-import com.example.devicersapp.data.local.LocalProfileProvider
-import com.example.devicersapp.data.local.LocalReviewProvider
 import com.example.devicersapp.ui.models.ReviewContent
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.RatingStarsLargeText
@@ -46,7 +44,6 @@ import com.example.devicersapp.ui.utils.review.ReviewActionsRow
 @Composable
 fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onProfileClick: (String) -> Unit = {}, actions: @Composable () -> Unit = {}) {
     val colors = LocalDevicersColors.current
-    val author = if (review.authorName == null) LocalProfileProvider.getProfileById(review.authorId) else null
 
     Column(modifier = modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -58,7 +55,7 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onProfile
             ) {
                 ProfileAvatar(
                     onProfileClick = onProfileClick,
-                    avatarResId = author?.avatarResId ?: R.drawable.no_pfp_icon,
+                    avatarResId = R.drawable.no_pfp_icon,
                     imageUrl = review.authorImageUrl,
                     userId = review.authorId.toIntOrNull(),
                     profileId = review.authorId,
@@ -68,10 +65,7 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onProfile
                 Column {
                     Text(
                         modifier = Modifier.clickable { onProfileClick(review.authorId) },
-                        text = LocalSessionState.current.userNameFor(
-                            review.authorId.toIntOrNull(),
-                            review.authorName ?: author?.let { stringResource(it.handleResId) }.orEmpty()
-                        ),
+                        text = review.authorName.orEmpty().asUserHandle(),
                         style = MaterialTheme.typography.titleSmall,
                         color = colors.textPrimary
                     )
@@ -116,7 +110,7 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onProfile
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        ReviewActionsRow(likes = review.likes, comments = review.comments.size)
+        ReviewActionsRow(likes = 0, comments = review.comments.size)
     }
 }
 
@@ -126,7 +120,7 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onProfile
 fun ReviewDetailPreview() {
     DevicersAppTheme {
         ReviewDetail(
-            review = LocalReviewProvider.reviews.first(),
+            review = com.example.devicersapp.ui.models.ReviewContent(authorId = "1", productNameResId = R.string.product_title, productImageResId = R.drawable.no_pfp_icon, productMetadataResId = R.string.product_brand_label, rating = 4, textResId = R.string.review_reply_text_two, likes = 0),
             modifier = Modifier.padding(16.dp)
         )
     }

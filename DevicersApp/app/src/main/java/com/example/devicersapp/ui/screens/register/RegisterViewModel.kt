@@ -3,6 +3,10 @@ package com.example.devicersapp.ui.screens.register
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.data.repository.AuthRepository
+import com.example.devicersapp.data.repository.UserRepository
+import com.example.devicersapp.data.utils.Utils
+import com.example.devicersapp.ui.models.UserDraft
+import kotlinx.coroutines.CancellationException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +17,8 @@ import kotlinx.coroutines.launch
 /** Gestiona la validación y las acciones de presentación del registro. */
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val users: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterState())
@@ -21,7 +26,7 @@ class RegisterViewModel @Inject constructor(
 
     /** Actualiza el nombre que la persona escribe en el formulario. */
     fun onUsernameChange(username: String) {
-        _uiState.update { it.copy(username = username) }
+        _uiState.update { it.copy(username = username, isUsernameValid = username.isNotBlank()) }
     }
 
     /** Actualiza el correo y vuelve a calcular las validaciones relacionadas. */
@@ -50,7 +55,7 @@ class RegisterViewModel @Inject constructor(
 
         _uiState.update { state ->
             val validatedState = state.withValidation()
-            isRegistrationValid = validatedState.isEmailValid &&
+            isRegistrationValid = validatedState.isUsernameValid && validatedState.isEmailValid &&
                 validatedState.isPasswordValid &&
                 validatedState.isConfirmationPasswordValid
             validatedState.copy(
@@ -71,15 +76,23 @@ class RegisterViewModel @Inject constructor(
     suspend fun signUp(): Boolean {
         val signUpResult = authRepository.signUp(
             email = _uiState.value.email,
-            password = _uiState.value.password,
-            username = _uiState.value.username.trim()
+            password = _uiState.value.password
         )
         if (signUpResult.isFailure) {
             updateRegistrationError(signUpResult.exceptionOrNull())
             return false
         }
 
-        return true
+        return try {
+            val account = checkNotNull(Utils.getCurrentUser())
+            users.createIfMissing(UserDraft(Utils.getCurrentUserId(), account.email.orEmpty(),
+                _uiState.value.username.trim(), account.photoUrl?.toString()))
+            true
+        } catch (cancelled: CancellationException) { throw cancelled
+        } catch (error: Exception) {
+            updateRegistrationError(error)
+            false
+        }
     }
 
     /** Publica un error de autenticación recibido desde el repositorio. */
@@ -99,6 +112,8 @@ class RegisterViewModel @Inject constructor(
         val passwordIsValid = password.matches(PASSWORD_REGEX)
 
         return copy(
+            // Se valida antes de crear Auth para no dejar cuentas sin un perfil válido.
+            isUsernameValid = username.isNotBlank(),
             email = email,
             password = password,
             confirmationPassword = confirmationPassword,
