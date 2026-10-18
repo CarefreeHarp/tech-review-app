@@ -44,9 +44,12 @@ class ProfileViewModel @Inject constructor(
                     return@launch
                 }
                 val content = profiles.getProfile(id)
+                // Consulta los seguidos del perfil visitado para reconocer el seguimiento de vuelta.
+                val followsYou = currentId in follows.getFollowedUserIds(id)
                 state.update {
                     ProfileState(profile = content.user.toProfileContent(content.reviews.size, content.followerCount, content.followingCount),
                         reviews = content.reviews.map { it.toReviewContent() }, isFollowed = content.isFollowed,
+                        followsYou = followsYou,
                         isOwnProfile = false)
                 }
             } catch (exception: CancellationException) {

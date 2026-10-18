@@ -96,7 +96,11 @@ fun ProfileViewContent(
                     onFollowersClick = onFollowersClick,
                     onFollowingClick = onFollowingClick,
                     profile = profile,
-                    actionLabelResId = if (state.isFollowed) R.string.activity_following else R.string.profile_follow,
+                    actionLabelResId = when {
+                        state.isFollowed -> R.string.activity_following
+                        state.followsYou -> R.string.profile_follow_back
+                        else -> R.string.profile_follow
+                    },
                     actionEnabled = !state.followInProgress,
                     actionIsSecondary = state.isFollowed,
                     onActionClick = onFollowClick

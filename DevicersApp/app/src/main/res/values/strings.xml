@@ -446,6 +446,7 @@
 
     <string name="profile_edit">Editar perfil</string>
     <string name="profile_follow">Seguir</string>
+    <string name="profile_follow_back">Seguir de vuelta</string>
     <string name="profile_edit_avatar">Cambiar foto de perfil</string>
 
     <!-- PERFIL: RESEÑAS GUARDADAS -->
