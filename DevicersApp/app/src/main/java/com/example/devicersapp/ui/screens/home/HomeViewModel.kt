@@ -2,6 +2,8 @@ package com.example.devicersapp.ui.screens.home
 
 import com.example.devicersapp.data.repository.ReviewLikeRepository
 import com.example.devicersapp.data.repository.ReviewRepository
+import com.example.devicersapp.data.repository.FollowRepository
+import kotlinx.coroutines.Job
 import com.example.devicersapp.data.repository.UserRepository
 
 import androidx.lifecycle.ViewModel
@@ -22,7 +24,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val articleReviews: ReviewRepository,
     private val users: UserRepository,
-    private val reviewLikes: ReviewLikeRepository
+    private val reviewLikes: ReviewLikeRepository,
+    private val follows: FollowRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeState())
@@ -31,25 +34,29 @@ class HomeViewModel @Inject constructor(
     /** ID numérico del usuario autenticado; identifica sus likes y no se muestra en pantalla. */
     private var currentUserId: Int? = null
 
-    init {
-        loadFeed()
-    }
+    private var loadJob: Job? = null
+
+    /** Reconsulta la pestaña activa cada vez que Home vuelve a primer plano. */
+    fun onResume() { loadFeed() }
 
     /** Carga desde la fuente seleccionada las reseñas del feed con su artículo, autor, conteos y likes propios. */
     private fun loadFeed() {
+        loadJob?.cancel()
+        val forYou = _uiState.value.isForYouSelected
         _uiState.update { currentState ->
             currentState.copy(isLoading = true, errorMessageResId = null)
         }
 
-        viewModelScope.launch {
+        loadJob = viewModelScope.launch {
             try {
                 val userId = users.getAuthenticatedUser().id
                 currentUserId = userId
-                val feed = articleReviews.getFeedReviews(userId).getOrThrow()
+                val authors = if (forYou) null else follows.getFollowedUserIds(userId)
+                val feed = articleReviews.getFeedReviews(userId, authors).getOrThrow()
                 _uiState.update { current ->
                     current.copy(
                         allFeedReviews = feed,
-                        feedReviews = if (current.isForYouSelected) feed else emptyList(),
+                        feedReviews = feed,
                         isLoading = false
                     )
                 }
@@ -104,23 +111,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /** Selecciona la sección "Para ti". */
+    /** Selecciona Para ti y vuelve a consultar sus reseñas. */
     fun onForYouClick() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                isForYouSelected = true,
-                feedReviews = currentState.allFeedReviews
-            )
-        }
+        _uiState.update { it.copy(isForYouSelected = true, feedReviews = emptyList()) }
+        loadFeed()
     }
 
-    /** Selecciona visualmente "Siguiendo" sin cargar reseñas de cuentas seguidas. */
+    /** Consulta los autores seguidos y únicamente las reseñas de esas cuentas. */
     fun onFollowingClick() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                isForYouSelected = false,
-                feedReviews = emptyList()
-            )
-        }
+        _uiState.update { it.copy(isForYouSelected = false, feedReviews = emptyList()) }
+        loadFeed()
     }
 }

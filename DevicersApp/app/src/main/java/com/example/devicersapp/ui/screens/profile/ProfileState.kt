@@ -11,5 +11,7 @@ data class ProfileState(
     val loading: Boolean = false,
     @param:StringRes val error: Int? = null,
     val isFollowed: Boolean = false,
-    val isOwnProfile: Boolean = false
+    val isOwnProfile: Boolean = false,
+    val followInProgress: Boolean = false,
+    @param:StringRes val followError: Int? = null
 )

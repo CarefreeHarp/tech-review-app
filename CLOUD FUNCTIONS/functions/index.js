@@ -75,6 +75,65 @@ exports.sendReviewLikeNotification = onDocumentCreated("reviews/{reviewId}/likes
     }
 });
 
+/**
+ * Avisa por FCM al usuario seguido; Android ya creó la relación y la notificación en su transacción.
+ * Solo observa el lado follows para no enviar dos avisos por la misma relación duplicada.
+ */
+exports.sendFollowNotification = onDocumentCreated("users/{userId}/follows/{followedId}", async (event) => {
+    const {userId, followedId} = event.params;
+    if (userId === followedId) return;
+    const [relation, actor, recipient] = await Promise.all([
+        event.data.ref.get(),
+        db.collection("users").doc(userId).get(),
+        db.collection("users").doc(followedId).get(),
+    ]);
+    // Un evento retrasado de un seguimiento retirado o reemplazado no debe producir un aviso nuevo.
+    if (!relation.exists || !relation.createTime.isEqual(event.data.createTime)) return;
+    const token = recipient.get("fcm_token");
+    if (!token) {
+        logger.info("El usuario seguido no tiene un token FCM registrado", {userId, followedId});
+        return;
+    }
+    const username = actor.get("username");
+    try {
+        await admin.messaging().send({
+            token,
+            notification: {
+                title: "Nuevo seguidor",
+                body: `${username ? `@${username}` : "Alguien"} empezó a seguirte`,
+            },
+        });
+        logger.log("Notificación de seguimiento enviada", {userId, followedId});
+    } catch (error) {
+        logger.error("Error al enviar la notificación de seguimiento", error);
+    }
+});
+
+/** Entrega el aviso del like de comentario; el cliente ya guardó el registro y el contador juntos. */
+exports.sendCommentLikeNotification = onDocumentCreated("reviews/{reviewId}/comments/{commentId}/likes/{userId}", async (event) => {
+    const {reviewId, commentId, userId} = event.params;
+    const reviewRef = db.collection("reviews").doc(reviewId);
+    const commentRef = reviewRef.collection("comments").doc(commentId);
+    const [review, comment, like] = await Promise.all([reviewRef.get(), commentRef.get(), event.data.ref.get()]);
+    if (!review.exists || !comment.exists || !like.exists ||
+        !like.createTime.isEqual(event.data.createTime) || !review.get("is_active") || !comment.get("is_active")) return;
+    const authorId = String(comment.get("user_id"));
+    if (authorId === userId) return;
+    const [recipient, actor] = await Promise.all([
+        db.collection("users").doc(authorId).get(), db.collection("users").doc(userId).get(),
+    ]);
+    const token = recipient.get("fcm_token");
+    if (!token) return;
+    const username = actor.get("username");
+    try {
+        await admin.messaging().send({token, notification: {
+            title: "Nuevo me gusta",
+            body: `${username ? `@${username}` : "Alguien"} le dio me gusta a tu comentario`,
+        }});
+        logger.log("Notificación de like de comentario enviada", {reviewId, commentId, userId, authorId});
+    } catch (error) { logger.error("Error al enviar la notificación de like de comentario", error); }
+});
+
 // Firestore permite como máximo 500 escrituras por lote.
 const BATCH_LIMIT = 500;
 
@@ -228,14 +287,17 @@ async function mirrorFollowRelation(event, mirrorRef, mirrorFields) {
         return;
     }
     await db.runTransaction(async (transaction) => {
+        // Se consulta el estado actual: los eventos pueden llegar tarde o fuera de orden.
+        const sourceRef = (event.data.after.exists ? event.data.after : event.data.before).ref;
+        const source = await transaction.get(sourceRef);
         const mirror = await transaction.get(mirrorRef);
-        if (event.data.after.exists && !mirror.exists) {
+        if (source.exists && !mirror.exists) {
             // Ambos lados conservan la misma fecha de creación.
             transaction.set(mirrorRef, {
                 ...mirrorFields,
-                created_at: event.data.after.get("created_at") ?? admin.firestore.FieldValue.serverTimestamp(),
+                created_at: source.get("created_at") ?? admin.firestore.FieldValue.serverTimestamp(),
             });
-        } else if (!event.data.after.exists && mirror.exists) {
+        } else if (!source.exists && mirror.exists) {
             transaction.delete(mirrorRef);
         }
     });

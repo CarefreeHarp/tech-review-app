@@ -28,7 +28,6 @@ class ActivityViewModel @Inject constructor(
 ) : ViewModel() {
     private val state = MutableStateFlow(ActivityState())
     val uiState = state.asStateFlow()
-    init { loadActivity() }
 
     /** Consulta el perfil propio y sus notificaciones con los actores y artículos que muestran las tarjetas. */
     fun loadActivity() {

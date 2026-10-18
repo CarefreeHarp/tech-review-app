@@ -35,8 +35,6 @@ class UserRemoteDataSourceRetrofitImplementation @Inject constructor(
         service.update(userId, changes.toUpdateUserRequestDto())
         return getById(userId)
     }
-    /** Express no guarda tokens FCM; las notificaciones push dependen de Firestore y de las Cloud Functions. */
-    override suspend fun updateFcmToken(userId: Int, token: String?) {
-        throw UnsupportedOperationException("Express no guarda tokens de notificaciones push.")
-    }
+    /** Retrofit no registra tokens ni envía avisos al teléfono. */
+    override suspend fun updateFcmToken(userId: Int, token: String?) = Unit
 }

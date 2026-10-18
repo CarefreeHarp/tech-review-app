@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.stringResource
 import com.example.devicersapp.R
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
@@ -36,6 +38,7 @@ fun ActivityView(
     viewModel: ActivityViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.loadActivity() }
 
     ActivityViewContent(
         onProfileClick = onProfileClick,

@@ -793,4 +793,7 @@
     <string name="catalog_timeout_error">El servidor está tardando demasiado en responder.</string>
     <string name="rate_product_load_error">No se pudo cargar el producto. Elige uno del catálogo actualizado.</string>
     <string name="rate_product_publish_error">No se pudo publicar. Tu borrador se conserva; intenta de nuevo.</string>
+    <string name="profile_follow_error">No pudimos actualizar el seguimiento. Intenta nuevamente.</string>
+    <string name="push_activity_channel">Actividad de Devicers</string>
+    <string name="review_comment_like_error">No pudimos actualizar el me gusta del comentario. Intenta nuevamente.</string>
 </resources>

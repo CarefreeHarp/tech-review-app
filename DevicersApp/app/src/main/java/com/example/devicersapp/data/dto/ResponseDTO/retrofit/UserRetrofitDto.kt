@@ -14,6 +14,8 @@ data class UserRetrofitDto(
     val created_at: String? = null,
     val updated_at: String? = null,
     val reviews: List<ReviewRetrofitDto>? = null,
+    val followers_count: Int = 0,
+    val follows_count: Int = 0,
     val createdAt: String? = null,
     val updatedAt: String? = null
 )
@@ -29,7 +31,9 @@ fun UserRetrofitDto.toUserInfo(): UserInfo = UserInfo(
     isActive = is_active,
     createdAt = checkNotNull(created_at ?: createdAt) { "Fecha created_at ausente" },
     updatedAt = checkNotNull(updated_at ?: updatedAt) { "Fecha updated_at ausente" },
-    reviews = reviews.orEmpty().map { it.toReviewInfo() }
+    reviews = reviews.orEmpty().map { it.toReviewInfo() },
+    followersCount = followers_count,
+    followsCount = follows_count
 )
 
 /** Proyección pública del mismo DTO de usuario. */

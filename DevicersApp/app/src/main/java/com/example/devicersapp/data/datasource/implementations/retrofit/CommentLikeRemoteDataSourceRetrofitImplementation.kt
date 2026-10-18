@@ -13,6 +13,8 @@ class CommentLikeRemoteDataSourceRetrofitImplementation @Inject constructor(
     private val service: CommentLikeRetrofitService,
     private val commentsService: CommentRetrofitService
 ) : CommentLikeRemoteDataSource {
+    override suspend fun sendCommentLike(reviewId: Int, commentId: Int, userId: Int): CommentLikeStatus =
+        service.toggleCommentLike(reviewId, commentId, ToggleReviewLikeRequestDto(userId)).toCommentLikeStatus()
     override suspend fun getCommentLikes(reviewId: Int?, commentId: Int?): List<CommentLikeInfo> {
         val comments = commentsService.getComments().associate { it.id to it.review_id }
         return service.getCommentLikes().filter {

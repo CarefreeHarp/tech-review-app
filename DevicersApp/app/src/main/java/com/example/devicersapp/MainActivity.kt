@@ -10,10 +10,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.lifecycle.lifecycleScope
+import com.example.devicersapp.data.repository.UserRepository
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /** Inicia la interfaz principal de Devicers y solicita el permiso para mostrar notificaciones push. */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject lateinit var users: UserRepository
     // Lanzador del diálogo del sistema en el que el usuario acepta o deniega las notificaciones.
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -24,7 +29,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Solo se pregunta al abrir la app, no al recrear la actividad por un cambio de configuración.
-        if (savedInstanceState == null) requestNotificationPermission()
+        if (savedInstanceState == null) {
+            requestNotificationPermission()
+            lifecycleScope.launch { users.registerFcmToken() }
+        }
         setContent { DevicersApp() }
     }
 

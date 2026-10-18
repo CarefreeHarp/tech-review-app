@@ -14,7 +14,8 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -33,7 +34,6 @@ import com.example.devicersapp.ui.utils.tabs.SectionTab
 @Composable
 fun ProfileView(
     profileId: String? = null,
-    onFollowClick: () -> Unit = {},
     onReviewClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel,
@@ -43,7 +43,7 @@ fun ProfileView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(profileId) {
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.loadProfile(profileId)
     }
 
@@ -53,7 +53,7 @@ fun ProfileView(
         onFollowingClick = onFollowingClick,
         state = uiState,
         onRetry = { viewModel.loadProfile(profileId) },
-        onFollowClick = onFollowClick,
+        onFollowClick = viewModel::onFollowClick,
         onReviewClick = onReviewClick,
         modifier = modifier
             .fillMaxSize()
@@ -97,10 +97,14 @@ fun ProfileViewContent(
                     onFollowingClick = onFollowingClick,
                     profile = profile,
                     actionLabelResId = if (state.isFollowed) R.string.activity_following else R.string.profile_follow,
-                    // Conserva el efecto visual de pulsación sin realizar escrituras.
-                    actionEnabled = true,
+                    actionEnabled = !state.followInProgress,
                     onActionClick = onFollowClick
                 )
+            }
+        }
+        state.followError?.let { error ->
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                androidx.compose.material3.Text(stringResource(error), color = LocalDevicersColors.current.textSecondary)
             }
         }
         item(span = { GridItemSpan(maxLineSpan) }) {

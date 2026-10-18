@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.R
 import com.example.devicersapp.data.repository.UserRepository
+import com.example.devicersapp.data.repository.FollowRepository
 import com.example.devicersapp.ui.models.toProfileContent
 import com.example.devicersapp.ui.models.toReviewContent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,8 @@ import javax.inject.Inject
 /** Consulta la fuente seleccionada y conserva el estado del perfil público seleccionado. */
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profiles: UserRepository
+    private val profiles: UserRepository,
+    private val follows: FollowRepository
 ) : ViewModel() {
     private val state = MutableStateFlow(ProfileState())
     val uiState = state.asStateFlow()
@@ -26,6 +28,7 @@ class ProfileViewModel @Inject constructor(
 
     /** Carga el ID solicitado sin sustituir perfiles inválidos por datos de muestra. */
     fun loadProfile(profileId: String?) {
+        if (state.value.followInProgress) return
         loadJob?.cancel()
         val id = profileId?.toIntOrNull()
         if (id == null || id <= 0) {
@@ -53,4 +56,30 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+    /** Cambia el botón de inmediato y confirma la relación; restaura el perfil si falla la escritura. */
+    fun onFollowClick() {
+        val original = state.value
+        val profile = original.profile ?: return
+        if (original.followInProgress || original.isOwnProfile) return
+        val following = !original.isFollowed
+        state.update { it.copy(isFollowed = following, followInProgress = true, followError = null) }
+        viewModelScope.launch {
+            try {
+                val actor = profiles.getAuthenticatedUser()
+                val status = follows.setFollowing(actor.id, profile.id.toInt(), following).getOrThrow()
+                state.update { current ->
+                    if (current.profile?.id != profile.id) current else current.copy(
+                        isFollowed = status.isFollowing, followInProgress = false,
+                        profile = current.profile.copy(stats = current.profile.stats.map { stat ->
+                            if (stat.labelResId == R.string.profile_followers) stat.copy(number = status.followersCount.toString()) else stat
+                        }))
+                }
+            } catch (cancelled: CancellationException) { throw cancelled
+            } catch (error: Exception) {
+                state.update { current -> if (current.profile?.id != profile.id) current else current.copy(
+                    isFollowed = original.isFollowed, followInProgress = false, followError = R.string.profile_follow_error) }
+            }
+        }
+    }
+
 }

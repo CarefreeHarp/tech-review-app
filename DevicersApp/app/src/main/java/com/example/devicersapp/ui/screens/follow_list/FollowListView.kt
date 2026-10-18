@@ -12,10 +12,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -40,8 +40,8 @@ fun FollowListView(
     onProfileClick: (String) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
-    LaunchedEffect(profileId, initialSection) { viewModel.loadProfile(profileId, initialSection) }
-    FollowListViewContent(state = state, onSectionChange = viewModel::selectSection, onRetry = {},
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.loadProfile(profileId, initialSection) }
+    FollowListViewContent(state = state, onSectionChange = viewModel::selectSection, onRetry = viewModel::reload,
         onProfileClick = onProfileClick,
         modifier = modifier.fillMaxSize().background(LocalDevicersColors.current.background))
 }
@@ -77,14 +77,14 @@ fun FollowListViewContent(
     }
 }
 
-/** Previsualiza la vista raíz con datos locales y la cabecera de regreso compartida. */
+/** Previsualiza la lista sin crear repositorios ni consultar servicios remotos. */
 @Preview(showBackground = true, heightDp = 900)
 @Composable
 fun FollowListViewPreview() {
-    val viewModel = remember { FollowListViewModel() }
     DevicersAppTheme {
         DevicersScaffold(topBarNumber = 13) { padding ->
-            FollowListView(1, FollowListSection.FOLLOWERS, viewModel, Modifier.padding(padding))
+            FollowListViewContent(state = FollowListState(loading = false), onSectionChange = {},
+                onRetry = {}, modifier = Modifier.padding(padding))
         }
     }
 }

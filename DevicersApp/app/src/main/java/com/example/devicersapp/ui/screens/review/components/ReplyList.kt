@@ -40,7 +40,9 @@ fun ReplyList(
     expandedReplies: Map<Int, Boolean> = emptyMap(),
     onViewAnswers: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
-    onProfileClick: (String) -> Unit = {}
+    onProfileClick: (String) -> Unit = {},
+    onLikeClick: (Int) -> Unit = {},
+    pendingLikeIds: Set<Int> = emptySet()
 ) {
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
@@ -77,6 +79,8 @@ fun ReplyList(
                     ReplyItem(
                         onProfileClick = onProfileClick,
                         reply = reply,
+                        onLikeClick = { onLikeClick(reply.id) },
+                        likeEnabled = reply.id > 0 && reply.id !in pendingLikeIds,
                         // Un ancestro expandido mantiene su línea hasta que alcance su control de ocultar.
                         passThroughLevels = passThroughLevels,
                         // La rama se conecta al control tanto cerrada como desplegada.

@@ -32,5 +32,6 @@ fun ReviewInfo.toReviewContent(): ReviewContent {
 fun ReviewDetailInfo.toReviewContent(): ReviewContent = review.copy(article = article, user = author,
     comments = comments.map { item -> ReplyContent(item.comment.userId.toString(), R.string.review_reply_time,
         R.string.review_reply_text_two, item.likes, item.depth, item.comment.userUsername,
-        item.authorImageUrl, item.comment.body, Instant.parse(item.comment.createdAt).toEpochMilli()) }
+        item.authorImageUrl, item.comment.body, Instant.parse(item.comment.createdAt).toEpochMilli(),
+        id = item.comment.id, isLiked = item.isLiked) }
 ).toReviewContent()

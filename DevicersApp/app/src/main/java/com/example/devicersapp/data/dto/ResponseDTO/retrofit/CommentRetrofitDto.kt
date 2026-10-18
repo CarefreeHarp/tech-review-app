@@ -9,6 +9,7 @@ data class CommentRetrofitDto(
     val user_profile_image_url: String? = null,
     val parent_comment_id: Int? = null,
     val body: String,
+    val likes_count: Int = 0,
     val is_active: Boolean,
     val created_at: String? = null,
     val updated_at: String? = null,
@@ -27,5 +28,6 @@ fun CommentRetrofitDto.toCommentInfo(): CommentInfo = CommentInfo(
     isActive = is_active,
     createdAt = checkNotNull(created_at ?: createdAt) { "Fecha created_at ausente" },
     updatedAt = checkNotNull(updated_at ?: updatedAt) { "Fecha updated_at ausente" },
-    reviewId = review_id
+    reviewId = review_id,
+    likesCount = likes_count
 )

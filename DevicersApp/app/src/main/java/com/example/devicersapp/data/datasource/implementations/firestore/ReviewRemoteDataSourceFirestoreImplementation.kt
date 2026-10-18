@@ -23,6 +23,12 @@ class ReviewRemoteDataSourceFirestoreImplementation @Inject constructor(
     }
     override suspend fun getReviewsByUser(userId: Int): List<ReviewInfo> =
         reviews.whereEqualTo("user_id", userId).get(Source.SERVER).await().documents.map { it.toReviewFirestoreDto().toReviewInfo() }
+    /** Divide el filtro IN en grupos de hasta 30 autores sin descargar la colección completa. */
+    override suspend fun getReviewsByUsers(userIds: Set<Int>): List<ReviewInfo> =
+        userIds.toList().chunked(30).flatMap { ids ->
+            reviews.whereIn("user_id", ids).get(Source.SERVER).await().documents
+                .map { it.toReviewFirestoreDto().toReviewInfo() }
+        }
     override suspend fun getReviewsByProduct(productId: Int): List<ReviewInfo> =
         reviews.whereEqualTo("article_id", productId).get(Source.SERVER).await().documents.map { it.toReviewFirestoreDto().toReviewInfo() }
 

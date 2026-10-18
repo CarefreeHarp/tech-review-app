@@ -4,6 +4,9 @@ import com.example.devicersapp.ui.models.*
 
 /** Consulta la relación en ambos sentidos y resuelve las identidades públicas de las listas. */
 class FollowRepository(private val source: FollowRemoteDataSource, private val users: UserRemoteDataSource) {
+    /** Confirma el seguimiento o propaga el fallo para revertir la presentación optimista. */
+    suspend fun setFollowing(followerId: Int, followedId: Int, following: Boolean): Result<FollowStatus> =
+        repositoryResult { source.setFollowing(followerId, followedId, following) }
     suspend fun getFollowers(userId: Int): List<FollowInfo> = source.getFollowers(userId)
     suspend fun getFollowing(userId: Int): List<FollowInfo> = source.getFollowing(userId)
     suspend fun getFollowedUserIds(userId: Int): Set<Int> = getFollowing(userId).map { it.followedId }.toSet()

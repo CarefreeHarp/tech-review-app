@@ -12,8 +12,9 @@ import kotlinx.coroutines.tasks.await
 class FollowRemoteDataSourceRetrofitImplementation @Inject constructor(
     private val service: FollowRetrofitService
 ) : FollowRemoteDataSource {
-    override suspend fun getFollowers(userId: Int): List<FollowInfo> = service.getFollows()
-        .filter { it.followed_id == userId }.map { it.toFollowInfo() }
-    override suspend fun getFollowing(userId: Int): List<FollowInfo> = service.getFollows()
-        .filter { it.follower_id == userId }.map { it.toFollowInfo() }
+    /** Express guarda la relación y su notificación de forma transaccional. */
+    override suspend fun setFollowing(followerId: Int, followedId: Int, following: Boolean): FollowStatus =
+        service.setFollowing(followedId, SetFollowingRequestDto(followerId, following)).toFollowStatus()
+    override suspend fun getFollowers(userId: Int): List<FollowInfo> = service.getFollows(followedId = userId).map { it.toFollowInfo() }
+    override suspend fun getFollowing(userId: Int): List<FollowInfo> = service.getFollows(followerId = userId).map { it.toFollowInfo() }
 }

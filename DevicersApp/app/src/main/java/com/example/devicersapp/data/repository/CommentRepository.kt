@@ -6,11 +6,14 @@ import java.time.Instant
 /** Arma los hilos y resuelve las fotos ausentes sin modificar la copia persistida del comentario. */
 class CommentRepository(
     private val source: CommentRemoteDataSource,
-    private val users: UserRemoteDataSource
+    private val users: UserRemoteDataSource,
+    private val likes: CommentLikeRemoteDataSource
 ) {
     suspend fun getComments(reviewId: Int? = null): List<CommentInfo> = source.getComments(reviewId)
     /** Las respuestas huérfanas quedan en la raíz y los ciclos no repiten comentarios. */
-    suspend fun getThread(reviewId: Int): List<CommentThreadItem> {
+    suspend fun getThread(reviewId: Int, currentUserId: Int? = null): List<CommentThreadItem> {
+        val likedIds = if (currentUserId == null) emptySet() else likes.getCommentLikes(reviewId)
+            .filter { it.userId == currentUserId }.map { it.commentId }.toSet()
         val comments = getComments(reviewId).filter { it.isActive }
             .sortedWith(compareBy({ Instant.parse(it.createdAt) }, { it.id }))
         // Un mismo autor puede comentar varias veces: se resuelve cada ID solo una vez por carga.
@@ -26,7 +29,8 @@ class CommentRepository(
             thread += CommentThreadItem(
                 comment = comment,
                 depth = depth,
-                likes = 0,
+                likes = comment.likesCount,
+                isLiked = comment.id in likedIds,
                 authorImageUrl = comment.userProfileImageUrl?.takeIf { it.isNotBlank() }
                     ?: authors[comment.userId]?.profileImageUrl
             )

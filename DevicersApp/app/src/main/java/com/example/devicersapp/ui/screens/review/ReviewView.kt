@@ -62,6 +62,7 @@ fun ReviewView(
             onDeleteClick = { viewModel.requestDeletion()?.let(onDeleteRequested) },
             onActionsMenuChange = viewModel::setActionsMenuExpanded,
             onLikeClick = viewModel::onLikeClick,
+            onCommentLikeClick = viewModel::onCommentLikeClick,
             onAuthorClick = onAuthorClick,
             onReplyTextChange = viewModel::onReplyTextChange,
             onProductClick = onProductClick,
@@ -92,6 +93,7 @@ fun ReviewViewContent(
     onDeleteClick: () -> Unit = {},
     onActionsMenuChange: (Boolean) -> Unit = {},
     onLikeClick: () -> Unit = {},
+    onCommentLikeClick: (Int) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
     onReplyTextChange: (String) -> Unit,
     onProductClick: (Int) -> Unit,
@@ -145,6 +147,9 @@ fun ReviewViewContent(
                         onProfileClick = onAuthorClick
                     )
 
+                    state.commentLikeError?.let { error ->
+                        androidx.compose.material3.Text(stringResource(error), color = LocalDevicersColors.current.textSecondary)
+                    }
                     Spacer(modifier = Modifier.height(24.dp))
 
                     HorizontalDivider(
@@ -154,6 +159,8 @@ fun ReviewViewContent(
                     )
                 }
             },
+            onLikeClick = onCommentLikeClick,
+            pendingLikeIds = state.pendingCommentLikeIds,
             expandedReplies = state.expandedReplies,
             onViewAnswers = onViewAnswers,
             modifier = Modifier

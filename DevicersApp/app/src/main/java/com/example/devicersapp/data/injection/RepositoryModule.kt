@@ -10,13 +10,13 @@ import javax.inject.Singleton
 @Module @InstallIn(SingletonComponent::class)
 object RepositoryModule {
     @Provides @Singleton
-    fun provideUserRepository(source: UserRemoteDataSource, reviews: ReviewRepository, storage: StorageRemoteDataSource, messaging: MessagingRemoteDataSource): UserRepository = UserRepository(source, reviews, storage, messaging)
+    fun provideUserRepository(source: UserRemoteDataSource, reviews: ReviewRepository, storage: StorageRemoteDataSource, messaging: MessagingRemoteDataSource, follows: FollowRepository): UserRepository = UserRepository(source, reviews, storage, messaging, follows)
     @Provides @Singleton
     fun provideProductRepository(source: ProductRemoteDataSource): ProductRepository = ProductRepository(source)
     @Provides @Singleton
     fun provideReviewRepository(source: ReviewRemoteDataSource, products: ProductRepository, users: UserRemoteDataSource, comments: CommentRepository, likes: ReviewLikeRemoteDataSource): ReviewRepository = ReviewRepository(source, products, users, comments, likes)
     @Provides @Singleton
-    fun provideCommentRepository(source: CommentRemoteDataSource, users: UserRemoteDataSource): CommentRepository = CommentRepository(source, users)
+    fun provideCommentRepository(source: CommentRemoteDataSource, users: UserRemoteDataSource, likes: CommentLikeRemoteDataSource): CommentRepository = CommentRepository(source, users, likes)
     @Provides @Singleton
     fun provideReviewLikeRepository(source: ReviewLikeRemoteDataSource): ReviewLikeRepository = ReviewLikeRepository(source)
     @Provides @Singleton

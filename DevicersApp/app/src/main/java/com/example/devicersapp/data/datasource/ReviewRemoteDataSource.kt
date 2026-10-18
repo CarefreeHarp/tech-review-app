@@ -5,6 +5,8 @@ interface ReviewRemoteDataSource {
     suspend fun getReviews(): List<ReviewInfo>
     suspend fun getReviewById(reviewId: Int): ReviewInfo
     suspend fun getReviewsByUser(userId: Int): List<ReviewInfo>
+    /** Consulta únicamente autores seleccionados; cada transporte puede agrupar los IDs. */
+    suspend fun getReviewsByUsers(userIds: Set<Int>): List<ReviewInfo> = userIds.flatMap { getReviewsByUser(it) }
     suspend fun getReviewsByProduct(productId: Int): List<ReviewInfo>
     suspend fun createReview(draft: ReviewDraft): ReviewInfo
     suspend fun updateReview(reviewId: Int, changes: ReviewChanges): ReviewInfo

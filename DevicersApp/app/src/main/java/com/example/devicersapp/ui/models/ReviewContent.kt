@@ -59,7 +59,9 @@ data class ReplyContent(
     val authorName: String? = null,
     val authorImageUrl: String? = null,
     val body: String? = null,
-    val createdAtMillis: Long? = null
+    val createdAtMillis: Long? = null,
+    val id: Int = 0,
+    val isLiked: Boolean = false
 ) {
     init {
         require(likes >= 0) { "La cantidad de reacciones no puede ser negativa." }

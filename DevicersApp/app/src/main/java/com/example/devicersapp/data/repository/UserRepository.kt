@@ -2,6 +2,7 @@ package com.example.devicersapp.data.repository
 import com.example.devicersapp.data.datasource.*
 import com.example.devicersapp.ui.models.*
 
+import com.example.devicersapp.data.config.BackendConfig
 import com.example.devicersapp.data.utils.Utils
 import android.net.Uri
 import java.util.UUID
@@ -14,7 +15,8 @@ class UserRepository(
     private val source: UserRemoteDataSource,
     private val reviews: ReviewRepository,
     private val storage: StorageRemoteDataSource,
-    private val messaging: MessagingRemoteDataSource
+    private val messaging: MessagingRemoteDataSource,
+    private val follows: FollowRepository
 ) {
     /** Resuelve el perfil por el UID actual de Auth sin conservar una copia global. */
     suspend fun getAuthenticatedUser(): UserInfo {
@@ -42,19 +44,26 @@ class UserRepository(
     suspend fun getProfile(userId: Int): UserProfileInfo = coroutineScope {
         val user = async { getById(userId) }
         val records = async { reviews.getReviewSummariesByUser(userId) }
-        UserProfileInfo(user.await(), records.await(), 0, 0, false)
+        val currentId = getAuthenticatedUser().id
+        val followed = async { currentId != userId && userId in follows.getFollowedUserIds(currentId) }
+        val profile = user.await()
+        UserProfileInfo(profile, records.await(), profile.followersCount, profile.followsCount, followed.await())
     }
 
     /**
      * Guarda en el perfil de la sesión actual el token FCM de este dispositivo, para que las Cloud
      * Functions puedan enviarle notificaciones push. Sin sesión iniciada no hay perfil al que asociarlo.
      */
-    suspend fun registerFcmToken(): Result<Unit> =
+    suspend fun registerFcmToken(token: String? = null): Result<Unit> =
         // Sin conexión, guardar el token no debe bloquear el acceso a la aplicación.
         withTimeoutOrNull(FCM_TOKEN_TIMEOUT_MS) {
             repositoryResult {
+                if (!BackendConfig.USE_FIRESTORE) {
+                    messaging.disablePush()
+                    return@repositoryResult
+                }
                 if (Utils.getCurrentUser() == null) return@repositoryResult
-                source.updateFcmToken(getAuthenticatedUser().id, messaging.getToken())
+                source.updateFcmToken(getAuthenticatedUser().id, token ?: messaging.getToken())
             }
         } ?: Result.failure(TimeoutException("Guardar el token FCM superó el tiempo de espera."))
 

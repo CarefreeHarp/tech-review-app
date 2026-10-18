@@ -11,7 +11,8 @@ data class CommentThreadItem(
     val comment: CommentInfo,
     val depth: Int,
     val likes: Int,
-    val authorImageUrl: String? = comment.userProfileImageUrl
+    val authorImageUrl: String? = comment.userProfileImageUrl,
+    val isLiked: Boolean = false
 )
 /** Reseña completa con las relaciones necesarias para su detalle. */
 data class ReviewDetailInfo(val review: ReviewInfo, val article: ProductInfo, val author: UserInfo,

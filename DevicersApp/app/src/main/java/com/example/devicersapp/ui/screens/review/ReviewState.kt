@@ -21,5 +21,7 @@ data class ReviewState(
     val replies: List<ReplyContent> = emptyList(),
     val replyText: String = "",
     val expandedReplies: Map<Int, Boolean> = emptyMap(),
-    val likeInProgress: Boolean = false
+    val likeInProgress: Boolean = false,
+    val pendingCommentLikeIds: Set<Int> = emptySet(),
+    val commentLikeError: Int? = null
 )
