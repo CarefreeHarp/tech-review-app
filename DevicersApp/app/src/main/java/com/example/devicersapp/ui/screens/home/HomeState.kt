@@ -10,11 +10,14 @@ import com.example.devicersapp.ui.models.FeedReviewContent
  * @param isLoading Indica si hay una carga del feed en curso.
  * @param errorMessageResId Mensaje del último error de carga, o `null` si la carga fue exitosa.
  * @param isForYouSelected Indica si la pestaña "Para ti" está seleccionada.
+ * @param allFeedReviews Feed completo del que se deriva la pestaña visible.
+ * @param pendingLikeReviewIds Reseñas cuyo like se está guardando; ignoran toques repetidos hasta confirmarse.
  */
 data class HomeState(
     val feedReviews: List<FeedReviewContent> = emptyList(),
     val isLoading: Boolean = false,
     @param:StringRes val errorMessageResId: Int? = null,
     val isForYouSelected: Boolean = true,
-    val allFeedReviews: List<FeedReviewContent> = emptyList()
+    val allFeedReviews: List<FeedReviewContent> = emptyList(),
+    val pendingLikeReviewIds: Set<Int> = emptySet()
 )

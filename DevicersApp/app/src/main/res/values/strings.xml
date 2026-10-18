@@ -228,6 +228,7 @@
 
     <!-- ACCIONES DE RESEÑA -->
     <string name="review_action_like">Me gusta</string>
+    <string name="review_action_unlike">Quitar me gusta</string>
     <string name="review_show_more">Ver más</string>
     <string name="review_action_comment">Comentar</string>
     <string name="review_action_send">Compartir</string>

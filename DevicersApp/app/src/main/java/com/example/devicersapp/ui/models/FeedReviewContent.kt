@@ -21,6 +21,7 @@ package com.example.devicersapp.ui.models
  * @param likes Cantidad de likes recibidos.
  * @param comments Cantidad de comentarios activos publicados en la reseña.
  * @param createdAtMillis Momento de publicación en milisegundos desde la época Unix.
+ * @param isLiked Indica si el usuario autenticado ya dio like a la reseña.
  */
 data class FeedReviewContent(
     val reviewId: Int,
@@ -38,7 +39,8 @@ data class FeedReviewContent(
     val body: String,
     val likes: Int,
     val comments: Int,
-    val createdAtMillis: Long
+    val createdAtMillis: Long,
+    val isLiked: Boolean = false
 ) {
     init { require(rating in 1..5) { "La calificación debe estar entre 1 y 5." } }
 }

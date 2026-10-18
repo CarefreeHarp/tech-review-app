@@ -10,11 +10,11 @@ import javax.inject.Singleton
 @Module @InstallIn(SingletonComponent::class)
 object RepositoryModule {
     @Provides @Singleton
-    fun provideUserRepository(source: UserRemoteDataSource, reviews: ReviewRepository, storage: StorageRemoteDataSource): UserRepository = UserRepository(source, reviews, storage)
+    fun provideUserRepository(source: UserRemoteDataSource, reviews: ReviewRepository, storage: StorageRemoteDataSource, messaging: MessagingRemoteDataSource): UserRepository = UserRepository(source, reviews, storage, messaging)
     @Provides @Singleton
     fun provideProductRepository(source: ProductRemoteDataSource): ProductRepository = ProductRepository(source)
     @Provides @Singleton
-    fun provideReviewRepository(source: ReviewRemoteDataSource, products: ProductRepository, users: UserRemoteDataSource, comments: CommentRepository): ReviewRepository = ReviewRepository(source, products, users, comments)
+    fun provideReviewRepository(source: ReviewRemoteDataSource, products: ProductRepository, users: UserRemoteDataSource, comments: CommentRepository, likes: ReviewLikeRemoteDataSource): ReviewRepository = ReviewRepository(source, products, users, comments, likes)
     @Provides @Singleton
     fun provideCommentRepository(source: CommentRemoteDataSource, users: UserRemoteDataSource): CommentRepository = CommentRepository(source, users)
     @Provides @Singleton
@@ -30,7 +30,7 @@ object RepositoryModule {
     @Provides @Singleton
     fun provideStoreRepository(source: StoreRemoteDataSource): StoreRepository = StoreRepository(source)
     @Provides @Singleton
-    fun provideNotificationRepository(source: NotificationRemoteDataSource): NotificationRepository = NotificationRepository(source)
+    fun provideNotificationRepository(source: NotificationRemoteDataSource, users: UserRemoteDataSource, reviews: ReviewRemoteDataSource, products: ProductRepository): NotificationRepository = NotificationRepository(source, users, reviews, products)
     @Provides @Singleton
     fun provideProductRequestRepository(source: ProductRequestRemoteDataSource): ProductRequestRepository = ProductRequestRepository(source)
 }

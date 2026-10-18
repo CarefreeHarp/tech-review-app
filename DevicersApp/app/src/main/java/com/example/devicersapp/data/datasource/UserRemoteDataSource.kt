@@ -8,4 +8,6 @@ interface UserRemoteDataSource {
     suspend fun findByFirebaseUid(firebaseUid: String): UserInfo?
     suspend fun createIfMissing(draft: UserDraft): UserInfo
     suspend fun updateProfile(userId: Int, changes: UserChanges): UserInfo
+    /** Guarda el token FCM del dispositivo en el perfil, o lo elimina cuando recibe null. */
+    suspend fun updateFcmToken(userId: Int, token: String?)
 }

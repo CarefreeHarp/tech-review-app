@@ -48,6 +48,7 @@ import com.example.devicersapp.ui.utils.rating.RatingStars
  * @param review Reseña obtenida del backend con su artículo, autor y conteos.
  * @param onProductClick Acción solicitada al abrir el detalle del artículo reseñado.
  * @param onViewMoreClick Acción solicitada al mostrar el detalle completo de la reseña.
+ * @param onLikeClick Acción solicitada al dar o quitar el like de la reseña.
  * @param onCommentClick Acción solicitada al abrir los comentarios de la reseña.
  * @param onSendClick Acción solicitada al compartir la reseña.
  * @param modifier Modificador aplicado al contenedor de la reseña.
@@ -57,6 +58,7 @@ fun FeedReviewItem(
     review: FeedReviewContent,
     onProductClick: () -> Unit = {},
     onViewMoreClick: () -> Unit = {},
+    onLikeClick: () -> Unit = {},
     onCommentClick: () -> Unit = {},
     onSendClick: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -198,11 +200,13 @@ fun FeedReviewItem(
         Spacer(modifier = Modifier.height(14.dp))
 
         ReviewActionsRow(
-            likes = 0,
+            likes = review.likes,
             comments = review.comments,
+            isLiked = review.isLiked,
             // El feed prioriza estas acciones con una escala 30 % superior a la del detalle.
             iconSize = 24.7.dp,
             countTextStyle = FeedReviewActionCountText,
+            onLikeClick = onLikeClick,
             onCommentClick = onCommentClick,
             onSendClick = onSendClick
         )

@@ -10,7 +10,8 @@ class ReviewRepository(
     private val source: ReviewRemoteDataSource,
     private val products: ProductRepository,
     private val users: UserRemoteDataSource,
-    private val comments: CommentRepository
+    private val comments: CommentRepository,
+    private val likes: ReviewLikeRemoteDataSource
 ) {
     suspend fun getReviews(): Result<List<ReviewInfo>> = repositoryResult { source.getReviews() }
     suspend fun getReviewById(reviewId: Int): Result<ReviewInfo> = repositoryResult { source.getReviewById(reviewId) }
@@ -31,25 +32,34 @@ class ReviewRepository(
             .sortedByDescending { Instant.parse(it.createdAt) }
     }
 
-    /** Resuelve las referencias requeridas por el detalle y conserva los contadores persistidos. */
-    suspend fun getReviewDetail(reviewId: Int): Result<ReviewDetailInfo> = repositoryResult {
+    /**
+     * Resuelve las referencias requeridas por el detalle y conserva los contadores persistidos.
+     * Con [currentUserId] también indica si ese usuario ya dio like a la reseña.
+     */
+    suspend fun getReviewDetail(reviewId: Int, currentUserId: Int? = null): Result<ReviewDetailInfo> = repositoryResult {
         val review = source.getReviewById(reviewId)
         if (!review.isActive) throw NoSuchElementException("La reseña ya no está disponible.")
         coroutineScope {
             val article = async { products.getProductById(review.articleId).getOrThrow() }
             val author = async { users.getById(review.userId) }
             val thread = async { comments.getThread(review.id) }
-            ReviewDetailInfo(review, article.await(), author.await(), thread.await())
+            val liked = async { currentUserId != null && review.id in likes.getLikedReviewIds(currentUserId, setOf(review.id)) }
+            ReviewDetailInfo(review.copy(isLiked = liked.await()), article.await(), author.await(), thread.await())
         }
     }
-    /** Obtiene tarjetas del feed con consultas agrupadas y promedios de reseñas activas. */
-    suspend fun getFeedReviews(): Result<List<FeedReviewContent>> = repositoryResult {
+    /**
+     * Obtiene tarjetas del feed con consultas agrupadas y promedios de reseñas activas.
+     * Con [currentUserId] también marca las reseñas a las que ese usuario ya dio like.
+     */
+    suspend fun getFeedReviews(currentUserId: Int? = null): Result<List<FeedReviewContent>> = repositoryResult {
         val reviews = source.getReviews().filter { it.isActive }
         coroutineScope {
             val articles = async { products.getProducts().getOrThrow().associateBy { it.id } }
             val authors = async { users.getByIds(reviews.map { it.userId }.toSet()) }
+            val liked = async { currentUserId?.let { likes.getLikedReviewIds(it, reviews.map { review -> review.id }.toSet()) }.orEmpty() }
             val catalog = articles.await()
             val profiles = authors.await()
+            val likedIds = liked.await()
             val averages = reviews.groupBy { it.articleId }.mapValues { (_, records) -> records.map { it.rating }.average().toFloat() }
             reviews.mapNotNull { review ->
                 val article = catalog[review.articleId] ?: return@mapNotNull null
@@ -57,7 +67,7 @@ class ReviewRepository(
                 FeedReviewContent(review.id, article.id, article.name, article.brandName, article.categoryName,
                     article.imageUrl, averages.getValue(article.id), author.id, author.username, author.profileImageUrl,
                     review.rating, review.title, review.body, checkNotNull(review.likes), review.commentsCount,
-                    Instant.parse(review.createdAt).toEpochMilli())
+                    Instant.parse(review.createdAt).toEpochMilli(), review.id in likedIds)
             }.sortedByDescending { it.createdAtMillis }
         }
     }

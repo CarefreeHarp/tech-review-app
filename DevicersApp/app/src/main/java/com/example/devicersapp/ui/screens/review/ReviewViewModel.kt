@@ -1,5 +1,6 @@
 package com.example.devicersapp.ui.screens.review
 
+import com.example.devicersapp.data.repository.ReviewLikeRepository
 import com.example.devicersapp.data.repository.ReviewRepository
 
 import com.example.devicersapp.data.repository.UserRepository
@@ -21,24 +22,29 @@ import javax.inject.Inject
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
     private val articleReviews: ReviewRepository,
-    private val users: UserRepository
+    private val users: UserRepository,
+    private val reviewLikes: ReviewLikeRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReviewState())
     val uiState: StateFlow<ReviewState> = _uiState
 
-    /** Carga la reseña solicitada y el producto asociado. */
     private var loadJob: Job? = null
 
+    /** ID numérico del usuario autenticado; identifica su like y no se muestra en pantalla. */
+    private var currentUserId: Int? = null
+
+    /** Carga la reseña solicitada, el producto asociado y si el usuario autenticado ya le dio like. */
     fun loadReview(reviewId: Int) {
         if (_uiState.value.deletionRequested) return
         loadJob?.cancel()
         _uiState.update { ReviewState(loading = true) }
         loadJob = viewModelScope.launch {
             try {
-                val review = articleReviews.getReviewDetail(reviewId).getOrThrow()
-                val content = review.toReviewContent()
                 val currentId = users.getAuthenticatedUser().id
+                currentUserId = currentId
+                val review = articleReviews.getReviewDetail(reviewId, currentId).getOrThrow()
+                val content = review.toReviewContent()
                 _uiState.update {
                     ReviewState(
                         product = review.article.toProductContent(),
@@ -60,6 +66,40 @@ class ReviewViewModel @Inject constructor(
         loadJob?.cancel()
         loadReview(reviewId)
 
+    }
+
+    /**
+     * Da o quita el like de la reseña. El corazón cambia de inmediato y después adopta el estado
+     * confirmado por la fuente de datos, o recupera el anterior si la escritura falla.
+     */
+    fun onLikeClick() {
+        val current = _uiState.value
+        val original = current.review ?: return
+        val userId = currentUserId ?: return
+        if (current.likeInProgress) return
+
+        _uiState.update {
+            it.copy(
+                review = original.copy(
+                    isLiked = !original.isLiked,
+                    likes = if (original.isLiked) original.likes - 1 else original.likes + 1
+                ),
+                likeInProgress = true
+            )
+        }
+        viewModelScope.launch {
+            val result = reviewLikes.sendReviewLike(original.id, userId)
+            _uiState.update { state ->
+                // Si la pantalla recargó otra reseña mientras tanto, solo se libera el indicador.
+                val shown = state.review?.takeIf { it.id == original.id }
+                    ?: return@update state.copy(likeInProgress = false)
+                val confirmed = result.fold(
+                    onSuccess = { status -> shown.copy(isLiked = status.isLiked, likes = status.likes) },
+                    onFailure = { shown.copy(isLiked = original.isLiked, likes = original.likes) }
+                )
+                state.copy(review = confirmed, likeInProgress = false)
+            }
+        }
     }
 
     /** Expone el menú únicamente para la reseña remota de la sesión actual. */

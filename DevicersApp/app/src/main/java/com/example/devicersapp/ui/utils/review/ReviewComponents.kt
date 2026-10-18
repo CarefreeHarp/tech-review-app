@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -34,9 +35,10 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
  * @param likes Cantidad de reacciones recibidas.
  * @param comments Cantidad de comentarios recibidos.
  * @param modifier Modificador aplicado a la fila.
+ * @param isLiked Indica si el usuario autenticado ya dio like; resalta el corazón con el color de like.
  * @param iconSize Tamaño visual de los íconos de interacción.
  * @param countTextStyle Estilo de los conteos de reacciones y comentarios.
- * @param onLikeClick Acción solicitada al reaccionar a la reseña.
+ * @param onLikeClick Acción solicitada al dar o quitar el like de la reseña.
  * @param onCommentClick Acción solicitada al comentar la reseña.
  * @param onSendClick Acción solicitada al compartir la reseña.
  * @param onSaveClick Acción solicitada al guardar la reseña.
@@ -46,6 +48,7 @@ fun ReviewActionsRow(
     likes: Int,
     comments: Int,
     modifier: Modifier = Modifier,
+    isLiked: Boolean = false,
     iconSize: Dp = 19.dp,
     countTextStyle: TextStyle = CardHighlightText,
     onLikeClick: () -> Unit = {},
@@ -53,16 +56,19 @@ fun ReviewActionsRow(
     onSendClick: () -> Unit = {},
     onSaveClick: () -> Unit = {}
 ) {
+    val colors = LocalDevicersColors.current
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         ReviewAction(
             iconResId = R.drawable.like_icon,
-            contentDescriptionResId = R.string.review_action_like,
+            // La descripción accesible anuncia la acción que ejecutará el siguiente toque.
+            contentDescriptionResId = if (isLiked) R.string.review_action_unlike else R.string.review_action_like,
             count = likes,
             iconSize = iconSize,
             countTextStyle = countTextStyle,
+            tint = if (isLiked) colors.likeBadge else colors.textSecondary,
             onClick = onLikeClick
         )
         Spacer(modifier = Modifier.width(22.dp))
@@ -93,6 +99,7 @@ fun ReviewActionsRow(
  * @param count Cantidad acumulada de la acción, o `null` cuando la acción no acumula.
  * @param iconSize Tamaño visual del ícono de la acción.
  * @param countTextStyle Estilo del conteo cuando la acción lo muestra.
+ * @param tint Color del ícono; por defecto usa el color secundario de la paleta activa.
  * @param onClick Acción solicitada al pulsar el ícono.
  */
 @Composable
@@ -103,6 +110,7 @@ fun ReviewAction(
     count: Int? = null,
     iconSize: Dp = 19.dp,
     countTextStyle: TextStyle = CardHighlightText,
+    tint: Color = LocalDevicersColors.current.textSecondary,
     onClick: () -> Unit = {}
 ) {
     val colors = LocalDevicersColors.current
@@ -115,7 +123,7 @@ fun ReviewAction(
             painter = painterResource(iconResId),
             contentDescription = stringResource(contentDescriptionResId),
             modifier = Modifier.size(iconSize),
-            tint = colors.textSecondary
+            tint = tint
         )
         if (count != null) {
             // Los conteos van en negrita porque son el dato que el lector compara entre reseñas.
@@ -133,7 +141,7 @@ fun ReviewAction(
 @Preview(showBackground = true)
 fun ReviewActionsRowPreview() {
     DevicersAppTheme {
-        ReviewActionsRow(likes = 128, comments = 18)
+        ReviewActionsRow(likes = 128, comments = 18, isLiked = true)
     }
 }
 

@@ -1,6 +1,10 @@
 package com.example.devicersapp.ui.models
 
-/** Datos de reseña independientes del contrato JSON del backend. */
+/**
+ * Datos de reseña independientes del contrato JSON del backend.
+ *
+ * @param isLiked Indica si el usuario autenticado ya dio like; solo se calcula cuando el repositorio recibe su ID.
+ */
 data class ReviewInfo(
     val id: Int,
     val userId: Int,
@@ -16,4 +20,5 @@ data class ReviewInfo(
     val likes: Int? = null,
     val commentsCount: Int = 0,
     val comments: List<ReplyContent>? = null,
+    val isLiked: Boolean = false,
 )

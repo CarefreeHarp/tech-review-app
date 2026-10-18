@@ -5,13 +5,16 @@ import com.example.devicersapp.ui.models.*
 import com.example.devicersapp.data.utils.Utils
 import android.net.Uri
 import java.util.UUID
+import java.util.concurrent.TimeoutException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withTimeoutOrNull
 /** Centraliza perfiles, proyecciones públicas y edición, usando la fuente seleccionada. */
 class UserRepository(
     private val source: UserRemoteDataSource,
     private val reviews: ReviewRepository,
-    private val storage: StorageRemoteDataSource
+    private val storage: StorageRemoteDataSource,
+    private val messaging: MessagingRemoteDataSource
 ) {
     /** Resuelve el perfil por el UID actual de Auth sin conservar una copia global. */
     suspend fun getAuthenticatedUser(): UserInfo {
@@ -40,5 +43,22 @@ class UserRepository(
         val user = async { getById(userId) }
         val records = async { reviews.getReviewSummariesByUser(userId) }
         UserProfileInfo(user.await(), records.await(), 0, 0, false)
+    }
+
+    /**
+     * Guarda en el perfil de la sesión actual el token FCM de este dispositivo, para que las Cloud
+     * Functions puedan enviarle notificaciones push. Sin sesión iniciada no hay perfil al que asociarlo.
+     */
+    suspend fun registerFcmToken(): Result<Unit> =
+        // Sin conexión, guardar el token no debe bloquear el acceso a la aplicación.
+        withTimeoutOrNull(FCM_TOKEN_TIMEOUT_MS) {
+            repositoryResult {
+                if (Utils.getCurrentUser() == null) return@repositoryResult
+                source.updateFcmToken(getAuthenticatedUser().id, messaging.getToken())
+            }
+        } ?: Result.failure(TimeoutException("Guardar el token FCM superó el tiempo de espera."))
+
+    private companion object {
+        const val FCM_TOKEN_TIMEOUT_MS = 5_000L
     }
 }

@@ -39,10 +39,18 @@ import com.example.devicersapp.ui.utils.review.ReviewActionsRow
  *
  * @param review Información visible de la reseña.
  * @param modifier Modificador aplicado al contenedor.
+ * @param onProfileClick Acción solicitada al abrir el perfil del autor.
+ * @param onLikeClick Acción solicitada al dar o quitar el like de la reseña.
  * @param actions Acciones del autor alineadas al extremo derecho de su misma fila.
  */
 @Composable
-fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onProfileClick: (String) -> Unit = {}, actions: @Composable () -> Unit = {}) {
+fun ReviewDetail(
+    review: ReviewContent,
+    modifier: Modifier = Modifier,
+    onProfileClick: (String) -> Unit = {},
+    onLikeClick: () -> Unit = {},
+    actions: @Composable () -> Unit = {}
+) {
     val colors = LocalDevicersColors.current
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -110,7 +118,12 @@ fun ReviewDetail(review: ReviewContent, modifier: Modifier = Modifier, onProfile
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        ReviewActionsRow(likes = 0, comments = review.comments.size)
+        ReviewActionsRow(
+            likes = review.likes,
+            comments = review.comments.size,
+            isLiked = review.isLiked,
+            onLikeClick = onLikeClick
+        )
     }
 }
 

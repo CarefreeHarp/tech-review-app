@@ -9,8 +9,11 @@ import com.example.devicersapp.ui.models.ProductCategoryContent
 import com.example.devicersapp.data.repository.ProductRepository
 import com.example.devicersapp.data.repository.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.net.ConnectException
@@ -32,78 +35,82 @@ class CreateReviewViewModel @Inject constructor(
     val uiState: StateFlow<CreateReviewState> =
         _uiState
 
+    /** Recolección activa del catálogo en vivo; se reemplaza al reintentar la carga. */
+    private var productsJob: Job? = null
+
     init {
         loadProducts()
     }
 
     /**
-     * Carga los productos disponibles desde el backend.
+     * Carga las categorías y escucha el catálogo en vivo: cada producto agregado a la base de datos
+     * aparece en el listado sin recargar la pantalla.
      */
     fun loadProducts() {
+        productsJob?.cancel()
 
-        viewModelScope.launch {
+        _uiState.update { currentState ->
+            currentState.copy(
+                isLoading = true,
+                errorMessage = null
+            )
+        }
+
+        productsJob = viewModelScope.launch {
+            val categories = try {
+                categoryRepository.getCategories().map {
+                    ProductCategoryContent(it.id.toString(), R.string.all, it.name, it.parentCategoryId?.toString())
+                }
+            } catch (cancelled: CancellationException) { throw cancelled
+            } catch (error: Exception) {
+                showLoadError(error)
+                return@launch
+            }
 
             _uiState.update { currentState ->
                 currentState.copy(
-                    isLoading = true,
-                    errorMessage = null
+                    categories = listOf(
+                        ProductCategoryContent("all", R.string.all)
+                    ) + categories
                 )
             }
 
-            val result = try {
-                val products = productRepository.getProducts().getOrThrow()
-                val categories = categoryRepository.getCategories()
-                Result.success(products to categories)
-            } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled
-            } catch (error: Exception) { Result.failure(error) }
+            productRepository.getProductsLive()
+                // catch reemplaza al try-catch: un error del listener detiene el flujo y se muestra en pantalla.
+                .catch { error -> showLoadError(error) }
+                // collect se ejecuta con la carga inicial y otra vez cada vez que cambia el catálogo.
+                .collect { products ->
+                    _uiState.update { currentState ->
+                        val loadedState = currentState.copy(
+                            products = products,
+                            isLoading = false,
+                            errorMessage = null
+                        )
 
-            if (result.isSuccess) {
-
-                val (products, categoryRecords) = result.getOrThrow()
-                val categories = categoryRecords.map {
-                    ProductCategoryContent(it.id.toString(), R.string.all, it.name, it.parentCategoryId?.toString())
+                        // Conserva la búsqueda y la categoría elegidas cuando llegan productos nuevos.
+                        loadedState.copy(
+                            filteredProducts = filterProducts(loadedState)
+                        )
+                    }
                 }
+        }
+    }
 
-                _uiState.update { currentState ->
-                    val loadedState = currentState.copy(
-                        categories = listOf(
-                            ProductCategoryContent("all", R.string.all)
-                        ) + categories,
-                        products = products,
-                        isLoading = false,
-                        errorMessage = null
-                    )
+    /**
+     * Traduce el error de carga del catálogo al mensaje visible.
+     */
+    private fun showLoadError(error: Throwable) {
+        val message = when (error) {
+            is ConnectException -> R.string.catalog_connection_error
+            is SocketTimeoutException -> R.string.catalog_timeout_error
+            else -> R.string.catalog_load_error
+        }
 
-                    // La búsqueda sigue disponible durante la carga; conserva la consulta más reciente.
-                    loadedState.copy(
-                        filteredProducts = filterProducts(loadedState)
-                    )
-                }
-
-            } else {
-
-                val exception =
-                    result.exceptionOrNull()
-
-                val message = when (exception) {
-
-                    is ConnectException ->
-                        R.string.catalog_connection_error
-
-                    is SocketTimeoutException ->
-                        R.string.catalog_timeout_error
-
-                    else ->
-                        R.string.catalog_load_error
-                }
-
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        isLoading = false,
-                        errorMessage = message
-                    )
-                }
-            }
+        _uiState.update { currentState ->
+            currentState.copy(
+                isLoading = false,
+                errorMessage = message
+            )
         }
     }
 

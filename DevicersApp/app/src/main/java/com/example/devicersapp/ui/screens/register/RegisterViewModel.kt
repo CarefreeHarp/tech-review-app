@@ -87,6 +87,8 @@ class RegisterViewModel @Inject constructor(
             val account = checkNotNull(Utils.getCurrentUser())
             users.createIfMissing(UserDraft(Utils.getCurrentUserId(), account.email.orEmpty(),
                 _uiState.value.username.trim(), account.photoUrl?.toString()))
+            // Asocia este dispositivo a la cuenta nueva para recibir notificaciones push; el registro no depende de ello.
+            users.registerFcmToken()
             true
         } catch (cancelled: CancellationException) { throw cancelled
         } catch (error: Exception) {

@@ -23,9 +23,10 @@ fun ReviewInfo.toReviewContent(): ReviewContent {
     val author = checkNotNull(user)
     return ReviewContent(authorId = userId.toString(), productNameResId = R.string.rate_product_name,
         productImageResId = R.drawable.logo_icono_claro, productMetadataResId = R.string.rate_product_brand,
-        rating = rating, textResId = R.string.rate_product_experience, likes = 0,
+        rating = rating, textResId = R.string.rate_product_experience, likes = likes ?: 0,
         comments = comments.orEmpty(), id = id, productName = product.name, productImageUrl = product.imageUrl,
-        body = body, authorName = author.username, authorImageUrl = author.profileImageUrl, title = title)
+        body = body, authorName = author.username, authorImageUrl = author.profileImageUrl, title = title,
+        isLiked = isLiked)
 }
 /** Mantiene el hilo y las copias de los autores al proyectar el detalle de una reseña. */
 fun ReviewDetailInfo.toReviewContent(): ReviewContent = review.copy(article = article, user = author,

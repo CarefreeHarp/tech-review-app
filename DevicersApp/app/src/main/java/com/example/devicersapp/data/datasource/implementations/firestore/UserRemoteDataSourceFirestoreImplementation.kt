@@ -74,4 +74,10 @@ class UserRemoteDataSourceFirestoreImplementation @Inject constructor(
         }.await()
         return getById(userId)
     }
+
+    /** Las Cloud Functions leen fcm_token para dirigir las notificaciones push al dispositivo del usuario. */
+    override suspend fun updateFcmToken(userId: Int, token: String?) {
+        require(userId > 0)
+        users.document(userId.toString()).update(UpdateUserFcmTokenFirestoreDto(token).fields()).await()
+    }
 }

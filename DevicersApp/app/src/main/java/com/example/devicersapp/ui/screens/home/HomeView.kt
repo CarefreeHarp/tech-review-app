@@ -65,6 +65,7 @@ fun HomeView(
         onRetryClick = viewModel::onRetryClick,
         onProductClick = onProductClick,
         onReviewClick = onReviewClick,
+        onLikeClick = viewModel::onLikeClick,
         onCommentClick = onCommentClick,
         onSendClick = onSendClick,
         modifier = modifier
@@ -75,6 +76,8 @@ fun HomeView(
 
 /**
  * Muestra las pestañas del feed y, según el estado, la carga, el error o la lista de reseñas.
+ *
+ * @param onLikeClick Acción solicitada al dar o quitar el like de la reseña con el ID recibido.
  */
 @Composable
 fun HomeViewContent(
@@ -84,6 +87,7 @@ fun HomeViewContent(
     onRetryClick: () -> Unit,
     onProductClick: (Int) -> Unit,
     onReviewClick: (Int) -> Unit,
+    onLikeClick: (Int) -> Unit,
     onCommentClick: (Int) -> Unit,
     onSendClick: (FeedReviewContent) -> Unit,
     modifier: Modifier = Modifier,
@@ -151,6 +155,9 @@ fun HomeViewContent(
                             onViewMoreClick = {
                                 onReviewClick(review.reviewId)
                             },
+                            onLikeClick = {
+                                onLikeClick(review.reviewId)
+                            },
                             onCommentClick = {
                                 onCommentClick(review.reviewId)
                             },
@@ -201,6 +208,7 @@ fun HomeViewPreview() {
                 onRetryClick = {},
                 onProductClick = {},
                 onReviewClick = {},
+                onLikeClick = {},
                 onCommentClick = {},
                 onSendClick = {}
             )
@@ -228,6 +236,7 @@ fun HomeViewDarkPreview() {
                 onRetryClick = {},
                 onProductClick = {},
                 onReviewClick = {},
+                onLikeClick = {},
                 onCommentClick = {},
                 onSendClick = {}
             )

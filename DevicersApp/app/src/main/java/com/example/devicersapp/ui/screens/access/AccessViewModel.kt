@@ -3,6 +3,7 @@ package com.example.devicersapp.ui.screens.access
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.data.repository.AuthRepository
+import com.example.devicersapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,8 @@ import kotlinx.coroutines.launch
 /** Conserva y modifica el estado de la pantalla de acceso. */
 @HiltViewModel
 class AccessViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val users: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AccessState())
@@ -42,12 +44,17 @@ class AccessViewModel @Inject constructor(
         }
     }
 
-    /** Inicia sesión y notifica a la vista únicamente cuando Firebase confirma el acceso. */
+    /**
+     * Inicia sesión, asocia el token FCM del dispositivo a la cuenta y notifica a la vista únicamente
+     * cuando Firebase confirma el acceso.
+     */
     fun onSignIn(onSignInSuccess: () -> Unit) {
         _uiState.update { state -> state.copy(signInErrorMessage = null) }
 
         viewModelScope.launch {
             if (signIn()) {
+                // Las cuentas creadas antes de las notificaciones push obtienen aquí su token; el acceso no depende de ello.
+                users.registerFcmToken()
                 onSignInSuccess()
             }
         }

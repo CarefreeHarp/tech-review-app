@@ -16,6 +16,7 @@ import androidx.annotation.StringRes
  * @param timeAgoResId Antigüedad de la publicación, cuando la pantalla la muestra.
  * @param productAverageResId Promedio del producto, cuando la pantalla lo muestra junto a las estrellas.
  * @param id Identificador estable usado por las rutas y los repositorios de reseñas.
+ * @param isLiked Indica si el usuario autenticado ya dio like a la reseña.
  */
 data class ReviewContent(
     val authorId: String,
@@ -34,7 +35,8 @@ data class ReviewContent(
     val body: String? = null,
     val authorName: String? = null,
     val authorImageUrl: String? = null,
-    val title: String? = null
+    val title: String? = null,
+    val isLiked: Boolean = false
 ) {
     init { require(rating in 1..5) { "La calificación debe estar entre 1 y 5." } }
 }

@@ -61,6 +61,7 @@ fun ReviewView(
             },
             onDeleteClick = { viewModel.requestDeletion()?.let(onDeleteRequested) },
             onActionsMenuChange = viewModel::setActionsMenuExpanded,
+            onLikeClick = viewModel::onLikeClick,
             onAuthorClick = onAuthorClick,
             onReplyTextChange = viewModel::onReplyTextChange,
             onProductClick = onProductClick,
@@ -79,13 +80,18 @@ fun ReviewView(
     )
 }
 
-/** Ensambla el producto, la reseña, las respuestas y el compositor. */
+/**
+ * Ensambla el producto, la reseña, las respuestas y el compositor.
+ *
+ * @param onLikeClick Acción solicitada al dar o quitar el like de la reseña.
+ */
 @Composable
 fun ReviewViewContent(
     state: ReviewState,
     onEditClick: (Int) -> Unit = {},
     onDeleteClick: () -> Unit = {},
     onActionsMenuChange: (Boolean) -> Unit = {},
+    onLikeClick: () -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
     onReplyTextChange: (String) -> Unit,
     onProductClick: (Int) -> Unit,
@@ -135,6 +141,7 @@ fun ReviewViewContent(
                                 )
                             }
                         },
+                        onLikeClick = onLikeClick,
                         onProfileClick = onAuthorClick
                     )
 

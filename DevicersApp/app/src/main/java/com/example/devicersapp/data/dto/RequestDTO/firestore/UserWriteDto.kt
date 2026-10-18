@@ -25,3 +25,7 @@ data class UpdateUserFirestoreDto(val username: String?, val biography: String?,
 }
 /** Traduce los cambios sin enviar como null los campos omitidos. */
 fun UserChanges.toUpdateUserFirestoreDto() = UpdateUserFirestoreDto(username, biography, profileImageUrl)
+/** Token FCM del dispositivo con sesión iniciada; null elimina el campo del documento. */
+data class UpdateUserFcmTokenFirestoreDto(val fcm_token: String?) {
+    fun fields(): Map<String, Any> = mapOf("fcm_token" to (fcm_token ?: FieldValue.delete()))
+}
