@@ -45,6 +45,7 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
  * @param showDisplayName Indica si debe mostrarse el nombre debajo de la foto.
  * @param showStats Indica si se muestran las métricas de reseñas, seguidores y seguidos.
  * @param showAction Indica si se muestra el botón de acción principal.
+ * @param actionIsSecondary Muestra la acción en gris cuando representa un seguimiento existente.
  * @param showBiography Indica si se muestra la biografía del perfil.
  * @param onActionClick Acción solicitada al pulsar el botón principal.
  * @param onFollowersClick Abre los seguidores del ID representado en la cabecera.
@@ -62,6 +63,7 @@ fun ProfileHeader(
     showStats: Boolean = true,
     showAction: Boolean = true,
     actionEnabled: Boolean = true,
+    actionIsSecondary: Boolean = false,
     showBiography: Boolean = true,
     onActionClick: () -> Unit = {},
     onProfileClick: (String) -> Unit = {},
@@ -133,8 +135,8 @@ fun ProfileHeader(
                     .height(48.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.primary,
-                    contentColor = colors.textOnPrimary
+                    containerColor = if (actionIsSecondary) colors.textSecondary else colors.primary,
+                    contentColor = if (actionIsSecondary) colors.background else colors.textOnPrimary
                 )
             ) {
                 Text(
