@@ -59,6 +59,7 @@ fun HomeView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.onResume() }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
 
     HomeViewContent(
         onProfileClick = onProfileClick,

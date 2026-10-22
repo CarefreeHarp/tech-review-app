@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.R
 import com.example.devicersapp.data.repository.NotificationRepository
+import com.example.devicersapp.data.repository.FollowRepository
 import com.example.devicersapp.data.repository.UserRepository
 import com.example.devicersapp.ui.models.ActivityContent
 import com.example.devicersapp.ui.models.ActivityGroupContent
@@ -24,22 +25,26 @@ import javax.inject.Inject
 @HiltViewModel
 class ActivityViewModel @Inject constructor(
     private val users: UserRepository,
-    private val notifications: NotificationRepository
+    private val notifications: NotificationRepository,
+    private val follows: FollowRepository
 ) : ViewModel() {
     private val state = MutableStateFlow(ActivityState())
     val uiState = state.asStateFlow()
 
     /** Consulta el perfil propio y sus notificaciones con los actores y artículos que muestran las tarjetas. */
     fun loadActivity() {
-        state.update { it.copy(loading = true, error = null) }
+        if (state.value.loading || state.value.followsInProgress.isNotEmpty()) return
+        state.update { it.copy(loading = true, error = null, followError = null) }
         viewModelScope.launch {
             try {
                 val profile = users.getAuthenticatedUser()
+                val followedIds = follows.getFollowedUserIds(profile.id)
                 val activity = notifications.getActivity(profile.id).getOrThrow()
                 val contents = activity.mapNotNull { it.toActivityContent() }.sortedByDescending { it.time }
                 state.update {
                     it.copy(
                         currentProfile = profile,
+                        followedUserIds = followedIds,
                         activityGroups = contents.groupByDay(),
                         profileImages = activity.associate { item -> item.actor.id to item.actor.profileImageUrl },
                         actorNames = activity.associate { item -> item.actor.id to item.actor.username },
@@ -54,6 +59,36 @@ class ActivityViewModel @Inject constructor(
                 throw cancelled
             } catch (error: Exception) {
                 state.update { it.copy(loading = false, error = R.string.activity_load_error) }
+            }
+        }
+    }
+
+    /** Sigue o deja de seguir al actor y comparte el resultado entre todas sus tarjetas. */
+    fun onFollowClick(profileId: String) {
+        val id = profileId.toIntOrNull()?.takeIf { it > 0 } ?: return
+        val original = state.value
+        if (original.loading || id == original.currentProfile?.id || id in original.followsInProgress) return
+        if (original.activityGroups.none { group -> group.notifications.any { it.actorProfileId == profileId && it.showFollowAction } }) return
+        val wasFollowed = id in original.followedUserIds
+        val following = !wasFollowed
+        state.update { it.copy(
+            followedUserIds = if (following) it.followedUserIds + id else it.followedUserIds - id,
+            followsInProgress = it.followsInProgress + id, followError = null
+        ) }
+        viewModelScope.launch {
+            try {
+                val actor = users.getAuthenticatedUser()
+                val status = follows.setFollowing(actor.id, id, following).getOrThrow()
+                state.update { it.copy(
+                    followedUserIds = if (status.isFollowing) it.followedUserIds + id else it.followedUserIds - id,
+                    followsInProgress = it.followsInProgress - id
+                ) }
+            } catch (cancelled: CancellationException) { throw cancelled
+            } catch (error: Exception) {
+                state.update { it.copy(
+                    followedUserIds = if (wasFollowed) it.followedUserIds + id else it.followedUserIds - id,
+                    followsInProgress = it.followsInProgress - id, followError = R.string.profile_follow_error
+                ) }
             }
         }
     }

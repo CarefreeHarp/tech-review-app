@@ -156,7 +156,7 @@ fun FeedReviewItem(
                     RatingStars(rating = review.rating, style = RatingStarsLargeText)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = stringResource(R.string.home_feed_product_average, review.productAverage),
+                        text = stringResource(R.string.home_feed_review_rating, review.rating),
                         color = colors.textPrimary,
                         style = MaterialTheme.typography.titleSmall
                     )

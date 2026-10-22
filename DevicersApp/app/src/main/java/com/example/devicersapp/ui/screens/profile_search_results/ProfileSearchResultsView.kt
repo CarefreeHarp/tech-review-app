@@ -14,6 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,12 +37,13 @@ fun ProfileSearchResultsView(
     viewModel: ProfileSearchResultsViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.loadResults() }
 
     ProfileSearchResultsViewContent(
         state = uiState,
         onRetry = viewModel::loadResults,
         onSearchTextChange = viewModel::onSearchTextChange,
-        onFollow = {},
+        onFollow = viewModel::onFollowClick,
         onProfileClick = onProfileClick,
         modifier = modifier
             .fillMaxSize()
@@ -63,6 +66,7 @@ fun ProfileSearchResultsViewContent(
 
     Column(modifier = modifier.padding(horizontal = 20.dp)) {
         state.error?.let { Text(stringResource(it)); androidx.compose.material3.TextButton(onClick = onRetry) { Text(stringResource(R.string.discovery_retry)) } }
+        state.followError?.let { Text(stringResource(it), color = colors.textSecondary) }
         Spacer(modifier = Modifier.height(28.dp))
         SearchBar(
             placeholder = R.string.profile_search_results_placeholder,
@@ -88,8 +92,8 @@ fun ProfileSearchResultsViewContent(
             items(results, key = { it.id }) { result ->
                 ProfileResultCard(
                     result = result,
-                    isFollowed = false,
-                    followEnabled = false,
+                    isFollowed = result.id.toIntOrNull() in state.followedUserIds,
+                    followEnabled = result.id.toIntOrNull() !in state.followsInProgress && !state.loading,
                     onFollow = { onFollow(result.id) },
                     onProfileClick = { onProfileClick(result.id) }
                 )

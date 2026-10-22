@@ -2,6 +2,7 @@ package com.example.devicersapp.ui.screens.access
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.devicersapp.R
 import com.example.devicersapp.data.repository.AuthRepository
 import com.example.devicersapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,11 +46,22 @@ class AccessViewModel @Inject constructor(
     }
 
     /**
-     * Inicia sesión, asocia el token FCM del dispositivo a la cuenta y notifica a la vista únicamente
+     * Valida los campos obligatorios, inicia sesión, asocia el token FCM y notifica a la vista únicamente
      * cuando Firebase confirma el acceso.
      */
     fun onSignIn(onSignInSuccess: () -> Unit) {
-        _uiState.update { state -> state.copy(signInErrorMessage = null) }
+        val current = _uiState.value
+        val validationError = when {
+            current.email.isBlank() && current.password.isBlank() -> R.string.auth_error_required_fields
+            current.email.isBlank() -> R.string.auth_error_email_required
+            current.password.isBlank() -> R.string.auth_error_password_required
+            else -> null
+        }
+        _uiState.update { state -> state.copy(
+            signInErrorMessage = null,
+            signInErrorMessageResId = validationError
+        ) }
+        if (validationError != null) return
 
         viewModelScope.launch {
             if (signIn()) {

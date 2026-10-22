@@ -61,6 +61,9 @@
     <string name="access_authentication_error_preview">
         No fue posible iniciar sesión. Inténtalo de nuevo.
     </string>
+    <string name="auth_error_required_fields">El correo y la contraseña son obligatorios.</string>
+    <string name="auth_error_email_required">El correo es obligatorio.</string>
+    <string name="auth_error_password_required">La contraseña es obligatoria.</string>
     <string name="auth_error_invalid_credentials">Correo o contraseña incorrectos.</string>
     <string name="auth_error_user_not_found">No existe una cuenta con este correo electrónico.</string>
     <string name="auth_error_email_in_use">Este correo electrónico ya está registrado.</string>
@@ -78,7 +81,7 @@
     <string name="home_tab_following">Siguiendo</string>
     <string name="home_feed_author_handle">%1$s</string>
     <string name="home_feed_product_metadata">%1$s • %2$s</string>
-    <string name="home_feed_product_average">%1$.1f</string>
+    <string name="home_feed_review_rating">%1$d</string>
     <string name="home_feed_loading">Cargando reseñas</string>
     <string name="home_feed_empty">Todavía no hay reseñas publicadas.</string>
     <string name="home_feed_error_connection">No pudimos conectarnos con el servidor. Revisa tu conexión e intenta de nuevo.</string>

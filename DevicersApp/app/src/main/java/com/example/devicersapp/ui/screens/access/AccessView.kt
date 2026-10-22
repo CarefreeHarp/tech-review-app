@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
@@ -103,10 +104,12 @@ fun AccessViewContent(
             modifier = Modifier.align(Alignment.End)
         )
 
-        if (state.signInErrorMessage != null) {
+        val errorMessage = state.signInErrorMessageResId?.let { stringResource(it) }
+            ?: state.signInErrorMessage
+        if (errorMessage != null) {
             Spacer(modifier = Modifier.height(18.dp))
             AccessAuthenticationError(
-                errorMessage = state.signInErrorMessage
+                errorMessage = errorMessage
             )
         }
 

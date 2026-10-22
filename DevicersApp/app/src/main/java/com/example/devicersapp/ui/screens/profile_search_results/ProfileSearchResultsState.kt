@@ -7,5 +7,8 @@ data class ProfileSearchResultsState(
     val loading: Boolean = false,
     val error: Int? = null,
     val results: List<ProfileSearchResultContent> = emptyList(),
-    val searchText: String = ""
+    val searchText: String = "",
+    val followedUserIds: Set<Int> = emptySet(),
+    val followsInProgress: Set<Int> = emptySet(),
+    val followError: Int? = null
 )

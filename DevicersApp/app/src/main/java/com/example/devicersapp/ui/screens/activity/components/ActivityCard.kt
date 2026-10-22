@@ -51,6 +51,7 @@ private const val DAY_IN_MILLIS = 24 * HOUR_IN_MILLIS
  * @param modifier Modificador aplicado a la tarjeta.
  * @param isHighlighted Indica si el evento se dibuja como tarjeta elevada en vez de sobre el fondo.
  * @param profileImageUrl Foto vigente del autor consultada en Firestore por el ViewModel.
+ * @param followEnabled Permite cambiar la relación cuando no hay una escritura pendiente.
  */
 @Composable
 fun ActivityCard(
@@ -63,7 +64,8 @@ fun ActivityCard(
     onProfileClick: (String) -> Unit = {},
     profileImageUrl: String? = null,
     actorName: String = "",
-    productName: String? = null
+    productName: String? = null,
+    followEnabled: Boolean = true
 ) {
     val colors = LocalDevicersColors.current
     // El tiempo se deriva al renderizar para evitar guardar textos como "Hace 5 m" en los datos.
@@ -126,7 +128,7 @@ fun ActivityCard(
             Spacer(modifier = Modifier.width(12.dp))
             Button(
                 onClick = onFollow,
-                enabled = false,
+                enabled = followEnabled,
                 modifier = Modifier.height(42.dp),
                 shape = RoundedCornerShape(percent = 50),
                 colors = ButtonDefaults.buttonColors(

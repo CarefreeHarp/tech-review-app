@@ -6,6 +6,12 @@ import com.example.devicersapp.data.dto.ResponseDTO.shared.*
 import com.example.devicersapp.data.dto.RequestDTO.firestore.*
 import com.google.firebase.firestore.*
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 /** Implementa las operaciones de reseñas con las rutas y campos de Firestore v9. */
@@ -15,6 +21,36 @@ class ReviewRemoteDataSourceFirestoreImplementation @Inject constructor(
     private val reviews get() = firestore.collection("reviews")
     override suspend fun getReviews(): List<ReviewInfo> =
         reviews.get(Source.SERVER).await().documents.map { it.toReviewFirestoreDto().toReviewInfo() }
+    /** Escucha altas, cambios y bajas, agrupando el filtro IN sin duplicar reseñas entre emisiones. */
+    override fun listenReviews(userIds: Set<Int>?): Flow<List<ReviewInfo>> {
+        if (userIds == null) return reviews.listenReviewQuery()
+        if (userIds.isEmpty()) return flowOf(emptyList())
+        val queries = userIds.sorted().chunked(30).map { ids ->
+            reviews.whereIn("user_id", ids).listenReviewQuery()
+        }
+        return combine(queries) { batches -> batches.flatMap { it }.distinctBy { it.id } }
+    }
+
+    /** Libera el listener al cancelar el feed y propaga errores de consulta o decodificación. */
+    private fun Query.listenReviewQuery(): Flow<List<ReviewInfo>> = callbackFlow {
+        var hasServerSnapshot = false
+        val listener = addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+            if (snapshot != null) {
+                // La caché inicial puede estar incompleta: no confirma que el feed esté vacío.
+                // INCLUDE entrega la confirmación del servidor aunque los documentos no cambien.
+                if (!hasServerSnapshot && snapshot.metadata.isFromCache) return@addSnapshotListener
+                if (!snapshot.metadata.isFromCache) hasServerSnapshot = true
+                runCatching { snapshot.documents.map { it.toReviewFirestoreDto().toReviewInfo() } }
+                    .onSuccess { trySend(it) }
+                    .onFailure { close(it) }
+            }
+        }
+        awaitClose { listener.remove() }
+    }.distinctUntilChanged()
     override suspend fun getReviewById(reviewId: Int): ReviewInfo {
         require(reviewId > 0)
         return reviews.document(reviewId.toString()).get(Source.SERVER).await().also { snapshot ->

@@ -5,6 +5,8 @@ import com.example.devicersapp.ui.models.*
 import java.time.Instant
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 /** Centraliza reseñas, feed y detalle; las estrategias de transporte quedan dentro de los DataSources. */
 class ReviewRepository(
     private val source: ReviewRemoteDataSource,
@@ -53,16 +55,28 @@ class ReviewRepository(
      * [authorIds] restringe la consulta a cuentas seguidas; vacío devuelve un feed vacío.
      */
     suspend fun getFeedReviews(currentUserId: Int? = null, authorIds: Set<Int>? = null): Result<List<FeedReviewContent>> = repositoryResult {
-        val reviews = (if (authorIds == null) source.getReviews() else source.getReviewsByUsers(authorIds)).filter { it.isActive }
-        if (reviews.isEmpty()) return@repositoryResult emptyList()
-        coroutineScope {
+        val records = if (authorIds == null) source.getReviews() else source.getReviewsByUsers(authorIds)
+        buildFeedReviews(records, currentUserId, authorIds != null)
+    }
+
+    /** Mantiene las tarjetas de Home al día utilizando la misma proyección que la consulta puntual. */
+    fun listenFeedReviews(currentUserId: Int, authorIds: Set<Int>? = null): Flow<List<FeedReviewContent>> =
+        source.listenReviews(authorIds).map { buildFeedReviews(it, currentUserId, authorIds != null) }
+
+    /** Resuelve productos, autores y likes para cada versión de las reseñas activas. */
+    private suspend fun buildFeedReviews(
+        records: List<ReviewInfo>, currentUserId: Int?, filteredByAuthor: Boolean
+    ): List<FeedReviewContent> {
+        val reviews = records.filter { it.isActive }
+        if (reviews.isEmpty()) return emptyList()
+        return coroutineScope {
             val articles = async { products.getProducts().getOrThrow().associateBy { it.id } }
             val authors = async { users.getByIds(reviews.map { it.userId }.toSet()) }
             val liked = async { currentUserId?.let { likes.getLikedReviewIds(it, reviews.map { review -> review.id }.toSet()) }.orEmpty() }
             val catalog = articles.await()
             val profiles = authors.await()
             val likedIds = liked.await()
-            val ratingRecords = if (authorIds == null) reviews else reviews.map { it.articleId }.toSet()
+            val ratingRecords = if (!filteredByAuthor) reviews else reviews.map { it.articleId }.toSet()
                 .flatMap { source.getReviewsByProduct(it) }.filter { it.isActive }
             val averages = ratingRecords.groupBy { it.articleId }.mapValues { (_, records) -> records.map { it.rating }.average().toFloat() }
             reviews.mapNotNull { review ->

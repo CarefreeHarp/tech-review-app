@@ -10,5 +10,8 @@ data class ActivityState(
     val actorNames: Map<Int, String> = emptyMap(),
     val productNames: Map<Int, String> = emptyMap(),
     val loading: Boolean = false,
-    val error: Int? = null
+    val error: Int? = null,
+    val followedUserIds: Set<Int> = emptySet(),
+    val followsInProgress: Set<Int> = emptySet(),
+    val followError: Int? = null
 )

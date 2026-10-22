@@ -5,5 +5,6 @@ data class AccessState(
     val email: String = "",
     val password: String = "",
     val isPasswordVisible: Boolean = false,
-    val signInErrorMessage: String? = null
+    val signInErrorMessage: String? = null,
+    val signInErrorMessageResId: Int? = null
 )

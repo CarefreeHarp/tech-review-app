@@ -43,7 +43,7 @@ fun ActivityView(
     ActivityViewContent(
         onProfileClick = onProfileClick,
         state = uiState,
-        onFollow = {},
+        onFollow = viewModel::onFollowClick,
         onRetry = viewModel::loadActivity,
         onActivityClick = { activity ->
             when (activity.type) {
@@ -86,6 +86,7 @@ fun ActivityViewContent(
     ) {
         item {
             if (state.loading) Text(stringResource(R.string.discovery_activity_loading))
+            state.followError?.let { Text(stringResource(it), color = colors.textSecondary) }
             state.error?.let { error ->
                 Text(stringResource(error))
                 TextButton(onClick = onRetry) { Text(stringResource(R.string.discovery_retry)) }
@@ -109,8 +110,11 @@ fun ActivityViewContent(
                     profileImageUrl = state.profileImages[activity.actorProfileId.toIntOrNull()],
                     actorName = state.actorNames[activity.actorProfileId.toIntOrNull()].orEmpty(),
                     productName = state.productNames[activity.targetReviewId],
-                    isFollowed = false,
-                    onFollow = { onFollow(activity.id) },
+                    isFollowed = activity.actorProfileId.toIntOrNull() in state.followedUserIds,
+                    followEnabled = !state.loading && state.currentProfile != null &&
+                        activity.actorProfileId.toIntOrNull() != state.currentProfile.id &&
+                        activity.actorProfileId.toIntOrNull() !in state.followsInProgress,
+                    onFollow = { onFollow(activity.actorProfileId) },
                     onClick = { onActivityClick(activity) },
                     isHighlighted = groupIndex == 0
                 )

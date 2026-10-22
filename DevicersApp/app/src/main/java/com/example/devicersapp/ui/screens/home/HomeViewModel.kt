@@ -14,6 +14,7 @@ import com.example.devicersapp.ui.models.FeedReviewContent
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -28,7 +29,7 @@ class HomeViewModel @Inject constructor(
     private val follows: FollowRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(HomeState())
+    private val _uiState = MutableStateFlow(HomeState(isLoading = true))
     val uiState: StateFlow<HomeState> = _uiState
 
     /** ID numérico del usuario autenticado; identifica sus likes y no se muestra en pantalla. */
@@ -36,10 +37,13 @@ class HomeViewModel @Inject constructor(
 
     private var loadJob: Job? = null
 
-    /** Reconsulta la pestaña activa cada vez que Home vuelve a primer plano. */
+    /** Recarga Para ti o reinicia la escucha de Siguiendo al volver a Home. */
     fun onResume() { loadFeed() }
 
-    /** Carga desde la fuente seleccionada las reseñas del feed con su artículo, autor, conteos y likes propios. */
+    /** Retira la escucha cuando Home deja de ser visible. */
+    fun onStop() { loadJob?.cancel() }
+
+    /** Consulta Para ti una vez; Siguiendo permanece escuchando las reseñas de los autores seguidos. */
     private fun loadFeed() {
         loadJob?.cancel()
         val forYou = _uiState.value.isForYouSelected
@@ -51,14 +55,27 @@ class HomeViewModel @Inject constructor(
             try {
                 val userId = users.getAuthenticatedUser().id
                 currentUserId = userId
-                val authors = if (forYou) null else follows.getFollowedUserIds(userId)
-                val feed = articleReviews.getFeedReviews(userId, authors).getOrThrow()
-                _uiState.update { current ->
-                    current.copy(
-                        allFeedReviews = feed,
-                        feedReviews = feed,
-                        isLoading = false
-                    )
+                val feedUpdates = if (forYou) {
+                    flowOf(articleReviews.getFeedReviews(userId).getOrThrow())
+                } else {
+                    val authors = follows.getFollowedUserIds(userId)
+                    articleReviews.listenFeedReviews(userId, authors)
+                }
+                feedUpdates.collect { feed ->
+                    _uiState.update { current ->
+                        // Una emisión remota no debe sobrescribir el like optimista que aún se está guardando.
+                        val pending = current.allFeedReviews.filter { it.reviewId in current.pendingLikeReviewIds }
+                            .associateBy { it.reviewId }
+                        val visible = feed.map { review ->
+                            pending[review.reviewId]?.let { review.copy(isLiked = it.isLiked, likes = it.likes) } ?: review
+                        }
+                        current.copy(
+                            allFeedReviews = visible,
+                            feedReviews = visible,
+                            isLoading = false,
+                            errorMessageResId = null
+                        )
+                    }
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -111,13 +128,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /** Selecciona Para ti y vuelve a consultar sus reseñas. */
+    /** Selecciona Para ti y realiza una consulta puntual del feed general. */
     fun onForYouClick() {
         _uiState.update { it.copy(isForYouSelected = true, feedReviews = emptyList()) }
         loadFeed()
     }
 
-    /** Consulta los autores seguidos y únicamente las reseñas de esas cuentas. */
+    /** Selecciona Siguiendo y escucha únicamente las reseñas de las cuentas seguidas. */
     fun onFollowingClick() {
         _uiState.update { it.copy(isForYouSelected = false, feedReviews = emptyList()) }
         loadFeed()
