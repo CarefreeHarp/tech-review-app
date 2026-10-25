@@ -31,6 +31,9 @@ android {
     }
 
     buildTypes {
+        debug{
+            isDebuggable = true
+        }
         release {
             optimization {
                 enable = false

@@ -68,3 +68,6 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Datos locales de prueba de Firebase (incluyen cuentas de Auth).
+/emulator-data/

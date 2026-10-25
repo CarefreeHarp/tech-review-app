@@ -118,3 +118,18 @@ La selección global se configura en [`BackendConfig.kt`](DevicersApp/app/src/ma
 La UI está adaptada a los repositorios y modelos agrupados, y el APK compila con Firestore y Retrofit. Likes y seguimientos conservan sus pantallas y controles visuales, pero no ejecutan consultas ni escrituras. Activity conserva su diseño sin cargar notificaciones; la pestaña Siguiendo y FollowList permanecen vacías.
 
 La autenticación usa directamente la sesión mantenida por Firebase Auth mediante `Utils.getCurrentUser()` y `getCurrentUserId()`. Auth y Storage siguen en Firebase al elegir Retrofit. Se retiraron SessionState, SessionViewModel y SessionRepository; cada pantalla consulta su perfil cuando lo necesita.
+
+
+## Firebase local con Make
+
+Ejecuta estos comandos desde la raíz de `tech-review-app`:
+
+```bash
+make firebase-clean  # Inicia Firebase desde cero, sin importar ni guardar datos.
+make seed-local      # Carga datos ficticios en el emulador encendido.
+make seed-remote     # Carga datos ficticios en Firebase real, previa confirmación.
+```
+
+`make firebase-clean` inicia Authentication, Firestore, Storage, Functions y la interfaz local en `http://127.0.0.1:4000`. Prepara los contadores que requiere el registro de usuarios. La sesión no contiene usuarios, artículos ni archivos, y sus cambios se descartan al detenerla. Si usas nvm, el Makefile activa Node 24 automáticamente.
+
+Detén la sesión con **Ctrl+C** y espera a que termine. Si ya hay emuladores activos, primero detén esa otra sesión. Las cuentas del Firebase real y las de cada sesión local son independientes: al iniciar vacío, cierra la sesión anterior de Android y registra una cuenta local.
