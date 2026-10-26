@@ -21,6 +21,7 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField(
             "String",
@@ -87,4 +88,10 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.material3)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    // Pruebas de integración instrumentadas contra los emuladores locales de Firebase.
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 }
