@@ -1,4 +1,4 @@
-package com.example.devicersapp.data.repository
+package com.example.devicersapp.repositoryintegrationtests
 
 import com.google.firebase.Timestamp
 

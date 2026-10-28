@@ -1,5 +1,10 @@
-package com.example.devicersapp.data.repository
+package com.example.devicersapp.repositoryintegrationtests
 
+import com.example.devicersapp.data.repository.CommentRepository
+import com.example.devicersapp.data.repository.FollowRepository
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.ReviewRepository
+import com.example.devicersapp.data.repository.UserRepository
 import com.example.devicersapp.data.datasource.MessagingRemoteDataSource
 import com.example.devicersapp.data.datasource.StorageRemoteDataSource
 import com.example.devicersapp.data.datasource.implementations.firestore.CommentLikeRemoteDataSourceFirestoreImplementation
@@ -103,6 +108,11 @@ class UserRepositoryIntegrationTest {
 
     @After
     fun tearDown() = runTest {
+        // JUnit ejecuta @After aunque falle @Before; nunca limpiar un destino distinto al emulador.
+        if (db.firestoreSettings.host != "10.0.2.2:8080") {
+            return@runTest
+        }
+
         // Solo se borran los usuarios de prueba; los datos cargados con faker se conservan.
         repeat(10) { i ->
             db.collection("users").document((1000 + i).toString()).delete().await()

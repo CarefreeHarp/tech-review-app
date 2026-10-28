@@ -1,5 +1,6 @@
-package com.example.devicersapp.data.repository
+package com.example.devicersapp.repositoryintegrationtests
 
+import com.example.devicersapp.data.repository.ProductRepository
 import com.example.devicersapp.data.datasource.implementations.firestore.ProductRemoteDataSourceFirestoreImplementation
 import com.google.common.truth.Truth
 import com.google.firebase.Firebase
@@ -77,6 +78,11 @@ class ProductRepositoryIntegrationTest {
 
     @After
     fun tearDown() = runTest {
+        // JUnit ejecuta @After aunque falle @Before; nunca limpiar un destino distinto al emulador.
+        if (db.firestoreSettings.host != "10.0.2.2:8080") {
+            return@runTest
+        }
+
         // Solo se borran los artículos de prueba; los datos cargados con faker se conservan.
         repeat(5) { i ->
             db.collection("articles").document((1000 + i).toString()).delete().await()

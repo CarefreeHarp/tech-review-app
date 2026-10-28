@@ -1,5 +1,8 @@
-package com.example.devicersapp.data.repository
+package com.example.devicersapp.repositoryintegrationtests
 
+import com.example.devicersapp.data.repository.NotificationRepository
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.ReviewLikeRepository
 import com.example.devicersapp.data.datasource.implementations.firestore.NotificationRemoteDataSourceFirestoreImplementation
 import com.example.devicersapp.data.datasource.implementations.firestore.ProductRemoteDataSourceFirestoreImplementation
 import com.example.devicersapp.data.datasource.implementations.firestore.ReviewLikeRemoteDataSourceFirestoreImplementation
@@ -105,6 +108,11 @@ class NotificationRepositoryIntegrationTest {
 
     @After
     fun tearDown() = runTest {
+        // JUnit ejecuta @After aunque falle @Before; nunca limpiar un destino distinto al emulador.
+        if (db.firestoreSettings.host != "10.0.2.2:8080") {
+            return@runTest
+        }
+
         val review = db.collection("reviews").document("1000")
         // Firestore no borra las subcolecciones junto con el documento, así que los likes se borran primero.
         val likes = review.collection("likes").get().await()

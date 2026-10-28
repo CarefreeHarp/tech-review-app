@@ -1,6 +1,7 @@
 package com.example.devicersapp
 
 import android.app.Application
+import android.os.Debug
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.auth
@@ -8,7 +9,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import dagger.hilt.android.HiltAndroidApp
 
-/** Inicializa Firebase y conecta los SDK a los emuladores locales durante la depuración. */
+/** Inicializa Firebase y usa los emuladores si el depurador está conectado al arrancar una variante debug. */
 @HiltAndroidApp
 class BaseApplication : Application() {
 
@@ -17,7 +18,8 @@ class BaseApplication : Application() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
 
-        if (BuildConfig.DEBUG) {
+        // El destino se decide al arrancar; adjuntar el depurador después no cambia la conexión.
+        if (BuildConfig.DEBUG && Debug.isDebuggerConnected()) {
             // En Android Emulator, esta dirección permite acceder al computador anfitrión.
             val emulatorHost = "10.0.2.2"
             Firebase.firestore.useEmulator(emulatorHost, 8080)

@@ -1,5 +1,6 @@
-package com.example.devicersapp.data.repository
+package com.example.devicersapp.repositoryintegrationtests
 
+import com.example.devicersapp.data.repository.FollowRepository
 import com.example.devicersapp.data.datasource.implementations.firestore.FollowRemoteDataSourceFirestoreImplementation
 import com.example.devicersapp.data.datasource.implementations.firestore.UserRemoteDataSourceFirestoreImplementation
 import com.google.common.truth.Truth
@@ -79,6 +80,11 @@ class FollowRepositoryIntegrationTest {
 
     @After
     fun tearDown() = runTest {
+        // JUnit ejecuta @After aunque falle @Before; nunca limpiar un destino distinto al emulador.
+        if (db.firestoreSettings.host != "10.0.2.2:8080") {
+            return@runTest
+        }
+
         repeat(3) { i ->
             val user = db.collection("users").document((1000 + i).toString())
             // Firestore no borra las subcolecciones junto con el documento, así que se borran primero.

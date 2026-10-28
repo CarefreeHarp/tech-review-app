@@ -1,5 +1,8 @@
-package com.example.devicersapp.data.repository
+package com.example.devicersapp.repositoryintegrationtests
 
+import com.example.devicersapp.data.repository.CommentRepository
+import com.example.devicersapp.data.repository.ProductRepository
+import com.example.devicersapp.data.repository.ReviewRepository
 import com.example.devicersapp.data.datasource.implementations.firestore.CommentLikeRemoteDataSourceFirestoreImplementation
 import com.example.devicersapp.data.datasource.implementations.firestore.CommentRemoteDataSourceFirestoreImplementation
 import com.example.devicersapp.data.datasource.implementations.firestore.ProductRemoteDataSourceFirestoreImplementation
@@ -137,6 +140,11 @@ class ReviewRepositoryIntegrationTest {
 
     @After
     fun tearDown() = runTest {
+        // JUnit ejecuta @After aunque falle @Before; nunca limpiar un destino distinto al emulador.
+        if (db.firestoreSettings.host != "10.0.2.2:8080") {
+            return@runTest
+        }
+
         // whereIn busca las reseñas de los usuarios de prueba, incluida la que crea createReview.
         val reviews = db.collection("reviews").whereIn("user_id", listOf(1000, 1001, 1002)).get().await()
         reviews.documents.forEach { doc ->

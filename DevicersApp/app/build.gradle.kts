@@ -94,4 +94,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.truth)
     androidTestImplementation(libs.kotlinx.coroutines.test)
+    // Pruebas unitarias locales incorporadas desde task/#1.
+    testImplementation("junit:junit:4.13.2")
+    testImplementation(kotlin("test"))
 }
