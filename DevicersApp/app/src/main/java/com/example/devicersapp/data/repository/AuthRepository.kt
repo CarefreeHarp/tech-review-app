@@ -21,6 +21,9 @@ class AuthRepository @Inject constructor(
     /** Firebase mantiene la sesión al completar el inicio de sesión. */
     suspend fun signIn(email: String, password: String): Result<Unit> =
         runAuthenticationOperation(R.string.auth_error_sign_in) { authRemoteDataSource.signIn(email.trim(), password) }
+    /** Intercambia el ID token de Google por una sesión persistente de Firebase. */
+    suspend fun signInWithGoogle(idToken: String): Result<Unit> =
+        runAuthenticationOperation(R.string.auth_error_sign_in) { authRemoteDataSource.signInWithGoogle(idToken) }
     /** Crea solo la cuenta Auth; el registro del perfil corresponde al repositorio de usuarios. */
     suspend fun signUp(email: String, password: String): Result<Unit> =
         runAuthenticationOperation(R.string.auth_error_sign_up) { authRemoteDataSource.signUp(email.trim(), password) }

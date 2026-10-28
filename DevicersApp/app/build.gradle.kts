@@ -27,6 +27,11 @@ android {
             "DEVICERS_API_BASE_URL",
             "\"${providers.gradleProperty("devicersApiBaseUrl").orElse("http://10.0.2.2:3000/").get()}\""
         )
+        buildConfigField(
+            "boolean",
+            "USE_FIREBASE_EMULATORS",
+            providers.gradleProperty("useFirebaseEmulators").orElse("false").get()
+        )
 
     }
 
@@ -70,6 +75,9 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.retrofit.converter.scalars)
     implementation(libs.okhttp)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.google.identity.googleid)
     ksp(libs.dagger.ksp)
     implementation(libs.hilt.compose.navigation)
     implementation(libs.firebase.analytics)

@@ -3,6 +3,7 @@ package com.example.devicersapp.ui.screens.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.data.utils.Utils
+import com.example.devicersapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,9 @@ import javax.inject.Inject
 
 /** Comprueba si existe una sesión de Firebase antes de decidir el primer destino de la aplicación. */
 @HiltViewModel
-class SplashViewModel @Inject constructor() : ViewModel() {
+class SplashViewModel @Inject constructor(
+    private val users: UserRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SplashState())
     val uiState: StateFlow<SplashState> = _uiState
@@ -27,11 +30,13 @@ class SplashViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             // Mantiene la pantalla de bienvenida visible sin bloquear el hilo principal.
             delay(2000)
-            _uiState.update { currentState ->
-                currentState.copy(
-                    isUserAuthenticated = Utils.getCurrentUser() != null
-                )
+            val account = Utils.getCurrentUser()
+            val destination = when {
+                account == null -> SplashDestination.LOGIN
+                users.findByFirebaseUid(account.uid) == null -> SplashDestination.COMPLETE_GOOGLE_PROFILE
+                else -> SplashDestination.HOME
             }
+            _uiState.update { it.copy(destination = destination) }
         }
     }
 }

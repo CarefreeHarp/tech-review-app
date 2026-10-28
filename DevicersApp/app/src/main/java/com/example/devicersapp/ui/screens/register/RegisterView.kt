@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.devicersapp.R
@@ -32,11 +33,13 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 @Composable
 fun RegisterView(
     onCreateAccountClick: () -> Unit = {},
+    onGoogleProfileRequired: () -> Unit,
     onSignInClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: RegisterViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     RegisterViewContent(
         state = uiState,
@@ -47,6 +50,13 @@ fun RegisterView(
         onPasswordVisibilityChange = viewModel::onPasswordVisibilityChange,
         onCreateAccount = {
             viewModel.onCreateAccount(onRegistrationSuccess = onCreateAccountClick)
+        },
+        onGoogleSignInClick = {
+            viewModel.onGoogleSignIn(
+                context,
+                onRegistrationSuccess = onCreateAccountClick,
+                onProfileRequired = onGoogleProfileRequired
+            )
         },
         onSignInClick = onSignInClick,
         modifier = modifier
@@ -65,6 +75,7 @@ fun RegisterViewContent(
     onConfirmationPasswordChange: (String) -> Unit,
     onPasswordVisibilityChange: () -> Unit,
     onCreateAccount: () -> Unit,
+    onGoogleSignInClick: () -> Unit,
     onSignInClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -135,7 +146,7 @@ fun RegisterViewContent(
         Spacer(modifier = Modifier.height(26.dp))
         AuthenticationDividerText()
         Spacer(modifier = Modifier.height(18.dp))
-        SocialButtons()
+        SocialButtons(onGoogleClick = onGoogleSignInClick)
         Spacer(modifier = Modifier.height(28.dp))
         AuthenticationFooter(
             textResId = R.string.already_have_account,
@@ -161,6 +172,7 @@ fun RegisterViewPreview() {
                 onConfirmationPasswordChange = {},
                 onPasswordVisibilityChange = {},
                 onCreateAccount = {},
+                onGoogleSignInClick = {},
                 onSignInClick = {}
             )
         }
@@ -182,6 +194,7 @@ fun RegisterViewDarkPreview() {
                 onConfirmationPasswordChange = {},
                 onPasswordVisibilityChange = {},
                 onCreateAccount = {},
+                onGoogleSignInClick = {},
                 onSignInClick = {}
             )
         }

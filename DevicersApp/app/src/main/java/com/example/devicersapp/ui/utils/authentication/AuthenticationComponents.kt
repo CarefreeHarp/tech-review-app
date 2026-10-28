@@ -241,11 +241,12 @@ fun SocialButton(
     @DrawableRes iconResId: Int,
     @StringRes labelResId: Int,
     @StringRes contentDescriptionResId: Int,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
     Button(
-        onClick = {},
+        onClick = onClick,
         modifier = modifier.height(44.dp),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
@@ -281,7 +282,10 @@ fun SocialButton(
  * @param modifier Modificador aplicado a la fila de acciones.
  */
 @Composable
-fun SocialButtons(modifier: Modifier = Modifier) {
+fun SocialButtons(
+    modifier: Modifier = Modifier,
+    onGoogleClick: () -> Unit = {}
+) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -290,6 +294,7 @@ fun SocialButtons(modifier: Modifier = Modifier) {
             iconResId = R.drawable.google,
             labelResId = R.string.social_google,
             contentDescriptionResId = R.string.google_sign_in,
+            onClick = onGoogleClick,
             modifier = Modifier.weight(1f)
         )
         SocialButton(

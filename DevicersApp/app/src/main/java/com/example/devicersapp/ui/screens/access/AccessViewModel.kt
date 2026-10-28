@@ -1,8 +1,11 @@
 package com.example.devicersapp.ui.screens.access
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devicersapp.R
+import com.example.devicersapp.data.auth.GoogleSignInUseCase
+import com.example.devicersapp.data.auth.GoogleSignInOutcome
 import com.example.devicersapp.data.repository.AuthRepository
 import com.example.devicersapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +19,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class AccessViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val users: UserRepository
+    private val users: UserRepository,
+    private val googleSignIn: GoogleSignInUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AccessState())
@@ -69,6 +73,31 @@ class AccessViewModel @Inject constructor(
                 users.registerFcmToken()
                 onSignInSuccess()
             }
+        }
+    }
+
+    /** Inicia el selector de Google y reutiliza el destino exitoso del acceso por correo. */
+    fun onGoogleSignIn(
+        context: Context,
+        onSignInSuccess: () -> Unit,
+        onProfileRequired: () -> Unit
+    ) {
+        _uiState.update { it.copy(signInErrorMessage = null, signInErrorMessageResId = null) }
+        viewModelScope.launch {
+            googleSignIn(context).fold(
+                onSuccess = { outcome ->
+                    when (outcome) {
+                        GoogleSignInOutcome.SIGNED_IN -> onSignInSuccess()
+                        GoogleSignInOutcome.PROFILE_REQUIRED -> onProfileRequired()
+                        GoogleSignInOutcome.CANCELLED -> Unit
+                    }
+                },
+                onFailure = {
+                    _uiState.update { state ->
+                        state.copy(signInErrorMessageResId = R.string.auth_error_sign_in)
+                    }
+                }
+            )
         }
     }
 

@@ -778,6 +778,12 @@
     <string name="edit_profile_load_error">No pudimos cargar tu perfil. Intenta nuevamente.</string>
     <string name="edit_profile_save_error">No pudimos guardar tu perfil. Tus cambios se conservan; intenta nuevamente.</string>
     <string name="edit_profile_username_required">Escribe un nombre de usuario.</string>
+    <string name="complete_profile_title">Elige tu nombre de usuario</string>
+    <string name="complete_profile_description">Será el nombre que verá la comunidad. Usa entre 3 y 20 letras, números o guiones bajos.</string>
+    <string name="complete_profile_continue">Continuar</string>
+    <string name="complete_profile_username_invalid">Usa entre 3 y 20 letras, números o guiones bajos.</string>
+    <string name="complete_profile_username_taken">Ese nombre de usuario ya está ocupado.</string>
+    <string name="complete_profile_save_error">No pudimos crear tu perfil. Intenta nuevamente.</string>
     <string name="profile_invalid_id">Perfil no válido. Selecciona un usuario.</string>
     <string name="public_profile_load_error">No pudimos cargar este perfil. Intenta nuevamente.</string>
     <string name="public_profile_empty_reviews">Este usuario todavía no ha publicado reseñas.</string>

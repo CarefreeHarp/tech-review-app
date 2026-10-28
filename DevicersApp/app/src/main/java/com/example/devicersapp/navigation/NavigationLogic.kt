@@ -81,6 +81,9 @@ object NavigationLogic {
                 topBarNumber = 5
             )
 
+        AppDestination.CompleteGoogleProfile.route ->
+            NavigationUiConfiguration(topBarNumber = 5)
+
         AppDestination.SearchProfile.route ->
             NavigationUiConfiguration(
                 selectedItem = AppDestination.SearchProduct.route,

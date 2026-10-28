@@ -12,7 +12,20 @@
           "package_name": "com.example.devicersapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1082734035243-8mvm02i1d7m1kcketpua9laab5oemu63.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.devicersapp",
+            "certificate_hash": "a98f74dc0a5365a724687a7f6db6ccfa905b0d93"
+          }
+        },
+        {
+          "client_id": "1082734035243-55nvm8s3o6n47or9gj51ti9h3nt246fk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCMZ_wOPSKcaiFCUnh_Jljhk470dqbHbp8"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1082734035243-55nvm8s3o6n47or9gj51ti9h3nt246fk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

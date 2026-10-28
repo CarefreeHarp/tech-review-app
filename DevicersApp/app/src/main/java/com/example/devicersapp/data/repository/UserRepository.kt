@@ -30,6 +30,9 @@ class UserRepository(
     suspend fun getSummaries(userIds: Set<Int>): List<UserSummary> =
         source.getByIds(userIds).values.filter { it.isActive }.map { it.toUserSummary() }
     suspend fun findByFirebaseUid(firebaseUid: String): UserInfo? = source.findByFirebaseUid(firebaseUid)
+    /** Comprueba el usuario sin distinguir mayúsculas para ambas fuentes de datos. */
+    suspend fun isUsernameAvailable(username: String): Boolean =
+        source.getUsers().none { it.username.equals(username.trim(), ignoreCase = true) }
     suspend fun createIfMissing(draft: UserDraft): UserInfo = source.createIfMissing(draft)
     suspend fun updateProfile(userId: Int, changes: UserChanges): UserInfo {
         changes.username?.let { require(it.isNotBlank()) }

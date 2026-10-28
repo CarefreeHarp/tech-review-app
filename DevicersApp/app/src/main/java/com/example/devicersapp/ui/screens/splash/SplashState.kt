@@ -1,6 +1,8 @@
 package com.example.devicersapp.ui.screens.splash
 
-/** Representa el resultado observable de comprobar la sesión al abrir la aplicación. */
+enum class SplashDestination { HOME, LOGIN, COMPLETE_GOOGLE_PROFILE }
+
+/** Representa el resultado observable de comprobar la sesión y su perfil. */
 data class SplashState(
-    val isUserAuthenticated: Boolean? = null
+    val destination: SplashDestination? = null
 )

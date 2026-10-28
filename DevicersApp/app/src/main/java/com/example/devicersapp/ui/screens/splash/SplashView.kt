@@ -15,15 +15,17 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
 fun SplashView(
     onUserAuthenticated: () -> Unit,
     onUserUnauthenticated: () -> Unit,
+    onProfileRequired: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SplashViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState.isUserAuthenticated) {
-        when (uiState.isUserAuthenticated) {
-            true -> onUserAuthenticated()
-            false -> onUserUnauthenticated()
+    LaunchedEffect(uiState.destination) {
+        when (uiState.destination) {
+            SplashDestination.HOME -> onUserAuthenticated()
+            SplashDestination.LOGIN -> onUserUnauthenticated()
+            SplashDestination.COMPLETE_GOOGLE_PROFILE -> onProfileRequired()
             null -> Unit
         }
     }

@@ -37,6 +37,8 @@ import com.example.devicersapp.ui.screens.activity.ActivityView
 import com.example.devicersapp.ui.screens.activity.ActivityViewModel
 import com.example.devicersapp.ui.screens.create_review.CreateReviewView
 import com.example.devicersapp.ui.screens.create_review.CreateReviewViewModel
+import com.example.devicersapp.ui.screens.complete_google_profile.CompleteGoogleProfileView
+import com.example.devicersapp.ui.screens.complete_google_profile.CompleteGoogleProfileViewModel
 import com.example.devicersapp.ui.screens.found_products.FoundProductsView
 import com.example.devicersapp.ui.screens.found_products.FoundProductsViewModel
 import com.example.devicersapp.ui.screens.home.HomeView
@@ -83,6 +85,7 @@ sealed class AppDestination(val route: String) {
         fun createDeletionRoute(reviewId: Int) = "$route?deleteReviewId=$reviewId"
     }
     data object Register : AppDestination("register")
+    data object CompleteGoogleProfile : AppDestination("complete-google-profile")
     data object SearchProfile : AppDestination("search-profile")
     data object FoundProducts : AppDestination("found-products") {
 
@@ -300,6 +303,11 @@ fun AppNavigation(
                             popUpTo(AppDestination.Splash.route) { inclusive = true }
                         }
                     },
+                    onProfileRequired = {
+                        navController.navigate(AppDestination.CompleteGoogleProfile.route) {
+                            popUpTo(AppDestination.Splash.route) { inclusive = true }
+                        }
+                    },
                     viewModel = splashViewModel
                 )
             }
@@ -309,6 +317,11 @@ fun AppNavigation(
                 AccessView(
                     onSignInClick = {
                         navController.navigate(AppDestination.Home.route) {
+                            popUpTo(AppDestination.Login.route) { inclusive = true }
+                        }
+                    },
+                    onGoogleProfileRequired = {
+                        navController.navigate(AppDestination.CompleteGoogleProfile.route) {
                             popUpTo(AppDestination.Login.route) { inclusive = true }
                         }
                     },
@@ -343,6 +356,17 @@ fun AppNavigation(
                         navController.navigate(
                             AppDestination.SearchProfile.route
                         )
+                    }
+                )
+            }
+            composable(route = AppDestination.CompleteGoogleProfile.route) {
+                val completeProfileViewModel: CompleteGoogleProfileViewModel = hiltViewModel()
+                CompleteGoogleProfileView(
+                    viewModel = completeProfileViewModel,
+                    onCompleted = {
+                        navController.navigate(AppDestination.Home.route) {
+                            popUpTo(AppDestination.CompleteGoogleProfile.route) { inclusive = true }
+                        }
                     }
                 )
             }
@@ -462,6 +486,11 @@ fun AppNavigation(
 
                 RegisterView(
                     viewModel = registerViewModel,
+                    onGoogleProfileRequired = {
+                        navController.navigate(AppDestination.CompleteGoogleProfile.route) {
+                            popUpTo(AppDestination.Register.route) { inclusive = true }
+                        }
+                    },
                     onCreateAccountClick = {
                         navController.navigate(AppDestination.Home.route) {
                             popUpTo(AppDestination.Login.route) {

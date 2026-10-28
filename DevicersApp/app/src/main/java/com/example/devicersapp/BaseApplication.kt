@@ -17,7 +17,7 @@ class BaseApplication : Application() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
 
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG && BuildConfig.USE_FIREBASE_EMULATORS) {
             // En Android Emulator, esta dirección permite acceder al computador anfitrión.
             val emulatorHost = "10.0.2.2"
             Firebase.firestore.useEmulator(emulatorHost, 8080)

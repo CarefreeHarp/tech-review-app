@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,10 +36,12 @@ import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 fun AccessView(
     modifier: Modifier = Modifier,
     onSignInClick: () -> Unit,
+    onGoogleProfileRequired: () -> Unit,
     onCreateAccountClick: () -> Unit = {},
     viewModel: AccessViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     AccessViewContent(
         state = uiState,
@@ -47,6 +50,13 @@ fun AccessView(
         onPasswordVisibilityChange = viewModel::onPasswordVisibilityChange,
         onSignInClick = {
             viewModel.onSignIn(onSignInSuccess = onSignInClick)
+        },
+        onGoogleSignInClick = {
+            viewModel.onGoogleSignIn(
+                context,
+                onSignInSuccess = onSignInClick,
+                onProfileRequired = onGoogleProfileRequired
+            )
         },
         onCreateAccountClick = onCreateAccountClick,
         modifier = modifier
@@ -63,6 +73,7 @@ fun AccessViewContent(
     onPasswordChange: (String) -> Unit,
     onPasswordVisibilityChange: () -> Unit,
     onSignInClick: () -> Unit,
+    onGoogleSignInClick: () -> Unit,
     onCreateAccountClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -129,7 +140,7 @@ fun AccessViewContent(
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        SocialButtons()
+        SocialButtons(onGoogleClick = onGoogleSignInClick)
 
         Spacer(modifier = Modifier.height(28.dp))
 
@@ -155,6 +166,7 @@ fun AccessViewPreview() {
                 onPasswordChange = {},
                 onPasswordVisibilityChange = {},
                 onSignInClick = {},
+                onGoogleSignInClick = {},
                 onCreateAccountClick = {}
             )
         }
@@ -173,6 +185,7 @@ fun AccessViewDarkPreview() {
                 onPasswordChange = {},
                 onPasswordVisibilityChange = {},
                 onSignInClick = {},
+                onGoogleSignInClick = {},
                 onCreateAccountClick = {}
             )
         }

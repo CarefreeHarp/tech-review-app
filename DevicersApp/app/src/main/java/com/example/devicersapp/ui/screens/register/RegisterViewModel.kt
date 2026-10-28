@@ -1,7 +1,10 @@
 package com.example.devicersapp.ui.screens.register
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.devicersapp.data.auth.GoogleSignInUseCase
+import com.example.devicersapp.data.auth.GoogleSignInOutcome
 import com.example.devicersapp.data.repository.AuthRepository
 import com.example.devicersapp.data.repository.UserRepository
 import com.example.devicersapp.data.utils.Utils
@@ -18,7 +21,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val users: UserRepository
+    private val users: UserRepository,
+    private val googleSignIn: GoogleSignInUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterState())
@@ -69,6 +73,27 @@ class RegisterViewModel @Inject constructor(
             if (signUp()) {
                 onRegistrationSuccess()
             }
+        }
+    }
+
+    /** Permite crear o recuperar la cuenta usando Google sin completar el formulario manual. */
+    fun onGoogleSignIn(
+        context: Context,
+        onRegistrationSuccess: () -> Unit,
+        onProfileRequired: () -> Unit
+    ) {
+        _uiState.update { it.copy(registrationErrorMessage = null) }
+        viewModelScope.launch {
+            googleSignIn(context).fold(
+                onSuccess = { outcome ->
+                    when (outcome) {
+                        GoogleSignInOutcome.SIGNED_IN -> onRegistrationSuccess()
+                        GoogleSignInOutcome.PROFILE_REQUIRED -> onProfileRequired()
+                        GoogleSignInOutcome.CANCELLED -> Unit
+                    }
+                },
+                onFailure = { error -> updateRegistrationError(error) }
+            )
         }
     }
 
