@@ -50,7 +50,7 @@ import com.example.devicersapp.ui.utils.profile.ProfileAvatar
  * @param userId Identificador del usuario al que conduce el alias.
  */
 @Composable
-fun TopBar1(
+fun ProfileTopBar(
     @StringRes userHandleResId: Int? = null,
     userHandle: String? = null,
     onBackClick: () -> Unit = {},
@@ -123,55 +123,45 @@ fun TopBar1(
 
 /** Muestra la barra superior de calificación de producto. */
 @Composable
-fun TopBar2(
+fun RateProductTopBar(
     onBackClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val colors = LocalDevicersColors.current
-    Column(
+    ReviewStepTopBar(
+        titleResId = R.string.rate_product_title,
+        stepResId = R.string.rate_product_step,
+        onBackClick = onBackClick,
         modifier = modifier
-            .fillMaxWidth()
-            // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
-            .statusBarsPadding()
-            .padding(horizontal = 12.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    painter = painterResource(R.drawable.back_icon),
-                    contentDescription = stringResource(R.string.top_bar_back),
-                    tint = colors.textPrimary,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            Spacer(Modifier.size(6.dp))
-            Text(
-                text = stringResource(R.string.rate_product_title),
-                style = MaterialTheme.typography.titleLarge,
-                color = colors.textPrimary
-            )
-        }
-        Spacer(modifier = Modifier.height(3.dp))
-        Text(
-            text = stringResource(R.string.rate_product_step),
-            modifier = Modifier.padding(start = 12.dp),
-            style = SearchControlText,
-            fontWeight = FontWeight.Bold,
-            color = colors.primaryText
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 3.dp,
-            color = colors.border
-        )
-    }
+    )
 }
 
 /** Muestra la barra superior de creación de reseña. */
 @Composable
-fun TopBar3(
+fun CreateReviewTopBar(
     onBackClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    ReviewStepTopBar(
+        titleResId = R.string.create_review_title,
+        stepResId = R.string.create_review_step,
+        onBackClick = onBackClick,
+        modifier = modifier
+    )
+}
+
+/**
+ * Comparte la composición del encabezado de los dos pasos de publicación de reseñas.
+ *
+ * @param titleResId Título del paso actual.
+ * @param stepResId Indicación del paso que se muestra debajo del título.
+ * @param onBackClick Acción solicitada al regresar.
+ * @param modifier Modificador aplicado al contenedor del encabezado.
+ */
+@Composable
+private fun ReviewStepTopBar(
+    @StringRes titleResId: Int,
+    @StringRes stepResId: Int,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalDevicersColors.current
@@ -193,14 +183,14 @@ fun TopBar3(
             }
             Spacer(Modifier.size(6.dp))
             Text(
-                text = stringResource(R.string.create_review_title),
+                text = stringResource(titleResId),
                 style = MaterialTheme.typography.titleLarge,
                 color = colors.textPrimary
             )
         }
         Spacer(modifier = Modifier.height(3.dp))
         Text(
-            text = stringResource(R.string.create_review_step),
+            text = stringResource(stepResId),
             modifier = Modifier.padding(start = 12.dp),
             style = SearchControlText,
             fontWeight = FontWeight.Bold,
@@ -217,7 +207,7 @@ fun TopBar3(
 
 /** Muestra la barra superior del detalle de una reseña. */
 @Composable
-fun TopBar4(
+fun ReviewTopBar(
     onBackClick: () -> Unit = {},
     onSaveClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -267,7 +257,7 @@ fun TopBar4(
 
 /** Muestra la barra superior del detalle de producto, con regreso y acción de guardar. */
 @Composable
-fun TopBar6(
+fun ProductTopBar(
     onBackClick: () -> Unit = {},
     onSaveClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -350,7 +340,7 @@ fun TitleTopBar(
 
 /** Muestra la barra superior de marca compartida por inicio de sesión y registro. */
 @Composable
-fun TopBar5(modifier: Modifier = Modifier) {
+fun AuthenticationTopBar(modifier: Modifier = Modifier) {
     AuthenticationHeader(
         modifier = modifier
             // Evita que el encabezado se dibuje bajo el notch o la barra de estado.
@@ -362,7 +352,7 @@ fun TopBar5(modifier: Modifier = Modifier) {
 
 /** Muestra la barra superior de la actividad reciente y el avatar del usuario autenticado. */
 @Composable
-fun TopBar10(
+fun ActivityTopBar(
     profileImageUrl: String? = null,
     profileId: String? = null,
     modifier: Modifier = Modifier,
@@ -413,41 +403,54 @@ fun TopBar10(
 /** Muestra una vista previa de la barra superior común. */
 @Composable
 @Preview(showBackground = true)
-fun TopBar1Preview() { DevicersAppTheme { TopBar1(userHandleResId = R.string.profile_handle) } }
+fun ProfileTopBarPreview() { DevicersAppTheme { ProfileTopBar(userHandleResId = R.string.profile_handle) } }
 
 /** Muestra una vista previa de la barra superior de calificación. */
 @Composable
 @Preview(showBackground = true)
-fun TopBar2Preview() { DevicersAppTheme { TopBar2() } }
+fun RateProductTopBarPreview() { DevicersAppTheme { RateProductTopBar() } }
 
 /** Muestra una vista previa de la barra superior de creación. */
 @Composable
 @Preview(showBackground = true)
-fun TopBar3Preview() { DevicersAppTheme { TopBar3() } }
+fun CreateReviewTopBarPreview() { DevicersAppTheme { CreateReviewTopBar() } }
 
 /** Muestra una vista previa de la barra superior de detalle. */
 @Composable
 @Preview(showBackground = true)
-fun TopBar4Preview() { DevicersAppTheme { TopBar4() } }
+fun ReviewTopBarPreview() { DevicersAppTheme { ReviewTopBar() } }
 
 /** Muestra una vista previa de la barra superior de autenticación. */
 @Composable
 @Preview(showBackground = true)
-fun TopBar5Preview() { DevicersAppTheme { TopBar5() } }
+fun AuthenticationTopBarPreview() { DevicersAppTheme { AuthenticationTopBar() } }
 
 /** Muestra una vista previa de la barra superior de actividad. */
 @Composable
 @Preview(showBackground = true)
-fun TopBar10Preview() { DevicersAppTheme { TopBar10() } }
+fun ActivityTopBarPreview() { DevicersAppTheme { ActivityTopBar() } }
 
 /** Muestra una vista previa de la barra superior del detalle de producto. */
 @Composable
 @Preview(showBackground = true)
-fun TopBar6Preview() { DevicersAppTheme { TopBar6() } }
+fun ProductTopBarPreview() { DevicersAppTheme { ProductTopBar() } }
 
 /** Muestra una vista previa de la barra superior con título. */
 @Composable
 @Preview(showBackground = true)
 fun TitleTopBarPreview() {
     DevicersAppTheme { TitleTopBar(R.string.profile_search_results_title) }
+}
+
+/** Muestra una vista previa del encabezado compartido de los pasos de publicación. */
+@Preview(showBackground = true)
+@Composable
+private fun ReviewStepTopBarPreview() {
+    DevicersAppTheme {
+        ReviewStepTopBar(
+            titleResId = R.string.create_review_title,
+            stepResId = R.string.create_review_step,
+            onBackClick = {}
+        )
+    }
 }

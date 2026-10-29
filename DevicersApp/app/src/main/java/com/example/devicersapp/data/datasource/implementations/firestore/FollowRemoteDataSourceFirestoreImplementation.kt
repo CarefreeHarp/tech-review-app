@@ -23,9 +23,9 @@ class FollowRemoteDataSourceFirestoreImplementation @Inject constructor(
         val notifications = firestore.collection("notifications")
         val sequence = firestore.collection("counters").document("next_id")
         // El SDK cliente consulta fuera de la transacción, igual que en los likes de reseñas.
-        val previous = notifications.whereEqualTo("user_id", followedId).get(Source.SERVER).await()
+        val previousNotifications = notifications.whereEqualTo("user_id", followedId).get(Source.SERVER).await()
             .documents.filter { it.getString("type") == NotificationTypes.FOLLOW && it.getLong("actor_user_id") == followerId.toLong() }
-        val seed = if (following) {
+        val firstNotificationId = if (following) {
             sequence.get(Source.SERVER).await().getLong("next_notification_id")?.toInt()
                 ?: ((notifications.orderBy("id", Query.Direction.DESCENDING).limit(1).get(Source.SERVER).await()
                     .documents.firstOrNull()?.integer("id") ?: 0) + 1)
@@ -38,17 +38,17 @@ class FollowRemoteDataSourceFirestoreImplementation @Inject constructor(
             val followExists = existingFollow.exists()
             val followerExists = transaction.get(followerRef).exists()
             val notificationId = if (following && !followExists) {
-                var next = transaction.get(sequence).getLong("next_notification_id")?.toInt() ?: seed
-                check(next > 0)
-                while (transaction.get(notifications.document(next.toString())).exists()) {
-                    check(next < Int.MAX_VALUE) { "Se agotaron los IDs de notificación." }
-                    next++
+                var nextNotificationId = transaction.get(sequence).getLong("next_notification_id")?.toInt() ?: firstNotificationId
+                check(nextNotificationId > 0)
+                while (transaction.get(notifications.document(nextNotificationId.toString())).exists()) {
+                    check(nextNotificationId < Int.MAX_VALUE) { "Se agotaron los IDs de notificación." }
+                    nextNotificationId++
                 }
-                next
+                nextNotificationId
             } else null
             val followDelta = (if (following) 1 else 0) - (if (followExists) 1 else 0)
             val followerDelta = (if (following) 1 else 0) - (if (followerExists) 1 else 0)
-            val count = ((target.getLong("followers_count")?.toInt() ?: 0) + followerDelta).coerceAtLeast(0)
+            val followersCount = ((target.getLong("followers_count")?.toInt() ?: 0) + followerDelta).coerceAtLeast(0)
             // Todas las lecturas terminan antes de escribir. Repetir el mismo estado no duplica relaciones.
             if (following) {
                 if (!followExists) transaction.set(followRef, mapOf("followed_id" to followedId, "created_at" to FieldValue.serverTimestamp(), "notification_id" to notificationId))
@@ -59,15 +59,15 @@ class FollowRemoteDataSourceFirestoreImplementation @Inject constructor(
                 existingFollow.getLong("notification_id")?.let { transaction.delete(notifications.document(it.toString())) }
             }
             if (followDelta != 0) transaction.update(actorRef, "follows_count", ((actor.getLong("follows_count")?.toInt() ?: 0) + followDelta).coerceAtLeast(0))
-            if (followerDelta != 0) transaction.update(targetRef, "followers_count", count)
-            if (!following || notificationId != null) previous.forEach { transaction.delete(it.reference) }
+            if (followerDelta != 0) transaction.update(targetRef, "followers_count", followersCount)
+            if (!following || notificationId != null) previousNotifications.forEach { transaction.delete(it.reference) }
             notificationId?.let { id ->
                 transaction.set(notifications.document(id.toString()), CreateNotificationFirestoreDto(
                     user_id = followedId, actor_user_id = followerId, type = NotificationTypes.FOLLOW,
                     review_id = null, comment_id = null).fields(id))
                 transaction.set(sequence, mapOf("next_notification_id" to id.toLong() + 1), SetOptions.merge())
             }
-            FollowStatus(following, count)
+            FollowStatus(following, followersCount)
         }.await()
     }
 

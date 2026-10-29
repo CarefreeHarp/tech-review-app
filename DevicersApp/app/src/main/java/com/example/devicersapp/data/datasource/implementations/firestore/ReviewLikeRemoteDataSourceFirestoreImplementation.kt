@@ -64,13 +64,13 @@ class ReviewLikeRemoteDataSourceFirestoreImplementation @Inject constructor(
             val wasLiked = transaction.get(likeRef).exists()
             // El autor no recibe notificaciones por los likes que da a sus propias reseñas.
             val notificationId = if (!wasLiked && authorId != userId) {
-                var next = transaction.get(sequence).getLong("next_notification_id")?.toInt() ?: firstNotificationId
-                check(next > 0)
-                while (transaction.get(notifications.document(next.toString())).exists()) {
-                    check(next < Int.MAX_VALUE) { "Se agotaron los IDs de notificación." }
-                    next++
+                var nextNotificationId = transaction.get(sequence).getLong("next_notification_id")?.toInt() ?: firstNotificationId
+                check(nextNotificationId > 0)
+                while (transaction.get(notifications.document(nextNotificationId.toString())).exists()) {
+                    check(nextNotificationId < Int.MAX_VALUE) { "Se agotaron los IDs de notificación." }
+                    nextNotificationId++
                 }
-                next
+                nextNotificationId
             } else null
 
             previousNotifications.forEach { transaction.delete(it) }
@@ -97,8 +97,8 @@ class ReviewLikeRemoteDataSourceFirestoreImplementation @Inject constructor(
     private suspend fun notificationIdSeed(): Int {
         sequence.get(Source.SERVER).await().getLong("next_notification_id")?.let { return it.toInt() }
         // Continúa después del mayor ID existente para no sobrescribir notificaciones previas.
-        val last = notifications.orderBy("id", Query.Direction.DESCENDING).limit(1).get(Source.SERVER).await()
+        val latestNotification = notifications.orderBy("id", Query.Direction.DESCENDING).limit(1).get(Source.SERVER).await()
             .documents.firstOrNull()
-        return (last?.integer("id") ?: 0) + 1
+        return (latestNotification?.integer("id") ?: 0) + 1
     }
 }

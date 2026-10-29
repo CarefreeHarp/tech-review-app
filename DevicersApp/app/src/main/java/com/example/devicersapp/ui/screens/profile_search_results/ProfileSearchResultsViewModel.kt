@@ -35,8 +35,11 @@ class ProfileSearchResultsViewModel @Inject constructor(
                 profiles = users.getUsers(currentId).filter { it.isActive }
                     .map { it.toSearchContent(counts[it.id] ?: 0) }
                 _uiState.update { it.copy(results = filteredProfiles(it.searchText), followedUserIds = followedIds, loading = false) }
-            } catch (cancelled: CancellationException) { throw cancelled
-            } catch (error: Exception) { _uiState.update { it.copy(loading = false, error = R.string.profile_search_load_error) } }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                _uiState.update { it.copy(loading = false, error = R.string.profile_search_load_error) }
+            }
         }
     }
     /** Actualiza el filtro visible de la lista. */
@@ -63,7 +66,8 @@ class ProfileSearchResultsViewModel @Inject constructor(
                     followedUserIds = if (status.isFollowing) it.followedUserIds + id else it.followedUserIds - id,
                     followsInProgress = it.followsInProgress - id
                 ) }
-            } catch (cancelled: CancellationException) { throw cancelled
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (error: Exception) {
                 _uiState.update { it.copy(
                     followedUserIds = if (wasFollowed) it.followedUserIds + id else it.followedUserIds - id,

@@ -31,6 +31,7 @@ import com.example.devicersapp.ui.utils.profile.ProfileHeader
 import com.example.devicersapp.ui.utils.profile.ProfileProductCard
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /**
  * Configura el perfil propio y observa su estado desde el ViewModel.
@@ -156,7 +157,7 @@ fun OwnProfileViewContent(
 fun OwnProfileViewPreview() {
     val username = stringResource(R.string.username_placeholder)
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
+        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarStyle = TopBarStyle.Profile,
             topBarUserHandle = username) { padding ->
             OwnProfileViewContent(state = OwnProfileState(loading = true), onSavedClick = {}, onReviewClick = {}, modifier = Modifier.padding(padding))
         }
@@ -169,7 +170,7 @@ fun OwnProfileViewPreview() {
 fun OwnProfileViewDarkPreview() {
     val username = stringResource(R.string.username_placeholder)
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
+        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarStyle = TopBarStyle.Profile,
             topBarUserHandle = username) { padding ->
             OwnProfileViewContent(state = OwnProfileState(loading = true), onSavedClick = {}, onReviewClick = {}, modifier = Modifier.padding(padding))
         }

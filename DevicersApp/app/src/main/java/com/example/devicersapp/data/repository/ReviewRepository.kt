@@ -72,20 +72,46 @@ class ReviewRepository(
         return coroutineScope {
             val articles = async { products.getProducts().getOrThrow().associateBy { it.id } }
             val authors = async { users.getByIds(reviews.map { it.userId }.toSet()) }
-            val liked = async { currentUserId?.let { likes.getLikedReviewIds(it, reviews.map { review -> review.id }.toSet()) }.orEmpty() }
+            val liked = async {
+                currentUserId?.let { userId ->
+                    likes.getLikedReviewIds(userId, reviews.map { it.id }.toSet())
+                }.orEmpty()
+            }
             val catalog = articles.await()
             val profiles = authors.await()
             val likedIds = liked.await()
-            val ratingRecords = if (!filteredByAuthor) reviews else reviews.map { it.articleId }.toSet()
-                .flatMap { source.getReviewsByProduct(it) }.filter { it.isActive }
-            val averages = ratingRecords.groupBy { it.articleId }.mapValues { (_, records) -> records.map { it.rating }.average().toFloat() }
+            // En Siguiendo, el promedio incluye también reseñas de autores que no se siguen.
+            val ratingRecords = if (!filteredByAuthor) {
+                reviews
+            } else {
+                reviews.map { it.articleId }.toSet()
+                    .flatMap { source.getReviewsByProduct(it) }
+                    .filter { it.isActive }
+            }
+            val averageRatings = ratingRecords.groupBy { it.articleId }
+                .mapValues { (_, productReviews) -> productReviews.map { it.rating }.average().toFloat() }
             reviews.mapNotNull { review ->
                 val article = catalog[review.articleId] ?: return@mapNotNull null
                 val author = profiles[review.userId] ?: return@mapNotNull null
-                FeedReviewContent(review.id, article.id, article.name, article.brandName, article.categoryName,
-                    article.imageUrl, averages.getValue(article.id), author.id, author.username, author.profileImageUrl,
-                    review.rating, review.title, review.body, checkNotNull(review.likes), review.commentsCount,
-                    Instant.parse(review.createdAt).toEpochMilli(), review.id in likedIds)
+                FeedReviewContent(
+                    reviewId = review.id,
+                    productId = article.id,
+                    productName = article.name,
+                    productBrand = article.brandName,
+                    productCategory = article.categoryName,
+                    productImage = article.imageUrl,
+                    productAverage = averageRatings.getValue(article.id),
+                    authorId = author.id,
+                    authorUsername = author.username,
+                    authorImage = author.profileImageUrl,
+                    rating = review.rating,
+                    title = review.title,
+                    body = review.body,
+                    likes = checkNotNull(review.likes),
+                    comments = review.commentsCount,
+                    createdAtMillis = Instant.parse(review.createdAt).toEpochMilli(),
+                    isLiked = review.id in likedIds
+                )
             }.sortedByDescending { it.createdAtMillis }
         }
     }

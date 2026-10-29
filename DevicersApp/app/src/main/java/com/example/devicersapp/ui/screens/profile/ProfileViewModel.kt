@@ -77,7 +77,8 @@ class ProfileViewModel @Inject constructor(
                             if (stat.labelResId == R.string.profile_followers) stat.copy(number = status.followersCount.toString()) else stat
                         }))
                 }
-            } catch (cancelled: CancellationException) { throw cancelled
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (error: Exception) {
                 state.update { current -> if (current.profile?.id != profile.id) current else current.copy(
                     isFollowed = original.isFollowed, followInProgress = false, followError = R.string.profile_follow_error) }

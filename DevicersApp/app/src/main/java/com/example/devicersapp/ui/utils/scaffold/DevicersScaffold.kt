@@ -22,13 +22,14 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.navigation.BottomNavigationBar
 import com.example.devicersapp.ui.utils.navigation.DevicersDrawerContent
 import com.example.devicersapp.ui.utils.navigation.TitleTopBar
-import com.example.devicersapp.ui.utils.navigation.TopBar1
-import com.example.devicersapp.ui.utils.navigation.TopBar10
-import com.example.devicersapp.ui.utils.navigation.TopBar2
-import com.example.devicersapp.ui.utils.navigation.TopBar3
-import com.example.devicersapp.ui.utils.navigation.TopBar4
-import com.example.devicersapp.ui.utils.navigation.TopBar5
-import com.example.devicersapp.ui.utils.navigation.TopBar6
+import com.example.devicersapp.ui.utils.navigation.ProfileTopBar
+import com.example.devicersapp.ui.utils.navigation.ActivityTopBar
+import com.example.devicersapp.ui.utils.navigation.RateProductTopBar
+import com.example.devicersapp.ui.utils.navigation.CreateReviewTopBar
+import com.example.devicersapp.ui.utils.navigation.ReviewTopBar
+import com.example.devicersapp.ui.utils.navigation.AuthenticationTopBar
+import com.example.devicersapp.ui.utils.navigation.ProductTopBar
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 import kotlinx.coroutines.launch
 
 /**
@@ -37,7 +38,7 @@ import kotlinx.coroutines.launch
  * @param selectedItem Identificador del elemento seleccionado en la navegación principal.
  * @param showBottomBar Indica si el Scaffold debe mostrar la barra de navegación inferior.
  * @param showDrawer Indica si la pantalla permite utilizar el menú lateral.
- * @param topBarNumber Número de la barra superior que debe mostrar la pantalla, o `null` si no tiene.
+ * @param topBarStyle Encabezado que debe mostrar la pantalla, o `null` si no tiene.
  * @param topBarUserHandleResId Recurso del nombre de usuario que muestra la barra superior de perfil.
  * @param topBarUserHandle Alias dinámico de la cuenta autenticada que sustituye el recurso cuando existe.
  * @param topBarProfileImageUrl URL de la foto del usuario autenticado para encabezados que la muestran.
@@ -56,7 +57,7 @@ fun DevicersScaffold(
     selectedItem: String = "",
     showBottomBar: Boolean = false,
     showDrawer: Boolean = false,
-    topBarNumber: Int? = null,
+    topBarStyle: TopBarStyle? = null,
     @StringRes topBarUserHandleResId: Int? = null,
     topBarUserHandle: String? = null,
     topBarProfileImageUrl: String? = null,
@@ -81,6 +82,15 @@ fun DevicersScaffold(
 
     val profileDrawerState = rememberDrawerState(DrawerValue.Closed)
     val layoutDirection = LocalLayoutDirection.current
+
+    // Las acciones del panel se ejecutan después de que termine su animación de cierre.
+    fun closeProfileDrawerAndRun(action: () -> Unit) {
+        coroutineScope.launch {
+            profileDrawerState.close()
+            action()
+        }
+    }
+
     BackHandler(enabled = profileDrawerState.isOpen) {
         coroutineScope.launch { profileDrawerState.close() }
     }
@@ -95,15 +105,15 @@ fun DevicersScaffold(
             drawerContent = {
                 CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
                     ProfileOptionsContent(
-                        onSignOutClick = { coroutineScope.launch { profileDrawerState.close(); onSignOutClick() } },
+                        onSignOutClick = { closeProfileDrawerAndRun(onSignOutClick) },
                         onEditProfileClick = onEditProfileClick?.let { edit ->
-                            { coroutineScope.launch { profileDrawerState.close(); edit() }; Unit }
+                            { closeProfileDrawerAndRun(edit) }
                         },
                         onSavedReviewsClick = onSavedReviewsClick?.let { saved ->
-                            { coroutineScope.launch { profileDrawerState.close(); saved() }; Unit }
+                            { closeProfileDrawerAndRun(saved) }
                         },
                         onUserPreferencesClick = onUserPreferencesClick?.let { preferences ->
-                            { coroutineScope.launch { profileDrawerState.close(); preferences() }; Unit }
+                            { closeProfileDrawerAndRun(preferences) }
                         }
                     )
                 }
@@ -138,9 +148,9 @@ fun DevicersScaffold(
                         containerColor = colors.background,
                         topBar = {
                             // Centraliza las variantes de encabezado para que
-                            // las pantallas solo soliciten su número.
-                            when (topBarNumber) {
-                                1 -> TopBar1(
+                            // las pantallas solo soliciten el encabezado que necesitan.
+                            when (topBarStyle) {
+                                TopBarStyle.Profile -> ProfileTopBar(
                                     onProfileClick = onProfileClick,
                                     userHandleResId = topBarUserHandleResId,
                                     userHandle = topBarUserHandle,
@@ -149,50 +159,52 @@ fun DevicersScaffold(
                                     onOptionsClick = { coroutineScope.launch { profileDrawerState.open() } }
                                 )
 
-                                2 -> TopBar2(
+                                TopBarStyle.RateProduct -> RateProductTopBar(
                                     onBackClick = onTopBarBackClick
                                 )
 
-                                3 -> TopBar3(
+                                TopBarStyle.CreateReview -> CreateReviewTopBar(
                                     onBackClick = onTopBarBackClick
                                 )
 
-                                4 -> TopBar4(
+                                TopBarStyle.Review -> ReviewTopBar(
                                     onBackClick = onTopBarBackClick
                                 )
 
-                                5 -> TopBar5()
+                                TopBarStyle.Authentication -> AuthenticationTopBar()
 
-                                6 -> TopBar6(
+                                TopBarStyle.Product -> ProductTopBar(
                                     onBackClick = onTopBarBackClick
                                 )
 
-                                7 -> TitleTopBar(
+                                TopBarStyle.ProfileSearchResults -> TitleTopBar(
                                     R.string.profile_search_results_title,
                                     onTopBarBackClick
                                 )
 
-                                8 -> TitleTopBar(
+                                TopBarStyle.FoundProducts -> TitleTopBar(
                                     R.string.found_products_title,
                                     onTopBarBackClick
                                 )
 
-                                9 -> TitleTopBar(
+                                TopBarStyle.RequestProduct -> TitleTopBar(
                                     R.string.request_product_title,
                                     onTopBarBackClick
                                 )
 
-                                13 -> TitleTopBar(R.string.follow_list_title, onTopBarBackClick)
+                                TopBarStyle.FollowList -> TitleTopBar(R.string.follow_list_title, onTopBarBackClick)
 
-                                12 -> TitleTopBar(R.string.profile_edit, onTopBarBackClick)
+                                TopBarStyle.EditProfile -> TitleTopBar(R.string.profile_edit, onTopBarBackClick)
 
-                                11 -> TitleTopBar(R.string.edit_review_title, onTopBarBackClick)
+                                TopBarStyle.EditReview -> TitleTopBar(R.string.edit_review_title, onTopBarBackClick)
 
-                                10 -> TopBar10(
+                                TopBarStyle.Activity -> ActivityTopBar(
                                     onProfileClick = onProfileClick,
                                     profileImageUrl = topBarProfileImageUrl,
                                     profileId = topBarUserId
                                 )
+
+                                null -> Unit
                             }
                         },
                         bottomBar = {

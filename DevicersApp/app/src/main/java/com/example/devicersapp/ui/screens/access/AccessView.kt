@@ -29,6 +29,7 @@ import com.example.devicersapp.ui.utils.authentication.PrimaryButton
 import com.example.devicersapp.ui.utils.authentication.ScreenTitle
 import com.example.devicersapp.ui.utils.authentication.SocialButtons
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Renderiza la pantalla de acceso y observa su estado desde el ViewModel. */
 @Composable
@@ -147,7 +148,7 @@ fun AccessViewContent(
 @Preview(showBackground = true, heightDp = 800)
 fun AccessViewPreview() {
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(topBarNumber = 5) { innerPadding ->
+        DevicersScaffold(topBarStyle = TopBarStyle.Authentication) { innerPadding ->
             AccessViewContent(
                 modifier = Modifier.padding(innerPadding),
                 state = AccessState(),
@@ -165,7 +166,7 @@ fun AccessViewPreview() {
 @Preview(showBackground = true, heightDp = 800)
 fun AccessViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(topBarNumber = 5) { innerPadding ->
+        DevicersScaffold(topBarStyle = TopBarStyle.Authentication) { innerPadding ->
             AccessViewContent(
                 modifier = Modifier.padding(innerPadding),
                 state = AccessState(),

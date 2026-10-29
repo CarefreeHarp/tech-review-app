@@ -1,6 +1,37 @@
 package com.example.devicersapp.repositoryintegrationtests
 
 import com.google.firebase.Timestamp
+import androidx.test.platform.app.InstrumentationRegistry
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.MemoryCacheSettings
+import kotlinx.coroutines.tasks.await
+
+/** Aísla las pruebas de la sesión y la caché reales, configurando el destino antes de crear referencias. */
+fun getRepositoryTestFirestore(): FirebaseFirestore {
+    val context = InstrumentationRegistry.getInstrumentation().targetContext
+    val appName = "repository-integration-tests"
+    val existing = FirebaseApp.getApps(context).firstOrNull { it.name == appName }
+    if (existing != null) return FirebaseFirestore.getInstance(existing)
+
+    val app = FirebaseApp.initializeApp(context, FirebaseApp.getInstance().options, appName)
+    return FirebaseFirestore.getInstance(app).apply {
+        firestoreSettings = FirebaseFirestoreSettings.Builder()
+            .setLocalCacheSettings(MemoryCacheSettings.newBuilder().build())
+            .build()
+        useEmulator("10.0.2.2", 8080)
+        FirebaseAuth.getInstance(app).useEmulator("10.0.2.2", 9099)
+    }
+}
+
+/** Las reglas locales requieren una sesión; esta cuenta anónima pertenece exclusivamente al emulador. */
+suspend fun signInToRepositoryTestAuth(db: FirebaseFirestore) {
+    check(db.firestoreSettings.host == "10.0.2.2:8080")
+    val auth = FirebaseAuth.getInstance(db.app)
+    if (auth.currentUser == null) auth.signInAnonymously().await()
+}
 
 // Datos de prueba compartidos por las clases *RepositoryIntegrationTest. Siguen el mismo esquema que
 // SEED_DATA/seed.js: campos snake_case y un campo id igual al ID numérico del documento.

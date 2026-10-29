@@ -29,6 +29,7 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileLoadStatus
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Observa la lista y comunica al ViewModel los argumentos del perfil de navegación. */
 @Composable
@@ -82,7 +83,7 @@ fun FollowListViewContent(
 @Composable
 fun FollowListViewPreview() {
     DevicersAppTheme {
-        DevicersScaffold(topBarNumber = 13) { padding ->
+        DevicersScaffold(topBarStyle = TopBarStyle.FollowList) { padding ->
             FollowListViewContent(state = FollowListState(loading = false), onSectionChange = {},
                 onRetry = {}, modifier = Modifier.padding(padding))
         }

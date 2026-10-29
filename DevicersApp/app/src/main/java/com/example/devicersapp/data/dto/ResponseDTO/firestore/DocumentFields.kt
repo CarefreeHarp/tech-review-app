@@ -22,12 +22,15 @@ internal fun Map<String, Any?>.integer(field: String): Int {
 }
 internal fun Map<String, Any?>.optionalInteger(field: String): Int? = if (get(field) == null) null else integer(field)
 internal fun Map<String, Any?>.getString(field: String): String? = get(field)?.let {
-    check(it is String) { "$field no es texto" }; it
+    check(it is String) { "$field no es texto" }
+    it
 }
 internal fun Map<String, Any?>.getTimestamp(field: String): Timestamp? = get(field)?.let {
-    check(it is Timestamp) { "$field no es Timestamp" }; it
+    check(it is Timestamp) { "$field no es Timestamp" }
+    it
 }
 internal fun Map<String, Any?>.text(field: String): String = checkNotNull(getString(field)) { "$field ausente" }
 internal fun Map<String, Any?>.flag(field: String): Boolean = get(field).let {
-    check(it is Boolean) { "$field no es booleano" }; it
+    check(it is Boolean) { "$field no es booleano" }
+    it
 }

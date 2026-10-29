@@ -1,6 +1,5 @@
 package com.example.devicersapp.ui.screens.profile_saved_reviews
 
-
 import com.example.devicersapp.ui.screens.profile_saved_reviews.components.ProfileSavedReviewsSkeleton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +32,7 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileAvatar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Renderiza las reseñas guardadas a partir del estado administrado por el ViewModel. */
 @Composable
@@ -141,7 +141,7 @@ fun ProfileSavedReviewsViewPreview() {
         DevicersScaffold(
             selectedItem = "profile",
             showBottomBar = true,
-            topBarNumber = 1,
+            topBarStyle = TopBarStyle.Profile,
             topBarUserHandleResId = R.string.profile_handle
         ) { innerPadding ->
             ProfileSavedReviewsViewContent(
@@ -166,7 +166,7 @@ fun ProfileSavedReviewsViewDarkPreview() {
         DevicersScaffold(
             selectedItem = "profile",
             showBottomBar = true,
-            topBarNumber = 1,
+            topBarStyle = TopBarStyle.Profile,
             topBarUserHandleResId = R.string.profile_handle
         ) { innerPadding ->
             ProfileSavedReviewsViewContent(

@@ -63,7 +63,7 @@ class ReviewViewModel @Inject constructor(
         }
     }
 
-    /** Abre una reseña del feed local sin confundir su ID con el de la API. */
+    /** Conserva la ruta local de navegación y carga su reseña desde el repositorio seleccionado. */
     fun loadLocalReview(reviewId: Int) {
         loadJob?.cancel()
         loadReview(reviewId)

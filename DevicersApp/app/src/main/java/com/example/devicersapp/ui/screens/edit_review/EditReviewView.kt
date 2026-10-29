@@ -26,6 +26,7 @@ import com.example.devicersapp.ui.utils.review_form.RateableProductCard
 import com.example.devicersapp.ui.utils.review_form.RatingSelector
 import com.example.devicersapp.ui.utils.review_form.ReviewForm
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Observa el formulario de edición y comunica el guardado exitoso a la navegación. */
 @Composable
@@ -106,7 +107,7 @@ fun EditReviewViewContent(
 @Composable
 fun EditReviewViewPreview() {
     DevicersAppTheme {
-        DevicersScaffold(topBarNumber = 11) { padding ->
+        DevicersScaffold(topBarStyle = TopBarStyle.EditReview) { padding ->
             EditReviewViewContent(
                 state = EditReviewState(product = com.example.devicersapp.ui.models.ProductContent(R.string.product_title, R.string.product_brand_label, R.drawable.no_pfp_icon, R.string.review_product_image), canEdit = true,
                     rating = 4, title = stringResource(R.string.edit_review_title),

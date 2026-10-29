@@ -59,9 +59,15 @@ class CreateReviewViewModel @Inject constructor(
         productsJob = viewModelScope.launch {
             val categories = try {
                 categoryRepository.getCategories().map {
-                    ProductCategoryContent(it.id.toString(), R.string.all, it.name, it.parentCategoryId?.toString())
+                    ProductCategoryContent(
+                        id = it.id.toString(),
+                        labelResId = R.string.all,
+                        label = it.name,
+                        parentCategoryId = it.parentCategoryId?.toString()
+                    )
                 }
-            } catch (cancelled: CancellationException) { throw cancelled
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (error: Exception) {
                 showLoadError(error)
                 return@launch
@@ -76,9 +82,8 @@ class CreateReviewViewModel @Inject constructor(
             }
 
             productRepository.getProductsLive()
-                // catch reemplaza al try-catch: un error del listener detiene el flujo y se muestra en pantalla.
+                // Un fallo del catálogo detiene la escucha y conserva el mensaje de error en el estado.
                 .catch { error -> showLoadError(error) }
-                // collect se ejecuta con la carga inicial y otra vez cada vez que cambia el catálogo.
                 .collect { products ->
                     _uiState.update { currentState ->
                         val loadedState = currentState.copy(
@@ -152,48 +157,40 @@ class CreateReviewViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Filtra los productos.
-     */
-    private fun filterProducts(
-        state: CreateReviewState
-    ): List<ProductInfo> {
+    /** Aplica la categoría seleccionada, sus descendientes y la consulta de texto al mismo catálogo. */
+    private fun filterProducts(state: CreateReviewState): List<ProductInfo> {
+        val parentCategories = state.categories.associate { it.id to it.parentCategoryId }
+        val query = state.searchText.trim()
 
         return state.products.filter { product ->
-
-            val parents = state.categories.associate {
-                it.id to it.parentCategoryId
-            }
-
-            var categoryId: String? = product.categoryId.toString()
-            val visited = mutableSetOf<String>()
-            var matchesCategory = state.selectedCategoryId == "all"
-
-            while (categoryId != null && visited.add(categoryId)) {
-                if (categoryId == state.selectedCategoryId) {
-                    matchesCategory = true
-                }
-                categoryId = parents[categoryId]
-            }
-
-            val search = state.searchText.trim()
-
-            val matchesSearch =
-                search.isBlank() ||
-                        product.name.contains(
-                            search,
-                            ignoreCase = true
-                        ) ||
-                        product.model?.contains(
-                            search,
-                            ignoreCase = true
-                        ) == true ||
-                        product.description?.contains(
-                            search,
-                            ignoreCase = true
-                        ) == true
+            val matchesCategory = matchesSelectedCategory(
+                product.categoryId.toString(),
+                state.selectedCategoryId,
+                parentCategories
+            )
+            val matchesSearch = query.isBlank() ||
+                product.name.contains(query, ignoreCase = true) ||
+                product.model?.contains(query, ignoreCase = true) == true ||
+                product.description?.contains(query, ignoreCase = true) == true
 
             matchesCategory && matchesSearch
         }
+    }
+
+    /** Recorre los padres una sola vez y detiene los ciclos de una jerarquía inconsistente. */
+    private fun matchesSelectedCategory(
+        productCategoryId: String,
+        selectedCategoryId: String,
+        parentCategories: Map<String, String?>
+    ): Boolean {
+        var categoryId: String? = productCategoryId
+        val visitedCategoryIds = mutableSetOf<String>()
+        var matchesCategory = selectedCategoryId == "all"
+
+        while (categoryId != null && visitedCategoryIds.add(categoryId)) {
+            if (categoryId == selectedCategoryId) matchesCategory = true
+            categoryId = parentCategories[categoryId]
+        }
+        return matchesCategory
     }
 }

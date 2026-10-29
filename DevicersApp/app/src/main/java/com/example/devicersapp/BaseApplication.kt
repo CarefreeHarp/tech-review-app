@@ -6,6 +6,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.MemoryCacheSettings
 import com.google.firebase.storage.storage
 import dagger.hilt.android.HiltAndroidApp
 
@@ -20,6 +22,10 @@ class BaseApplication : Application() {
 
         // El destino se decide al arrancar; adjuntar el depurador después no cambia la conexión.
         if (BuildConfig.DEBUG && Debug.isDebuggerConnected()) {
+            // El emulador no comparte su caché persistente con Firestore real al alternar Run y Debug.
+            Firebase.firestore.firestoreSettings = FirebaseFirestoreSettings.Builder()
+                .setLocalCacheSettings(MemoryCacheSettings.newBuilder().build())
+                .build()
             // En Android Emulator, esta dirección permite acceder al computador anfitrión.
             val emulatorHost = "10.0.2.2"
             Firebase.firestore.useEmulator(emulatorHost, 8080)

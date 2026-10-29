@@ -20,12 +20,12 @@ class CommentRepository(
         val missingPhotoUserIds = comments.filter { it.userProfileImageUrl.isNullOrBlank() }
             .map { it.userId }.toSet()
         val authors = if (missingPhotoUserIds.isEmpty()) emptyMap() else users.getByIds(missingPhotoUserIds)
-        val children = comments.groupBy { it.parentCommentId }
-        val ids = comments.map { it.id }.toSet()
-        val visited = mutableSetOf<Int>()
+        val commentsByParentId = comments.groupBy { it.parentCommentId }
+        val activeCommentIds = comments.map { it.id }.toSet()
+        val visitedCommentIds = mutableSetOf<Int>()
         val thread = mutableListOf<CommentThreadItem>()
-        fun append(comment: CommentInfo, depth: Int) {
-            if (!visited.add(comment.id)) return
+        fun appendComment(comment: CommentInfo, depth: Int) {
+            if (!visitedCommentIds.add(comment.id)) return
             thread += CommentThreadItem(
                 comment = comment,
                 depth = depth,
@@ -34,10 +34,11 @@ class CommentRepository(
                 authorImageUrl = comment.userProfileImageUrl?.takeIf { it.isNotBlank() }
                     ?: authors[comment.userId]?.profileImageUrl
             )
-            children[comment.id].orEmpty().forEach { append(it, depth + 1) }
+            commentsByParentId[comment.id].orEmpty().forEach { appendComment(it, depth + 1) }
         }
-        comments.filter { it.parentCommentId !in ids }.forEach { append(it, 0) }
-        comments.forEach { append(it, 0) }
+        comments.filter { it.parentCommentId !in activeCommentIds }.forEach { appendComment(it, 0) }
+        // Recupera también ramas sin raíz por ciclos; visitedCommentIds evita repetir sus comentarios.
+        comments.forEach { appendComment(it, 0) }
         return thread
     }
 }

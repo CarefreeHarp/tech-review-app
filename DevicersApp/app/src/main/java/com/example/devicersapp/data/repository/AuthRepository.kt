@@ -28,7 +28,9 @@ class AuthRepository @Inject constructor(
     fun signOut(): Result<Unit> = try {
         authRemoteDataSource.signOut()
         Result.success(Unit)
-    } catch (exception: Exception) { authenticationFailure(R.string.auth_error_sign_out, exception) }
+    } catch (exception: Exception) {
+        authenticationFailure(R.string.auth_error_sign_out, exception)
+    }
     /** Actualiza la imagen de la cuenta Auth, independientemente de la base de datos seleccionada. */
     suspend fun updateProfileImage(url: String): Result<Unit> =
         runAuthenticationOperation(R.string.auth_error_update_profile) { authRemoteDataSource.updateProfileImage(url) }

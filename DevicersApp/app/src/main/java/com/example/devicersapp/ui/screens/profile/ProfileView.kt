@@ -29,6 +29,7 @@ import com.example.devicersapp.ui.utils.profile.ProfileHeader
 import com.example.devicersapp.ui.utils.profile.ProfileProductCard
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTab
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Renderiza el detalle de perfil y solicita su carga cuando cambia el identificador. */
 @Composable
@@ -139,7 +140,7 @@ fun ProfileViewContent(
 fun ProfileViewPreview() {
     val username = stringResource(R.string.username_placeholder)
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
+        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarStyle = TopBarStyle.Profile,
             topBarUserHandle = username) { padding ->
             ProfileViewContent(state = ProfileState(loading = true), onFollowClick = {}, onReviewClick = {}, modifier = Modifier.padding(padding))
         }
@@ -152,7 +153,7 @@ fun ProfileViewPreview() {
 fun ProfileViewDarkPreview() {
     val username = stringResource(R.string.username_placeholder)
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarNumber = 1,
+        DevicersScaffold(selectedItem = "profile", showBottomBar = true, topBarStyle = TopBarStyle.Profile,
             topBarUserHandle = username) { padding ->
             ProfileViewContent(state = ProfileState(loading = true), onFollowClick = {}, onReviewClick = {}, modifier = Modifier.padding(padding))
         }

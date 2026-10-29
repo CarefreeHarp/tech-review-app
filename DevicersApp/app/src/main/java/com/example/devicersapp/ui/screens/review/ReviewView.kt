@@ -1,6 +1,5 @@
 package com.example.devicersapp.ui.screens.review
 
-
 import com.example.devicersapp.ui.utils.profile.asUserHandle
 import com.example.devicersapp.ui.screens.review.components.ReviewSkeleton
 
@@ -30,6 +29,7 @@ import com.example.devicersapp.ui.screens.review.components.ReviewProductSummary
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Configura el detalle de una reseña y observa su estado desde el ViewModel. */
 @Composable
@@ -111,7 +111,10 @@ fun ReviewViewContent(
         }
         return
     }
-    if (state.loading) { ReviewSkeleton(modifier); return }
+    if (state.loading) {
+        ReviewSkeleton(modifier)
+        return
+    }
     val product = state.product ?: return
     val review = state.review ?: return
     Box(modifier = modifier) {
@@ -187,26 +190,24 @@ fun ReviewViewPreview() {
     val review = com.example.devicersapp.ui.models.ReviewContent(authorId = "1", productNameResId = R.string.product_title, productImageResId = R.drawable.no_pfp_icon, productMetadataResId = R.string.product_brand_label, rating = 4, textResId = R.string.review_reply_text_two, likes = 0)
     val product = com.example.devicersapp.ui.models.ProductContent(R.string.product_title, R.string.product_brand_label, R.drawable.no_pfp_icon, R.string.review_product_image)
 
-    if (product != null) {
-        DevicersAppTheme(darkTheme = false) {
-            DevicersScaffold(topBarNumber = 4) { innerPadding ->
-                ReviewViewContent(
-                    state = ReviewState(
-                        product = product,
-                        review = review,
-                        replies = review.comments
-                    ),
-                    onReplyTextChange = {},
-                    onProductClick = {},
-                    onSendReply = {},
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .background(
-                            LocalDevicersColors.current.background
-                        )
-                )
-            }
+    DevicersAppTheme(darkTheme = false) {
+        DevicersScaffold(topBarStyle = TopBarStyle.Review) { innerPadding ->
+            ReviewViewContent(
+                state = ReviewState(
+                    product = product,
+                    review = review,
+                    replies = review.comments
+                ),
+                onReplyTextChange = {},
+                onProductClick = {},
+                onSendReply = {},
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(
+                        LocalDevicersColors.current.background
+                    )
+            )
         }
     }
 }
@@ -218,26 +219,24 @@ fun ReviewViewDarkPreview() {
     val review = com.example.devicersapp.ui.models.ReviewContent(authorId = "1", productNameResId = R.string.product_title, productImageResId = R.drawable.no_pfp_icon, productMetadataResId = R.string.product_brand_label, rating = 4, textResId = R.string.review_reply_text_two, likes = 0)
     val product = com.example.devicersapp.ui.models.ProductContent(R.string.product_title, R.string.product_brand_label, R.drawable.no_pfp_icon, R.string.review_product_image)
 
-    if (product != null) {
-        DevicersAppTheme(darkTheme = true) {
-            DevicersScaffold(topBarNumber = 4) { innerPadding ->
-                ReviewViewContent(
-                    state = ReviewState(
-                        product = product,
-                        review = review,
-                        replies = review.comments
-                    ),
-                    onReplyTextChange = {},
-                    onProductClick = {},
-                    onSendReply = {},
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .background(
-                            LocalDevicersColors.current.background
-                        )
-                )
-            }
+    DevicersAppTheme(darkTheme = true) {
+        DevicersScaffold(topBarStyle = TopBarStyle.Review) { innerPadding ->
+            ReviewViewContent(
+                state = ReviewState(
+                    product = product,
+                    review = review,
+                    replies = review.comments
+                ),
+                onReplyTextChange = {},
+                onProductClick = {},
+                onSendReply = {},
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(
+                        LocalDevicersColors.current.background
+                    )
+            )
         }
     }
 }

@@ -105,9 +105,6 @@ sealed class AppDestination(val route: String) {
             return "product/$productId"
         }
     }
-//    data object RateProduct : AppDestination("rate-product") {
-//        fun createRoute(productId: String) = "rate-product/$productId"
-//    }
     data object RateProduct : AppDestination("rateProduct") {
 
         fun createRoute(productId: Int): String {
@@ -184,10 +181,7 @@ fun AppNavigation(
         ?: activityState?.currentProfile?.id?.toString()
 
     val configuration = NavigationLogic.configurationFor(
-        route = backStackEntry?.destination?.route,
-        profileId = backStackEntry
-            ?.arguments
-            ?.getString("profileId")
+        route = backStackEntry?.destination?.route
     )
 
     val onProfileClick: (String) -> Unit = { profileId ->
@@ -217,7 +211,7 @@ fun AppNavigation(
         selectedItem = configuration.selectedItem,
         showBottomBar = configuration.showBottomBar,
         showDrawer = configuration.showDrawer,
-        topBarNumber = configuration.topBarNumber,
+        topBarStyle = configuration.topBarStyle,
         topBarUserHandleResId = configuration.topBarUserHandleResId,
         topBarUserHandle = (publicProfileState?.profile?.username
             ?: ownProfileState?.displayName ?: savedProfileState?.profile?.username)?.asUserHandle(),

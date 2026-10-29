@@ -1,5 +1,6 @@
 package com.example.devicersapp.navigation
 
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 import androidx.annotation.StringRes
 import androidx.navigation.NavHostController
 
@@ -10,7 +11,7 @@ data class NavigationUiConfiguration(
     val selectedItem: String = "",
     val showBottomBar: Boolean = false,
     val showDrawer: Boolean = false,
-    val topBarNumber: Int? = null,
+    val topBarStyle: TopBarStyle? = null,
     @param:StringRes val topBarUserHandleResId: Int? = null
 )
 
@@ -24,24 +25,23 @@ object NavigationLogic {
      * Obtiene la configuración visual correspondiente al destino actual.
      */
     fun configurationFor(
-        route: String?,
-        profileId: String? = null
+        route: String?
     ): NavigationUiConfiguration = when (route) {
 
-        AppDestination.Splash.route ->
+        AppDestination.Splash.route,
+        AppDestination.UserPreferences.route ->
             NavigationUiConfiguration()
 
-        AppDestination.Login.route ->
-            NavigationUiConfiguration(
-                topBarNumber = 5
-            )
+        AppDestination.Login.route,
+        AppDestination.Register.route ->
+            NavigationUiConfiguration(topBarStyle = TopBarStyle.Authentication)
 
         AppDestination.Home.route ->
             NavigationUiConfiguration(
                 selectedItem = AppDestination.Home.route,
                 showBottomBar = true,
                 showDrawer = true,
-                topBarNumber = 5
+                topBarStyle = TopBarStyle.Authentication
             )
 
         AppDestination.SearchProduct.route ->
@@ -56,7 +56,7 @@ object NavigationLogic {
                 selectedItem = AppDestination.CreateReview.route,
                 showBottomBar = true,
                 showDrawer = true,
-                topBarNumber = 3
+                topBarStyle = TopBarStyle.CreateReview
             )
 
         AppDestination.Activity.route ->
@@ -64,7 +64,7 @@ object NavigationLogic {
                 selectedItem = AppDestination.Activity.route,
                 showBottomBar = true,
                 showDrawer = true,
-                topBarNumber = 10
+                topBarStyle = TopBarStyle.Activity
             )
 
         AppDestination.OwnProfile.route,
@@ -73,12 +73,7 @@ object NavigationLogic {
                 selectedItem = AppDestination.OwnProfile.route,
                 showBottomBar = true,
                 showDrawer = true,
-                topBarNumber = 1
-            )
-
-        AppDestination.Register.route ->
-            NavigationUiConfiguration(
-                topBarNumber = 5
+                topBarStyle = TopBarStyle.Profile
             )
 
         AppDestination.SearchProfile.route ->
@@ -91,81 +86,60 @@ object NavigationLogic {
             NavigationUiConfiguration(
                 selectedItem = AppDestination.SearchProduct.route,
                 showBottomBar = true,
-                topBarNumber = 8
+                topBarStyle = TopBarStyle.FoundProducts
             )
 
         AppDestination.ProfileSearchResults.route ->
             NavigationUiConfiguration(
                 selectedItem = AppDestination.SearchProduct.route,
                 showBottomBar = true,
-                topBarNumber = 7
+                topBarStyle = TopBarStyle.ProfileSearchResults
             )
 
         "${AppDestination.Product.route}/{productId}" ->
             NavigationUiConfiguration(
                 selectedItem = AppDestination.SearchProduct.route,
                 showBottomBar = true,
-                topBarNumber = 6
+                topBarStyle = TopBarStyle.Product
             )
 
         "${AppDestination.RateProduct.route}/{productId}" ->
             NavigationUiConfiguration(
-                topBarNumber = 2
+                topBarStyle = TopBarStyle.RateProduct
             )
 
         AppDestination.FollowList.routeWithArguments ->
-            NavigationUiConfiguration(topBarNumber = 13)
-
-        AppDestination.UserPreferences.route ->
-            NavigationUiConfiguration()
+            NavigationUiConfiguration(topBarStyle = TopBarStyle.FollowList)
 
         AppDestination.EditProfile.route ->
-            NavigationUiConfiguration(topBarNumber = 12)
+            NavigationUiConfiguration(topBarStyle = TopBarStyle.EditProfile)
 
         "${AppDestination.EditReview.route}/{reviewId}" ->
-            NavigationUiConfiguration(topBarNumber = 11)
+            NavigationUiConfiguration(topBarStyle = TopBarStyle.EditReview)
 
-        AppDestination.Review.route ->
-            NavigationUiConfiguration(
-                topBarNumber = 4
-            )
+        AppDestination.Review.route,
+        "${AppDestination.Review.route}/{reviewId}",
+        "${AppDestination.Review.route}/local/{reviewId}" ->
+            NavigationUiConfiguration(topBarStyle = TopBarStyle.Review)
 
         AppDestination.RequestProduct.route ->
             NavigationUiConfiguration(
                 selectedItem = AppDestination.CreateReview.route,
-                topBarNumber = 9
+                topBarStyle = TopBarStyle.RequestProduct
             )
 
-        AppDestination.Profile.route ->
-            NavigationUiConfiguration(
-                selectedItem = AppDestination.OwnProfile.route,
-                showBottomBar = true,
-                topBarNumber = 1
-            )
-
-        AppDestination.ProfileSavedReviews.route ->
-            NavigationUiConfiguration(
-                selectedItem = AppDestination.OwnProfile.route,
-                showBottomBar = true,
-                topBarNumber = 1
-            )
-
+        AppDestination.Profile.route,
+        AppDestination.ProfileSavedReviews.route,
         "${AppDestination.Profile.route}/{profileId}" ->
             NavigationUiConfiguration(
                 selectedItem = AppDestination.OwnProfile.route,
                 showBottomBar = true,
-                topBarNumber = 1
-            )
-
-        "${AppDestination.Review.route}/{reviewId}",
-        "${AppDestination.Review.route}/local/{reviewId}" ->
-            NavigationUiConfiguration(
-                topBarNumber = 4
+                topBarStyle = TopBarStyle.Profile
             )
 
         else ->
             NavigationUiConfiguration(
-                topBarNumber = 5
+                topBarStyle = TopBarStyle.Authentication
             )
     }
 }

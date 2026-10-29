@@ -27,6 +27,7 @@ import com.example.devicersapp.ui.utils.review_form.ReviewForm
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Renderiza la calificación y solicita la carga del producto que llega por argumento. */
 @Composable
@@ -161,7 +162,7 @@ fun RateProductViewContent(
 @Preview(showBackground = true, heightDp = 1100)
 fun RateProductViewPreview() {
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(topBarNumber = 2) { innerPadding ->
+        DevicersScaffold(topBarStyle = TopBarStyle.RateProduct) { innerPadding ->
             RateProductViewContent(
                 state = RateProductState(product = com.example.devicersapp.ui.models.ProductContent(R.string.product_title, R.string.product_brand_label, R.drawable.no_pfp_icon, R.string.review_product_image)),
                 onRatingChange = {},
@@ -185,7 +186,7 @@ fun RateProductViewPreview() {
 @Preview(showBackground = true, heightDp = 1100)
 fun RateProductViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(topBarNumber = 2) { innerPadding ->
+        DevicersScaffold(topBarStyle = TopBarStyle.RateProduct) { innerPadding ->
             RateProductViewContent(
                 state = RateProductState(product = com.example.devicersapp.ui.models.ProductContent(R.string.product_title, R.string.product_brand_label, R.drawable.no_pfp_icon, R.string.review_product_image)),
                 onRatingChange = {},

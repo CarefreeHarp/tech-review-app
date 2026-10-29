@@ -19,7 +19,10 @@ import javax.inject.Inject
 
 /** Gestiona la validación y las acciones de presentación de la solicitud de producto. */
 @HiltViewModel
-class RequestProductViewModel @Inject constructor(private val repository: ProductRequestRepository, private val users: UserRepository) : ViewModel() {
+class RequestProductViewModel @Inject constructor(
+    private val repository: ProductRequestRepository,
+    private val users: UserRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RequestProductState())
     val uiState: StateFlow<RequestProductState> = _uiState
@@ -33,9 +36,20 @@ class RequestProductViewModel @Inject constructor(private val repository: Produc
         _uiState.update { it.copy(submitting = true, canSendRequest = false, error = null) }
         viewModelScope.launch {
             try {
-                repository.submit(requestId, users.getAuthenticatedUser().id, ProductSuggestion(state.productName, state.category, state.brand, state.releaseDate))
+                repository.submit(
+                    requestId,
+                    users.getAuthenticatedUser().id,
+                    ProductSuggestion(
+                        productName = state.productName,
+                        category = state.category,
+                        brand = state.brand,
+                        releaseDate = state.releaseDate
+                    )
+                )
                 _uiState.update { it.copy(submitting = false, submitted = true, canSendRequest = false) }
-            } catch (e: CancellationException) { throw e }
+            } catch (e: CancellationException) {
+                throw e
+            }
             catch (e: Exception) {
                 _uiState.update { it.copy(submitting = false, error = R.string.product_request_send_error).withValidation() }
                 return@launch
@@ -44,6 +58,7 @@ class RequestProductViewModel @Inject constructor(private val repository: Produc
         }
     }
 
+    /** Inicia un borrador nuevo sin reutilizar el ID de una solicitud ya enviada. */
     private fun beginEdit(): Boolean {
         if (_uiState.value.submitting) return false
         requestId = UUID.randomUUID().toString()

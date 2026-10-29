@@ -83,7 +83,8 @@ class ActivityViewModel @Inject constructor(
                     followedUserIds = if (status.isFollowing) it.followedUserIds + id else it.followedUserIds - id,
                     followsInProgress = it.followsInProgress - id
                 ) }
-            } catch (cancelled: CancellationException) { throw cancelled
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (error: Exception) {
                 state.update { it.copy(
                     followedUserIds = if (wasFollowed) it.followedUserIds + id else it.followedUserIds - id,

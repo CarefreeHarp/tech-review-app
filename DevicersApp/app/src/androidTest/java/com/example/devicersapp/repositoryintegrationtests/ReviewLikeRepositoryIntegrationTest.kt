@@ -3,9 +3,7 @@ package com.example.devicersapp.repositoryintegrationtests
 import com.example.devicersapp.data.repository.ReviewLikeRepository
 import com.example.devicersapp.data.datasource.implementations.firestore.ReviewLikeRemoteDataSourceFirestoreImplementation
 import com.google.common.truth.Truth
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -14,24 +12,20 @@ import org.junit.Test
 
 /** Pruebas de integración de [ReviewLikeRepository] contra Firestore del emulador local. */
 class ReviewLikeRepositoryIntegrationTest {
-    private val db = Firebase.firestore
+    private val db = getRepositoryTestFirestore()
     private val counters = db.collection("counters").document("next_id")
     private var originalCounters: Map<String, Any>? = null
     private lateinit var reviewLikeRepository: ReviewLikeRepository
 
     @Before
     fun setUp() = runTest {
-        try {
-            db.useEmulator("10.0.2.2", 8080)
-        } catch (e: Exception) {
-            // BaseApplication ya conectó Firestore al emulador; repetirlo después de usarlo lanza una excepción.
-        }
         // Si Firestore no apunta al emulador local, la prueba se detiene aquí, antes de escribir o borrar datos.
         Truth.assertThat(db.firestoreSettings.host).isEqualTo("10.0.2.2:8080")
+        signInToRepositoryTestAuth(db)
 
         reviewLikeRepository = ReviewLikeRepository(ReviewLikeRemoteDataSourceFirestoreImplementation(db))
 
-        // Se guarda el contador real para dejarlo igual en tearDown.
+        // Conserva el contador local para restaurarlo en tearDown.
         originalCounters = counters.get().await().data
 
         // Datos replicables y autónomos: el usuario 1000 escribió la reseña 1000, que todavía no tiene likes.

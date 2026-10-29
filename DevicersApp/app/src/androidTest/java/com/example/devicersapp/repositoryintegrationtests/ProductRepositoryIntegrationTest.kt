@@ -3,8 +3,6 @@ package com.example.devicersapp.repositoryintegrationtests
 import com.example.devicersapp.data.repository.ProductRepository
 import com.example.devicersapp.data.datasource.implementations.firestore.ProductRemoteDataSourceFirestoreImplementation
 import com.google.common.truth.Truth
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -13,18 +11,14 @@ import org.junit.Test
 
 /** Pruebas de integración de [ProductRepository] contra Firestore del emulador local. */
 class ProductRepositoryIntegrationTest {
-    private val db = Firebase.firestore
+    private val db = getRepositoryTestFirestore()
     private lateinit var productRepository: ProductRepository
 
     @Before
     fun setUp() = runTest {
-        try {
-            db.useEmulator("10.0.2.2", 8080)
-        } catch (e: Exception) {
-            // BaseApplication ya conectó Firestore al emulador; repetirlo después de usarlo lanza una excepción.
-        }
         // Si Firestore no apunta al emulador local, la prueba se detiene aquí, antes de escribir o borrar datos.
         Truth.assertThat(db.firestoreSettings.host).isEqualTo("10.0.2.2:8080")
+        signInToRepositoryTestAuth(db)
 
         productRepository = ProductRepository(ProductRemoteDataSourceFirestoreImplementation(db))
 

@@ -37,8 +37,11 @@ class ProfileSavedReviewsViewModel @Inject constructor(
                 _uiState.update { it.copy(profile = user.toProfileContent(profile.reviews.size,
                     profile.followerCount, profile.followingCount), profileImageUrl = user.profileImageUrl,
                     email = user.email, savedReviews = saved, loading = false) }
-            } catch (cancelled: CancellationException) { throw cancelled
-            } catch (error: Exception) { _uiState.update { it.copy(loading = false, errorMessageResId = R.string.profile_saved_load_error) } }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                _uiState.update { it.copy(loading = false, errorMessageResId = R.string.profile_saved_load_error) }
+            }
         }
     }
     /** Selecciona visualmente la pestaña de reseñas. */

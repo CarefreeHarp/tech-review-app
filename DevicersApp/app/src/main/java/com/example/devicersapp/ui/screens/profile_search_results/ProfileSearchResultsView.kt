@@ -28,6 +28,7 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.theme.SearchControlText
 import com.example.devicersapp.ui.utils.navigation.SearchBar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Renderiza los resultados de perfiles y delega sus eventos al ViewModel. */
 @Composable
@@ -111,7 +112,7 @@ fun ProfileSearchResultsViewContent(
 @Preview(showBackground = true, heightDp = 900)
 fun ProfileSearchResultsViewPreview() {
     DevicersAppTheme(darkTheme = false) {
-        DevicersScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 7) {
+        DevicersScaffold(selectedItem = "search", showBottomBar = true, topBarStyle = TopBarStyle.ProfileSearchResults) {
                 innerPadding ->
             ProfileSearchResultsViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
@@ -129,7 +130,7 @@ fun ProfileSearchResultsViewPreview() {
 @Preview(showBackground = true, heightDp = 900)
 fun ProfileSearchResultsViewDarkPreview() {
     DevicersAppTheme(darkTheme = true) {
-        DevicersScaffold(selectedItem = "search", showBottomBar = true, topBarNumber = 7) {
+        DevicersScaffold(selectedItem = "search", showBottomBar = true, topBarStyle = TopBarStyle.ProfileSearchResults) {
                 innerPadding ->
             ProfileSearchResultsViewContent(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),

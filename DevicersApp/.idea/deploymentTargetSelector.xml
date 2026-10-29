@@ -24,7 +24,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="NotificationRepositoryIntegrationTest">
+      <SelectionState runConfigName="FollowRemoteDataSourceIntegrationTest">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2026-08-07T21:06:49.693837883Z">
           <Target type="DEFAULT_BOOT">
@@ -35,7 +35,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="ReviewLikeRepositoryIntegrationTest">
+      <SelectionState runConfigName="setFollowing_true_addsFollowerAndFollowing()">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2026-08-07T21:06:49.693837883Z">
           <Target type="DEFAULT_BOOT">
@@ -46,7 +46,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="ReviewRepositoryIntegrationTest">
+      <SelectionState runConfigName="ProductRepositoryIntegrationTest">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2026-08-07T21:06:49.693837883Z">
           <Target type="DEFAULT_BOOT">
@@ -58,6 +58,17 @@
         <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="UserRepositoryIntegrationTest">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2026-08-07T21:06:49.693837883Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=/home/legion-5080-monster/.android/avd/CelularDevicers1.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="ReviewLikeRepositoryIntegrationTest">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2026-08-07T21:06:49.693837883Z">
           <Target type="DEFAULT_BOOT">

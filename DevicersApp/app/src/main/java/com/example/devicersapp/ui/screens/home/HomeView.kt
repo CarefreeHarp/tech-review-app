@@ -36,6 +36,7 @@ import com.example.devicersapp.ui.screens.home.components.HomeFeedErrorMessage
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.tabs.SectionTabsRow
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /**
  * Configura la pantalla principal y observa su estado desde el ViewModel.
@@ -200,7 +201,7 @@ fun HomeViewPreview() {
         DevicersScaffold(
             selectedItem = "home",
             showBottomBar = true,
-            topBarNumber = 5
+            topBarStyle = TopBarStyle.Authentication
         ) { innerPadding ->
             HomeViewContent(
                 modifier = Modifier.padding(
@@ -228,7 +229,7 @@ fun HomeViewDarkPreview() {
         DevicersScaffold(
             selectedItem = "home",
             showBottomBar = true,
-            topBarNumber = 5
+            topBarStyle = TopBarStyle.Authentication
         ) { innerPadding ->
             HomeViewContent(
                 modifier = Modifier.padding(

@@ -90,7 +90,8 @@ class RegisterViewModel @Inject constructor(
             // Asocia este dispositivo a la cuenta nueva para recibir notificaciones push; el registro no depende de ello.
             users.registerFcmToken()
             true
-        } catch (cancelled: CancellationException) { throw cancelled
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (error: Exception) {
             updateRegistrationError(error)
             false

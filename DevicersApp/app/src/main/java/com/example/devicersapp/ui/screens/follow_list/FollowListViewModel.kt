@@ -42,7 +42,8 @@ class FollowListViewModel @Inject constructor(private val follows: FollowReposit
                 state.update { it.copy(loading = false, users = records.map { user ->
                     FollowListUser(user.id, user.username, user.biography.orEmpty(), user.profileImageUrl)
                 }) }
-            } catch (cancelled: CancellationException) { throw cancelled
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (error: Exception) {
                 state.update { it.copy(loading = false, errorMessageResId = R.string.follow_list_load_error) }
             }

@@ -31,6 +31,7 @@ import com.example.devicersapp.ui.utils.navigation.SearchBar
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
 import com.example.devicersapp.ui.utils.search.LaunchDateField
 import com.example.devicersapp.ui.utils.search.FilterLabel
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Renderiza la solicitud de producto y conecta sus eventos con el estado del ViewModel. */
 @Composable
@@ -181,7 +182,7 @@ fun RequestProductViewPreview() {
         DevicersScaffold(
             selectedItem = "create",
             showBottomBar = true,
-            topBarNumber = 9
+            topBarStyle = TopBarStyle.RequestProduct
         ) { innerPadding ->
             RequestProductViewContent(
                 state = RequestProductState(),
@@ -208,7 +209,7 @@ fun RequestProductViewDarkPreview() {
         DevicersScaffold(
             selectedItem = "create",
             showBottomBar = true,
-            topBarNumber = 9
+            topBarStyle = TopBarStyle.RequestProduct
         ) { innerPadding ->
             RequestProductViewContent(
                 state = RequestProductState(),

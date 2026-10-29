@@ -1,14 +1,14 @@
-const{
+const {
     onDocumentUpdated,
     onDocumentCreated,
     onDocumentWritten,
 } = require("firebase-functions/v2/firestore");
 const logger = require("firebase-functions/logger");
-const admin = require("firebase-admin")
+const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-const db = admin.firestore();
+const firestore = admin.firestore();
 
 /**
  * Envía una notificación push al autor de una reseña cuando otro usuario le da like.
@@ -24,7 +24,7 @@ exports.sendReviewLikeNotification = onDocumentCreated("reviews/{reviewId}/likes
     const likerId = event.params.userId;
 
     // 2. Consulta la reseña para conocer a su autor, que es quien recibe la notificación.
-    const reviewDoc = await db.collection("reviews").doc(reviewId).get();
+    const reviewDoc = await firestore.collection("reviews").doc(reviewId).get();
     if (!reviewDoc.exists) {
         logger.warn("La reseña del like ya no existe", {reviewId, likerId});
         return;
@@ -39,9 +39,9 @@ exports.sendReviewLikeNotification = onDocumentCreated("reviews/{reviewId}/likes
 
     // 4. Consulta al autor (destinatario), a quien dio el like y el artículo reseñado.
     const [authorDoc, likerDoc, articleDoc] = await Promise.all([
-        db.collection("users").doc(authorId).get(),
-        db.collection("users").doc(likerId).get(),
-        db.collection("articles").doc(String(review.article_id)).get(),
+        firestore.collection("users").doc(authorId).get(),
+        firestore.collection("users").doc(likerId).get(),
+        firestore.collection("articles").doc(String(review.article_id)).get(),
     ]);
     // La app guarda fcm_token al registrarse, al iniciar sesión o cuando FCM renueva el token.
     const fcmToken = authorDoc.get("fcm_token");
@@ -54,15 +54,15 @@ exports.sendReviewLikeNotification = onDocumentCreated("reviews/{reviewId}/likes
 
     // 6. Construye el mensaje con el nombre real de quien dio like y el artículo reseñado.
     const likerName = likerDoc.get("username");
-    const actor = likerName ? `@${likerName}` : "Alguien";
+    const actorDisplayName = notificationActorName(likerName);
     const articleName = articleDoc.get("name");
     const message = {
         token: fcmToken,
         notification: {
             title: "Nuevo me gusta",
             body: articleName ?
-                `${actor} le dio me gusta a tu reseña de ${articleName}` :
-                `${actor} le dio me gusta a tu reseña`,
+                `${actorDisplayName} le dio me gusta a tu reseña de ${articleName}` :
+                `${actorDisplayName} le dio me gusta a tu reseña`,
         },
     };
 
@@ -84,8 +84,8 @@ exports.sendFollowNotification = onDocumentCreated("users/{userId}/follows/{foll
     if (userId === followedId) return;
     const [relation, actor, recipient] = await Promise.all([
         event.data.ref.get(),
-        db.collection("users").doc(userId).get(),
-        db.collection("users").doc(followedId).get(),
+        firestore.collection("users").doc(userId).get(),
+        firestore.collection("users").doc(followedId).get(),
     ]);
     // Un evento retrasado de un seguimiento retirado o reemplazado no debe producir un aviso nuevo.
     if (!relation.exists || !relation.createTime.isEqual(event.data.createTime)) return;
@@ -100,7 +100,7 @@ exports.sendFollowNotification = onDocumentCreated("users/{userId}/follows/{foll
             token,
             notification: {
                 title: "Nuevo seguidor",
-                body: `${username ? `@${username}` : "Alguien"} empezó a seguirte`,
+                body: `${notificationActorName(username)} empezó a seguirte`,
             },
         });
         logger.log("Notificación de seguimiento enviada", {userId, followedId});
@@ -112,7 +112,7 @@ exports.sendFollowNotification = onDocumentCreated("users/{userId}/follows/{foll
 /** Entrega el aviso del like de comentario; el cliente ya guardó el registro y el contador juntos. */
 exports.sendCommentLikeNotification = onDocumentCreated("reviews/{reviewId}/comments/{commentId}/likes/{userId}", async (event) => {
     const {reviewId, commentId, userId} = event.params;
-    const reviewRef = db.collection("reviews").doc(reviewId);
+    const reviewRef = firestore.collection("reviews").doc(reviewId);
     const commentRef = reviewRef.collection("comments").doc(commentId);
     const [review, comment, like] = await Promise.all([reviewRef.get(), commentRef.get(), event.data.ref.get()]);
     if (!review.exists || !comment.exists || !like.exists ||
@@ -120,19 +120,29 @@ exports.sendCommentLikeNotification = onDocumentCreated("reviews/{reviewId}/comm
     const authorId = String(comment.get("user_id"));
     if (authorId === userId) return;
     const [recipient, actor] = await Promise.all([
-        db.collection("users").doc(authorId).get(), db.collection("users").doc(userId).get(),
+        firestore.collection("users").doc(authorId).get(), firestore.collection("users").doc(userId).get(),
     ]);
     const token = recipient.get("fcm_token");
     if (!token) return;
     const username = actor.get("username");
     try {
-        await admin.messaging().send({token, notification: {
-            title: "Nuevo me gusta",
-            body: `${username ? `@${username}` : "Alguien"} le dio me gusta a tu comentario`,
-        }});
+        await admin.messaging().send({
+            token,
+            notification: {
+                title: "Nuevo me gusta",
+                body: `${notificationActorName(username)} le dio me gusta a tu comentario`,
+            },
+        });
         logger.log("Notificación de like de comentario enviada", {reviewId, commentId, userId, authorId});
-    } catch (error) { logger.error("Error al enviar la notificación de like de comentario", error); }
+    } catch (error) {
+        logger.error("Error al enviar la notificación de like de comentario", error);
+    }
 });
+
+/** Usa el alias disponible y conserva el texto de respaldo para actores sin nombre. */
+function notificationActorName(username) {
+    return username ? `@${username}` : "Alguien";
+}
 
 // Firestore permite como máximo 500 escrituras por lote.
 const BATCH_LIMIT = 500;
@@ -145,7 +155,7 @@ const BATCH_LIMIT = 500;
  */
 async function writeInBatches(documents, write) {
     for (let start = 0; start < documents.length; start += BATCH_LIMIT) {
-        const batch = db.batch();
+        const batch = firestore.batch();
         documents.slice(start, start + BATCH_LIMIT).forEach((document) => write(batch, document));
         await batch.commit();
     }
@@ -174,7 +184,7 @@ exports.syncUserInfoInComments = onDocumentUpdated("users/{userId}", async (even
     }
 
     // 4. Trae los comentarios del usuario en todas las reseñas (consulta de grupo de colecciones).
-    const comments = await db.collectionGroup("comments").where("user_id", "==", userId).get();
+    const comments = await firestore.collectionGroup("comments").where("user_id", "==", userId).get();
 
     // 5. Reemplaza las copias en lotes atómicos.
     await writeInBatches(comments.docs, (batch, comment) => {
@@ -207,8 +217,8 @@ exports.cleanUpDeletedReview = onDocumentUpdated("reviews/{reviewId}", async (ev
 
     // 3. Busca los guardados de todos los usuarios y las notificaciones que apuntan a la reseña.
     const [bookmarks, notifications] = await Promise.all([
-        db.collectionGroup("review_bookmarks").where("review_id", "==", reviewId).get(),
-        db.collection("notifications").where("review_id", "==", reviewId).get(),
+        firestore.collectionGroup("review_bookmarks").where("review_id", "==", reviewId).get(),
+        firestore.collection("notifications").where("review_id", "==", reviewId).get(),
     ]);
 
     // 4. Elimina ambas referencias; countUserReviewBookmarks recalcula después los contadores de guardados.
@@ -238,7 +248,7 @@ async function recountSubcollection(event, counterField) {
     const parentRef = subcollection.parent;
 
     // La lectura del padre y el conteo ocurren en la misma transacción que la corrección.
-    const correctedTotal = await db.runTransaction(async (transaction) => {
+    const correctedTotal = await firestore.runTransaction(async (transaction) => {
         const parent = await transaction.get(parentRef);
         // Si el documento padre ya no existe, no hay contador que corregir.
         if (!parent.exists) {
@@ -286,7 +296,7 @@ async function mirrorFollowRelation(event, mirrorRef, mirrorFields) {
     if (event.data.before.exists && event.data.after.exists) {
         return;
     }
-    await db.runTransaction(async (transaction) => {
+    await firestore.runTransaction(async (transaction) => {
         // Se consulta el estado actual: los eventos pueden llegar tarde o fuera de orden.
         const sourceRef = (event.data.after.exists ? event.data.after : event.data.before).ref;
         const source = await transaction.get(sourceRef);
@@ -305,13 +315,13 @@ async function mirrorFollowRelation(event, mirrorRef, mirrorFields) {
 
 exports.syncFollowsToFollowers = onDocumentWritten("users/{userId}/follows/{followedId}", (event) => {
     const {userId, followedId} = event.params;
-    const mirrorRef = db.collection("users").doc(followedId).collection("followers").doc(userId);
+    const mirrorRef = firestore.collection("users").doc(followedId).collection("followers").doc(userId);
     return mirrorFollowRelation(event, mirrorRef, {follower_id: Number(userId)});
 });
 
 exports.syncFollowersToFollows = onDocumentWritten("users/{userId}/followers/{followerId}", (event) => {
     const {userId, followerId} = event.params;
-    const mirrorRef = db.collection("users").doc(followerId).collection("follows").doc(userId);
+    const mirrorRef = firestore.collection("users").doc(followerId).collection("follows").doc(userId);
     return mirrorFollowRelation(event, mirrorRef, {followed_id: Number(userId)});
 });
 
@@ -332,7 +342,7 @@ exports.syncCategoryNameInArticles = onDocumentUpdated("categories/{categoryId}"
     }
 
     // 3. Trae los artículos de la categoría y reemplaza la copia del nombre en lotes.
-    const articles = await db.collection("articles").where("category_id", "==", categoryId).get();
+    const articles = await firestore.collection("articles").where("category_id", "==", categoryId).get();
     await writeInBatches(articles.docs, (batch, article) => {
         batch.update(article.ref, {category_name: afterName});
     });

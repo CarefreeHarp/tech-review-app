@@ -28,6 +28,7 @@ import com.example.devicersapp.ui.screens.activity.components.ActivityCard
 import com.example.devicersapp.ui.screens.activity.components.ActivitySection
 import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Configura la pantalla de actividad y observa su estado desde el ViewModel. */
 @Composable
@@ -131,7 +132,7 @@ fun ActivityScreenPreview() {
         DevicersScaffold(
             selectedItem = "activity",
             showBottomBar = true,
-            topBarNumber = 10
+            topBarStyle = TopBarStyle.Activity
         ) { innerPadding ->
             ActivityViewContent(
                 state = ActivityState(
@@ -158,7 +159,7 @@ fun ActivityScreenDarkPreview() {
         DevicersScaffold(
             selectedItem = "activity",
             showBottomBar = true,
-            topBarNumber = 10
+            topBarStyle = TopBarStyle.Activity
         ) { innerPadding ->
             ActivityViewContent(
                 state = ActivityState(

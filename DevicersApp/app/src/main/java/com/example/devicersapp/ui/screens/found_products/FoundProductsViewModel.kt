@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import javax.inject.Inject
 
+/** Mantiene los resultados de búsqueda filtrados sobre el catálogo en vivo. */
 @HiltViewModel
 class FoundProductsViewModel @Inject constructor(
     private val productRepository: ProductRepository,
@@ -42,8 +43,9 @@ class FoundProductsViewModel @Inject constructor(
             val (categories, reviews) = try {
                 categoryRepository.getCategories() to
                     reviewRepository.getReviews().getOrThrow().filter { it.isActive }.groupBy { it.articleId }
-            } catch (e: CancellationException) { throw e }
-            catch (e: Exception) {
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
                 showLoadError()
                 return@launch
             }
@@ -59,32 +61,22 @@ class FoundProductsViewModel @Inject constructor(
             val parents = categories.associate { it.id to it.parentCategoryId }
 
             productRepository.getProductsLive()
-                // catch reemplaza al try-catch: un error del listener detiene el flujo y se muestra en pantalla.
+                // Un fallo del catálogo detiene la escucha y conserva el mensaje de error en el estado.
                 .catch { showLoadError() }
-                // collect se ejecuta con la carga inicial y otra vez cada vez que cambia el catálogo.
                 .collect { liveProducts ->
                     val catalogProducts = liveProducts.map { it.copy(reviews = reviews[it.id].orEmpty()) }
-                    val filtered = catalogProducts.filter { product ->
-                        var id: Int? = product.categoryId
-                        val visited = mutableSetOf<Int>()
-                        var matches = category == "all"
-                        while (id != null && visited.add(id)) {
-                            if (id in roots) matches = true
-                            id = parents[id]
-                        }
-                        matches && average(product) >= minimumRating
+                    val filteredProducts = catalogProducts.filter { product ->
+                        matchesCategory(product.categoryId, category, roots, parents) &&
+                            activeAverageRating(product) >= minimumRating
                     }
-                    products = when (sortBy) {
-                        "recent" -> filtered.sortedByDescending { runCatching { Instant.parse(it.createdAt).toEpochMilli() }.getOrDefault(0L) }
-                        "rated" -> filtered.sortedByDescending(::average)
-                        else -> filtered
-                    }
+                    products = sortProducts(filteredProducts, sortBy)
                     // Conserva el texto que la persona esté escribiendo al llegar productos nuevos.
                     _uiState.update { it.copy(results = filterProducts(it.searchText), isLoading = false, errorMessage = null) }
                 }
         }
     }
 
+    /** Vuelve a aplicar la consulta de texto a los productos que ya cumplen los filtros. */
     fun onSearchTextChange(searchText: String) {
         _uiState.update { it.copy(searchText = searchText, results = filterProducts(searchText)) }
     }
@@ -93,11 +85,42 @@ class FoundProductsViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = false, errorMessage = R.string.catalog_load_error) }
     }
 
-    private fun filterProducts(text: String): List<ProductInfo> = products.filter { product ->
+    /** Filtra por nombre, modelo o descripción sin modificar el texto escrito en pantalla. */
+    private fun filterProducts(text: String): List<ProductInfo> {
         val query = text.trim()
-        query.isEmpty() || listOfNotNull(product.name, product.model, product.description).any { it.contains(query, true) }
+        return products.filter { product ->
+            query.isEmpty() || listOfNotNull(product.name, product.model, product.description)
+                .any { it.contains(query, ignoreCase = true) }
+        }
     }
 
-    private fun average(product: ProductInfo): Double = product.reviews.filter { it.isActive }
+    /** Incluye descendientes de las categorías encontradas y detiene los ciclos entre padres. */
+    private fun matchesCategory(
+        productCategoryId: Int,
+        requestedCategory: String,
+        rootCategoryIds: Set<Int>,
+        parentCategories: Map<Int, Int?>
+    ): Boolean {
+        var categoryId: Int? = productCategoryId
+        val visitedCategoryIds = mutableSetOf<Int>()
+        var matchesCategory = requestedCategory == "all"
+        while (categoryId != null && visitedCategoryIds.add(categoryId)) {
+            if (categoryId in rootCategoryIds) matchesCategory = true
+            categoryId = parentCategories[categoryId]
+        }
+        return matchesCategory
+    }
+
+    /** Mantiene el orden recibido salvo que la búsqueda pida fecha o calificación descendente. */
+    private fun sortProducts(products: List<ProductInfo>, sortBy: String): List<ProductInfo> = when (sortBy) {
+        "recent" -> products.sortedByDescending {
+            runCatching { Instant.parse(it.createdAt).toEpochMilli() }.getOrDefault(0L)
+        }
+        "rated" -> products.sortedByDescending(::activeAverageRating)
+        else -> products
+    }
+
+    /** Los productos sin reseñas activas tienen promedio cero en los filtros y en el orden. */
+    private fun activeAverageRating(product: ProductInfo): Double = product.reviews.filter { it.isActive }
         .map { it.rating }.average().takeIf { it.isFinite() } ?: 0.0
 }

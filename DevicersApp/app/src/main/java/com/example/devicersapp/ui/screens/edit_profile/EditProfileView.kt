@@ -32,6 +32,7 @@ import com.example.devicersapp.ui.theme.DevicersAppTheme
 import com.example.devicersapp.ui.theme.LocalDevicersColors
 import com.example.devicersapp.ui.utils.profile.ProfileLoadStatus
 import com.example.devicersapp.ui.utils.scaffold.DevicersScaffold
+import com.example.devicersapp.ui.utils.navigation.TopBarStyle
 
 /** Observa el formulario y conecta el selector de fotos con su ViewModel explícito. */
 @Composable
@@ -102,7 +103,7 @@ fun EditProfileViewPreview() {
     val biography = stringResource(R.string.profile_biography)
     val email = stringResource(R.string.email_placeholder)
     DevicersAppTheme {
-        DevicersScaffold(topBarNumber = 12) { padding ->
+        DevicersScaffold(topBarStyle = TopBarStyle.EditProfile) { padding ->
             EditProfileViewContent(state = EditProfileState(username = username, biography = biography, email = email, loading = false, loaded = true),
                 onUsernameChange = {}, onBiographyChange = {}, onChoosePhoto = {}, onSave = {},
                 onCancel = {}, onRetry = {}, modifier = Modifier.padding(padding))

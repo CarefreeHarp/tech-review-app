@@ -24,8 +24,9 @@ class RateProductViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(RateProductState())
     val uiState: StateFlow<RateProductState> = _uiState
 
-    /** Carga el producto solicitado o el predeterminado cuando no llega un identificador. */
     private var loadJob: Job? = null
+
+    /** Carga el producto solicitado; un ID inválido conserva la respuesta de error de la pantalla. */
     fun loadProduct(productId: Int?) {
         if (_uiState.value.product?.id == productId) return
         loadJob?.cancel()
@@ -37,7 +38,9 @@ class RateProductViewModel @Inject constructor(
                 _uiState.update { RateProductState(product = product) }
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: Exception) { _uiState.update { RateProductState(error = R.string.rate_product_load_error) } }
+            } catch (e: Exception) {
+                _uiState.update { RateProductState(error = R.string.rate_product_load_error) }
+            }
         }
     }
 
@@ -47,7 +50,8 @@ class RateProductViewModel @Inject constructor(
         if (draft.saving || draft.published) return
         val productId = draft.product?.id ?: return
         if (draft.rating !in 1..5 || draft.experience.isBlank()) {
-            _uiState.update { it.copy(error = R.string.edit_review_validation_error) }; return
+            _uiState.update { it.copy(error = R.string.edit_review_validation_error) }
+            return
         }
         _uiState.update { it.copy(saving = true, error = null) }
         viewModelScope.launch {
@@ -58,11 +62,21 @@ class RateProductViewModel @Inject constructor(
                     if (draft.advantage.isNotBlank()) append("\n\nVentajas: ${draft.advantage.trim()}")
                     if (draft.disadvantage.isNotBlank()) append("\n\nDesventajas: ${draft.disadvantage.trim()}")
                 }
-                reviews.createReview(ReviewDraft(userId, productId, draft.rating, body, draft.title.trim())).getOrThrow()
+                reviews.createReview(
+                    ReviewDraft(
+                        userId = userId,
+                        articleId = productId,
+                        rating = draft.rating,
+                        body = body,
+                        title = draft.title.trim()
+                    )
+                ).getOrThrow()
                 _uiState.update { it.copy(saving = false, published = true) }
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: Exception) { _uiState.update { it.copy(saving = false, error = R.string.rate_product_publish_error) } }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(saving = false, error = R.string.rate_product_publish_error) }
+            }
         }
     }
 
