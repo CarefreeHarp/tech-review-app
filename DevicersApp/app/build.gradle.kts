@@ -97,4 +97,8 @@ dependencies {
     // Pruebas unitarias locales incorporadas desde task/#1.
     testImplementation("junit:junit:4.13.2")
     testImplementation(kotlin("test"))
+    // Pruebas unitarias de repositorios con mocks; corren en la JVM, sin emulador.
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.truth)
 }

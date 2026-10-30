@@ -5,12 +5,15 @@ import com.example.devicersapp.ui.screens.review.components.ReviewSkeleton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,7 +43,6 @@ fun ReviewView(
     onDeleteRequested: (Int) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
     onProductClick: (Int) -> Unit = {},
-    onSendReply: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: ReviewViewModel
 ) {
@@ -66,14 +68,7 @@ fun ReviewView(
             onAuthorClick = onAuthorClick,
             onReplyTextChange = viewModel::onReplyTextChange,
             onProductClick = onProductClick,
-            onSendReply = {
-                val replyText = uiState.replyText
-
-                if (replyText.isNotBlank()) {
-                    onSendReply(replyText)
-                    viewModel.clearReplyText()
-                }
-            },
+            onSendReply = viewModel::onSendReply,
             onViewAnswers = viewModel::onViewAnswers,
             modifier = modifier
                 .fillMaxSize()
@@ -171,15 +166,32 @@ fun ReviewViewContent(
                 .padding(horizontal = 20.dp)
         )
 
-        ReplyComposer(
-            placeholder = if (state.isLocal) null else stringResource(R.string.remote_review_reply_to, (review.authorName.orEmpty()).asUserHandle()),
-            value = state.replyText,
-            onValueChange = onReplyTextChange,
-            onSendClick = onSendReply,
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-        )
+        ) {
+            // El aviso va junto al compositor para que se vea aunque el hilo esté desplazado.
+            state.replyError?.let { error ->
+                Text(
+                    text = stringResource(error),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = LocalDevicersColors.current.error,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(LocalDevicersColors.current.background)
+                        .padding(horizontal = 20.dp, vertical = 6.dp)
+                )
+            }
+            ReplyComposer(
+                placeholder = if (state.isLocal) null else stringResource(R.string.remote_review_reply_to, (review.authorName.orEmpty()).asUserHandle()),
+                value = state.replyText,
+                onValueChange = onReplyTextChange,
+                onSendClick = onSendReply,
+                enabled = !state.replyInProgress,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 

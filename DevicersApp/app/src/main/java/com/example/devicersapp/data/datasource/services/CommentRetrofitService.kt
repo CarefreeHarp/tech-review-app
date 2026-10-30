@@ -6,4 +6,5 @@ import retrofit2.http.*
 /** Endpoints existentes de comentarios; los cuerpos y respuestas permanecen en la frontera HTTP. */
 interface CommentRetrofitService {
     @GET("comments") suspend fun getComments(): List<CommentRetrofitDto>
+    @POST("reviews/{id}/comments") suspend fun create(@Path("id") reviewId: Int, @Body request: CreateCommentRequestDto): CommentRetrofitDto
 }

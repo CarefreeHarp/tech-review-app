@@ -10,6 +10,11 @@ class CommentRepository(
     private val likes: CommentLikeRemoteDataSource
 ) {
     suspend fun getComments(reviewId: Int? = null): List<CommentInfo> = source.getComments(reviewId)
+    /** Publica el texto sin espacios sobrantes o entrega el fallo para conservar el borrador en pantalla. */
+    suspend fun createComment(draft: CommentDraft): Result<CommentInfo> = repositoryResult {
+        require(draft.body.isNotBlank()) { "El comentario no puede estar vacío." }
+        source.createComment(draft.copy(body = draft.body.trim()))
+    }
     /** Las respuestas huérfanas quedan en la raíz y los ciclos no repiten comentarios. */
     suspend fun getThread(reviewId: Int, currentUserId: Int? = null): List<CommentThreadItem> {
         val likedIds = if (currentUserId == null) emptySet() else likes.getCommentLikes(reviewId)

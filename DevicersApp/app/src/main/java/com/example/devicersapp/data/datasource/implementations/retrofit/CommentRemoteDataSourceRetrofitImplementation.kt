@@ -14,4 +14,10 @@ class CommentRemoteDataSourceRetrofitImplementation @Inject constructor(
 ) : CommentRemoteDataSource {
     override suspend fun getComments(reviewId: Int?): List<CommentInfo> = service.getComments()
         .filter { reviewId == null || it.review_id == reviewId }.map { it.toCommentInfo() }
+    /** Express valida la reseña y el autor, y guarda el comentario con las copias de su perfil. */
+    override suspend fun createComment(draft: CommentDraft): CommentInfo {
+        require(draft.reviewId > 0 && draft.userId > 0 && draft.body.isNotBlank())
+        draft.parentCommentId?.let { require(it > 0) }
+        return service.create(draft.reviewId, draft.toCreateCommentRequestDto()).toCommentInfo()
+    }
 }

@@ -800,4 +800,5 @@
     <string name="profile_follow_error">No pudimos actualizar el seguimiento. Intenta nuevamente.</string>
     <string name="push_activity_channel">Actividad de Devicers</string>
     <string name="review_comment_like_error">No pudimos actualizar el me gusta del comentario. Intenta nuevamente.</string>
+    <string name="review_reply_error">No pudimos publicar tu comentario. Tu texto se conserva; intenta nuevamente.</string>
 </resources>

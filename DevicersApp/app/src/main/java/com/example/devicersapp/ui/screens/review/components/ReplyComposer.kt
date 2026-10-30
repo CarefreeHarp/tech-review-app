@@ -34,6 +34,7 @@ import com.example.devicersapp.ui.theme.LocalDevicersColors
  * @param onValueChange Acción que solicita actualizar el texto.
  * @param onSendClick Acción solicitada al enviar la respuesta.
  * @param modifier Modificador aplicado al compositor.
+ * @param enabled Permite escribir y enviar; se desactiva mientras se publica una respuesta.
  */
 @Composable
 fun ReplyComposer(
@@ -41,7 +42,8 @@ fun ReplyComposer(
     onValueChange: (String) -> Unit,
     onSendClick: () -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String? = null
+    placeholder: String? = null,
+    enabled: Boolean = true
 ) {
     val colors = LocalDevicersColors.current
 
@@ -61,6 +63,7 @@ fun ReplyComposer(
                 .background(colors.surface, CircleShape)
                 .border(1.dp, colors.border, CircleShape)
                 .padding(horizontal = 18.dp),
+            enabled = enabled,
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(
                 color = colors.textPrimary,
@@ -83,8 +86,9 @@ fun ReplyComposer(
             modifier = Modifier
                 .padding(start = 10.dp)
                 .size(48.dp)
-                .background(colors.primary, CircleShape)
-                .clickable(onClick = onSendClick),
+                // El tono suave indica que el envío está en curso y el botón no responde.
+                .background(if (enabled) colors.primary else colors.primarySoft, CircleShape)
+                .clickable(enabled = enabled, onClick = onSendClick),
             contentAlignment = Alignment.Center
         ) {
             // El ícono de envío va en crema para contrastar con el burgundy del botón.

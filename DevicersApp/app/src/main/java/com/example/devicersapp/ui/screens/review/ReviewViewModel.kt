@@ -1,6 +1,7 @@
 package com.example.devicersapp.ui.screens.review
 
 import com.example.devicersapp.data.repository.CommentLikeRepository
+import com.example.devicersapp.data.repository.CommentRepository
 import com.example.devicersapp.data.repository.ReviewLikeRepository
 import com.example.devicersapp.data.repository.ReviewRepository
 
@@ -9,6 +10,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import com.example.devicersapp.ui.models.CommentDraft
+import com.example.devicersapp.ui.models.toReplyContent
 import com.example.devicersapp.ui.models.toReviewContent
 import com.example.devicersapp.ui.models.toProductContent
 import com.example.devicersapp.R
@@ -25,7 +28,8 @@ class ReviewViewModel @Inject constructor(
     private val articleReviews: ReviewRepository,
     private val users: UserRepository,
     private val reviewLikes: ReviewLikeRepository,
-    private val commentLikes: CommentLikeRepository
+    private val commentLikes: CommentLikeRepository,
+    private val comments: CommentRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReviewState())
@@ -168,10 +172,37 @@ class ReviewViewModel @Inject constructor(
         }
     }
 
-    /** Limpia el compositor después de enviar una respuesta válida. */
-    fun clearReplyText() {
-        _uiState.update { currentState ->
-            currentState.copy(replyText = "")
+    /**
+     * Publica el texto del compositor como comentario de la reseña. Al confirmarse, el comentario aparece
+     * al final del hilo y el compositor se vacía; si falla, el texto se conserva para intentarlo de nuevo.
+     */
+    fun onSendReply() {
+        val current = _uiState.value
+        val reviewId = current.review?.id ?: return
+        val userId = currentUserId ?: return
+        val body = current.replyText.trim()
+        if (body.isEmpty() || current.replyInProgress) return
+
+        _uiState.update { it.copy(replyInProgress = true, replyError = null) }
+        viewModelScope.launch {
+            val result = comments.createComment(CommentDraft(reviewId = reviewId, userId = userId, body = body))
+            _uiState.update { state ->
+                // Si la pantalla recargó otra reseña mientras tanto, solo se libera el indicador.
+                if (state.review?.id != reviewId) return@update state.copy(replyInProgress = false)
+                result.fold(
+                    onSuccess = { comment ->
+                        // Un comentario a la reseña es el más reciente del primer nivel: va al final del hilo.
+                        val replies = state.replies + comment.toReplyContent()
+                        state.copy(
+                            replies = replies,
+                            review = state.review?.copy(comments = replies),
+                            replyText = "",
+                            replyInProgress = false
+                        )
+                    },
+                    onFailure = { state.copy(replyInProgress = false, replyError = R.string.review_reply_error) }
+                )
+            }
         }
     }
 }

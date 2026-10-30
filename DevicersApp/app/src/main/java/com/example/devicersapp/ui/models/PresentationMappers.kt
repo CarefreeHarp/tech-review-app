@@ -101,3 +101,7 @@ private fun CommentThreadItem.toReplyContent() = ReplyContent(
     id = comment.id,
     isLiked = isLiked
 )
+
+/** Proyecta un comentario recién publicado como respuesta de primer nivel, todavía sin likes propios. */
+fun CommentInfo.toReplyContent(): ReplyContent =
+    CommentThreadItem(comment = this, depth = 0, likes = likesCount).toReplyContent()
