@@ -94,7 +94,16 @@ dependencies {
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.truth)
     androidTestImplementation(libs.kotlinx.coroutines.test)
-    // Pruebas unitarias locales incorporadas desde task/#1.
+    // Pruebas de integración instrumentadas contra los emuladores locales de Firebase.
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    // Pruebas unitarias locales (app/src/test/)
     testImplementation("junit:junit:4.13.2")
     testImplementation(kotlin("test"))
+    testImplementation("io.mockk:mockk:1.14.11")
+    testImplementation(libs.truth)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
